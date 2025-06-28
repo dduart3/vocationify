@@ -1,0 +1,103 @@
+.academic-card {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark .academic-card {
+  background: var(--color-dark-card);
+  border-color: var(--color-dark-border);
+}
+
+.academic-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.glass-card {
+  background: color-mix(in srgb, var(--color-card) 80%, transparent);
+  backdrop-filter: blur(12px);
+  border: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
+  border-radius: var(--radius);
+  box-shadow: 
+    0 8px 32px color-mix(in srgb, var(--color-foreground) 10%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--color-card) 50%, transparent);
+}
+
+.dark .glass-card {
+  background: color-mix(in srgb, var(--color-dark-card) 80%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-dark-border) 50%, transparent);
+  box-shadow: 
+    0 8px 32px color-mix(in srgb, var(--color-dark-foreground) 30%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--color-dark-card) 10%, transparent);
+}
+
+.quiz-card {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: calc(var(--radius) + 4px);
+  padding: 2rem;
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.dark .quiz-card {
+  background: var(--color-dark-card);
+  border-color: var(--color-dark-border);
+}
+
+.quiz-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, 
+    var(--color-primary-500) 0%, 
+    var(--color-primary-600) 100%
+  );
+}
+
+.quiz-option {
+  background: var(--color-background);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  margin-bottom: 0.75rem;
+}
+
+.dark .quiz-option {
+  background: var(--color-dark-background);
+  border-color: var(--color-dark-border);
+}
+
+.quiz-option:hover {
+  border-color: var(--color-primary-500);
+  background: color-mix(in srgb, var(--color-primary-500) 5%, var(--color-background));
+  transform: translateY(-1px);
+}
+
+.dark .quiz-option:hover {
+  border-color: var(--color-primary-400);
+  background: color-mix(in srgb, var(--color-primary-400) 5%, var(--color-dark-background));
+}
+
+.quiz-option.selected {
+  border-color: var(--color-primary-500);
+  background: color-mix(in srgb, var(--color-primary-500) 10%, var(--color-background));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary-500) 10%, transparent);
+}
+
+.dark .quiz-option.selected {
+  border-color: var(--color-primary-400);
+  background: color-mix(in srgb, var(--color-primary-400) 10%, var(--color-dark-background));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary-400) 10%, transparent);
+}

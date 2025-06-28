@@ -1,0 +1,35 @@
+.input-field {
+  background: var(--color-background);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: var(--color-foreground);
+  width: 100%;
+}
+
+.dark .input-field {
+  background: var(--color-dark-background);
+  border-color: var(--color-dark-border);
+  color: var(--color-dark-foreground);
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--color-primary-500);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary-500) 10%, transparent);
+}
+
+.dark .input-field:focus {
+  border-color: var(--color-primary-400);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary-400) 10%, transparent);
+}
+
+.input-field::placeholder {
+  color: var(--color-muted-foreground);
+}
+
+.dark .input-field::placeholder {
+  color: var(--color-dark-muted-foreground);
+}

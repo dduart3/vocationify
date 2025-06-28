@@ -1,0 +1,81 @@
+.voice-bubble {
+  background: linear-gradient(135deg, 
+    var(--color-primary-500) 0%, 
+    var(--color-primary-600) 100%
+  );
+  border: 3px solid color-mix(in srgb, white 30%, transparent);
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 
+    0 20px 25px -5px color-mix(in srgb, var(--color-primary-500) 10%, transparent),
+    0 10px 10px -5px color-mix(in srgb, var(--color-primary-500) 4%, transparent);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.voice-bubble::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, 
+    color-mix(in srgb, white 10%, transparent) 0%, 
+    transparent 70%
+  );
+  border-radius: 50%;
+}
+
+.voice-bubble.idle {
+  animation: float 6s ease-in-out infinite;
+}
+
+.voice-bubble.listening {
+  animation: voice-pulse 1.5s ease-in-out infinite;
+  background: linear-gradient(135deg, 
+    var(--color-success-500) 0%, 
+    var(--color-success-600) 100%
+  );
+}
+
+.voice-bubble.speaking {
+  animation: pulse-gentle 1s ease-in-out infinite;
+  background: linear-gradient(135deg, 
+    var(--color-accent-500) 0%, 
+    var(--color-accent-600) 100%
+  );
+}
+
+.voice-bars {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  height: 24px;
+}
+
+.voice-bar {
+  width: 3px;
+  background: color-mix(in srgb, white 90%, transparent);
+  border-radius: 2px;
+  animation: voice-bar 0.8s ease-in-out infinite alternate;
+}
+
+.voice-bar:nth-child(1) { animation-delay: 0s; height: 8px; }
+.voice-bar:nth-child(2) { animation-delay: 0.1s; height: 12px; }
+.voice-bar:nth-child(3) { animation-delay: 0.2s; height: 16px; }
+.voice-bar:nth-child(4) { animation-delay: 0.3s; height: 20px; }
+.voice-bar:nth-child(5) { animation-delay: 0.4s; height: 16px; }
+.voice-bar:nth-child(6) { animation-delay: 0.5s; height: 12px; }
+.voice-bar:nth-child(7) { animation-delay: 0.6s; height: 8px; }
+
+.mic-icon {
+  width: 32px;
+  height: 32px;
+  color: color-mix(in srgb, white 90%, transparent);
+  filter: drop-shadow(0 2px 4px color-mix(in srgb, black 10%, transparent));
+}
