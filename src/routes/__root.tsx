@@ -1,6 +1,8 @@
 import { QueryClient } from '@tanstack/react-query'
 import { createRootRouteWithContext, Outlet } from '@tanstack/react-router'
 import { Toaster } from '@/components/ui/toaster'
+import { Header } from '@/components/layout/header'
+import { Footer } from '@/components/layout/footer'
 import GeneralError from '@/components/errors/general-error'
 import NotFoundError from '@/components/errors/not-found-error'
 import { useAuthStore } from '@/stores/auth-store'
@@ -22,8 +24,12 @@ function RootComponent() {
   }, [initialize])
 
   return (
-    <div className="min-h-screen bg-background">
-      <Outlet />
+    <div className="min-h-screen bg-background flex flex-col">
+      <Header />
+      <main className="flex-1">
+        <Outlet />
+      </main>
+      <Footer />
       <Toaster />
     </div>
   )

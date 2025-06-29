@@ -1,70 +1,100 @@
 @theme {
-  /* Professional Academic Color Palette */
-  --color-primary-50: #f0f9ff;
-  --color-primary-100: #e0f2fe;
-  --color-primary-200: #bae6fd;
-  --color-primary-300: #7dd3fc;
-  --color-primary-400: #38bdf8;
-  --color-primary-500: #0ea5e9;
-  --color-primary-600: #0284c7;
-  --color-primary-700: #0369a1;
-  --color-primary-800: #075985;
-  --color-primary-900: #0c4a6e;
-  --color-primary-950: #082f49;
+  /* Professional Futuristic Color Palette */
+  --color-primary-50: #f8fafc;
+  --color-primary-100: #f1f5f9;
+  --color-primary-200: #e2e8f0;
+  --color-primary-300: #cbd5e1;
+  --color-primary-400: #94a3b8;
+  --color-primary-500: #64748b;
+  --color-primary-600: #475569;
+  --color-primary-700: #334155;
+  --color-primary-800: #1e293b;
+  --color-primary-900: #0f172a;
+  --color-primary-950: #020617;
 
-  --color-secondary-50: #f8fafc;
-  --color-secondary-100: #f1f5f9;
-  --color-secondary-200: #e2e8f0;
-  --color-secondary-300: #cbd5e1;
-  --color-secondary-400: #94a3b8;
-  --color-secondary-500: #64748b;
-  --color-secondary-600: #475569;
-  --color-secondary-700: #334155;
-  --color-secondary-800: #1e293b;
-  --color-secondary-900: #0f172a;
-  --color-secondary-950: #020617;
+  /* Futuristic Accent Colors */
+  --color-accent-50: #f0f9ff;
+  --color-accent-100: #e0f2fe;
+  --color-accent-200: #bae6fd;
+  --color-accent-300: #7dd3fc;
+  --color-accent-400: #38bdf8;
+  --color-accent-500: #0ea5e9;
+  --color-accent-600: #0284c7;
+  --color-accent-700: #0369a1;
 
-  --color-accent-50: #fefce8;
-  --color-accent-500: #eab308;
-  --color-accent-600: #ca8a04;
+  /* Tech Purple */
+  --color-tech-50: #faf5ff;
+  --color-tech-100: #f3e8ff;
+  --color-tech-200: #e9d5ff;
+  --color-tech-300: #d8b4fe;
+  --color-tech-400: #c084fc;
+  --color-tech-500: #a855f7;
+  --color-tech-600: #9333ea;
+  --color-tech-700: #7c3aed;
+  --color-tech-800: #6b21a8;
 
-  --color-success-500: #22c55e;
-  --color-success-600: #16a34a;
+  /* Neon Green for highlights */
+  --color-neon-400: #4ade80;
+  --color-neon-500: #22c55e;
+  --color-neon-600: #16a34a;
 
+  /* Professional Neutrals */
+  --color-neutral-50: #fafafa;
+  --color-neutral-100: #f5f5f5;
+  --color-neutral-200: #e5e5e5;
+  --color-neutral-300: #d4d4d4;
+  --color-neutral-400: #a3a3a3;
+  --color-neutral-500: #737373;
+  --color-neutral-600: #525252;
+  --color-neutral-700: #404040;
+  --color-neutral-800: #262626;
+  --color-neutral-900: #171717;
+  --color-neutral-950: #0a0a0a;
+
+  /* Error/Warning */
   --color-error-500: #ef4444;
-  --color-error-600: #dc2626;
+  --color-warning-500: #f59e0b;
+  --color-success-500: var(--color-neon-500);
 
-  /* Semantic Colors */
-  --color-background: var(--color-secondary-50);
-  --color-foreground: var(--color-secondary-950);
+  /* Semantic Colors - Light Mode */
+  --color-background: #ffffff;
+  --color-foreground: var(--color-neutral-900);
   --color-card: #ffffff;
-  --color-card-foreground: var(--color-secondary-950);
-  --color-muted: var(--color-secondary-100);
-  --color-muted-foreground: var(--color-secondary-500);
-  --color-border: var(--color-secondary-200);
-  --color-input: var(--color-secondary-200);
-  --color-ring: var(--color-primary-500);
+  --color-card-foreground: var(--color-neutral-900);
+  --color-muted: var(--color-neutral-50);
+  --color-muted-foreground: var(--color-neutral-500);
+  --color-border: var(--color-neutral-200);
+  --color-input: var(--color-neutral-100);
+  --color-ring: var(--color-accent-500);
 
   /* Dark mode colors */
-  --color-dark-background: var(--color-secondary-950);
-  --color-dark-foreground: var(--color-secondary-50);
-  --color-dark-card: var(--color-secondary-900);
-  --color-dark-card-foreground: var(--color-secondary-50);
-  --color-dark-muted: var(--color-secondary-800);
-  --color-dark-muted-foreground: var(--color-secondary-400);
-  --color-dark-border: var(--color-secondary-800);
-  --color-dark-input: var(--color-secondary-800);
-  --color-dark-ring: var(--color-primary-400);
+  --color-dark-background: var(--color-neutral-950);
+  --color-dark-foreground: var(--color-neutral-50);
+  --color-dark-card: var(--color-neutral-900);
+  --color-dark-card-foreground: var(--color-neutral-50);
+  --color-dark-muted: var(--color-neutral-800);
+  --color-dark-muted-foreground: var(--color-neutral-400);
+  --color-dark-border: var(--color-neutral-800);
+  --color-dark-input: var(--color-neutral-800);
+  --color-dark-ring: var(--color-accent-400);
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, var(--color-neutral-900) 0%, var(--color-neutral-700) 100%);
+  --gradient-accent: linear-gradient(135deg, var(--color-accent-500) 0%, var(--color-tech-600) 100%);
+  --gradient-neon: linear-gradient(135deg, var(--color-neon-400) 0%, var(--color-accent-500) 100%);
+  --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
 
   /* Design System */
   --radius: 0.75rem;
   --font-family-sans: 'Inter', system-ui, sans-serif;
   --font-family-mono: 'JetBrains Mono', monospace;
 
-  /* Shadows */
+  /* Enhanced Shadows */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-glow: 0 0 20px rgba(14, 165, 233, 0.3);
+  --shadow-neon: 0 0 30px rgba(34, 197, 94, 0.4);
 }
