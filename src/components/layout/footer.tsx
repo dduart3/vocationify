@@ -1,122 +1,271 @@
+import { useRef, useEffect } from 'react'
 import { Link } from '@tanstack/react-router'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { 
+  IconBrandTwitter, 
+  IconBrandLinkedin, 
+  IconBrandInstagram, 
+  IconBrandGithub,
+  IconMail,
+  IconPhone,
+  IconMapPin,
+  IconHeart,
+  IconBolt
+} from '@tabler/icons-react'
+
+gsap.registerPlugin(ScrollTrigger)
 
 export function Footer() {
+  const footerRef = useRef<HTMLDivElement>(null)
+  const brandRef = useRef<HTMLDivElement>(null)
+  const linksRef = useRef<HTMLDivElement>(null)
+  const socialRef = useRef<HTMLDivElement>(null)
+  const bottomRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const footer = footerRef.current
+    const brand = brandRef.current
+    const links = linksRef.current
+    const social = socialRef.current
+    const bottom = bottomRef.current
+
+    if (!footer || !brand || !links || !social || !bottom) return
+
+    // Initial states
+    gsap.set([brand, links, social, bottom], { opacity: 0, y: 30 })
+
+    // Animation timeline
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: footer,
+        start: "top 90%",
+        toggleActions: "play none none reverse"
+      }
+    })
+
+    tl.to(brand, {
+      opacity: 1,
+      y: 0,
+      duration: 0.8,
+      ease: "power3.out"
+    })
+    .to(links, {
+      opacity: 1,
+      y: 0,
+      duration: 0.8,
+      ease: "power3.out"
+    }, "-=0.6")
+    .to(social, {
+      opacity: 1,
+      y: 0,
+      duration: 0.8,
+      ease: "power3.out"
+    }, "-=0.4")
+    .to(bottom, {
+      opacity: 1,
+      y: 0,
+      duration: 0.8,
+      ease: "power3.out"
+    }, "-=0.2")
+
+    // Social icons hover animation
+    const socialIcons = social.querySelectorAll('.social-icon')
+    socialIcons.forEach((icon) => {
+      const handleMouseEnter = () => {
+        gsap.to(icon, {
+          scale: 1.1,
+          duration: 0.3,
+          ease: "back.out(1.7)"
+        })
+      }
+      
+      const handleMouseLeave = () => {
+        gsap.to(icon, {
+          scale: 1,
+          duration: 0.3,
+          ease: "power2.out"
+        })
+      }
+
+      icon.addEventListener('mouseenter', handleMouseEnter)
+      icon.addEventListener('mouseleave', handleMouseLeave)
+    })
+
+  }, [])
+
   return (
-    <footer className="bg-neutral-900 text-neutral-100">
-      <div className="container mx-auto px-4 py-16">
+    <footer ref={footerRef} className="relative overflow-hidden py-24">
+      {/* Background Effects */}
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[600px] bg-gradient-to-r from-blue-500/5 to-purple-500/5 rounded-full blur-3xl"></div>
+
+      <div className="container mx-auto px-8 md:px-12 lg:px-16 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
           {/* Brand Section */}
-          <div className="col-span-1 md:col-span-2">
+          <div ref={brandRef} className="col-span-1 md:col-span-2">
             <div className="flex items-center space-x-3 mb-6">
-              <div className="w-10 h-10 bg-gradient-to-br from-accent-500 to-tech-600 rounded-xl flex items-center justify-center">
+              <div 
+                className="w-10 h-10 rounded-xl flex items-center justify-center"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.8) 0%, rgba(147, 51, 234, 0.8) 100%)',
+                  boxShadow: '0 10px 30px rgba(59, 130, 246, 0.3)'
+                }}
+              >
                 <span className="text-white font-bold">V</span>
               </div>
               <span className="font-bold text-2xl text-white">
                 Vocationify
               </span>
             </div>
-            <p className="text-neutral-400 mb-8 max-w-md leading-relaxed">
-              La plataforma más avanzada de orientación vocacional. 
+            
+            <p className="text-neutral-300 mb-8 max-w-md leading-relaxed">
+              La plataforma más avanzada de orientación vocacional.
               Tecnología de vanguardia para decisiones profesionales inteligentes.
             </p>
-            <div className="flex space-x-4">
-              <a href="#" className="w-12 h-12 bg-neutral-800 rounded-xl flex items-center justify-center hover:bg-accent-600 transition-colors duration-300 group">
-                <svg className="w-5 h-5 text-neutral-400 group-hover:text-white" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
-                </svg>
+
+            {/* Contact Info */}
+            <div className="space-y-3 mb-8">
+              <div className="flex items-center gap-3 text-neutral-400">
+                <IconMail size={16} className="text-blue-400" />
+                <span className="text-sm">contacto@vocationify.com</span>
+              </div>
+              <div className="flex items-center gap-3 text-neutral-400">
+                <IconPhone size={16} className="text-green-400" />
+                <span className="text-sm">+58 424 123 4567</span>
+              </div>
+              <div className="flex items-center gap-3 text-neutral-400">
+                <IconMapPin size={16} className="text-red-400" />
+                <span className="text-sm">Caracas, Venezuela</span>
+              </div>
+            </div>
+
+            {/* Social Links */}
+            <div ref={socialRef} className="flex space-x-4">
+              <a 
+                href="#" 
+                className="social-icon w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 hover:bg-white/5"
+                style={{
+                  background: 'transparent',
+                  backdropFilter: 'blur(12px)',
+                  boxShadow: '0 0 30px rgba(0, 0, 0, 0.2)'
+                }}
+              >
+                <IconBrandTwitter size={18} className="text-blue-400" />
               </a>
-              <a href="#" className="w-12 h-12 bg-neutral-800 rounded-xl flex items-center justify-center hover:bg-accent-600 transition-colors duration-300 group">
-                <svg className="w-5 h-5 text-neutral-400 group-hover:text-white" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                </svg>
+              <a 
+                href="#" 
+                className="social-icon w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 hover:bg-white/5"
+                style={{
+                  background: 'transparent',
+                  backdropFilter: 'blur(12px)',
+                  boxShadow: '0 0 30px rgba(0, 0, 0, 0.2)'
+                }}
+              >
+                <IconBrandLinkedin size={18} className="text-blue-600" />
               </a>
-              <a href="#" className="w-12 h-12 bg-neutral-800 rounded-xl flex items-center justify-center hover:bg-accent-600 transition-colors duration-300 group">
-                <svg className="w-5 h-5 text-neutral-400 group-hover:text-white" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.402.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.357-.629-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24.009 12.017 24c6.624 0 11.99-5.367 11.99-11.987C24.007 5.367 18.641.001 12.017.001z"/>
-                </svg>
+              <a 
+                href="#" 
+                className="social-icon w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 hover:bg-white/5"
+                style={{
+                  background: 'transparent',
+                  backdropFilter: 'blur(12px)',
+                  boxShadow: '0 0 30px rgba(0, 0, 0, 0.2)'
+                }}
+              >
+                <IconBrandInstagram size={18} className="text-pink-400" />
               </a>
-              <a href="#" className="w-12 h-12 bg-neutral-800 rounded-xl flex items-center justify-center hover:bg-accent-600 transition-colors duration-300 group">
-                <svg className="w-5 h-5 text-neutral-400 group-hover:text-white" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
-                </svg>
+              <a 
+                href="#" 
+                className="social-icon w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 hover:bg-white/5"
+                style={{
+                  background: 'transparent',
+                  backdropFilter: 'blur(12px)',
+                  boxShadow: '0 0 30px rgba(0, 0, 0, 0.2)'
+                }}
+              >
+                <IconBrandGithub size={18} className="text-neutral-300" />
               </a>
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div>
-            <h3 className="font-semibold text-white mb-6 text-lg">Plataforma</h3>
-            <ul className="space-y-3">
-              <li>
-                <Link to="/como-funciona" className="text-neutral-400 hover:text-white transition-colors duration-200">
-                  Cómo Funciona
-                </Link>
-              </li>
-              <li>
-                <Link to="/carreras" className="text-neutral-400 hover:text-white transition-colors duration-200">
-                  Explorar Carreras
-                </Link>
-              </li>
-              <li>
-                <Link to="/precios" className="text-neutral-400 hover:text-white transition-colors duration-200">
-                  Precios
-                </Link>
-              </li>
-              <li>
-                <Link to="/testimonios" className="text-neutral-400 hover:text-white transition-colors duration-200">
-                  Casos de Éxito
-                </Link>
-              </li>
-              <li>
-                <Link to="/blog" className="text-neutral-400 hover:text-white transition-colors duration-200">
-                  Recursos
-                </Link>
-              </li>
-            </ul>
-          </div>
+          {/* Links Section */}
+          <div ref={linksRef} className="grid grid-cols-1 md:grid-cols-2 gap-8 md:col-span-2">
+            {/* Quick Links */}
+            <div>
+              <h3 className="font-semibold text-white mb-6 text-lg flex items-center gap-2">
+                <IconBolt size={18} className="text-yellow-400" />
+                Plataforma
+              </h3>
+              <ul className="space-y-3">
+                {[
+                  { to: "/como-funciona", label: "Cómo Funciona" },
+                  { to: "/carreras", label: "Explorar Carreras" },
+                  { to: "/precios", label: "Precios" },
+                  { to: "/testimonios", label: "Casos de Éxito" },
+                  { to: "/blog", label: "Recursos" }
+                ].map((link) => (
+                  <li key={link.to}>
+                    <Link 
+                      to={link.to} 
+                      className="text-neutral-400 hover:text-white transition-all duration-300 hover:translate-x-1 inline-block text-sm"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          {/* Support */}
-          <div>
-            <h3 className="font-semibold text-white mb-6 text-lg">Soporte</h3>
-            <ul className="space-y-3">
-              <li>
-                <Link to="/ayuda" className="text-neutral-400 hover:text-white transition-colors duration-200">
-                  Centro de Ayuda
-                </Link>
-              </li>
-              <li>
-                <Link to="/contacto" className="text-neutral-400 hover:text-white transition-colors duration-200">
-                  Contacto
-                </Link>
-              </li>
-              <li>
-                <Link to="/privacidad" className="text-neutral-400 hover:text-white transition-colors duration-200">
-                  Privacidad
-                </Link>
-              </li>
-              <li>
-                <Link to="/terminos" className="text-neutral-400 hover:text-white transition-colors duration-200">
-                  Términos
-                </Link>
-              </li>
-              <li>
-                <Link to="/api" className="text-neutral-400 hover:text-white transition-colors duration-200">
-                  API
-                </Link>
-              </li>
-            </ul>
+            {/* Support */}
+            <div>
+              <h3 className="font-semibold text-white mb-6 text-lg flex items-center gap-2">
+                <IconHeart size={18} className="text-red-400" />
+                Soporte
+              </h3>
+              <ul className="space-y-3">
+                {[
+                  { to: "/ayuda", label: "Centro de Ayuda" },
+                  { to: "/contacto", label: "Contacto" },
+                  { to: "/privacidad", label: "Privacidad" },
+                  { to: "/terminos", label: "Términos" },
+                  { to: "/api", label: "API" }
+                ].map((link) => (
+                  <li key={link.to}>
+                    <Link 
+                      to={link.to} 
+                      className="text-neutral-400 hover:text-white transition-all duration-300 hover:translate-x-1 inline-block text-sm"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
 
         {/* Bottom Section */}
-        <div className="border-t border-neutral-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+        <div 
+          ref={bottomRef}
+          className="mt-12 pt-8 flex flex-col md:flex-row justify-between items-center"
+          style={{
+            borderTop: '1px solid rgba(255, 255, 255, 0.1)'
+          }}
+        >
           <p className="text-neutral-400 text-sm">
-            © 2024 Vocationify. Todos los derechos reservados.
+            {`© ${new Date().getFullYear()} Vocationify. Todos los derechos reservados.`}
           </p>
+          
           <div className="flex items-center space-x-6 mt-4 md:mt-0">
-            <span className="text-neutral-500 text-sm">Desarrollado en España</span>
+            <span className="text-neutral-500 text-sm flex items-center gap-2">
+              Desarrollado con 
+              <IconHeart size={14} className="text-red-400 animate-pulse" />
+              en Venezuela
+            </span>
             <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-neon-500 rounded-full animate-pulse"></div>
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
               <span className="text-neutral-500 text-sm">Sistema Activo</span>
             </div>
           </div>

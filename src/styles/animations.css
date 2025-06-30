@@ -1,18 +1,18 @@
 @keyframes float {
-  0%, 100% { 
-    transform: translateY(0px) scale(1); 
+  0%, 100% {
+    transform: translateY(0px) scale(1);
   }
-  50% { 
-    transform: translateY(-6px) scale(1.02); 
+  50% {
+    transform: translateY(-6px) scale(1.02);
   }
 }
 
 @keyframes pulse-gentle {
-  0%, 100% { 
+  0%, 100% {
     opacity: 1;
     transform: scale(1);
   }
-  50% { 
+  50% {
     opacity: 0.9;
     transform: scale(1.01);
   }
@@ -30,13 +30,13 @@
 }
 
 @keyframes voice-bar {
-  0% { 
-    transform: scaleY(0.3); 
-    opacity: 0.6; 
+  0% {
+    transform: scaleY(0.3);
+    opacity: 0.6;
   }
-  100% { 
-    transform: scaleY(1); 
-    opacity: 1; 
+  100% {
+    transform: scaleY(1);
+    opacity: 1;
   }
 }
 
@@ -46,28 +46,77 @@
 }
 
 @keyframes fade-in {
-  from { 
-    opacity: 0; 
-    transform: translateY(16px); 
+  from {
+    opacity: 0;
+    transform: translateY(16px);
   }
-  to { 
-    opacity: 1; 
-    transform: translateY(0); 
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
 @keyframes slide-up {
-  from { 
-    transform: translateY(24px); 
-    opacity: 0; 
+  from {
+    transform: translateY(24px);
+    opacity: 0;
   }
-  to { 
-    transform: translateY(0); 
-    opacity: 1; 
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
 }
 
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+/* Custom animation for very slow, gentle background element movement */
+@keyframes background-float {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  25% {
+    transform: translate(15px, 10px) scale(1.01);
+  }
+  50% {
+    transform: translate(0, 20px) scale(1.02);
+  }
+  75% {
+    transform: translate(-15px, 10px) scale(1.01);
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+/* Custom animation for very slow, gentle background element pulsation */
+@keyframes background-pulse {
+  0%, 100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+/* New: For more complex flowing movement */
+@keyframes background-flow {
+  0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+  25% { transform: translate(20px, -10px) rotate(5deg) scale(1.02); }
+  50% { transform: translate(0, 20px) rotate(0deg) scale(0.98); }
+  75% { transform: translate(-20px, -10px) rotate(-5deg) scale(1.01); }
+  100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+}
+
+/* Sidebar specific animations (if not handled by GSAP fully) */
+@keyframes sidebar-open {
+  from { width: 60px; }
+  to { width: 280px; }
+}
+
+@keyframes sidebar-close {
+  from { width: 280px; }
+  to { width: 60px; }
 }

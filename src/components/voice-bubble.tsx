@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react'
 import { gsap } from 'gsap'
 import { Mic, MicOff, Volume2 } from 'lucide-react'
-import { cn } from '../../lib/utils'
+import { cn } from '../lib/utils'
 import { useVoice } from '../../hooks/use-voice'
-import { Button } from './button'
+import { Button } from './ui/button'
 
 export function VoiceBubble() {
   const bubbleRef = useRef<HTMLDivElement>(null)

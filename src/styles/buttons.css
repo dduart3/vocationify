@@ -58,5 +58,6 @@
 }
 
 .dark .btn-secondary:hover {
-  background: var(--color-secondary-700);
+  background: var(--color-neutral-700); /* Adjusted to a darker hover for better contrast */
+  border-color: var(--color-neutral-600); /* Darker border on hover */
 }
