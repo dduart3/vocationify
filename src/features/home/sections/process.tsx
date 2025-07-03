@@ -1,5 +1,5 @@
 import { ClipboardList, Cpu, FileText } from "lucide-react";
-import { ProcessStep } from "../process-step";
+import { ProcessStep } from "../components/process-step";
 
 export function ProcessSection () {
     return (

@@ -1,5 +1,5 @@
 import { Brain, Zap, BarChart3, Target, Microscope, Rocket } from "lucide-react";
-import { FeatureCard } from "../feature-card";
+import { FeatureCard } from "../components/feature-card";
 
 export function FeaturesSection () {
     return( 

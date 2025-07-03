@@ -56,7 +56,7 @@ const queryClient = new QueryClient({
               label: 'Sign In',
               onClick: () => {
                 const redirect = `${router.history.location.href}`
-                router.navigate({ to: '/auth/sign-in', search: { redirect } })
+                router.navigate({ to: '/login', search: { redirect } })
               },
             },
           })
@@ -146,7 +146,6 @@ if (!rootElement.innerHTML) {
           position="top-right"
           expand={true}
           richColors
-          closeButton
           toastOptions={{
             style: {
               background: 'hsl(var(--background))',

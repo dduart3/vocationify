@@ -6,14 +6,18 @@ export function Toaster() {
       position="top-right"
       expand={true}
       richColors
-      closeButton
+      closeButton={false}
       toastOptions={{
         duration: 4000,
         style: {
           background: 'hsl(var(--background))',
           color: 'hsl(var(--foreground))',
           border: '1px solid hsl(var(--border))',
+          zIndex: 99999,
         },
+      }}
+      style={{
+        zIndex: 9999,
       }}
     />
   )

@@ -8,7 +8,7 @@ import { FeaturesSection } from "./sections/features";
 import { HeroSection } from "./sections/hero";
 import { ProcessSection } from "./sections/process";
 
-export function HomePage() {
+export function Home() {
   const { isAuthenticated } = useAuthStore();
 
   return (
@@ -18,7 +18,7 @@ export function HomePage() {
 
       {/* Main content area */}
       <div
-        className={`${isAuthenticated ? "ml-[60px] lg:ml-[280px]" : ""} transition-all duration-500 ease-in-out`}
+        className={` transition-all duration-500 ease-in-out z-0`}
       >
         <div className="relative overflow-hidden">
           <Background />
