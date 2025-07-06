@@ -35,7 +35,7 @@ interface AuthStore {
 
   // Auth methods
   signIn: (email: string, password: string) => Promise<void>;
-  signInWithProvider: (provider: "google" | "github") => Promise<void>; // ← AGREGAR ESTA LÍNEA
+  signInWithProvider: (provider: "google") => Promise<void>; // ← AGREGAR ESTA LÍNEA
   signUp: (email: string, password: string, fullName?: string) => Promise<void>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
@@ -156,7 +156,7 @@ export const useAuthStore = create<AuthStore>()(
             set({ isLoading: false });
           }
         },
-        signInWithProvider: async (provider: "google" | "github") => {
+        signInWithProvider: async (provider: "google") => {
           try {
             set({ isLoading: true, error: null });
 

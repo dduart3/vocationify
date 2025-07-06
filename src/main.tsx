@@ -145,14 +145,6 @@ if (!rootElement.innerHTML) {
         <Toaster 
           position="top-right"
           expand={true}
-          richColors
-          toastOptions={{
-            style: {
-              background: 'hsl(var(--background))',
-              color: 'hsl(var(--foreground))',
-              border: '1px solid hsl(var(--border))',
-            },
-          }}
         />
       </QueryClientProvider>
     </StrictMode>
