@@ -19,30 +19,68 @@ export function Dashboard() {
         className="space-y-6"
         onValueChange={setActiveTab}
       >
-        <TabsList 
-          className="grid w-full grid-cols-3 lg:w-[400px]"
+        <TabsList
+          className="grid w-full grid-cols-3 lg:w-[400px] h-12 p-1"
           style={{
-            background: 'rgba(255, 255, 255, 0.08)',
-            backdropFilter: 'blur(20px)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
+            background: `
+              linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.08) 0%, 
+                rgba(255, 255, 255, 0.04) 100%
+              )
+            `,
+            backdropFilter: 'blur(16px)',
+            border: '1px solid rgba(255, 255, 255, 0.06)',
             borderRadius: '12px',
+            boxShadow: '0 4px 24px rgba(0, 0, 0, 0.1)',
           }}
         >
-          <TabsTrigger 
+          <TabsTrigger
             value="overview"
-            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500/20 data-[state=active]:to-purple-500/20 data-[state=active]:text-white text-slate-300"
+            className="h-full rounded-lg text-sm font-medium transition-all duration-200 border-0"
+            style={{
+              background: activeTab === 'overview' 
+                ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.12) 0%, rgba(147, 51, 234, 0.12) 100%)'
+                : 'transparent',
+              color: activeTab === 'overview' ? '#ffffff' : '#cbd5e1',
+              boxShadow: activeTab === 'overview' 
+                ? 'inset 0 1px 2px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(59, 130, 246, 0.1)'
+                : 'none',
+              transform: activeTab === 'overview' ? 'scale(0.98)' : 'scale(1)',
+            }}
           >
             Vista General
           </TabsTrigger>
-          <TabsTrigger 
+          
+          <TabsTrigger
             value="progress"
-            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500/20 data-[state=active]:to-purple-500/20 data-[state=active]:text-white text-slate-300"
+            className="h-full rounded-lg text-sm font-medium transition-all duration-200 border-0"
+            style={{
+              background: activeTab === 'progress' 
+                ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.12) 0%, rgba(147, 51, 234, 0.12) 100%)'
+                : 'transparent',
+              color: activeTab === 'progress' ? '#ffffff' : '#cbd5e1',
+              boxShadow: activeTab === 'progress' 
+                ? 'inset 0 1px 2px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(59, 130, 246, 0.1)'
+                : 'none',
+              transform: activeTab === 'progress' ? 'scale(0.98)' : 'scale(1)',
+            }}
           >
             Progreso
           </TabsTrigger>
-          <TabsTrigger 
+          
+          <TabsTrigger
             value="analytics"
-            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500/20 data-[state=active]:to-purple-500/20 data-[state=active]:text-white text-slate-300"
+            className="h-full rounded-lg text-sm font-medium transition-all duration-200 border-0"
+            style={{
+              background: activeTab === 'analytics' 
+                ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.12) 0%, rgba(147, 51, 234, 0.12) 100%)'
+                : 'transparent',
+              color: activeTab === 'analytics' ? '#ffffff' : '#cbd5e1',
+              boxShadow: activeTab === 'analytics' 
+                ? 'inset 0 1px 2px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(59, 130, 246, 0.1)'
+                : 'none',
+              transform: activeTab === 'analytics' ? 'scale(0.98)' : 'scale(1)',
+            }}
           >
             Análisis
           </TabsTrigger>
