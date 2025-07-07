@@ -1,260 +1,287 @@
-import { useRef, useEffect } from 'react'
-import { Link, useLocation } from '@tanstack/react-router'
-import { 
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
-  SidebarRail,
-  useSidebar,
-} from '@/components/ui/sidebar'
-import { 
+import { Link, useLocation } from "@tanstack/react-router";
+import { useAuthStore } from "@/stores/auth-store";
+import { useSidebarStore } from "@/stores/sidebar-store";
+import { useRef, useEffect } from "react";
+import gsap from "gsap";
+import {
   IconDashboard,
-  IconUser,
-  IconSettings,
-  IconSchool,
-  IconBrain,
-  IconMicrophone,
+  IconFileText,
   IconChartBar,
+  IconSchool,
+  IconSettings,
   IconLogout,
-  IconSparkles,
   IconChevronRight,
-  IconHome
-} from '@tabler/icons-react'
-import { Logo } from '@/components/logo'
-import { useAuthStore } from '@/stores/auth-store'
-import { useSidebarStore } from '@/stores/sidebar-store'
-import { cn } from '@/lib/utils'
-import gsap from 'gsap'
+} from "@tabler/icons-react";
+import { Logo } from "@/components/logo";
+import { cn } from "@/lib/utils";
 
-const navigationItems = [
+const menuItems = [
   {
-    title: 'Dashboard',
-    url: '/dashboard',
+    title: "Dashboard",
+    url: "/dashboard",
     icon: IconDashboard,
-    isActive: true,
   },
   {
-    title: 'Orientación Vocacional',
-    icon: IconBrain,
-    items: [
-      {
-        title: 'Test Vocacional',
-        url: '/dashboard/vocational-test',
-        icon: IconBrain,
-      },
-      {
-        title: 'Asistente de Voz',
-        url: '/dashboard/voice-assistant',
-        icon: IconMicrophone,
-      },
-    ],
+    title: "Evaluaciones",
+    url: "/evaluaciones",
+    icon: IconFileText,
   },
   {
-    title: 'Análisis',
-    url: '/dashboard/analytics',
+    title: "Resultados",
+    url: "/resultados",
     icon: IconChartBar,
   },
   {
-    title: 'Universidades',
-    url: '/dashboard/universities',
+    title: "Explorar Carreras",
+    url: "/carreras",
     icon: IconSchool,
   },
   {
-    title: 'Perfil',
-    url: '/dashboard/profile',
-    icon: IconUser,
-  },
-  {
-    title: 'Configuración',
-    url: '/dashboard/settings',
+    title: "Configuración",
+    url: "/configuracion",
     icon: IconSettings,
   },
-]
+];
 
 export function AppSidebar() {
-  const { state } = useSidebar()
-  const location = useLocation()
-  const { user, profile, signOut } = useAuthStore()
-  const { setActiveItem } = useSidebarStore()
-  const sidebarRef = useRef<HTMLDivElement>(null)
+  const { user, profile, signOut } = useAuthStore();
+  const { isHovered, setHovered } = useSidebarStore();
+  const location = useLocation();
+  const sidebarRef = useRef<HTMLDivElement>(null);
+  const arrowRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const sidebar = sidebarRef.current
-    if (!sidebar) return
+    if (sidebarRef.current && arrowRef.current) {
+      // Animate sidebar width
+      gsap.to(sidebarRef.current, {
+        width: isHovered ? "240px" : "50px",
+        ease: "power3.out",
+        duration: 0.5,
+      });
 
-    // Animate sidebar entrance
-    gsap.fromTo(sidebar, 
-      { x: -280, opacity: 0 },
-      { x: 0, opacity: 1, duration: 0.6, ease: "power3.out" }
-    )
-  }, [])
+      // Animate arrow position to follow the sidebar edge
+      gsap.to(arrowRef.current, {
+        left: isHovered ? "232px" : "42px",
+        ease: "power3.out",
+        duration: 0.5,
+      });
+
+      gsap.to(".sidebar-content", {
+        opacity: isHovered ? 1 : 0,
+        x: isHovered ? 0 : -20,
+        delay: isHovered ? 0.2 : 0,
+        duration: 0.3,
+      });
+
+      gsap.to(".chevron-arrow", {
+        rotate: isHovered ? 180 : 0,
+        duration: 0.4,
+        ease: "power2.out",
+      });
+
+      // Animate collapsed logo
+      gsap.to(".collapsed-logo", {
+        opacity: isHovered ? 0 : 1,
+        scale: isHovered ? 0.8 : 1,
+        delay: isHovered ? 0 : 0.3,
+        duration: 0.3,
+        ease: "power2.out",
+      });
+    }
+  }, [isHovered]);
+
+  const handleMouseEnter = () => {
+    setHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setHovered(false);
+  };
 
   const handleSignOut = async () => {
-    await signOut()
-  }
+    try {
+      await signOut();
+    } catch (error) {
+      console.error("Sign out error:", error);
+    }
+  };
 
   return (
-    <Sidebar 
-      ref={sidebarRef}
-      collapsible="icon"
-      className="border-r-0"
-      style={{
-        background: 'rgba(15, 23, 42, 0.95)',
-        backdropFilter: 'blur(20px)',
-        borderRight: '1px solid rgba(255, 255, 255, 0.1)',
-        boxShadow: `
-          20px 0 40px -12px rgba(0, 0, 0, 0.4),
-          0 0 0 1px rgba(255, 255, 255, 0.05),
-          inset -1px 0 0 rgba(255, 255, 255, 0.1)
-        `,
-      }}
-    >
-      <SidebarHeader className="border-b border-white/10 pb-4">
-        <div className="flex items-center gap-3 px-3">
-          <div className="relative">
-            <Logo size={32} className="drop-shadow-lg" />
-            <div className="absolute inset-0 bg-blue-500/15 rounded-full blur-md scale-125 animate-pulse"></div>
-          </div>
-          {state === 'expanded' && (
-            <div className="flex items-center gap-2">
-              <h1 className="text-lg font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
-                Vocationify
-              </h1>
-              <IconSparkles size={14} className="text-blue-400 animate-pulse" />
-            </div>
-          )}
-        </div>
-      </SidebarHeader>
-
-      <SidebarContent className="px-2 py-4">
-        <SidebarMenu>
-          {navigationItems.map((item) => {
-            const isActive = location.pathname === item.url || 
-                           (item.items && item.items.some(subItem => location.pathname === subItem.url))
-            
-            if (item.items) {
-              return (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    className={cn(
-                      "group relative rounded-xl transition-all duration-300 mb-1",
-                      "hover:bg-white/10 hover:text-white",
-                      isActive && "bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white border border-white/10"
-                    )}
-                  >
-                    <item.icon size={20} className="text-blue-400" />
-                    <span className="font-medium">{item.title}</span>
-                    <IconChevronRight size={16} className="ml-auto transition-transform group-data-[state=open]:rotate-90" />
-                  </SidebarMenuButton>
-                  <SidebarMenuSub>
-                    {item.items.map((subItem) => {
-                      const isSubActive = location.pathname === subItem.url
-                      return (
-                        <SidebarMenuSubItem key={subItem.title}>
-                          <SidebarMenuSubButton
-                            asChild
-                            className={cn(
-                              "rounded-lg transition-all duration-300 ml-6",
-                              "hover:bg-white/10 hover:text-white",
-                              isSubActive && "bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white border border-white/10"
-                            )}
-                          >
-                            <Link to={subItem.url} onClick={() => setActiveItem(subItem.title)}>
-                              <subItem.icon size={16} className="text-blue-400" />
-                              <span>{subItem.title}</span>
-                            </Link>
-                          </SidebarMenuSubButton>
-                        </SidebarMenuSubItem>
-                      )
-                    })}
-                  </SidebarMenuSub>
-                </SidebarMenuItem>
-              )
-            }
-
-            return (
-              <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton
-                  asChild
-                  className={cn(
-                    "rounded-xl transition-all duration-300 mb-1",
-                    "hover:bg-white/10 hover:text-white hover:scale-[1.02]",
-                    isActive && "bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white border border-white/10 shadow-lg"
-                  )}
-                >
-                  <Link to={item.url} onClick={() => setActiveItem(item.title)}>
-                    <item.icon size={20} className="text-blue-400" />
-                    <span className="font-medium">{item.title}</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+    <div className="fixed left-0 top-0 h-full z-50 flex">
+      {/* Main Sidebar */}
+      <div
+        ref={sidebarRef}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        className="flex flex-col py-6 px-3 relative"
+        style={{
+          width: "50px",
+          background: `
+            linear-gradient(135deg, 
+              rgba(15, 23, 42, 0.95) 0%, 
+              rgba(30, 41, 59, 0.9) 30%,
+              rgba(51, 65, 85, 0.85) 60%,
+              rgba(15, 23, 42, 0.95) 100%
             )
-          })}
-        </SidebarMenu>
-      </SidebarContent>
+          `,
+          backdropFilter: "blur(16px) saturate(180%)",
+          WebkitBackdropFilter: "blur(16px) saturate(180%)",
+          boxShadow: `
+            0 8px 32px rgba(0, 0, 0, 0.37),
+            0 0 0 1px rgba(255, 255, 255, 0.05),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.2)
+          `,
+          border: "1px solid rgba(255, 255, 255, 0.08)",
+          borderRight: "1px solid rgba(59, 130, 246, 0.15)",
+        }}
+      >
+        {/* Collapsed Logo - Only visible when sidebar is closed */}
+        <div className="collapsed-logo absolute top-6 left-1/2 -translate-x-1/2 opacity-0">
+          <Link to="/" className="block group">
+            <Logo
+              size={28}
+              className="group-hover:scale-110 transition-transform duration-300 drop-shadow-lg"
+            />
+          </Link>
+        </div>
 
-      <SidebarFooter className="border-t border-white/10 pt-4">
-        {/* User Profile */}
-        {state === 'expanded' && (
-          <div 
-            className="mb-4 p-3 rounded-xl"
+        <div className="flex flex-col flex-1 sidebar-content opacity-0">
+          {/* Logo */}
+          <Link
+            to="/"
+            className="flex items-center space-x-3 mb-8 group"
+          >
+            <Logo
+              size={32}
+              className="group-hover:scale-110 transition-transform duration-300"
+            />
+            <span className="font-bold text-lg text-white drop-shadow-sm">
+              Vocationify
+            </span>
+          </Link>
+
+          {/* User Profile */}
+          <div
+            className="flex items-center space-x-3 mb-6 p-3 rounded-lg"
             style={{
-              background: 'rgba(255, 255, 255, 0.05)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
+              background: "rgba(255, 255, 255, 0.08)",
+              backdropFilter: "blur(8px)",
+              border: "1px solid rgba(255, 255, 255, 0.12)",
+              boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.1)",
             }}
           >
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
-                <span className="text-white text-sm font-semibold">
-                  {profile?.full_name?.charAt(0) || user?.email?.charAt(0) || 'U'}
-                </span>
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-white truncate">
-                  {profile?.full_name || 'Usuario'}
-                </p>
-                <p className="text-xs text-slate-400 truncate">
-                  {user?.email}
-                </p>
-              </div>
+            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
+              <span className="text-white text-xs font-semibold">
+                {(profile?.full_name || user?.email || "U")[0]?.toUpperCase()}
+              </span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-sm font-medium text-white drop-shadow-sm">
+                {profile?.full_name || user?.email?.split("@")[0]}
+              </span>
+              <span className="text-xs text-neutral-300">Estudiante</span>
             </div>
           </div>
-        )}
 
-        {/* Navigation Links */}
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              className="rounded-xl transition-all duration-300 hover:bg-white/10 hover:text-white"
-            >
-              <Link to="/">
-                <IconHome size={20} className="text-slate-400" />
-                <span>Volver al Inicio</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          
-          <SidebarMenuItem>
-            <SidebarMenuButton
+          {/* Navigation */}
+          <nav className="flex-1 space-y-1">
+            {menuItems.map((item) => {
+              const isActive = location.pathname === item.url;
+              return (
+                <SidebarLink
+                  key={item.url}
+                  to={item.url}
+                  icon={<item.icon size={16} />}
+                  label={item.title}
+                  isActive={isActive}
+                />
+              );
+            })}
+          </nav>
+
+          {/* Sign Out */}
+          <div className="mt-auto pt-4">
+            <button
               onClick={handleSignOut}
-              className="rounded-xl transition-all duration-300 hover:bg-red-500/20 hover:text-red-400 text-slate-400"
+              className="flex items-center w-full p-2 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all duration-300 group"
+              style={{
+                backdropFilter: "blur(4px)",
+              }}
             >
-              <IconLogout size={20} />
-              <span>Cerrar Sesión</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
+              <IconLogout
+                size={16}
+                className="mr-3 group-hover:scale-110 transition-transform duration-300"
+              />
+              <span className="text-sm font-medium">Cerrar Sesión</span>
+            </button>
+          </div>
+        </div>
+      </div>
 
-      <SidebarRail />
-    </Sidebar>
-  )
+      {/* Chevron Arrow - Follows the sidebar edge dynamically */}
+      <div
+        ref={arrowRef}
+        className="flex items-center justify-center absolute top-1/2 -translate-y-1/2 cursor-pointer"
+        style={{ left: "45px" }}
+        onMouseEnter={handleMouseEnter}
+      >
+        <IconChevronRight
+          size={24}
+          className="text-neutral-300 hover:text-white transition-colors duration-300"
+        />
+      </div>
+    </div>
+  );
+}
+
+interface SidebarLinkProps {
+  to: string;
+  icon: React.ReactNode;
+  label: string;
+  isActive?: boolean;
+}
+
+function SidebarLink({ to, icon, label, isActive }: SidebarLinkProps) {
+  return (
+    <Link
+      to={to}
+      className={cn(
+        "flex items-center p-2 rounded-lg transition-all duration-300 group relative",
+        isActive ? "text-white shadow-lg" : "text-neutral-300 hover:text-white"
+      )}
+      style={{
+        background: isActive
+          ? "linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(147, 51, 234, 0.2) 100%)"
+          : "transparent",
+        border: isActive
+          ? "1px solid rgba(59, 130, 246, 0.3)"
+          : "1px solid transparent",
+        backdropFilter: isActive ? "blur(8px)" : "none",
+      }}
+    >
+      {/* Active indicator */}
+      {isActive && (
+        <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 to-purple-500 rounded-r-full" />
+      )}
+
+      <span className="mr-3 group-hover:scale-110 transition-transform duration-300 relative z-10">
+        {icon}
+      </span>
+      <span className="text-sm font-medium relative z-10 drop-shadow-sm">
+        {label}
+      </span>
+
+      {/* Hover glow effect */}
+      {!isActive && (
+        <div
+          className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          style={{
+            background: "rgba(255, 255, 255, 0.05)",
+            backdropFilter: "blur(4px)",
+          }}
+        />
+      )}
+    </Link>
+  );
 }

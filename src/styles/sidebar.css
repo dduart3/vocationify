@@ -1,0 +1,55 @@
+/* Custom sidebar styling */
+.sidebar {
+  --sidebar-width: 16rem;
+  --sidebar-width-icon: 3rem;
+}
+
+/* Sidebar background effects */
+[data-sidebar="sidebar"] {
+  position: relative;
+  overflow: hidden;
+}
+
+[data-sidebar="sidebar"]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(59, 130, 246, 0.05) 0%,
+    rgba(147, 51, 234, 0.05) 100%
+  );
+  pointer-events: none;
+}
+
+/* Hover effects for menu items */
+[data-sidebar="menu-button"]:hover {
+  transform: translateX(2px);
+}
+
+/* Active state styling */
+[data-sidebar="menu-button"][data-active="true"] {
+  background: linear-gradient(
+    90deg,
+    rgba(59, 130, 246, 0.2) 0%,
+    rgba(147, 51, 234, 0.2) 100%
+  );
+  border-right: 2px solid rgb(59, 130, 246);
+  color: white;
+}
+
+/* Icon scaling on hover */
+[data-sidebar="menu-button"]:hover svg {
+  transform: scale(1.1);
+  transition: transform 0.3s ease;
+}
+
+/* Collapsed state styling */
+[data-collapsible="icon"] [data-sidebar="menu-button"] {
+  justify-content: center;
+}
+
+/* Smooth transitions */
+[data-sidebar="sidebar"] * {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}

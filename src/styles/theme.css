@@ -97,4 +97,21 @@
   --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   --shadow-glow: 0 0 20px rgba(14, 165, 233, 0.3);
   --shadow-neon: 0 0 30px rgba(34, 197, 94, 0.4);
+
+
+   --sidebar-background: var(--color-secondary-950);
+  --sidebar-foreground: var(--color-secondary-50);
+  --sidebar-primary: var(--color-primary-500);
+  --sidebar-primary-foreground: var(--color-primary-50);
+  --sidebar-accent: var(--color-secondary-800);
+  --sidebar-accent-foreground: var(--color-secondary-100);
+  --sidebar-border: var(--color-secondary-800);
+  --sidebar-ring: var(--color-primary-500);
+
+  /* Light mode sidebar (if needed) */
+  --sidebar-background-light: var(--color-secondary-50);
+  --sidebar-foreground-light: var(--color-secondary-950);
+  --sidebar-accent-light: var(--color-secondary-100);
+  --sidebar-accent-foreground-light: var(--color-secondary-900);
+  --sidebar-border-light: var(--color-secondary-200);
 }

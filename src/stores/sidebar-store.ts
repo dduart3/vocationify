@@ -3,32 +3,28 @@ import { persist } from 'zustand/middleware'
 
 interface SidebarState {
   isOpen: boolean
-  isCollapsed: boolean
-  activeItem: string
+  isHovered: boolean
+  isMobile: boolean
   setOpen: (open: boolean) => void
-  setCollapsed: (collapsed: boolean) => void
-  setActiveItem: (item: string) => void
+  setHovered: (hovered: boolean) => void
+  setMobile: (mobile: boolean) => void
   toggle: () => void
 }
 
 export const useSidebarStore = create<SidebarState>()(
   persist(
     (set, get) => ({
-      isOpen: true,
-      isCollapsed: false,
-      activeItem: 'dashboard',
-      
+      isOpen: false,
+      isHovered: false,
+      isMobile: false,
       setOpen: (open) => set({ isOpen: open }),
-      setCollapsed: (collapsed) => set({ isCollapsed: collapsed }),
-      setActiveItem: (item) => set({ activeItem: item }),
-      
-      toggle: () => {
-        const { isOpen } = get()
-        set({ isOpen: !isOpen })
-      },
+      setHovered: (hovered) => set({ isHovered: hovered }),
+      setMobile: (mobile) => set({ isMobile: mobile }),
+      toggle: () => set({ isOpen: !get().isOpen }),
     }),
     {
       name: 'sidebar-storage',
+      partialize: (state) => ({ isOpen: state.isOpen }),
     }
   )
 )
