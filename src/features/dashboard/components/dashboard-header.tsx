@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
 export function DashboardHeader() {
-  const { profile, user } = useAuthStore()
+  const { profile } = useAuthStore()
   
   const getGreeting = () => {
     const hour = new Date().getHours()
@@ -18,7 +18,7 @@ export function DashboardHeader() {
       <div>
         <div className="flex items-center gap-2 mb-2">
           <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
-            {getGreeting()}, {profile?.full_name?.split(' ')[0] || 'Usuario'}
+            {getGreeting()}, {profile?.first_name || 'Usuario'}
           </h1>
           <IconSparkles size={24} className="text-blue-400 animate-pulse" />
         </div>
