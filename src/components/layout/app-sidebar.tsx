@@ -13,7 +13,6 @@ import {
   IconChevronRight,
 } from "@tabler/icons-react";
 import { Logo } from "@/components/logo";
-import { cn } from "@/lib/utils";
 
 const menuItems = [
   {
@@ -87,6 +86,24 @@ export function AppSidebar() {
         duration: 0.3,
         ease: "power2.out",
       });
+
+      // Animate collapsed navigation icons
+      gsap.to(".collapsed-nav", {
+        opacity: isHovered ? 0 : 1,
+        y: isHovered ? -10 : 0,
+        delay: isHovered ? 0 : 0.3,
+        duration: 0.3,
+        ease: "power2.out",
+      });
+
+      // Animate collapsed avatar
+      gsap.to(".collapsed-avatar", {
+        opacity: isHovered ? 0 : 1,
+        scale: isHovered ? 0.8 : 1,
+        delay: isHovered ? 0 : 0.3,
+        duration: 0.3,
+        ease: "power2.out",
+      });
     }
   }, [isHovered]);
 
@@ -116,24 +133,12 @@ export function AppSidebar() {
         className="flex flex-col py-6 px-3 relative"
         style={{
           width: "50px",
-          background: `
-            linear-gradient(135deg, 
-              rgba(15, 23, 42, 0.95) 0%, 
-              rgba(30, 41, 59, 0.9) 30%,
-              rgba(51, 65, 85, 0.85) 60%,
-              rgba(15, 23, 42, 0.95) 100%
-            )
-          `,
-          backdropFilter: "blur(16px) saturate(180%)",
-          WebkitBackdropFilter: "blur(16px) saturate(180%)",
-          boxShadow: `
-            0 8px 32px rgba(0, 0, 0, 0.37),
-            0 0 0 1px rgba(255, 255, 255, 0.05),
-            inset 0 1px 0 rgba(255, 255, 255, 0.1),
-            inset 0 -1px 0 rgba(0, 0, 0, 0.2)
-          `,
-          border: "1px solid rgba(255, 255, 255, 0.08)",
-          borderRight: "1px solid rgba(59, 130, 246, 0.15)",
+          background: `linear-gradient(90deg,
+            transparent 50%,                   
+            transparent 100%
+          )`,
+          backdropFilter: "blur(12px)",
+          boxShadow: "0 0 50px rgba(0, 0, 0, 0.3)",
         }}
       >
         {/* Collapsed Logo - Only visible when sidebar is closed */}
@@ -146,6 +151,53 @@ export function AppSidebar() {
           </Link>
         </div>
 
+        {/* Collapsed Navigation Icons - Only visible when sidebar is closed */}
+        <div className="collapsed-nav absolute top-20 left-1/2 -translate-x-1/2 opacity-0 flex flex-col space-y-3">
+          {menuItems.map((item) => {
+            const isActive = location.pathname === item.url;
+            return (
+              <Link
+                key={item.url}
+                to={item.url}
+                className={`p-2 rounded-lg transition-all duration-300 group flex items-center justify-center ${
+                  isActive 
+                    ? "bg-gradient-to-r from-blue-500/30 to-purple-500/30 text-white shadow-lg" 
+                    : "text-neutral-300 hover:text-white hover:bg-white/10"
+                }`}
+                title={item.title}
+              >
+                <item.icon 
+                  size={18} 
+                  className="group-hover:scale-110 transition-transform duration-300" 
+                />
+              </Link>
+            );
+          })}
+        </div>
+
+        {/* Collapsed Avatar - Only visible when sidebar is closed */}
+        <div className="collapsed-avatar absolute bottom-16 left-1/2 -translate-x-1/2 opacity-0">
+          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform duration-300 cursor-pointer">
+            <span className="text-white text-xs font-semibold">
+              {(profile?.full_name || user?.email || "U")[0]?.toUpperCase()}
+            </span>
+          </div>
+        </div>
+
+        {/* Collapsed Sign Out - Only visible when sidebar is closed */}
+        <div className="collapsed-nav absolute bottom-6 left-1/2 -translate-x-1/2 opacity-0">
+          <button
+            onClick={handleSignOut}
+            className="p-2 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-500/20 transition-all duration-300 group flex items-center justify-center"
+            title="Cerrar Sesión"
+          >
+            <IconLogout 
+              size={18} 
+              className="group-hover:scale-110 transition-transform duration-300" 
+            />
+          </button>
+        </div>
+
         <div className="flex flex-col flex-1 sidebar-content opacity-0">
           {/* Logo */}
           <Link
@@ -156,33 +208,8 @@ export function AppSidebar() {
               size={32}
               className="group-hover:scale-110 transition-transform duration-300"
             />
-            <span className="font-bold text-lg text-white drop-shadow-sm">
-              Vocationify
-            </span>
+            <span className="font-bold text-lg text-white">Vocationify</span>
           </Link>
-
-          {/* User Profile */}
-          <div
-            className="flex items-center space-x-3 mb-6 p-3 rounded-lg"
-            style={{
-              background: "rgba(255, 255, 255, 0.08)",
-              backdropFilter: "blur(8px)",
-              border: "1px solid rgba(255, 255, 255, 0.12)",
-              boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.1)",
-            }}
-          >
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
-              <span className="text-white text-xs font-semibold">
-                {(profile?.full_name || user?.email || "U")[0]?.toUpperCase()}
-              </span>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-sm font-medium text-white drop-shadow-sm">
-                {profile?.full_name || user?.email?.split("@")[0]}
-              </span>
-              <span className="text-xs text-neutral-300">Estudiante</span>
-            </div>
-          </div>
 
           {/* Navigation */}
           <nav className="flex-1 space-y-1">
@@ -200,20 +227,32 @@ export function AppSidebar() {
             })}
           </nav>
 
+          {/* User Profile - Moved to bottom */}
+          <div className="flex items-center space-x-3 mb-3 p-2 rounded-lg bg-white/5">
+            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+              <span className="text-white text-xs font-semibold">
+                {(profile?.full_name || user?.email || "U")[0]?.toUpperCase()}
+              </span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-xs font-medium text-white">
+                {profile?.full_name || user?.email?.split("@")[0]}
+              </span>
+              <span className="text-xs text-neutral-400">Estudiante</span>
+            </div>
+          </div>
+
           {/* Sign Out */}
-          <div className="mt-auto pt-4">
+          <div className="pt-2">
             <button
               onClick={handleSignOut}
               className="flex items-center w-full p-2 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all duration-300 group"
-              style={{
-                backdropFilter: "blur(4px)",
-              }}
             >
               <IconLogout
                 size={16}
                 className="mr-3 group-hover:scale-110 transition-transform duration-300"
               />
-              <span className="text-sm font-medium">Cerrar Sesión</span>
+              <span className="text-xs font-medium">Cerrar Sesión</span>
             </button>
           </div>
         </div>
@@ -223,13 +262,15 @@ export function AppSidebar() {
       <div
         ref={arrowRef}
         className="flex items-center justify-center absolute top-1/2 -translate-y-1/2 cursor-pointer"
-        style={{ left: "45px" }}
+        style={{ left: "42px" }}
         onMouseEnter={handleMouseEnter}
       >
-        <IconChevronRight
-          size={24}
-          className="text-neutral-300 hover:text-white transition-colors duration-300"
-        />
+        <div className="chevron-arrow p-1 backdrop-blur-sm rounded-full">
+          <IconChevronRight
+            size={18}
+            className="text-neutral-300 hover:text-white transition-colors duration-300"
+          />
+        </div>
       </div>
     </div>
   );
@@ -246,42 +287,14 @@ function SidebarLink({ to, icon, label, isActive }: SidebarLinkProps) {
   return (
     <Link
       to={to}
-      className={cn(
-        "flex items-center p-2 rounded-lg transition-all duration-300 group relative",
-        isActive ? "text-white shadow-lg" : "text-neutral-300 hover:text-white"
-      )}
-      style={{
-        background: isActive
-          ? "linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(147, 51, 234, 0.2) 100%)"
-          : "transparent",
-        border: isActive
-          ? "1px solid rgba(59, 130, 246, 0.3)"
-          : "1px solid transparent",
-        backdropFilter: isActive ? "blur(8px)" : "none",
-      }}
+      className={`flex items-center p-2 rounded-lg text-neutral-300 hover:text-white hover:bg-white/5 transition-all duration-300 group ${
+        isActive ? "bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white" : ""
+      }`}
     >
-      {/* Active indicator */}
-      {isActive && (
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 to-purple-500 rounded-r-full" />
-      )}
-
-      <span className="mr-3 group-hover:scale-110 transition-transform duration-300 relative z-10">
+      <span className="mr-3 group-hover:scale-110 transition-transform duration-300">
         {icon}
       </span>
-      <span className="text-sm font-medium relative z-10 drop-shadow-sm">
-        {label}
-      </span>
-
-      {/* Hover glow effect */}
-      {!isActive && (
-        <div
-          className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-          style={{
-            background: "rgba(255, 255, 255, 0.05)",
-            backdropFilter: "blur(4px)",
-          }}
-        />
-      )}
+      <span className="text-xs font-medium">{label}</span>
     </Link>
   );
 }
