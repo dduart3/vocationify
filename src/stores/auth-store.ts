@@ -7,7 +7,8 @@ import { toast } from "sonner";
 export interface UserProfile {
   id: string;
   email: string;
-  full_name?: string;
+  first_name: string;
+  last_name: string;
   avatar_url?: string;
   role: "user" | "admin";
   created_at: string;
@@ -105,34 +106,13 @@ export const useAuthStore = create<AuthStore>()(
 
             if (data.user) {
               // Fetch user profile
-              const { data: profileData, error: profileError } = await supabase
+              const { data: profileData } = await supabase
                 .from("profiles")
                 .select("*")
                 .eq("id", data.user.id)
                 .single();
 
-              if (profileError) {
-                console.error("Profile fetch error:", profileError);
-                // Create profile if it doesn't exist
-                const newProfile: Partial<UserProfile> = {
-                  id: data.user.id,
-                  email: data.user.email!,
-                  full_name: data.user.user_metadata?.full_name,
-                  role: "user",
-                };
-
-                const { data: createdProfile, error: createError } =
-                  await supabase
-                    .from("profiles")
-                    .insert(newProfile)
-                    .select()
-                    .single();
-
-                if (createError) throw createError;
-                set({ profile: createdProfile as UserProfile });
-              } else {
-                set({ profile: profileData as UserProfile });
-              }
+              set({ profile: profileData as UserProfile });
 
               set({
                 user: data.user,
