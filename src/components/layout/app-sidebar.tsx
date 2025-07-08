@@ -21,8 +21,8 @@ const menuItems = [
     icon: IconDashboard,
   },
   {
-    title: "Evaluaciones",
-    url: "/evaluaciones",
+    title: "Test Vocacional",
+    url: "/vocational-test",
     icon: IconFileText,
   },
   {
@@ -179,7 +179,7 @@ export function AppSidebar() {
         <div className="collapsed-avatar absolute bottom-16 left-1/2 -translate-x-1/2 opacity-0">
           <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform duration-300 cursor-pointer">
             <span className="text-white text-xs font-semibold">
-              {(profile?.full_name || user?.email || "U")[0]?.toUpperCase()}
+              {(profile?.first_name || user?.email || "U")[0]?.toUpperCase()}
             </span>
           </div>
         </div>
@@ -231,12 +231,12 @@ export function AppSidebar() {
           <div className="flex items-center space-x-3 mb-3 p-2 rounded-lg bg-white/5">
             <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
               <span className="text-white text-xs font-semibold">
-                {(profile?.full_name || user?.email || "U")[0]?.toUpperCase()}
+                {(profile?.first_name || user?.email || "U")[0]?.toUpperCase()}
               </span>
             </div>
             <div className="flex flex-col">
               <span className="text-xs font-medium text-white">
-                {profile?.full_name || user?.email?.split("@")[0]}
+                {profile?.first_name || user?.email?.split("@")[0]}
               </span>
               <span className="text-xs text-neutral-400">Estudiante</span>
             </div>

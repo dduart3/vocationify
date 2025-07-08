@@ -79,3 +79,34 @@
   color: color-mix(in srgb, white 90%, transparent);
   filter: drop-shadow(0 2px 4px color-mix(in srgb, black 10%, transparent));
 }
+
+.pulse-ring {
+  position: absolute;
+  inset: -20px;
+  border: 2px solid rgba(59, 130, 246, 0.3);
+  border-radius: 50%;
+  animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+}
+
+@keyframes speaking-wave {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 1;
+  }
+}
+
