@@ -261,13 +261,13 @@ export function AppSidebar() {
       {/* Chevron Arrow - Follows the sidebar edge dynamically */}
       <div
         ref={arrowRef}
-        className="flex items-center justify-center absolute top-1/2 -translate-y-1/2 cursor-pointer"
+        className="flex items-center justify-center absolute top-1/2 -translate-y-1/2 cursor-pointer bg-none"
         style={{ left: "42px" }}
         onMouseEnter={handleMouseEnter}
       >
-        <div className="chevron-arrow p-1 backdrop-blur-sm rounded-full">
+        <div className="chevron-arrow p-1  ">
           <IconChevronRight
-            size={18}
+            size={22}
             className="text-neutral-300 hover:text-white transition-colors duration-300"
           />
         </div>
