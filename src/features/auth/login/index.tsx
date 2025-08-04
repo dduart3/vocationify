@@ -16,7 +16,7 @@ export function Login() {
     }
   }
 
-  const handleSocialLogin = async (provider: 'google' | 'github') => {
+  const handleSocialLogin = async (provider: 'google') => {
     try {
       await signInWithProvider(provider)
       // OAuth will redirect automatically
