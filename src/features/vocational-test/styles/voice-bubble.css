@@ -119,6 +119,12 @@
   animation: particle-dance 2s ease-in-out infinite;
 }
 
+/* Bubble morphing class */
+.bubble-morph {
+  animation: float 6s ease-in-out infinite, morph 15s ease-in-out infinite !important;
+  border-radius: 50% !important;
+}
+
 @keyframes particle-dance {
   0%, 100% {
     transform: translateY(0) scale(1);

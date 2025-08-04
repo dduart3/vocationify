@@ -17,6 +17,7 @@ export function VoiceBubble({ onTestComplete }: VoiceBubbleProps) {
   const [questionOrder, setQuestionOrder] = useState(1)
   const [audioLevel, setAudioLevel] = useState(0)
   const [isRecording, setIsRecording] = useState(false)
+  const [morphPhase, setMorphPhase] = useState(0)
   
   const bubbleRef = useRef<HTMLButtonElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -29,6 +30,17 @@ export function VoiceBubble({ onTestComplete }: VoiceBubbleProps) {
   const createSession = useCreateSession()
   const { data: currentQuestion, isLoading: loadingQuestion } = useNextQuestion(sessionId || '', !!sessionId)
   const submitResponse = useSubmitResponse()
+
+  // Morphing animation for idle state
+  useEffect(() => {
+    if (state === 'idle') {
+      const interval = setInterval(() => {
+        setMorphPhase(prev => (prev + 1) % 4)
+      }, 3750) // 15 seconds / 4 phases = 3.75 seconds per phase
+      
+      return () => clearInterval(interval)
+    }
+  }, [state])
 
   // Audio visualization setup
   useEffect(() => {
@@ -242,6 +254,33 @@ export function VoiceBubble({ onTestComplete }: VoiceBubbleProps) {
     }
   }
 
+  const getMorphedBorderRadius = () => {
+    if (state !== 'idle') return '50%'
+    
+    const morphShapes = [
+      '50% 50% 50% 50% / 50% 50% 50% 50%', // Perfect circle
+      '51.5% 48.5% 50% 50% / 48.5% 51.5% 50% 50%', // Slight morph
+      '50% 50% 48.5% 51.5% / 50% 50% 51.5% 48.5%', // Different direction
+      '48.5% 51.5% 50% 50% / 51.5% 48.5% 50% 50%', // Back to subtle
+    ]
+    
+    return morphShapes[morphPhase]
+  }
+
+  const getMorphedClipPath = () => {
+    if (state !== 'idle') return 'none'
+    
+    // Create subtle organic bubble shapes using clip-path ellipse
+    const morphClipPaths = [
+      'ellipse(50% 50% at 50% 50%)', // Perfect circle
+      'ellipse(52% 48% at 49% 51%)', // Slight vertical stretch, offset
+      'ellipse(48% 52% at 51% 49%)', // Slight horizontal stretch, offset  
+      'ellipse(51% 49% at 50% 50%)', // Minor oval
+    ]
+    
+    return morphClipPaths[morphPhase]
+  }
+
   const getStateStyles = () => {
     const audioIntensity = state === 'listening' ? audioLevel : 0
     const pulseIntensity = 0.3 + audioIntensity * 0.7
@@ -353,8 +392,6 @@ export function VoiceBubble({ onTestComplete }: VoiceBubbleProps) {
             )
           `,
           boxShadow: `
-            0 25px 50px rgba(59, 130, 246, 0.15),
-            0 15px 30px rgba(147, 51, 234, 0.1),
             inset 0 1px 0 rgba(255, 255, 255, 0.2),
             inset 0 -1px 0 rgba(255, 255, 255, 0.05)
           `,
@@ -449,24 +486,17 @@ export function VoiceBubble({ onTestComplete }: VoiceBubbleProps) {
           style={{
             width: '260px',
             height: '260px',
-            borderRadius: '50%',
+            borderRadius: getMorphedBorderRadius(),
             backdropFilter: 'blur(32px) saturate(200%)',
             WebkitBackdropFilter: 'blur(32px) saturate(200%)',
-            animation: state === 'idle' ? 'float 6s ease-in-out infinite, morph 12s ease-in-out infinite' : 
+            clipPath: getMorphedClipPath(),
+            animation: state === 'idle' ? 'float 6s ease-in-out infinite' : 
                        state === 'listening' ? 'breathe 2s ease-in-out infinite' : undefined,
             overflow: 'visible',
+            transition: state === 'idle' ? 'clip-path 2s ease-in-out, border-radius 2s ease-in-out' : 'border-radius 0.7s ease-in-out',
             ...getStateStyles(),
           }}
         >
-          {/* Surface tension effect */}
-          <div 
-            className="surface-tension" 
-            style={{
-              borderRadius: 'inherit',
-              animation: 'surface-flow 12s linear infinite',
-            }}
-          />
-          
           {/* Bubble highlight */}
           <div className="bubble-highlight" />
           
