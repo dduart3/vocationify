@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
-import { IconSend, IconUser, IconRobot, IconMicrophone } from '@tabler/icons-react'
+import { IconSend, IconUser, IconRobot, IconMicrophone, IconSparkles } from '@tabler/icons-react'
+import { useCreateSession, useNextQuestion, useSubmitResponse } from '../hooks'
+import { useAuthStore } from '@/stores/auth-store'
 
 interface Message {
   id: string
@@ -7,14 +9,18 @@ interface Message {
   sender: 'user' | 'aria'
   timestamp: Date
   typing?: boolean
+  questionId?: string
+  category?: string
 }
 
 interface ChatInterfaceProps {
   onSwitchToVoice?: () => void
   isVoiceAvailable?: boolean
+  onTestComplete?: (sessionId: string) => void
 }
 
-export function ChatInterface({ onSwitchToVoice, isVoiceAvailable = true }: ChatInterfaceProps) {
+export function ChatInterface({ onSwitchToVoice, isVoiceAvailable = true, onTestComplete }: ChatInterfaceProps) {
+  const { user } = useAuthStore()
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -25,8 +31,16 @@ export function ChatInterface({ onSwitchToVoice, isVoiceAvailable = true }: Chat
   ])
   const [inputValue, setInputValue] = useState('')
   const [isTyping, setIsTyping] = useState(false)
+  const [sessionId, setSessionId] = useState<string | null>(null)
+  const [questionOrder, setQuestionOrder] = useState(1)
+  const [currentQuestionId, setCurrentQuestionId] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  // API hooks
+  const createSession = useCreateSession()
+  const { data: currentQuestion, isLoading: loadingQuestion } = useNextQuestion(sessionId || '', !!sessionId)
+  const submitResponse = useSubmitResponse()
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })

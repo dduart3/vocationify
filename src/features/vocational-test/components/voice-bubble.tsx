@@ -1,15 +1,88 @@
 import { useState, useEffect, useRef } from 'react'
 import { IconMicrophone, IconVolume, IconBrain } from '@tabler/icons-react'
+import { useCreateSession, useNextQuestion, useSubmitResponse } from '../hooks'
+import { useAuthStore } from '@/stores/auth-store'
+import '../styles/voice-bubble.css'
 
-type VoiceBubbleState = 'idle' | 'listening' | 'speaking' | 'thinking'
+type VoiceBubbleState = 'idle' | 'listening' | 'speaking' | 'thinking' | 'session-starting'
 
-export function VoiceBubble() {
+interface VoiceBubbleProps {
+  onTestComplete?: (sessionId: string) => void
+}
+
+export function VoiceBubble({ onTestComplete }: VoiceBubbleProps) {
+  const { user } = useAuthStore()
   const [state, setState] = useState<VoiceBubbleState>('idle')
+  const [sessionId, setSessionId] = useState<string | null>(null)
+  const [questionOrder, setQuestionOrder] = useState(1)
+  const [audioLevel, setAudioLevel] = useState(0)
+  const [isRecording, setIsRecording] = useState(false)
+  
   const bubbleRef = useRef<HTMLButtonElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
+  const audioContextRef = useRef<AudioContext | null>(null)
+  const analyserRef = useRef<AnalyserNode | null>(null)
+  const animationFrameRef = useRef<number>()
 
+  // API hooks
+  const createSession = useCreateSession()
+  const { data: currentQuestion, isLoading: loadingQuestion } = useNextQuestion(sessionId || '', !!sessionId)
+  const submitResponse = useSubmitResponse()
+
+  // Audio visualization setup
   useEffect(() => {
-    // Animated particle system
+    if (state === 'listening' && isRecording) {
+      const startAudioVisualization = async () => {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+          const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)()
+          const analyser = audioContext.createAnalyser()
+          const microphone = audioContext.createMediaStreamSource(stream)
+          
+          analyser.smoothingTimeConstant = 0.8
+          analyser.fftSize = 256
+          microphone.connect(analyser)
+          
+          audioContextRef.current = audioContext
+          analyserRef.current = analyser
+          
+          const bufferLength = analyser.frequencyBinCount
+          const dataArray = new Uint8Array(bufferLength)
+          
+          const updateAudioLevel = () => {
+            if (!analyserRef.current) return
+            
+            analyserRef.current.getByteFrequencyData(dataArray)
+            const average = dataArray.reduce((sum, value) => sum + value, 0) / bufferLength
+            setAudioLevel(average / 255) // Normalize to 0-1
+            
+            if (state === 'listening') {
+              animationFrameRef.current = requestAnimationFrame(updateAudioLevel)
+            }
+          }
+          
+          updateAudioLevel()
+        } catch (error) {
+          console.error('Error accessing microphone:', error)
+        }
+      }
+      
+      startAudioVisualization()
+    }
+    
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current)
+      }
+      if (audioContextRef.current) {
+        audioContextRef.current.close()
+      }
+    }
+  }, [state, isRecording])
+
+  // Enhanced particle system with audio reactivity
+  useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
 
@@ -26,6 +99,7 @@ export function VoiceBubble() {
       vy: number
       life: number
       maxLife: number
+      baseRadius: number
     }> = []
 
     const createParticle = () => {
@@ -37,15 +111,21 @@ export function VoiceBubble() {
         vx: (Math.random() - 0.5) * 0.5,
         vy: (Math.random() - 0.5) * 0.5,
         life: 0,
-        maxLife: 100 + Math.random() * 100
+        maxLife: 100 + Math.random() * 100,
+        baseRadius: Math.random() * 2 + 1
       }
     }
 
     const animate = () => {
       ctx.clearRect(0, 0, 400, 400)
       
-      // Add new particles
-      if (particles.length < 50 && Math.random() < 0.3) {
+      // Create sound waves when listening
+      if (state === 'listening' && audioLevel > 0.1) {
+        const waveCount = Math.floor(audioLevel * 10) + 1
+        for (let i = 0; i < waveCount; i++) {
+          particles.push(createParticle())
+        }
+      } else if (particles.length < 30 && Math.random() < 0.2) {
         particles.push(createParticle())
       }
 
@@ -57,10 +137,12 @@ export function VoiceBubble() {
         p.y += p.vy
 
         const alpha = 1 - (p.life / p.maxLife)
-        const size = (1 - p.life / p.maxLife) * 2
+        const audioBoost = state === 'listening' ? (1 + audioLevel * 2) : 1
+        const size = (1 - p.life / p.maxLife) * p.baseRadius * audioBoost
 
         if (state === 'listening') {
-          ctx.fillStyle = `rgba(34, 197, 94, ${alpha * 0.6})`
+          const intensity = audioLevel * 0.8 + 0.2
+          ctx.fillStyle = `rgba(34, 197, 94, ${alpha * intensity})`
         } else if (state === 'speaking') {
           ctx.fillStyle = `rgba(59, 130, 246, ${alpha * 0.6})`
         } else if (state === 'thinking') {
@@ -82,26 +164,96 @@ export function VoiceBubble() {
     }
 
     animate()
-  }, [state])
+  }, [state, audioLevel])
 
-  const handleClick = () => {
+  // Check if test is complete
+  useEffect(() => {
+    if (sessionId && !currentQuestion && !loadingQuestion) {
+      setState('idle')
+      onTestComplete?.(sessionId)
+    }
+  }, [sessionId, currentQuestion, loadingQuestion, onTestComplete])
+
+  const handleClick = async () => {
     if (state === 'idle') {
-      setState('listening')
-      setTimeout(() => setState('thinking'), 3000)
-      setTimeout(() => setState('speaking'), 5000)
-      setTimeout(() => setState('idle'), 8000)
+      try {
+        setState('session-starting')
+        const session = await createSession.mutateAsync(user?.id)
+        setSessionId(session.id)
+        
+        // Wait for first question to load
+        setTimeout(() => {
+          if (currentQuestion) {
+            setState('speaking')
+            // Simulate ARIA speaking the question
+            setTimeout(() => {
+              setState('listening')
+              setIsRecording(true)
+            }, 3000)
+          }
+        }, 1000)
+        
+      } catch (error) {
+        console.error('Failed to start session:', error)
+        setState('idle')
+      }
+    } else if (state === 'listening') {
+      // Stop listening and process response
+      setState('thinking')
+      setIsRecording(false)
+      
+      // Simulate voice processing and submit response
+      setTimeout(async () => {
+        try {
+          const responseValue = Math.floor(Math.random() * 5) + 1 // Mock response for now
+          
+          await submitResponse.mutateAsync({
+            sessionId: sessionId!,
+            question_id: currentQuestion!.id,
+            question_text: currentQuestion!.text,
+            question_category: currentQuestion!.category,
+            response_value: responseValue,
+            response_time: 3000,
+            question_order: questionOrder,
+            riasec_weights: currentQuestion!.riasec_weights,
+          })
+          
+          setQuestionOrder(prev => prev + 1)
+          
+          // Wait for next question to load or complete test
+          setTimeout(() => {
+            if (currentQuestion) {
+              setState('speaking')
+              setTimeout(() => {
+                setState('listening')
+                setIsRecording(true)
+              }, 2000)
+            } else {
+              setState('idle')
+            }
+          }, 1000)
+          
+        } catch (error) {
+          console.error('Failed to submit response:', error)
+          setState('listening')
+          setIsRecording(true)
+        }
+      }, 2000)
     }
   }
 
   const getStateStyles = () => {
+    const audioIntensity = state === 'listening' ? audioLevel : 0
+    const pulseIntensity = 0.3 + audioIntensity * 0.7
+    
     switch (state) {
       case 'listening':
         return {
           background: `
             radial-gradient(circle at 30% 30%, 
-              rgba(34, 197, 94, 0.4) 0%, 
-              rgba(34, 197, 94, 0.2) 35%,
-              rgba(34, 197, 94, 0.1) 70%,
+              rgba(34, 197, 94, ${0.4 + audioIntensity * 0.3}) 0%, 
+              rgba(34, 197, 94, ${0.2 + audioIntensity * 0.2}) 35%,
+              rgba(34, 197, 94, ${0.1 + audioIntensity * 0.1}) 70%,
               transparent 100%
             ),
             linear-gradient(135deg, 
@@ -110,11 +262,33 @@ export function VoiceBubble() {
             )
           `,
           boxShadow: `
-            0 0 60px rgba(34, 197, 94, 0.4),
-            0 0 100px rgba(34, 197, 94, 0.2),
+            0 0 ${60 + audioIntensity * 40}px rgba(34, 197, 94, ${pulseIntensity}),
+            0 0 ${100 + audioIntensity * 60}px rgba(34, 197, 94, ${pulseIntensity * 0.5}),
             inset 0 2px 0 rgba(255, 255, 255, 0.2)
           `,
-          border: '2px solid rgba(34, 197, 94, 0.3)',
+          border: `2px solid rgba(34, 197, 94, ${0.3 + audioIntensity * 0.4})`,
+          transform: `scale(${1 + audioIntensity * 0.05})`,
+        }
+      case 'session-starting':
+        return {
+          background: `
+            radial-gradient(circle at 30% 30%, 
+              rgba(59, 130, 246, 0.3) 0%, 
+              rgba(147, 51, 234, 0.2) 35%,
+              rgba(59, 130, 246, 0.1) 70%,
+              transparent 100%
+            ),
+            linear-gradient(135deg, 
+              rgba(255, 255, 255, 0.15) 0%, 
+              rgba(255, 255, 255, 0.05) 100%
+            )
+          `,
+          boxShadow: `
+            0 0 80px rgba(59, 130, 246, 0.4),
+            0 0 120px rgba(147, 51, 234, 0.3),
+            inset 0 2px 0 rgba(255, 255, 255, 0.2)
+          `,
+          border: '2px solid rgba(59, 130, 246, 0.4)',
         }
       case 'speaking':
         return {
@@ -161,23 +335,30 @@ export function VoiceBubble() {
       default:
         return {
           background: `
-            radial-gradient(circle at 30% 30%, 
-              rgba(59, 130, 246, 0.3) 0%, 
-              rgba(147, 51, 234, 0.2) 35%,
-              rgba(59, 130, 246, 0.1) 70%,
+            radial-gradient(ellipse at 25% 25%, 
+              rgba(255, 255, 255, 0.15) 0%, 
+              rgba(59, 130, 246, 0.1) 25%,
+              rgba(147, 51, 234, 0.08) 50%,
+              rgba(59, 130, 246, 0.05) 75%,
+              transparent 100%
+            ),
+            radial-gradient(ellipse at 75% 75%, 
+              rgba(147, 51, 234, 0.1) 0%, 
+              rgba(59, 130, 246, 0.05) 50%,
               transparent 100%
             ),
             linear-gradient(135deg, 
-              rgba(255, 255, 255, 0.1) 0%, 
-              rgba(255, 255, 255, 0.05) 100%
+              rgba(255, 255, 255, 0.08) 0%, 
+              rgba(255, 255, 255, 0.02) 100%
             )
           `,
           boxShadow: `
-            0 20px 40px rgba(59, 130, 246, 0.2),
-            0 10px 20px rgba(147, 51, 234, 0.1),
-            inset 0 2px 0 rgba(255, 255, 255, 0.1)
+            0 25px 50px rgba(59, 130, 246, 0.15),
+            0 15px 30px rgba(147, 51, 234, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2),
+            inset 0 -1px 0 rgba(255, 255, 255, 0.05)
           `,
-          border: '2px solid rgba(255, 255, 255, 0.1)',
+          border: '1px solid rgba(255, 255, 255, 0.15)',
         }
     }
   }
@@ -187,14 +368,20 @@ export function VoiceBubble() {
       case 'listening':
         return (
           <div className="flex flex-col items-center space-y-4">
-            <IconMicrophone size={48} className="text-white animate-pulse" />
-            <AudioWaveform color="rgb(34, 197, 94)" />
+            <IconMicrophone 
+              size={48 + audioLevel * 8} 
+              className="text-white animate-pulse" 
+              style={{ 
+                filter: `drop-shadow(0 0 ${10 + audioLevel * 20}px rgba(34, 197, 94, 0.8))` 
+              }} 
+            />
+            <AudioWaveform color="rgb(34, 197, 94)" intensity={audioLevel} />
           </div>
         )
       case 'speaking':
         return (
           <div className="flex flex-col items-center space-y-4">
-            <IconVolume size={48} className="text-white" />
+            <IconVolume size={48} className="text-white animate-bounce" />
             <SpeechWaves />
           </div>
         )
@@ -205,13 +392,38 @@ export function VoiceBubble() {
             <ThinkingDots />
           </div>
         )
-      default:
+      case 'session-starting':
         return (
           <div className="flex flex-col items-center space-y-4">
-            <IconMicrophone size={56} className="text-white group-hover:scale-110 transition-transform duration-300" />
+            <div className="relative">
+              <IconBrain size={48} className="text-white animate-pulse" />
+              <div className="absolute inset-0 animate-ping">
+                <IconBrain size={48} className="text-blue-400 opacity-75" />
+              </div>
+            </div>
             <div className="text-center">
-              <div className="text-white font-bold text-lg">ARIA</div>
-              <div className="text-white/70 text-sm">Haz clic para hablar</div>
+              <div className="text-white font-bold text-sm">Iniciando sesión...</div>
+            </div>
+          </div>
+        )
+      default:
+        return (
+          <div className="flex flex-col items-center space-y-6">
+            <div className="relative">
+              <IconMicrophone 
+                size={64} 
+                className="text-white group-hover:scale-125 transition-all duration-500 drop-shadow-lg" 
+                style={{
+                  filter: 'drop-shadow(0 0 20px rgba(255, 255, 255, 0.3))',
+                }}
+              />
+              <div className="absolute inset-0 animate-ping opacity-20">
+                <IconMicrophone size={64} className="text-blue-400" />
+              </div>
+            </div>
+            <div className="text-center space-y-2">
+              <div className="text-white font-bold text-2xl tracking-wide">ARIA</div>
+              <div className="text-white/80 text-sm font-medium">Toca para comenzar</div>
             </div>
           </div>
         )
@@ -219,101 +431,162 @@ export function VoiceBubble() {
   }
 
   return (
-    <div className="relative flex flex-col items-center space-y-8">
+    <div className="relative flex flex-col items-center space-y-12 py-8">
       {/* Particle Canvas Background */}
       <canvas
         ref={canvasRef}
         className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-        style={{ width: '300px', height: '300px' }}
+        style={{ width: '350px', height: '350px' }}
       />
 
-      {/* Main Voice Bubble */}
-      <div className="relative">
+      {/* Main Voice Bubble Container - Extra padding to prevent cuts */}
+      <div className="relative p-8">
         <button
           ref={bubbleRef}
           onClick={handleClick}
           disabled={state === 'thinking' || state === 'speaking'}
-          className="relative group transition-all duration-500 ease-out hover:scale-105 disabled:cursor-not-allowed"
+          className="relative group transition-all duration-700 ease-out hover:scale-105 disabled:cursor-not-allowed"
           style={{
-            width: '240px',
-            height: '240px',
+            width: '260px',
+            height: '260px',
             borderRadius: '50%',
-            backdropFilter: 'blur(20px) saturate(180%)',
-            WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+            backdropFilter: 'blur(32px) saturate(200%)',
+            WebkitBackdropFilter: 'blur(32px) saturate(200%)',
+            animation: state === 'idle' ? 'float 6s ease-in-out infinite, morph 12s ease-in-out infinite' : 
+                       state === 'listening' ? 'breathe 2s ease-in-out infinite' : undefined,
+            overflow: 'visible',
             ...getStateStyles(),
           }}
         >
+          {/* Surface tension effect */}
+          <div 
+            className="surface-tension" 
+            style={{
+              borderRadius: 'inherit',
+              animation: 'surface-flow 12s linear infinite',
+            }}
+          />
+          
+          {/* Bubble highlight */}
+          <div className="bubble-highlight" />
+          
+          {/* Secondary highlight */}
+          <div 
+            className="absolute top-40% right-25% w-6 h-6 bg-white/20 rounded-full blur-sm"
+            style={{
+              animation: 'highlight-float 5s ease-in-out infinite reverse',
+            }}
+          />
+
           {/* Inner Content */}
-          <div className="absolute inset-0 flex items-center justify-center">
+          <div className="absolute inset-0 flex items-center justify-center z-10">
             {renderContent()}
           </div>
 
-          {/* Ripple Effect */}
-          {state !== 'idle' && (
-            <>
-              <div className="absolute inset-0 rounded-full animate-ping opacity-20" style={getStateStyles()} />
-              <div className="absolute inset-0 rounded-full animate-pulse opacity-30" style={getStateStyles()} />
-            </>
+          {/* Subtle listening indicator */}
+          {state === 'listening' && (
+            <div 
+              className="absolute inset-0 border border-green-400/20 opacity-0"
+              style={{
+                borderRadius: 'inherit',
+                animation: 'liquidRipple 4s ease-out infinite',
+              }}
+            />
           )}
         </button>
 
-        {/* Orbital Rings */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div 
-            className="absolute inset-0 rounded-full border opacity-20 animate-spin"
-            style={{ 
-              borderColor: state === 'listening' ? 'rgb(34, 197, 94)' : 
-                          state === 'speaking' ? 'rgb(59, 130, 246)' : 
-                          state === 'thinking' ? 'rgb(147, 51, 234)' : 'rgba(255, 255, 255, 0.3)',
-              borderWidth: '1px',
-              borderStyle: 'dashed',
-              animationDuration: '10s'
-            }}
-          />
-          <div 
-            className="absolute inset-[-20px] rounded-full border opacity-10 animate-spin"
-            style={{ 
-              borderColor: state === 'listening' ? 'rgb(34, 197, 94)' : 
-                          state === 'speaking' ? 'rgb(59, 130, 246)' : 
-                          state === 'thinking' ? 'rgb(147, 51, 234)' : 'rgba(255, 255, 255, 0.2)',
-              borderWidth: '1px',
-              borderStyle: 'dotted',
-              animationDuration: '15s',
-              animationDirection: 'reverse'
-            }}
-          />
-        </div>
+        {/* Subtle orbital ring - only when active */}
+        {state !== 'idle' && (
+          <div className="absolute inset-[-10px] pointer-events-none">
+            <div 
+              className="absolute inset-0 rounded-full border opacity-15 animate-spin"
+              style={{ 
+                borderColor: state === 'listening' ? 'rgb(34, 197, 94)' : 
+                            state === 'speaking' ? 'rgb(59, 130, 246)' : 
+                            state === 'thinking' ? 'rgb(147, 51, 234)' : 'rgba(255, 255, 255, 0.3)',
+                borderWidth: '1px',
+                borderStyle: 'dashed',
+                animationDuration: '8s'
+              }}
+            />
+          </div>
+        )}
       </div>
       
       {/* Status Display */}
-      <div className="text-center space-y-3 max-w-md">
-        <h3 className="text-2xl font-bold text-white">
-          {getStateMessage(state)}
-        </h3>
-        <p className="text-slate-400 text-base leading-relaxed">
-          {getStateDescription(state)}
-        </p>
+      <div className="text-center space-y-6 max-w-3xl px-4">
+        <div className="space-y-3">
+          <h3 className="text-3xl font-bold text-white">
+            {getStateMessage(state)}
+          </h3>
+          <p className="text-slate-400 text-lg leading-relaxed max-w-xl mx-auto">
+            {getStateDescription(state)}
+          </p>
+        </div>
+        
+        {/* Current Question Display - Only when active */}
+        {currentQuestion && (state === 'speaking' || state === 'listening') && (
+          <div 
+            className="p-8 rounded-3xl"
+            style={{
+              background: `
+                linear-gradient(135deg, 
+                  rgba(255, 255, 255, 0.12) 0%, 
+                  rgba(255, 255, 255, 0.06) 100%
+                )
+              `,
+              backdropFilter: 'blur(20px)',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+            }}
+          >
+            <div className="flex items-center justify-center gap-4 mb-4">
+              <span className="text-blue-400 text-sm font-semibold">
+                Pregunta {questionOrder}
+              </span>
+              <div className="w-2 h-2 bg-slate-400 rounded-full"></div>
+              <span className="text-slate-400 text-sm uppercase tracking-wider">
+                {currentQuestion.category}
+              </span>
+            </div>
+            <p className="text-white text-xl font-medium leading-relaxed">
+              {currentQuestion.text}
+            </p>
+          </div>
+        )}
+
+        {/* Progress indicator - Simplified */}
+        {sessionId && questionOrder > 1 && (
+          <div className="text-slate-500 text-sm">
+            {questionOrder - 1} respuestas completadas
+          </div>
+        )}
       </div>
     </div>
   )
 }
 
-function AudioWaveform({ color }: { color: string }) {
+function AudioWaveform({ color, intensity = 0 }: { color: string; intensity?: number }) {
   return (
     <div className="flex items-center justify-center gap-1">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <div
-          key={i}
-          className="rounded-full animate-pulse"
-          style={{
-            width: '3px',
-            height: `${12 + i * 4}px`,
-            backgroundColor: color,
-            animationDelay: `${i * 0.1}s`,
-            animationDuration: '1s',
-          }}
-        />
-      ))}
+      {Array.from({ length: 7 }).map((_, i) => {
+        const baseHeight = 8 + i * 3
+        const dynamicHeight = baseHeight + (intensity * 20)
+        return (
+          <div
+            key={i}
+            className="rounded-full animate-pulse transition-all duration-150"
+            style={{
+              width: '2px',
+              height: `${dynamicHeight}px`,
+              backgroundColor: color,
+              animationDelay: `${i * 0.1}s`,
+              animationDuration: `${0.8 + intensity}s`,
+              opacity: 0.6 + intensity * 0.4,
+              boxShadow: `0 0 ${intensity * 10}px ${color}`,
+            }}
+          />
+        )
+      })}
     </div>
   )
 }
@@ -357,9 +630,11 @@ function getStateMessage(state: VoiceBubbleState): string {
     case 'listening':
       return 'Te estoy escuchando'
     case 'speaking':
-      return 'Hablando contigo'
+      return 'Nueva pregunta'
     case 'thinking':
       return 'Analizando respuesta'
+    case 'session-starting':
+      return 'Iniciando test vocacional'
     default:
       return '¡Hola! Soy ARIA'
   }
@@ -368,12 +643,14 @@ function getStateMessage(state: VoiceBubbleState): string {
 function getStateDescription(state: VoiceBubbleState): string {
   switch (state) {
     case 'listening':
-      return 'Habla claramente sobre tus intereses, pasatiempos y lo que te motiva profesionalmente'
+      return 'Responde la pregunta hablando claramente. Haz clic nuevamente cuando termines.'
     case 'speaking':
-      return 'Escucha atentamente mi pregunta y prepárate para responder'
+      return 'Escucha atentamente la pregunta y prepárate para responder por voz.'
     case 'thinking':
-      return 'Procesando tu respuesta con inteligencia artificial para generar la siguiente pregunta'
-        default:
-      return 'Tu asistente de orientación vocacional impulsada por IA. Haz clic para comenzar tu evaluación personalizada'
+      return 'Procesando tu respuesta con inteligencia artificial para generar la siguiente pregunta.'
+    case 'session-starting':
+      return 'Creando tu sesión personalizada de test vocacional...'
+    default:
+      return 'Tu asistente de orientación vocacional impulsada por IA. Haz clic para comenzar tu evaluación personalizada.'
   }
 }

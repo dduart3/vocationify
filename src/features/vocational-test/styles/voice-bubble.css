@@ -1,0 +1,131 @@
+/* Floating animation for idle bubble */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-15px) rotate(1deg);
+  }
+  66% {
+    transform: translateY(-5px) rotate(-1deg);
+  }
+}
+
+/* Subtle morphing animation for elegant bubble shape */
+@keyframes morph {
+  0%, 100% {
+    border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%;
+  }
+  25% {
+    border-radius: 52% 48% 50% 50% / 48% 52% 50% 50%;
+  }
+  50% {
+    border-radius: 50% 50% 48% 52% / 50% 50% 52% 48%;
+  }
+  75% {
+    border-radius: 48% 52% 50% 50% / 52% 48% 50% 50%;
+  }
+}
+
+/* Bubble breathing animation */
+@keyframes breathe {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* Liquid ripple effect */
+@keyframes liquidRipple {
+  0% {
+    transform: scale(0.8);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+}
+
+/* Pulsating glow for listening state */
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.3),
+                0 0 40px rgba(34, 197, 94, 0.2),
+                0 0 60px rgba(34, 197, 94, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(34, 197, 94, 0.5),
+                0 0 60px rgba(34, 197, 94, 0.3),
+                0 0 90px rgba(34, 197, 94, 0.2);
+  }
+}
+
+/* Bubble surface highlights */
+.bubble-highlight {
+  position: absolute;
+  top: 20%;
+  left: 30%;
+  width: 40px;
+  height: 40px;
+  background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 70%);
+  border-radius: 50%;
+  filter: blur(8px);
+  animation: highlight-float 4s ease-in-out infinite;
+}
+
+@keyframes highlight-float {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translate(10px, -10px) scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+/* Surface tension effect */
+.surface-tension {
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: linear-gradient(45deg, 
+    rgba(255,255,255,0.1) 0%, 
+    transparent 50%, 
+    rgba(255,255,255,0.05) 100%
+  );
+  animation: surface-flow 10s linear infinite;
+}
+
+@keyframes surface-flow {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 100% 100%;
+  }
+}
+
+/* Audio wave particles for listening state */
+.audio-particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: rgba(34, 197, 94, 0.6);
+  border-radius: 50%;
+  animation: particle-dance 2s ease-in-out infinite;
+}
+
+@keyframes particle-dance {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(-20px) scale(1.2);
+    opacity: 1;
+  }
+}

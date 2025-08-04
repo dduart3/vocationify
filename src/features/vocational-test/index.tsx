@@ -4,17 +4,18 @@ import { ChatInterface } from './components/chat-interface'
 import { InteractionToggle } from './components/interaction-toggle'
 import { 
   IconSparkles, 
-  IconTarget, 
-  IconMicrophone, 
-  IconChartBar, 
-  IconSchool,
-  IconBrain,
-  IconBriefcase,
-  IconBuilding,
-  IconTrendingUp,
-  IconClock,
-  IconDatabase
 } from '@tabler/icons-react'
+import { 
+  Target, 
+  Mic, 
+  BarChart3, 
+  GraduationCap,
+  Brain,
+  Briefcase,
+  School,
+  Clock,
+  Database
+} from 'lucide-react'
 
 export function VocationalTest() {
   const [interactionMode, setInteractionMode] = useState<'voice' | 'chat'>('voice')
@@ -39,49 +40,21 @@ export function VocationalTest() {
         <div className="max-w-6xl mx-auto">
           {/* Header Section */}
           <div className="text-center mb-12">
-            <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-white/10 mb-6">
+            <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-white/10 mb-8">
               <IconSparkles className="w-4 h-4 text-blue-400 mr-2" />
               <span className="text-blue-400 text-sm font-medium">Powered by AI</span>
             </div>
             
-            <h1 className="text-6xl font-bold mb-6">
+            <h1 className="text-5xl font-bold mb-6">
               <span className="bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent">
-                Test Vocacional
+                Test Vocacional RIASEC
               </span>
             </h1>
             
-            <p className="text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed mb-8">
-              Descubre tu camino profesional ideal a través de una conversación inteligente 
-              con <span className="text-blue-400 font-semibold">ARIA</span>, nuestra asistente de orientación vocacional
+            <p className="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed mb-8">
+              Descubre tu perfil vocacional con <span className="text-blue-400 font-semibold">ARIA</span>, 
+              tu asistente inteligente de orientación profesional
             </p>
-
-            {/* Feature Pills */}
-            <div className="flex flex-wrap justify-center gap-4 mb-8">
-              {[
-                { icon: IconTarget, text: 'Análisis Personalizado' },
-                { icon: IconMicrophone, text: 'Interacción por Voz' },
-                { icon: IconChartBar, text: 'Resultados Precisos' },
-                { icon: IconSchool, text: 'Recomendaciones Universitarias' }
-              ].map((feature, index) => (
-                <div
-                  key={index}
-                  className="flex items-center space-x-2 px-4 py-2 rounded-full"
-                  style={{
-                    background: `
-                      linear-gradient(135deg, 
-                        rgba(255, 255, 255, 0.08) 0%, 
-                        rgba(255, 255, 255, 0.04) 100%
-                      )
-                    `,
-                    backdropFilter: 'blur(12px)',
-                    border: '1px solid rgba(255, 255, 255, 0.06)',
-                  }}
-                >
-                  <feature.icon className="w-4 h-4 text-blue-400" />
-                  <span className="text-slate-300 text-sm font-medium">{feature.text}</span>
-                </div>
-              ))}
-            </div>
 
             {/* Interaction Mode Toggle */}
             <InteractionToggle 
@@ -92,125 +65,151 @@ export function VocationalTest() {
 
           {/* Main Test Area */}
           {interactionMode === 'voice' ? (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
-              {/* Left Info Panel */}
-              <div className="lg:col-span-1 space-y-6">
-                <div
-                  className="p-6 rounded-2xl"
-                  style={{
-                    background: `
-                      linear-gradient(135deg, 
-                        rgba(255, 255, 255, 0.08) 0%, 
-                        rgba(255, 255, 255, 0.04) 100%
-                      )
-                    `,
-                    backdropFilter: 'blur(16px)',
-                    border: '1px solid rgba(255, 255, 255, 0.06)',
-                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
-                  }}
-                >
-                  <h3 className="text-xl font-semibold text-white mb-4">¿Cómo funciona?</h3>
-                  <div className="space-y-4">
-                    {[
-                      { step: '01', text: 'Haz clic en ARIA para comenzar' },
-                      { step: '02', text: 'Responde las preguntas por voz' },
-                      { step: '03', text: 'Recibe tu perfil vocacional' },
-                      { step: '04', text: 'Explora carreras recomendadas' }
-                    ].map((item, index) => (
-                      <div key={index} className="flex items-center space-x-4">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white text-xs font-bold">
-                          {item.step}
-                        </div>
-                        <span className="text-slate-300 text-sm">{item.text}</span>
+            <div className="space-y-8">
+              {/* Top Features */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+                {[
+                  { icon: Target, title: 'Análisis Personalizado', desc: 'Basado en tus respuestas', color: 'text-blue-400' },
+                  { icon: Mic, title: 'Interacción por Voz', desc: 'Habla naturalmente', color: 'text-green-400' },
+                  { icon: BarChart3, title: 'Resultados Precisos', desc: 'Modelo RIASEC científico', color: 'text-purple-400' },
+                  { icon: GraduationCap, title: 'Recomendaciones', desc: 'Carreras y universidades', color: 'text-orange-400' }
+                ].map((feature, index) => {
+                  const IconComponent = feature.icon
+                  return (
+                    <div
+                      key={index}
+                      className="text-center p-4 rounded-xl group hover:scale-105 transition-all duration-300"
+                      style={{
+                        background: `linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%)`,
+                        backdropFilter: 'blur(12px)',
+                        border: '1px solid rgba(255, 255, 255, 0.08)',
+                      }}
+                    >
+                      <div className="flex justify-center mb-3 group-hover:scale-110 transition-transform duration-300">
+                        <IconComponent className={`w-8 h-8 ${feature.color}`} />
                       </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div
-                  className="p-6 rounded-2xl"
-                  style={{
-                    background: `
-                      linear-gradient(135deg, 
-                        rgba(34, 197, 94, 0.08) 0%, 
-                        rgba(34, 197, 94, 0.04) 100%
-                      )
-                    `,
-                    backdropFilter: 'blur(16px)',
-                    border: '1px solid rgba(34, 197, 94, 0.2)',
-                  }}
-                >
-                  <div className="flex items-center space-x-3 mb-3">
-                    <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse" />
-                    <IconClock className="w-4 h-4 text-green-400" />
-                    <span className="text-green-400 font-medium">Duración estimada</span>
-                  </div>
-                  <p className="text-white text-2xl font-bold">15-20 minutos</p>
-                  <p className="text-slate-400 text-sm mt-1">Tiempo promedio de completación</p>
-                </div>
-              </div>
-
-              {/* Center - Voice Bubble */}
-              <div className="lg:col-span-1 flex justify-center">
-                <VoiceBubble />
-              </div>
-
-              {/* Right Stats Panel */}
-              <div className="lg:col-span-1 space-y-6">
-                <div
-                  className="p-6 rounded-2xl"
-                  style={{
-                    background: `
-                      linear-gradient(135deg, 
-                        rgba(255, 255, 255, 0.08) 0%, 
-                        rgba(255, 255, 255, 0.04) 100%
-                      )
-                    `,
-                    backdropFilter: 'blur(16px)',
-                    border: '1px solid rgba(255, 255, 255, 0.06)',
-                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
-                  }}
-                >
-                  <h3 className="text-xl font-semibold text-white mb-4">Qué descubrirás</h3>
-                  <div className="space-y-4">
-                    {[
-                      { icon: IconBrain, title: 'Tu perfil RIASEC', desc: 'Intereses y personalidad vocacional' },
-                      { icon: IconBriefcase, title: 'Carreras compatibles', desc: 'Profesiones que se ajustan a ti' },
-                      { icon: IconBuilding, title: 'Universidades', desc: 'Instituciones recomendadas' },
-                      { icon: IconTrendingUp, title: 'Plan de acción', desc: 'Próximos pasos a seguir' }
-                    ].map((item, index) => (
-                      <div key={index} className="flex items-start space-x-3">
-                        <item.icon className="w-5 h-5 text-blue-400 mt-0.5" />
-                        <div>
-                          <h4 className="text-white font-medium text-sm">{item.title}</h4>
-                          <p className="text-slate-400 text-xs">{item.desc}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div
-                  className="p-6 rounded-2xl"
-                  style={{
-                    background: `
-                      linear-gradient(135deg, 
-                        rgba(59, 130, 246, 0.08) 0%, 
-                        rgba(147, 51, 234, 0.08) 100%
-                      )
-                    `,
-                    backdropFilter: 'blur(16px)',
-                    border: '1px solid rgba(59, 130, 246, 0.2)',
-                  }}
-                >
-                  <div className="text-center">
-                    <div className="flex items-center justify-center mb-2">
-                      <IconDatabase className="w-6 h-6 text-blue-400 mr-2" />
-                      <div className="text-3xl font-bold text-white">73+</div>
+                      <div className="text-white text-sm font-medium mb-1">{feature.title}</div>
+                      <div className="text-slate-400 text-xs">{feature.desc}</div>
                     </div>
-                    <div className="text-blue-400 text-sm font-medium mb-2">Carreras disponibles</div>
-                    <div className="text-slate-400 text-xs">En nuestra base de datos</div>
+                  )
+                })}
+              </div>
+
+              {/* Main Voice Bubble Area */}
+              <div className="grid grid-cols-1 lg:grid-cols-7 gap-8 items-center">
+                {/* Left Side Info */}
+                <div className="lg:col-span-2 space-y-4">
+                  <div
+                    className="p-6 rounded-2xl"
+                    style={{
+                      background: `linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%)`,
+                      backdropFilter: 'blur(16px)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                    }}
+                  >
+                    <h3 className="text-xl font-semibold text-white mb-4">¿Cómo funciona?</h3>
+                    <div className="space-y-3">
+                      {[
+                        { step: '1', text: 'Haz clic en ARIA para comenzar' },
+                        { step: '2', text: 'Responde las preguntas por voz' },
+                        { step: '3', text: 'Recibe tu perfil vocacional' }
+                      ].map((item, index) => (
+                        <div key={index} className="flex items-center space-x-3">
+                          <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white text-xs font-bold">
+                            {item.step}
+                          </div>
+                          <span className="text-slate-300 text-sm">{item.text}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
+
+                  <div
+                    className="p-4 rounded-xl text-center"
+                    style={{
+                      background: `linear-gradient(135deg, rgba(34, 197, 94, 0.08) 0%, rgba(34, 197, 94, 0.04) 100%)`,
+                      backdropFilter: 'blur(16px)',
+                      border: '1px solid rgba(34, 197, 94, 0.2)',
+                    }}
+                  >
+                    <div className="flex items-center justify-center gap-2 mb-2">
+                      <Clock className="w-4 h-4 text-green-400" />
+                      <span className="text-green-400 font-medium text-sm">Duración</span>
+                    </div>
+                    <div className="text-white text-2xl font-bold">15-20 min</div>
+                    <div className="text-slate-400 text-xs">Tiempo promedio</div>
+                  </div>
+                </div>
+
+                {/* Center - Voice Bubble */}
+                <div className="lg:col-span-3 flex justify-center">
+                  <VoiceBubble onTestComplete={(sessionId) => console.log('Test completed:', sessionId)} />
+                </div>
+
+                {/* Right Side Info */}
+                <div className="lg:col-span-2 space-y-4">
+                  <div
+                    className="p-6 rounded-2xl"
+                    style={{
+                      background: `linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%)`,
+                      backdropFilter: 'blur(16px)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                    }}
+                  >
+                    <h3 className="text-xl font-semibold text-white mb-4">Qué descubrirás</h3>
+                    <div className="space-y-3">
+                      {[
+                        { icon: Brain, title: 'Tu perfil RIASEC', desc: 'Personalidad vocacional', color: 'text-blue-400' },
+                        { icon: Briefcase, title: 'Carreras compatibles', desc: 'Profesiones ideales', color: 'text-purple-400' },
+                        { icon: School, title: 'Universidades', desc: 'Instituciones cercanas', color: 'text-orange-400' }
+                      ].map((item, index) => {
+                        const IconComponent = item.icon
+                        return (
+                          <div key={index} className="flex items-start space-x-3">
+                            <IconComponent className={`w-5 h-5 mt-0.5 ${item.color}`} />
+                            <div>
+                              <h4 className="text-white font-medium text-sm">{item.title}</h4>
+                              <p className="text-slate-400 text-xs">{item.desc}</p>
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+
+                  <div
+                    className="p-4 rounded-xl text-center"
+                    style={{
+                      background: `linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(147, 51, 234, 0.08) 100%)`,
+                      backdropFilter: 'blur(16px)',
+                      border: '1px solid rgba(59, 130, 246, 0.2)',
+                    }}
+                  >
+                    <div className="flex items-center justify-center gap-2 mb-2">
+                      <Database className="w-4 h-4 text-blue-400" />
+                      <span className="text-blue-400 font-medium text-sm">Base de datos</span>
+                    </div>
+                    <div className="text-white text-2xl font-bold">73+ carreras</div>
+                    <div className="text-slate-400 text-xs">Disponibles para ti</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom Call to Action */}
+              <div className="text-center max-w-3xl mx-auto">
+                <div
+                  className="p-6 rounded-2xl"
+                  style={{
+                    background: `linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)`,
+                    backdropFilter: 'blur(16px)',
+                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                  }}
+                >
+                  <p className="text-slate-300 text-base leading-relaxed">
+                    <span className="text-blue-400 font-semibold">ARIA</span> utilizará inteligencia artificial 
+                    para analizar tus respuestas y generar un perfil vocacional personalizado basado en el 
+                    modelo <span className="text-purple-400 font-semibold">Holland RIASEC</span>
+                  </p>
                 </div>
               </div>
             </div>
@@ -220,32 +219,10 @@ export function VocationalTest() {
               <ChatInterface 
                 onSwitchToVoice={() => setInteractionMode('voice')}
                 isVoiceAvailable={true}
+                onTestComplete={(sessionId) => console.log('Test completed:', sessionId)}
               />
             </div>
           )}
-
-          {/* Bottom CTA */}
-          <div className="text-center mt-16">
-            <div
-              className="inline-block p-6 rounded-2xl max-w-2xl"
-              style={{
-                background: `
-                  linear-gradient(135deg, 
-                    rgba(255, 255, 255, 0.05) 0%, 
-                    rgba(255, 255, 255, 0.02) 100%
-                  )
-                `,
-                backdropFilter: 'blur(16px)',
-                border: '1px solid rgba(255, 255, 255, 0.06)',
-              }}
-            >
-              <p className="text-slate-300 text-lg leading-relaxed">
-                <span className="text-blue-400 font-semibold">ARIA</span> utilizará inteligencia artificial 
-                para analizar tus respuestas y generar un perfil vocacional personalizado basado en el 
-                modelo <span className="text-purple-400 font-semibold">Holland RIASEC</span>
-              </p>
-            </div>
-          </div>
         </div>
       </div>
     </div>
