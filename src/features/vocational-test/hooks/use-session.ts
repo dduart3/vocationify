@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { sessionAPI, queryKeys } from '../api'
-import type { TestSession } from '../types'
+import type { TestSession, Question } from '../types'
 
 // Create session hook
 export const useCreateSession = () => {
@@ -8,11 +8,11 @@ export const useCreateSession = () => {
   
   return useMutation({
     mutationFn: (userId?: string) => sessionAPI.create(userId),
-    onSuccess: (data: TestSession) => {
+    onSuccess: (data: { id: string; question: Question; progress: number }) => {
       // Invalidate and refetch sessions
       queryClient.invalidateQueries({ queryKey: queryKeys.sessions.all })
-      // Set the session data in cache
-      queryClient.setQueryData(queryKeys.sessions.detail(data.id), data)
+      // Set the first question in cache
+      queryClient.setQueryData(queryKeys.questions.next(data.id), data.question)
     },
   })
 }

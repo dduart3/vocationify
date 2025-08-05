@@ -44,7 +44,7 @@ export const queryKeys = {
 
 // API Functions (used by TanStack Query hooks)
 export const sessionAPI = {
-  create: async (userId?: string): Promise<TestSession> => {
+  create: async (userId?: string): Promise<{ id: string; question: Question; progress: number }> => {
     const response = await api.post('/sessions', { user_id: userId })
     return response.data.data
   },

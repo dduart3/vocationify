@@ -1,8 +1,44 @@
 import { useState, useEffect, useRef } from 'react'
-import { IconMicrophone, IconVolume, IconBrain } from '@tabler/icons-react'
+import { IconMicrophone, IconVolume, IconBrain, IconAlertCircle } from '@tabler/icons-react'
 import { useCreateSession, useNextQuestion, useSubmitResponse } from '../hooks'
 import { useAuthStore } from '@/stores/auth-store'
 import '../styles/voice-bubble.css'
+
+// TypeScript declarations for Web Speech API
+interface SpeechRecognitionEvent extends Event {
+  results: SpeechRecognitionResultList
+  resultIndex: number
+}
+
+interface SpeechRecognitionErrorEvent extends Event {
+  error: string
+  message?: string
+}
+
+interface SpeechRecognition extends EventTarget {
+  continuous: boolean
+  interimResults: boolean
+  lang: string
+  maxAlternatives: number
+  start(): void
+  stop(): void
+  abort(): void
+  onstart: ((this: SpeechRecognition, ev: Event) => any) | null
+  onresult: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => any) | null
+  onend: ((this: SpeechRecognition, ev: Event) => any) | null
+  onerror: ((this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) => any) | null
+}
+
+interface SpeechRecognitionStatic {
+  new(): SpeechRecognition
+}
+
+declare global {
+  interface Window {
+    SpeechRecognition: SpeechRecognitionStatic
+    webkitSpeechRecognition: SpeechRecognitionStatic
+  }
+}
 
 type VoiceBubbleState = 'idle' | 'listening' | 'speaking' | 'thinking' | 'session-starting'
 
@@ -18,18 +54,76 @@ export function VoiceBubble({ onTestComplete }: VoiceBubbleProps) {
   const [audioLevel, setAudioLevel] = useState(0)
   const [isRecording, setIsRecording] = useState(false)
   const [morphPhase, setMorphPhase] = useState(0)
+  const [transcript, setTranscript] = useState('')
+  const [isListeningToSpeech, setIsListeningToSpeech] = useState(false)
+  const [speechRecognitionAvailable, setSpeechRecognitionAvailable] = useState(false)
   
   const bubbleRef = useRef<HTMLButtonElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const audioContextRef = useRef<AudioContext | null>(null)
   const analyserRef = useRef<AnalyserNode | null>(null)
-  const animationFrameRef = useRef<number>()
+  const animationFrameRef = useRef<number>(0)
+  const speechRecognitionRef = useRef<SpeechRecognition | null>(null)
 
   // API hooks
   const createSession = useCreateSession()
   const { data: currentQuestion, isLoading: loadingQuestion } = useNextQuestion(sessionId || '', !!sessionId)
   const submitResponse = useSubmitResponse()
+
+  // Initialize speech recognition
+  useEffect(() => {
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+      const recognition = new SpeechRecognition()
+      
+      recognition.continuous = false
+      recognition.interimResults = true
+      recognition.lang = 'es-VE' // Venezuelan Spanish, fallback to es-ES
+      recognition.maxAlternatives = 1
+      
+      recognition.onstart = () => {
+        setIsListeningToSpeech(true)
+        setTranscript('')
+      }
+      
+      recognition.onresult = (event: SpeechRecognitionEvent) => {
+        let finalTranscript = ''
+        let interimTranscript = ''
+        
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const transcript = event.results[i][0].transcript
+          if (event.results[i].isFinal) {
+            finalTranscript += transcript
+          } else {
+            interimTranscript += transcript
+          }
+        }
+        
+        setTranscript(finalTranscript || interimTranscript)
+      }
+      
+      recognition.onend = () => {
+        setIsListeningToSpeech(false)
+      }
+      
+      recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
+        console.error('Speech recognition error:', event.error)
+        setIsListeningToSpeech(false)
+      }
+      
+      speechRecognitionRef.current = recognition
+      setSpeechRecognitionAvailable(true)
+    } else {
+      console.warn('Speech Recognition not supported in this browser')
+      setSpeechRecognitionAvailable(false)
+    }
+    
+    return () => {
+      if (speechRecognitionRef.current) {
+        speechRecognitionRef.current.abort()
+      }
+    }
+  }, [])
 
   // Morphing animation for idle state
   useEffect(() => {
@@ -201,6 +295,10 @@ export function VoiceBubble({ onTestComplete }: VoiceBubbleProps) {
             setTimeout(() => {
               setState('listening')
               setIsRecording(true)
+              // Start speech recognition
+              if (speechRecognitionRef.current) {
+                speechRecognitionRef.current.start()
+              }
             }, 3000)
           }
         }, 1000)
@@ -214,10 +312,16 @@ export function VoiceBubble({ onTestComplete }: VoiceBubbleProps) {
       setState('thinking')
       setIsRecording(false)
       
-      // Simulate voice processing and submit response
+      // Stop speech recognition
+      if (speechRecognitionRef.current) {
+        speechRecognitionRef.current.stop()
+      }
+      
+      // Process the transcript and submit response
       setTimeout(async () => {
         try {
-          const responseValue = Math.floor(Math.random() * 5) + 1 // Mock response for now
+          // Convert transcript to RIASEC response value (1-5 scale)
+          const responseValue = processTranscriptToValue(transcript)
           
           await submitResponse.mutateAsync({
             sessionId: sessionId!,
@@ -231,6 +335,7 @@ export function VoiceBubble({ onTestComplete }: VoiceBubbleProps) {
           })
           
           setQuestionOrder(prev => prev + 1)
+          setTranscript('') // Clear transcript
           
           // Wait for next question to load or complete test
           setTimeout(() => {
@@ -239,6 +344,10 @@ export function VoiceBubble({ onTestComplete }: VoiceBubbleProps) {
               setTimeout(() => {
                 setState('listening')
                 setIsRecording(true)
+                // Start speech recognition for next question
+                if (speechRecognitionRef.current) {
+                  speechRecognitionRef.current.start()
+                }
               }, 2000)
             } else {
               setState('idle')
@@ -249,9 +358,78 @@ export function VoiceBubble({ onTestComplete }: VoiceBubbleProps) {
           console.error('Failed to submit response:', error)
           setState('listening')
           setIsRecording(true)
+          // Restart speech recognition on error
+          if (speechRecognitionRef.current) {
+            speechRecognitionRef.current.start()
+          }
         }
       }, 2000)
     }
+  }
+
+  const processTranscriptToValue = (transcript: string): number => {
+    if (!transcript || transcript.trim().length === 0) {
+      return 3 // Neutral response if no transcript
+    }
+    
+    const text = transcript.toLowerCase().trim()
+    
+    // Spanish response patterns for RIASEC scale (1-5)
+    const positivePatterns = [
+      /\b(sí|si|yes|claro|por supuesto|definitivamente|absolutamente|me encanta|me gusta mucho|totalmente|completamente)\b/,
+      /\b(muy de acuerdo|estoy de acuerdo|de acuerdo|correcto|exacto|perfecto)\b/,
+      /\b(siempre|frecuentemente|a menudo|mucho|bastante)\b/
+    ]
+    
+    const strongPositivePatterns = [
+      /\b(me fascina|amo|adoro|me apasiona|es lo mío|exactamente|totalmente de acuerdo)\b/,
+      /\b(muchísimo|extremadamente|completamente|absolutamente)\b/
+    ]
+    
+    const negativePatterns = [
+      /\b(no|nunca|jamás|para nada|en absoluto|definitivamente no|claro que no)\b/,
+      /\b(no me gusta|odio|detesto|no soporto|me disgusta|no estoy de acuerdo)\b/,
+      /\b(raramente|casi nunca|muy poco|nada)\b/
+    ]
+    
+    const strongNegativePatterns = [
+      /\b(odio|detesto|aborrezco|me repugna|jamás|nunca jamás|para nada en absoluto)\b/,
+      /\b(completamente en desacuerdo|totalmente en contra)\b/
+    ]
+    
+    const neutralPatterns = [
+      /\b(tal vez|quizás|no sé|no estoy seguro|más o menos|regular|normal|neutral)\b/,
+      /\b(a veces|de vez en cuando|ocasionalmente|depende|puede ser)\b/
+    ]
+    
+    // Check for strong responses first
+    if (strongPositivePatterns.some(pattern => pattern.test(text))) {
+      return 5 // Strongly agree
+    }
+    if (strongNegativePatterns.some(pattern => pattern.test(text))) {
+      return 1 // Strongly disagree
+    }
+    
+    // Check for regular responses
+    if (positivePatterns.some(pattern => pattern.test(text))) {
+      return 4 // Agree
+    }
+    if (negativePatterns.some(pattern => pattern.test(text))) {
+      return 2 // Disagree
+    }
+    if (neutralPatterns.some(pattern => pattern.test(text))) {
+      return 3 // Neutral
+    }
+    
+    // Fallback: analyze sentence length and overall sentiment
+    if (text.includes('gusta') || text.includes('interesa') || text.includes('bien')) {
+      return 4
+    }
+    if (text.includes('no') && text.length < 10) {
+      return 2
+    }
+    
+    return 3 // Default neutral
   }
 
   const getMorphedBorderRadius = () => {
@@ -413,6 +591,12 @@ export function VoiceBubble({ onTestComplete }: VoiceBubbleProps) {
               }} 
             />
             <AudioWaveform color="rgb(34, 197, 94)" intensity={audioLevel} />
+            {isListeningToSpeech && (
+              <div className="flex items-center justify-center gap-1 text-green-400 text-xs mt-2 animate-pulse">
+                <IconMicrophone className="w-3 h-3" />
+                <span>Escuchando...</span>
+              </div>
+            )}
           </div>
         )
       case 'speaking':
@@ -550,7 +734,7 @@ export function VoiceBubble({ onTestComplete }: VoiceBubbleProps) {
             {getStateMessage(state)}
           </h3>
           <p className="text-slate-400 text-lg leading-relaxed max-w-xl mx-auto">
-            {getStateDescription(state)}
+            {getStateDescription(state, transcript)}
           </p>
         </div>
         
@@ -581,6 +765,19 @@ export function VoiceBubble({ onTestComplete }: VoiceBubbleProps) {
             <p className="text-white text-xl font-medium leading-relaxed">
               {currentQuestion.text}
             </p>
+          </div>
+        )}
+
+        {/* Speech Recognition Warning */}
+        {!speechRecognitionAvailable && (
+          <div className="p-4 rounded-xl bg-yellow-500/10 border border-yellow-500/20 max-w-md mx-auto">
+            <div className="flex items-center justify-center gap-2">
+              <IconAlertCircle className="w-5 h-5 text-yellow-400" />
+              <p className="text-yellow-400 text-sm text-center">
+                Reconocimiento de voz no disponible en este navegador. 
+                Usa Chrome para mejor experiencia o cambia al modo texto.
+              </p>
+            </div>
           </div>
         )}
 
@@ -670,9 +867,12 @@ function getStateMessage(state: VoiceBubbleState): string {
   }
 }
 
-function getStateDescription(state: VoiceBubbleState): string {
+function getStateDescription(state: VoiceBubbleState, transcript?: string): string {
   switch (state) {
     case 'listening':
+      if (transcript && transcript.trim()) {
+        return `Escuchando: "${transcript}". Haz clic cuando termines de hablar.`
+      }
       return 'Responde la pregunta hablando claramente. Haz clic nuevamente cuando termines.'
     case 'speaking':
       return 'Escucha atentamente la pregunta y prepárate para responder por voz.'
