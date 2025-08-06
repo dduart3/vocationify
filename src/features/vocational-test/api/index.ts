@@ -1,5 +1,15 @@
 import axios from 'axios'
-import type { TestSession, Question, TestResponse, TestResults, Career, RiasecScore } from '../types'
+import type { 
+  TestSession, 
+  Question, 
+  TestResponse, 
+  TestResults, 
+  Career, 
+  RiasecScore,
+  ConversationalSession,
+  ConversationResponse,
+  SessionResults 
+} from '../types'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
 
@@ -39,6 +49,11 @@ export const queryKeys = {
     all: ['careers'] as const,
     detail: (careerId: string) => ['careers', careerId] as const,
     recommendations: (scores: RiasecScore) => ['careers', 'recommendations', scores] as const,
+  },
+  conversations: {
+    session: (sessionId: string) => ['conversations', 'session', sessionId] as const,
+    results: (sessionId: string) => ['conversations', 'results', sessionId] as const,
+    history: (sessionId: string) => ['conversations', 'history', sessionId] as const,
   },
 } as const
 
@@ -109,5 +124,23 @@ export const healthAPI = {
   check: async (): Promise<any> => {
     const response = await api.get('/health')
     return response.data
+  },
+}
+
+// Conversational API functions
+export const conversationalAPI = {
+  createSession: async (userId?: string): Promise<ConversationalSession> => {
+    const response = await api.post('/conversations/sessions', { user_id: userId })
+    return response.data.data
+  },
+
+  sendMessage: async (sessionId: string, message: string): Promise<ConversationResponse> => {
+    const response = await api.post(`/conversations/sessions/${sessionId}/messages`, { message })
+    return response.data.data
+  },
+
+  getResults: async (sessionId: string): Promise<SessionResults> => {
+    const response = await api.get(`/conversations/sessions/${sessionId}/results`)
+    return response.data.data
   },
 }

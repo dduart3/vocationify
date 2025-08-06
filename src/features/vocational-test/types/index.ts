@@ -78,3 +78,61 @@ export interface Career {
   key_skills: string[]
   related_careers: string[]
 }
+
+// Conversational session types
+export interface ConversationMessage {
+  role: 'system' | 'user' | 'assistant'
+  content: string
+  timestamp?: Date
+}
+
+export interface ConversationalSession {
+  sessionId: string
+  greeting: ConversationResponse
+}
+
+export interface ConversationResponse {
+  message: string
+  intent: 'question' | 'clarification' | 'assessment' | 'recommendation' | 'farewell'
+  suggestedFollowUp?: string[]
+  riasecAssessment?: {
+    scores: {
+      R: number
+      I: number
+      A: number
+      S: number
+      E: number
+      C: number
+    }
+    confidence: number
+    reasoning: string
+  }
+  careerSuggestions?: Array<{
+    careerId: string
+    name: string
+    confidence: number
+    reasoning: string
+  }>
+  nextPhase?: 'greeting' | 'exploration' | 'assessment' | 'recommendation' | 'complete'
+}
+
+export interface SessionResults {
+  sessionId: string
+  riasecScores: {
+    R: number
+    I: number
+    A: number
+    S: number
+    E: number
+    C: number
+  }
+  confidenceLevel: number
+  conversationPhase: 'greeting' | 'exploration' | 'assessment' | 'recommendation' | 'complete'
+  careerRecommendations: Array<{
+    career_id: string
+    confidence: number
+    reasoning: string
+    career: Career | null
+  }>
+  conversationHistory: ConversationMessage[]
+}
