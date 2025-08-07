@@ -140,9 +140,14 @@ export function ConversationalVoiceBubble({ onTestComplete }: ConversationalVoic
   const startListening = () => {
     if (!currentAIResponse) return
     
-    if (currentAIResponse.nextPhase === 'complete') {
-      console.log('✅ Conversation complete')
+    // Check if conversation should complete
+    if (currentAIResponse.nextPhase === 'complete' || sessionResults?.conversationPhase === 'complete') {
+      console.log('✅ Conversation complete - final speech finished')
       setState('idle')
+      // Trigger completion callback if not already done
+      if (sessionResults?.conversationPhase === 'complete') {
+        onTestComplete?.(sessionResults.sessionId)
+      }
       return
     }
     
@@ -230,13 +235,17 @@ export function ConversationalVoiceBubble({ onTestComplete }: ConversationalVoic
     }
   }
 
-  // Check for conversation completion
+  // Check for conversation completion - but let final speech finish first
   useEffect(() => {
-    if (sessionResults?.conversationPhase === 'complete') {
+    if (sessionResults?.conversationPhase === 'complete' && state !== 'speaking') {
+      // Only complete if we're not currently speaking
       setState('idle')
       onTestComplete?.(sessionResults.sessionId)
+    } else if (sessionResults?.conversationPhase === 'complete' && state === 'speaking') {
+      // If we're speaking when completion is detected, wait for speech to finish
+      console.log('🏁 Conversation complete but ARIA is still speaking - will complete after speech')
     }
-  }, [sessionResults, onTestComplete])
+  }, [sessionResults, onTestComplete, state])
 
   return (
     <div className="relative flex flex-col items-center space-y-12 py-8">
