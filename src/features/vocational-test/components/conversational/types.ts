@@ -1,0 +1,1 @@
+export type ConversationalBubbleState = 'idle' | 'listening' | 'speaking' | 'thinking' | 'session-starting'

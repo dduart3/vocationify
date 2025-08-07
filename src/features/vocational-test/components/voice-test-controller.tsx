@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { IconPlayerPlay, IconLoader2, IconMicrophone, IconVolume, IconTarget, IconTrophy } from '@tabler/icons-react'
-import { ConversationalVoiceBubble } from './conversational-voice-bubble'
+import { IconPlayerPlay, IconMicrophone, IconVolume, IconTarget, IconTrophy } from '@tabler/icons-react'
+import { ConversationalVoiceBubble } from './conversational'
 
 type TestState = 'idle' | 'conversational' | 'completed'
 
