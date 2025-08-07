@@ -30,7 +30,7 @@ const TTS_CONFIG = {
 }
 
 export interface TTSService {
-  speak: (text: string) => Promise<void> | void
+  speak: (text: string, onComplete?: () => void) => Promise<void> | void
   stop: () => void
   isSpeaking: boolean
   isLoading: boolean
@@ -54,9 +54,9 @@ export function useTTSService(): TTSService {
   } else {
     // Browser TTS implementation
     return {
-      speak: async (text: string) => {
+      speak: async (text: string, onComplete?: () => void) => {
         console.log('🔊 Browser TTS speaking:', text.substring(0, 50) + '...')
-        browserTTS.speak(text)
+        browserTTS.speak(text, onComplete)
       },
       stop: browserTTS.stop,
       isSpeaking: browserTTS.isSpeaking,

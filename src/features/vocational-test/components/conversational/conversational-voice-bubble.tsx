@@ -46,26 +46,22 @@ export function ConversationalVoiceBubble({ onTestComplete }: ConversationalVoic
   const lastTranscriptRef = useRef<string>('')
   const currentResponseRef = useRef<string>('')
 
-  // Silence detection - auto-submit when user stops talking
+  // Simple silence detection - restart timer whenever transcript changes
   useEffect(() => {
-    if (state === 'listening' && speechRecognition.transcript) {
+    if (state === 'listening' && speechRecognition.transcript.trim()) {
       // Clear existing silence timeout
       if (silenceTimeoutRef.current) {
         clearTimeout(silenceTimeoutRef.current)
         silenceTimeoutRef.current = null
       }
 
-      // Only submit if transcript changed (new speech detected)
-      if (speechRecognition.transcript !== lastTranscriptRef.current) {
-        console.log('🎙️ New speech detected:', speechRecognition.transcript)
-        lastTranscriptRef.current = speechRecognition.transcript
+      console.log('🎙️ Speech detected:', speechRecognition.transcript)
 
-        // Start silence detection timer - auto-submit after 2 seconds of silence
-        silenceTimeoutRef.current = setTimeout(() => {
-          console.log('🔇 Silence detected, auto-submitting...')
-          submitUserResponse()
-        }, 2000)
-      }
+      // Start/restart silence detection timer - auto-submit after 2.5 seconds of silence
+      silenceTimeoutRef.current = setTimeout(() => {
+        console.log('🔇 Silence detected, auto-submitting...')
+        submitUserResponse()
+      }, 2500)
     }
   }, [state, speechRecognition.transcript])
 
@@ -90,37 +86,31 @@ export function ConversationalVoiceBubble({ onTestComplete }: ConversationalVoic
     if (state === 'speaking' && currentAIResponse) {
       console.log('🎙️ ARIA speaking:', currentAIResponse.message.substring(0, 50) + '...')
       
-      // Start TTS
-      tts.speak(currentAIResponse.message)
+      // Start TTS with completion callback
+      tts.speak(currentAIResponse.message, () => {
+        console.log('✅ TTS onend callback fired - speech actually finished')
+        setTimeout(() => {
+          startListening()
+        }, 300) // Small delay for natural feel
+      })
       currentResponseRef.current = currentAIResponse.message
-      
-      // Calculate speech duration - shorter and more accurate for browser TTS
-      const speechDuration = Math.max(2000, currentAIResponse.message.length * 40) + 1000 // 40ms per char + 1s buffer
-      console.log(`⏰ Speech will last ${speechDuration}ms`)
-      
-      // Transition to listening after speech completes
-      speechTimeoutRef.current = setTimeout(() => {
-        console.log('✅ Speech finished, transitioning to listening')
-        startListening()
-      }, speechDuration)
       
     } else if (state === 'listening') {
       console.log('👂 Starting to listen...')
       
       // Ensure TTS is stopped and reset transcript tracking
       tts.stop()
-      lastTranscriptRef.current = ''
       
       // Small delay to ensure audio context is clear
       setTimeout(() => {
         speechRecognition.startListening()
         
-        // Fallback timeout after 20 seconds (silence detection should handle most cases)
+        // Fallback timeout after 15 seconds
         listeningTimeoutRef.current = setTimeout(() => {
           console.log('⏰ Listening timeout (fallback), submitting response')
           submitUserResponse()
-        }, 20000)
-      }, 800)
+        }, 15000)
+      }, 500)
       
     } else if (state === 'thinking') {
       console.log('🧠 Processing user input...')
@@ -161,19 +151,23 @@ export function ConversationalVoiceBubble({ onTestComplete }: ConversationalVoic
 
   // Helper function to submit user response
   const submitUserResponse = async () => {
-    const transcript = speechRecognition.transcript.trim()
-    console.log('📝 Submitting transcript:', transcript || '(empty)')
+    const finalTranscript = speechRecognition.transcript.trim()
+    console.log('📝 Submitting transcript:', finalTranscript || '(empty)')
 
     // Clear timeouts
     if (listeningTimeoutRef.current) {
       clearTimeout(listeningTimeoutRef.current)
       listeningTimeoutRef.current = null
     }
+    if (silenceTimeoutRef.current) {
+      clearTimeout(silenceTimeoutRef.current)
+      silenceTimeoutRef.current = null
+    }
 
     // Stop listening
     speechRecognition.stopListening()
 
-    if (!transcript) {
+    if (!finalTranscript) {
       console.log('❌ No transcript, restarting listening')
       // Brief pause then restart listening
       setTimeout(() => {
@@ -187,7 +181,7 @@ export function ConversationalVoiceBubble({ onTestComplete }: ConversationalVoic
       
       const response = await sendMessage.mutateAsync({
         sessionId: sessionId!,
-        message: transcript
+        message: finalTranscript
       })
       
       setCurrentAIResponse(response)

@@ -8,7 +8,7 @@ interface UseTextToSpeechOptions {
 }
 
 interface UseTextToSpeechReturn {
-  speak: (text: string) => void
+  speak: (text: string, onComplete?: () => void) => void
   stop: () => void
   isSpeaking: boolean
   isSupported: boolean
@@ -66,7 +66,7 @@ export function useTextToSpeech(
     }
   }, [])
 
-  const speak = useCallback((text: string) => {
+  const speak = useCallback((text: string, onComplete?: () => void) => {
     if (!isSupported || !text.trim()) return
 
     // Stop any current speech
@@ -88,6 +88,10 @@ export function useTextToSpeech(
 
     utterance.onend = () => {
       setIsSpeaking(false)
+      // Call the completion callback if provided
+      if (onComplete) {
+        onComplete()
+      }
     }
 
     utterance.onerror = (event) => {
@@ -96,6 +100,10 @@ export function useTextToSpeech(
         console.error('Speech synthesis error:', event.error)
       }
       setIsSpeaking(false)
+      // Also call onComplete on error to prevent getting stuck
+      if (onComplete) {
+        onComplete()
+      }
     }
 
     utteranceRef.current = utterance
