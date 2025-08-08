@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { useNavigate } from '@tanstack/react-router'
 import { useCreateConversationalSession, useSendMessage, useConversationalResults } from '../../hooks'
 import { useTTSService } from '../../hooks/use-tts-service'
 import { useAuthStore } from '@/stores/auth-store'
@@ -18,6 +19,7 @@ interface ConversationalVoiceBubbleProps {
 
 export function ConversationalVoiceBubble({ onTestComplete }: ConversationalVoiceBubbleProps) {
   const { user } = useAuthStore()
+  const navigate = useNavigate()
   const [state, setState] = useState<ConversationalBubbleState>('idle')
   const [sessionId, setSessionId] = useState<string | null>(null)
   const [currentAIResponse, setCurrentAIResponse] = useState<ConversationResponse | null>(null)
@@ -144,7 +146,13 @@ export function ConversationalVoiceBubble({ onTestComplete }: ConversationalVoic
     if (currentAIResponse.nextPhase === 'complete' || sessionResults?.conversationPhase === 'complete') {
       console.log('✅ Conversation complete - final speech finished')
       setState('idle')
-      // Trigger completion callback if not already done
+      // Navigate to results page
+      if (sessionResults?.sessionId || sessionId) {
+        const resultSessionId = sessionResults?.sessionId || sessionId!
+        console.log('🔄 Navigating to results page:', resultSessionId)
+        navigate({ to: '/vocational-test/results/$sessionId', params: { sessionId: resultSessionId } })
+      }
+      // Also trigger completion callback for backward compatibility
       if (sessionResults?.conversationPhase === 'complete') {
         onTestComplete?.(sessionResults.sessionId)
       }
@@ -240,12 +248,15 @@ export function ConversationalVoiceBubble({ onTestComplete }: ConversationalVoic
     if (sessionResults?.conversationPhase === 'complete' && state !== 'speaking') {
       // Only complete if we're not currently speaking
       setState('idle')
+      // Navigate to results page
+      console.log('🔄 Navigating to results page from useEffect:', sessionResults.sessionId)
+      navigate({ to: '/vocational-test/results/$sessionId', params: { sessionId: sessionResults.sessionId } })
       onTestComplete?.(sessionResults.sessionId)
     } else if (sessionResults?.conversationPhase === 'complete' && state === 'speaking') {
       // If we're speaking when completion is detected, wait for speech to finish
       console.log('🏁 Conversation complete but ARIA is still speaking - will complete after speech')
     }
-  }, [sessionResults, onTestComplete, state])
+  }, [sessionResults, onTestComplete, state, navigate])
 
   return (
     <div className="relative flex flex-col items-center space-y-12 py-8">

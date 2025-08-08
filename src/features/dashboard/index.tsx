@@ -102,29 +102,153 @@ export function Dashboard() {
         </TabsContent>
 
         <TabsContent value="progress" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* RIASEC Progress Chart */}
+            <Card className="glass-card lg:col-span-1">
+              <CardHeader>
+                <CardTitle className="text-white">Evolución del Perfil RIASEC</CardTitle>
+                <CardDescription className="text-slate-400">
+                  Cómo ha cambiado tu perfil vocacional a lo largo del tiempo
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <VocationalProgress />
+              </CardContent>
+            </Card>
+
+            {/* Test History */}
+            <Card className="glass-card lg:col-span-1">
+              <CardHeader>
+                <CardTitle className="text-white">Historial de Tests</CardTitle>
+                <CardDescription className="text-slate-400">
+                  Todos tus tests completados
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <RecentActivity />
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Progress Goals */}
           <Card className="glass-card">
             <CardHeader>
-              <CardTitle className="text-white">Tu Progreso Vocacional</CardTitle>
+              <CardTitle className="text-white">Objetivos de Desarrollo</CardTitle>
               <CardDescription className="text-slate-400">
-                Seguimiento detallado de tu desarrollo profesional
+                Áreas recomendadas para fortalecer tu perfil vocacional
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <p className="text-slate-300">Contenido de progreso próximamente...</p>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                  <h4 className="text-white font-medium mb-2">Exploración</h4>
+                  <p className="text-slate-400 text-sm">
+                    Continúa explorando diferentes carreras y universidades para ampliar tus opciones.
+                  </p>
+                </div>
+                <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/20">
+                  <h4 className="text-white font-medium mb-2">Validación</h4>
+                  <p className="text-slate-400 text-sm">
+                    Realiza tests adicionales para confirmar y refinar tu perfil vocacional.
+                  </p>
+                </div>
+                <div className="p-4 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                  <h4 className="text-white font-medium mb-2">Acción</h4>
+                  <p className="text-slate-400 text-sm">
+                    Investiga requisitos de admisión y planifica tu ruta académica.
+                  </p>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
 
         <TabsContent value="analytics" className="space-y-6">
+          {/* Detailed RIASEC Analysis */}
           <Card className="glass-card">
             <CardHeader>
-              <CardTitle className="text-white">Análisis Detallado</CardTitle>
+              <CardTitle className="text-white">Análisis Detallado de Personalidad</CardTitle>
               <CardDescription className="text-slate-400">
-                Insights sobre tus preferencias y aptitudes
+                Insights profundos sobre tu perfil RIASEC y compatibilidad con carreras
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-slate-300">Análisis próximamente...</p>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <h4 className="text-lg font-semibold text-white">Fortalezas Identificadas</h4>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                      <div className="w-2 h-2 rounded-full bg-green-400"></div>
+                      <div>
+                        <p className="text-white font-medium">Pensamiento Analítico</p>
+                        <p className="text-slate-400 text-sm">Excelente para resolver problemas complejos</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                      <div className="w-2 h-2 rounded-full bg-blue-400"></div>
+                      <div>
+                        <p className="text-white font-medium">Creatividad</p>
+                        <p className="text-slate-400 text-sm">Capacidad para generar ideas innovadoras</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h4 className="text-lg font-semibold text-white">Áreas de Desarrollo</h4>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 p-3 rounded-lg bg-orange-500/10 border border-orange-500/20">
+                      <div className="w-2 h-2 rounded-full bg-orange-400"></div>
+                      <div>
+                        <p className="text-white font-medium">Habilidades Sociales</p>
+                        <p className="text-slate-400 text-sm">Fortalecer comunicación interpersonal</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                      <div className="w-2 h-2 rounded-full bg-purple-400"></div>
+                      <div>
+                        <p className="text-white font-medium">Liderazgo</p>
+                        <p className="text-slate-400 text-sm">Desarrollar capacidades de dirección</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Career Compatibility Matrix */}
+          <Card className="glass-card">
+            <CardHeader>
+              <CardTitle className="text-white">Matriz de Compatibilidad</CardTitle>
+              <CardDescription className="text-slate-400">
+                Cómo se alinea tu perfil con diferentes áreas profesionales
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {[
+                  { area: 'Ciencias e Ingeniería', compatibility: 92, color: 'bg-blue-500' },
+                  { area: 'Tecnología', compatibility: 88, color: 'bg-cyan-500' },
+                  { area: 'Artes y Diseño', compatibility: 75, color: 'bg-pink-500' },
+                  { area: 'Negocios', compatibility: 68, color: 'bg-orange-500' },
+                  { area: 'Ciencias Sociales', compatibility: 65, color: 'bg-green-500' },
+                  { area: 'Educación', compatibility: 58, color: 'bg-purple-500' },
+                ].map((item) => (
+                  <div key={item.area} className="p-4 rounded-lg bg-white/5 border border-white/10">
+                    <div className="flex justify-between items-center mb-2">
+                      <h4 className="text-white font-medium text-sm">{item.area}</h4>
+                      <span className="text-slate-400 text-sm font-mono">{item.compatibility}%</span>
+                    </div>
+                    <div className="w-full bg-gray-700 rounded-full h-2">
+                      <div 
+                        className={`${item.color} h-2 rounded-full transition-all duration-1000`} 
+                        style={{ width: `${item.compatibility}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </CardContent>
           </Card>
         </TabsContent>

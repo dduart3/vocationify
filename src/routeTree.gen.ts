@@ -17,6 +17,7 @@ import { Route as authAuthCallbackRouteImport } from './routes/(auth)/auth-callb
 import { Route as AuthenticatedVocationalTestIndexRouteImport } from './routes/_authenticated/vocational-test/index'
 import { Route as AuthenticatedProfileIndexRouteImport } from './routes/_authenticated/profile/index'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard/index'
+import { Route as AuthenticatedVocationalTestResultsSessionIdRouteImport } from './routes/_authenticated/vocational-test/results.$sessionId'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
@@ -60,6 +61,12 @@ const AuthenticatedDashboardIndexRoute =
     path: '/dashboard/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedVocationalTestResultsSessionIdRoute =
+  AuthenticatedVocationalTestResultsSessionIdRouteImport.update({
+    id: '/vocational-test/results/$sessionId',
+    path: '/vocational-test/results/$sessionId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -69,6 +76,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/profile': typeof AuthenticatedProfileIndexRoute
   '/vocational-test': typeof AuthenticatedVocationalTestIndexRoute
+  '/vocational-test/results/$sessionId': typeof AuthenticatedVocationalTestResultsSessionIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -78,6 +86,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/profile': typeof AuthenticatedProfileIndexRoute
   '/vocational-test': typeof AuthenticatedVocationalTestIndexRoute
+  '/vocational-test/results/$sessionId': typeof AuthenticatedVocationalTestResultsSessionIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -89,6 +98,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/_authenticated/profile/': typeof AuthenticatedProfileIndexRoute
   '/_authenticated/vocational-test/': typeof AuthenticatedVocationalTestIndexRoute
+  '/_authenticated/vocational-test/results/$sessionId': typeof AuthenticatedVocationalTestResultsSessionIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -100,6 +110,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/profile'
     | '/vocational-test'
+    | '/vocational-test/results/$sessionId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -109,6 +120,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/profile'
     | '/vocational-test'
+    | '/vocational-test/results/$sessionId'
   id:
     | '__root__'
     | '/'
@@ -119,6 +131,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/'
     | '/_authenticated/profile/'
     | '/_authenticated/vocational-test/'
+    | '/_authenticated/vocational-test/results/$sessionId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -187,6 +200,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/vocational-test/results/$sessionId': {
+      id: '/_authenticated/vocational-test/results/$sessionId'
+      path: '/vocational-test/results/$sessionId'
+      fullPath: '/vocational-test/results/$sessionId'
+      preLoaderRoute: typeof AuthenticatedVocationalTestResultsSessionIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -194,12 +214,15 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
   AuthenticatedProfileIndexRoute: typeof AuthenticatedProfileIndexRoute
   AuthenticatedVocationalTestIndexRoute: typeof AuthenticatedVocationalTestIndexRoute
+  AuthenticatedVocationalTestResultsSessionIdRoute: typeof AuthenticatedVocationalTestResultsSessionIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
   AuthenticatedProfileIndexRoute: AuthenticatedProfileIndexRoute,
   AuthenticatedVocationalTestIndexRoute: AuthenticatedVocationalTestIndexRoute,
+  AuthenticatedVocationalTestResultsSessionIdRoute:
+    AuthenticatedVocationalTestResultsSessionIdRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

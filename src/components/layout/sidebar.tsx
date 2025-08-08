@@ -78,13 +78,17 @@ export function Sidebar() {
         className="flex flex-col py-6 px-3 relative"
         style={{ 
           width: '50px',
-          background: `linear-gradient(90deg, 
-            transparent 50%, 
-            
-            transparent 100%
+          background: `linear-gradient(180deg, 
+            rgba(15, 23, 42, 0.95) 0%, 
+            rgba(30, 41, 59, 0.90) 50%,
+            rgba(15, 23, 42, 0.95) 100%
           )`,
-          backdropFilter: 'blur(12px)',
-          boxShadow: '0 0 50px rgba(0, 0, 0, 0.3)'
+          backdropFilter: 'blur(16px)',
+          border: '1px solid rgba(148, 163, 184, 0.1)',
+          boxShadow: `
+            0 10px 25px -5px rgba(0, 0, 0, 0.4),
+            0 4px 6px -2px rgba(0, 0, 0, 0.2)
+          `
         }}
       >
         {/* Collapsed Logo - Only visible when sidebar is closed */}
@@ -108,27 +112,27 @@ export function Sidebar() {
           </Link>
 
           {/* User Profile */}
-          <div className="flex items-center space-x-3 mb-6 p-2 rounded-lg bg-white/5">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-              <span className="text-white text-xs font-semibold">
-                {(profile?.full_name || user?.email || 'U')[0]?.toUpperCase()}
+          <div className="flex items-center space-x-3 mb-6 p-3 rounded-lg bg-gradient-to-r from-white/10 to-white/5 border border-white/10">
+            <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
+              <span className="text-white text-sm font-semibold">
+                {(profile?.first_name || user?.email || 'U')[0]?.toUpperCase()}
               </span>
             </div>
-            <div className="flex flex-col">
-              <span className="text-xs font-medium text-white">
-                {profile?.full_name || user?.email?.split('@')[0]}
+            <div className="flex flex-col flex-1 min-w-0">
+              <span className="text-sm font-medium text-white truncate">
+                {profile?.first_name || user?.email?.split('@')[0] || 'Usuario'}
               </span>
-              <span className="text-xs text-neutral-400">Estudiante</span>
+              <span className="text-xs text-slate-400">Estudiante</span>
             </div>
           </div>
 
           {/* Navigation */}
           <nav className="flex-1 space-y-1">
             <SidebarLink to="/dashboard" icon={<IconDashboard size={16} />} label="Dashboard" />
-            <SidebarLink to="/evaluaciones" icon={<IconFileText size={16} />} label="Evaluaciones" />
-            <SidebarLink to="/resultados" icon={<IconChartBar size={16} />} label="Resultados" />
-            <SidebarLink to="/carreras" icon={<IconSchool size={16} />} label="Explorar Carreras" />
-            <SidebarLink to="/configuracion" icon={<IconSettings size={16} />} label="Configuración" />
+            <SidebarLink to="/vocational-test" icon={<IconFileText size={16} />} label="Test Vocacional" />
+            <SidebarLink to="/results" icon={<IconChartBar size={16} />} label="Mis Resultados" />
+            <SidebarLink to="/careers" icon={<IconSchool size={16} />} label="Carreras" />
+            <SidebarLink to="/profile" icon={<IconSettings size={16} />} label="Mi Perfil" />
           </nav>
 
           {/* Sign Out */}
@@ -151,10 +155,10 @@ export function Sidebar() {
         style={{ left: '42px' }}
         onMouseEnter={handleMouseEnter}
       >
-        <div className="chevron-arrow p-1 backdrop-blur-sm rounded-full">
+        <div className="chevron-arrow p-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 shadow-lg">
           <IconChevronRight 
-            size={18} 
-            className="text-neutral-300 hover:text-white transition-colors duration-300" 
+            size={16} 
+            className="text-slate-300 hover:text-white transition-colors duration-300" 
           />
         </div>
       </div>
@@ -175,7 +179,7 @@ function SidebarLink({ to, icon, label }: SidebarLinkProps) {
       activeProps={{ 
         className: 'bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white' 
       }}
-      className="flex items-center p-2 rounded-lg text-neutral-300 hover:text-white hover:bg-white/5 transition-all duration-300 group"
+      className="flex items-center p-2 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-all duration-300 group"
     >
       <span className="mr-3 group-hover:scale-110 transition-transform duration-300">
         {icon}
