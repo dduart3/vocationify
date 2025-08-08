@@ -39,11 +39,9 @@ export const useConversationalResults = (sessionId: string, enabled: boolean = t
     queryKey: queryKeys.conversations.results(sessionId),
     queryFn: () => conversationalAPI.getResults(sessionId),
     enabled: enabled && !!sessionId,
-    staleTime: 10 * 1000, // 10 seconds (more frequent updates for conversations)
-    refetchInterval: (data) => {
-      // Keep refetching if conversation is not complete
-      return data?.conversationPhase !== 'complete' ? 5000 : false
-    }
+    staleTime: 5 * 60 * 1000, // 5 minutes (completed results don't change)
+    refetchOnWindowFocus: false, // Don't refetch on window focus
+    refetchInterval: false, // Disable automatic refetching entirely for results page
   })
 }
 

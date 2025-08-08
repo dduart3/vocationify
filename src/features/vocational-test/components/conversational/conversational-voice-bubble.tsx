@@ -142,7 +142,7 @@ export function ConversationalVoiceBubble({ onTestComplete }: ConversationalVoic
   const startListening = () => {
     if (!currentAIResponse) return
     
-    // Check if conversation should complete
+    // Check if conversation should complete (only when truly complete, not during career exploration)
     if (currentAIResponse.nextPhase === 'complete' || sessionResults?.conversationPhase === 'complete') {
       console.log('✅ Conversation complete - final speech finished')
       setState('idle')
@@ -156,6 +156,14 @@ export function ConversationalVoiceBubble({ onTestComplete }: ConversationalVoic
       if (sessionResults?.conversationPhase === 'complete') {
         onTestComplete?.(sessionResults.sessionId)
       }
+      return
+    }
+    
+    // Continue listening for career exploration phase
+    if (currentAIResponse.nextPhase === 'career_exploration' || sessionResults?.conversationPhase === 'career_exploration') {
+      console.log('🎯 Entering career exploration phase - continuing conversation')
+      setState('idle')
+      // Do not navigate away - stay in conversation mode for career exploration
       return
     }
     
@@ -284,6 +292,57 @@ export function ConversationalVoiceBubble({ onTestComplete }: ConversationalVoic
         isSpeaking={tts.isSpeaking}
         sessionResults={sessionResults}
       />
+
+      {/* Completion Check UI - shown when AI suggests finishing */}
+      {currentAIResponse?.intent === 'completion_check' && state === 'idle' && (
+        <div className="mt-8 bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 shadow-xl max-w-md">
+          <div className="text-center space-y-4">
+            <h3 className="text-white font-semibold text-lg">
+              ¿Qué te gustaría hacer?
+            </h3>
+            <div className="space-y-3">
+              <button
+                onClick={async () => {
+                  // Send confirmation message to complete
+                  setState('thinking')
+                  try {
+                    const response = await sendMessage.mutateAsync({
+                      sessionId: sessionId!,
+                      message: 'Ver resultados finales'
+                    })
+                    setCurrentAIResponse(response)
+                  } catch (error) {
+                    console.error('❌ Error sending completion confirmation:', error)
+                    setState('idle')
+                  }
+                }}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-xl transition-colors"
+              >
+                Ver resultados finales
+              </button>
+              <button
+                onClick={async () => {
+                  // Send message to continue exploring
+                  setState('thinking')
+                  try {
+                    const response = await sendMessage.mutateAsync({
+                      sessionId: sessionId!,
+                      message: 'Explorar más carreras'
+                    })
+                    setCurrentAIResponse(response)
+                  } catch (error) {
+                    console.error('❌ Error sending continue message:', error)
+                    setState('idle')
+                  }
+                }}
+                className="w-full bg-white/20 hover:bg-white/30 text-white font-medium py-3 px-4 rounded-xl transition-colors border border-white/30"
+              >
+                Explorar más carreras
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

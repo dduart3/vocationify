@@ -93,7 +93,7 @@ export interface ConversationalSession {
 
 export interface ConversationResponse {
   message: string
-  intent: 'question' | 'clarification' | 'assessment' | 'recommendation' | 'farewell'
+  intent: 'question' | 'clarification' | 'assessment' | 'recommendation' | 'completion_check' | 'farewell'
   suggestedFollowUp?: string[]
   riasecAssessment?: {
     scores: {
@@ -113,7 +113,7 @@ export interface ConversationResponse {
     confidence: number
     reasoning: string
   }>
-  nextPhase?: 'greeting' | 'exploration' | 'assessment' | 'recommendation' | 'complete'
+  nextPhase?: 'greeting' | 'exploration' | 'assessment' | 'recommendation' | 'career_exploration' | 'complete'
 }
 
 export interface SessionResults {
@@ -127,7 +127,7 @@ export interface SessionResults {
     C: number
   }
   confidenceLevel: number
-  conversationPhase: 'greeting' | 'exploration' | 'assessment' | 'recommendation' | 'complete'
+  conversationPhase: 'greeting' | 'exploration' | 'assessment' | 'recommendation' | 'career_exploration' | 'complete'
   careerRecommendations: Array<{
     career_id: string
     confidence: number
