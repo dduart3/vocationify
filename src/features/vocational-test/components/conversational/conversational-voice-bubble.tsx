@@ -162,7 +162,7 @@ export function ConversationalVoiceBubble({ onTestComplete }: ConversationalVoic
     // Continue listening for career exploration phase
     if (currentAIResponse.nextPhase === 'career_exploration' || sessionResults?.conversationPhase === 'career_exploration') {
       console.log('🎯 Entering career exploration phase - continuing conversation')
-      setState('idle')
+      setState('listening')
       // Do not navigate away - stay in conversation mode for career exploration
       return
     }
@@ -292,6 +292,76 @@ export function ConversationalVoiceBubble({ onTestComplete }: ConversationalVoic
         isSpeaking={tts.isSpeaking}
         sessionResults={sessionResults}
       />
+
+      {/* Career Exploration UI - shown when AI provides career recommendations */}
+      {currentAIResponse?.intent === 'recommendation' && currentAIResponse?.nextPhase === 'career_exploration' && (state === 'idle' || state === 'listening') && (
+        <div className="mt-8 bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 shadow-xl max-w-md">
+          <div className="text-center space-y-4">
+            <h3 className="text-white font-semibold text-lg">
+              ¿Qué te gustaría hacer ahora?
+            </h3>
+            <div className="space-y-3">
+              <button
+                onClick={async () => {
+                  setState('thinking')
+                  try {
+                    const response = await sendMessage.mutateAsync({
+                      sessionId: sessionId!,
+                      message: '¿Podrías contarme más detalles sobre estas carreras? Me interesa saber sobre el campo laboral y las oportunidades.'
+                    })
+                    setCurrentAIResponse(response)
+                  } catch (error) {
+                    console.error('❌ Error sending career exploration message:', error)
+                    setState('listening')
+                  }
+                }}
+                className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded-xl transition-colors"
+              >
+                Conocer más sobre estas carreras
+              </button>
+              <button
+                onClick={async () => {
+                  setState('thinking')
+                  try {
+                    const response = await sendMessage.mutateAsync({
+                      sessionId: sessionId!,
+                      message: '¿Podrías sugerirme otras carreras alternativas que también podrían interesarme?'
+                    })
+                    setCurrentAIResponse(response)
+                  } catch (error) {
+                    console.error('❌ Error sending alternative careers message:', error)
+                    setState('listening')
+                  }
+                }}
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-4 rounded-xl transition-colors"
+              >
+                Ver otras opciones
+              </button>
+              <button
+                onClick={async () => {
+                  setState('thinking')
+                  try {
+                    const response = await sendMessage.mutateAsync({
+                      sessionId: sessionId!,
+                      message: 'Estoy satisfecho con estas recomendaciones. Me gustaría ver los resultados finales.'
+                    })
+                    setCurrentAIResponse(response)
+                  } catch (error) {
+                    console.error('❌ Error sending completion message:', error)
+                    setState('listening')
+                  }
+                }}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-xl transition-colors"
+              >
+                Ver resultados finales
+              </button>
+            </div>
+            <p className="text-sm text-white/70 mt-4">
+              También puedes hacer cualquier pregunta hablando naturalmente
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Completion Check UI - shown when AI suggests finishing */}
       {currentAIResponse?.intent === 'completion_check' && state === 'idle' && (
