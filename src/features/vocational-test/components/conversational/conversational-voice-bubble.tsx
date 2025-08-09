@@ -7,6 +7,7 @@ import type { ConversationResponse } from '../../types'
 import { VoiceBubbleCore } from './voice-bubble-core'
 import { VoiceBubbleParticleSystem } from './voice-bubble-particle-system'
 import { VoiceBubbleStatusDisplay } from './voice-bubble-status-display'
+import { CareerRecommendationsDisplay } from './career-recommendations-display'
 import { useSpeechRecognition } from '../../hooks/use-speech-recognition'
 import { useAudioVisualization, useMorphAnimation } from './voice-bubble-hooks'
 import { getStateStyles } from './voice-bubble-styles'
@@ -292,6 +293,11 @@ export function ConversationalVoiceBubble({ onTestComplete }: ConversationalVoic
         isSpeaking={tts.isSpeaking}
         sessionResults={sessionResults}
       />
+
+      {/* Career Recommendations Display */}
+      {currentAIResponse?.intent === 'recommendation' && currentAIResponse?.careerSuggestions && (
+        <CareerRecommendationsDisplay careerSuggestions={currentAIResponse.careerSuggestions} />
+      )}
 
       {/* Career Exploration UI - shown when AI provides career recommendations */}
       {currentAIResponse?.intent === 'recommendation' && currentAIResponse?.nextPhase === 'career_exploration' && (state === 'idle' || state === 'listening') && (
