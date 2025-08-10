@@ -288,12 +288,24 @@ export function ConversationalVoiceBubble({ onTestComplete }: ConversationalVoic
 
       {/* Career Exploration UI - shown when AI provides career recommendations - STICKY AT BOTTOM */}
       {currentAIResponse?.intent === 'recommendation' && currentAIResponse?.nextPhase === 'career_exploration' && (state === 'idle' || state === 'listening') && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-black/80 backdrop-blur-md border-t border-white/20">
-          <div className="max-w-md mx-auto text-center space-y-4">
-            <h3 className="text-white font-semibold text-lg">
+        <div 
+          className="fixed bottom-0 left-0 right-0 z-50 p-4"
+          style={{
+            background: `
+              linear-gradient(135deg, 
+                rgba(0, 0, 0, 0.8) 0%, 
+                rgba(0, 0, 0, 0.6) 100%
+              )
+            `,
+            backdropFilter: 'blur(20px)',
+            borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+          }}
+        >
+          <div className="max-w-4xl mx-auto text-center space-y-3">
+            <h3 className="text-white font-semibold text-sm">
               ¿Qué te gustaría hacer ahora?
             </h3>
-            <div className="space-y-3">
+            <div className="flex flex-wrap gap-3 justify-center">
               <button
                 onClick={async () => {
                   setState('thinking')
@@ -308,9 +320,9 @@ export function ConversationalVoiceBubble({ onTestComplete }: ConversationalVoic
                     setState('listening')
                   }
                 }}
-                className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded-xl transition-colors"
+                className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm"
               >
-                Conocer más sobre estas carreras
+                Conocer más detalles
               </button>
               <button
                 onClick={async () => {
@@ -326,7 +338,7 @@ export function ConversationalVoiceBubble({ onTestComplete }: ConversationalVoic
                     setState('listening')
                   }
                 }}
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-4 rounded-xl transition-colors"
+                className="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm"
               >
                 Ver otras opciones
               </button>
@@ -344,7 +356,7 @@ export function ConversationalVoiceBubble({ onTestComplete }: ConversationalVoic
                     setState('listening')
                   }
                 }}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-xl transition-colors"
+                className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm"
               >
                 Ver resultados finales
               </button>
@@ -358,12 +370,24 @@ export function ConversationalVoiceBubble({ onTestComplete }: ConversationalVoic
 
       {/* Completion Check UI - shown when AI suggests finishing - STICKY AT BOTTOM */}
       {currentAIResponse?.intent === 'completion_check' && state === 'idle' && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-black/80 backdrop-blur-md border-t border-white/20">
-          <div className="max-w-md mx-auto text-center space-y-4">
-            <h3 className="text-white font-semibold text-lg">
+        <div 
+          className="fixed bottom-0 left-0 right-0 z-50 p-4"
+          style={{
+            background: `
+              linear-gradient(135deg, 
+                rgba(0, 0, 0, 0.8) 0%, 
+                rgba(0, 0, 0, 0.6) 100%
+              )
+            `,
+            backdropFilter: 'blur(20px)',
+            borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+          }}
+        >
+          <div className="max-w-4xl mx-auto text-center space-y-3">
+            <h3 className="text-white font-semibold text-sm">
               ¿Qué te gustaría hacer?
             </h3>
-            <div className="space-y-3">
+            <div className="flex flex-wrap gap-3 justify-center">
               <button
                 onClick={async () => {
                   // Send confirmation message to complete
@@ -379,7 +403,7 @@ export function ConversationalVoiceBubble({ onTestComplete }: ConversationalVoic
                     setState('idle')
                   }
                 }}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-xl transition-colors"
+                className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm"
               >
                 Ver resultados finales
               </button>
@@ -398,7 +422,7 @@ export function ConversationalVoiceBubble({ onTestComplete }: ConversationalVoic
                     setState('idle')
                   }
                 }}
-                className="w-full bg-white/20 hover:bg-white/30 text-white font-medium py-3 px-4 rounded-xl transition-colors border border-white/30"
+                className="bg-white/20 hover:bg-white/30 text-white font-medium py-2 px-4 rounded-lg transition-colors border border-white/30 text-sm"
               >
                 Explorar más carreras
               </button>
