@@ -145,18 +145,21 @@ export function ConversationalVoiceBubble({ onTestComplete }: ConversationalVoic
     
     // Check if conversation should complete (only when truly complete, not during career exploration)
     if (currentAIResponse.nextPhase === 'complete' || sessionResults?.conversationPhase === 'complete') {
-      console.log('✅ Conversation complete - final speech finished')
-      setState('idle')
-      // Navigate to results page
-      if (sessionResults?.sessionId || sessionId) {
-        const resultSessionId = sessionResults?.sessionId || sessionId!
-        console.log('🔄 Navigating to results page:', resultSessionId)
-        navigate({ to: '/vocational-test/results/$sessionId', params: { sessionId: resultSessionId } })
-      }
-      // Also trigger completion callback for backward compatibility
-      if (sessionResults?.conversationPhase === 'complete') {
-        onTestComplete?.(sessionResults.sessionId)
-      }
+      console.log('✅ Conversation complete - showing final recommendations')
+      setState('results-display')
+      
+      // Give time to show the podium animation, then navigate to results page
+      setTimeout(() => {
+        if (sessionResults?.sessionId || sessionId) {
+          const resultSessionId = sessionResults?.sessionId || sessionId!
+          console.log('🔄 Navigating to results page after podium display:', resultSessionId)
+          navigate({ to: '/vocational-test/results/$sessionId', params: { sessionId: resultSessionId } })
+        }
+        // Also trigger completion callback for backward compatibility
+        if (sessionResults?.conversationPhase === 'complete') {
+          onTestComplete?.(sessionResults.sessionId)
+        }
+      }, 8000) // 8 seconds to enjoy the podium animation
       return
     }
     
@@ -255,17 +258,15 @@ export function ConversationalVoiceBubble({ onTestComplete }: ConversationalVoic
   // Check for conversation completion - but let final speech finish first
   useEffect(() => {
     if (sessionResults?.conversationPhase === 'complete' && state !== 'speaking') {
-      // Only complete if we're not currently speaking
-      setState('idle')
-      // Navigate to results page
-      console.log('🔄 Navigating to results page from useEffect:', sessionResults.sessionId)
-      navigate({ to: '/vocational-test/results/$sessionId', params: { sessionId: sessionResults.sessionId } })
+      // Only complete if we're not currently speaking - NO AUTO REDIRECT
+      setState('complete')
+      console.log('🏁 Conversation completed - showing results without redirect')
       onTestComplete?.(sessionResults.sessionId)
     } else if (sessionResults?.conversationPhase === 'complete' && state === 'speaking') {
       // If we're speaking when completion is detected, wait for speech to finish
       console.log('🏁 Conversation complete but ARIA is still speaking - will complete after speech')
     }
-  }, [sessionResults, onTestComplete, state, navigate])
+  }, [sessionResults, onTestComplete, state])
 
   return (
     <div className="relative flex flex-col items-center space-y-12 py-8">
@@ -294,8 +295,8 @@ export function ConversationalVoiceBubble({ onTestComplete }: ConversationalVoic
         sessionResults={sessionResults}
       />
 
-      {/* Career Recommendations Display */}
-      {currentAIResponse?.intent === 'recommendation' && currentAIResponse?.careerSuggestions && (
+      {/* Career Recommendations Display - Show during recommendations or final completion */}
+      {currentAIResponse?.careerSuggestions && (currentAIResponse?.intent === 'recommendation' || currentAIResponse?.nextPhase === 'complete' || state === 'results-display') && (
         <CareerRecommendationsDisplay careerSuggestions={currentAIResponse.careerSuggestions} />
       )}
 

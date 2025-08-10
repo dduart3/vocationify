@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedPodiumTestRouteImport } from './routes/_authenticated/podium-test'
 import { Route as authRegisterRouteImport } from './routes/(auth)/register'
 import { Route as authLoginRouteImport } from './routes/(auth)/login'
 import { Route as authAuthCallbackRouteImport } from './routes/(auth)/auth-callback'
@@ -27,6 +28,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedPodiumTestRoute = AuthenticatedPodiumTestRouteImport.update({
+  id: '/podium-test',
+  path: '/podium-test',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const authRegisterRoute = authRegisterRouteImport.update({
   id: '/(auth)/register',
@@ -73,6 +79,7 @@ export interface FileRoutesByFullPath {
   '/auth-callback': typeof authAuthCallbackRoute
   '/login': typeof authLoginRoute
   '/register': typeof authRegisterRoute
+  '/podium-test': typeof AuthenticatedPodiumTestRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/profile': typeof AuthenticatedProfileIndexRoute
   '/vocational-test': typeof AuthenticatedVocationalTestIndexRoute
@@ -83,6 +90,7 @@ export interface FileRoutesByTo {
   '/auth-callback': typeof authAuthCallbackRoute
   '/login': typeof authLoginRoute
   '/register': typeof authRegisterRoute
+  '/podium-test': typeof AuthenticatedPodiumTestRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/profile': typeof AuthenticatedProfileIndexRoute
   '/vocational-test': typeof AuthenticatedVocationalTestIndexRoute
@@ -95,6 +103,7 @@ export interface FileRoutesById {
   '/(auth)/auth-callback': typeof authAuthCallbackRoute
   '/(auth)/login': typeof authLoginRoute
   '/(auth)/register': typeof authRegisterRoute
+  '/_authenticated/podium-test': typeof AuthenticatedPodiumTestRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/_authenticated/profile/': typeof AuthenticatedProfileIndexRoute
   '/_authenticated/vocational-test/': typeof AuthenticatedVocationalTestIndexRoute
@@ -107,6 +116,7 @@ export interface FileRouteTypes {
     | '/auth-callback'
     | '/login'
     | '/register'
+    | '/podium-test'
     | '/dashboard'
     | '/profile'
     | '/vocational-test'
@@ -117,6 +127,7 @@ export interface FileRouteTypes {
     | '/auth-callback'
     | '/login'
     | '/register'
+    | '/podium-test'
     | '/dashboard'
     | '/profile'
     | '/vocational-test'
@@ -128,6 +139,7 @@ export interface FileRouteTypes {
     | '/(auth)/auth-callback'
     | '/(auth)/login'
     | '/(auth)/register'
+    | '/_authenticated/podium-test'
     | '/_authenticated/dashboard/'
     | '/_authenticated/profile/'
     | '/_authenticated/vocational-test/'
@@ -157,6 +169,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/podium-test': {
+      id: '/_authenticated/podium-test'
+      path: '/podium-test'
+      fullPath: '/podium-test'
+      preLoaderRoute: typeof AuthenticatedPodiumTestRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/(auth)/register': {
       id: '/(auth)/register'
@@ -211,6 +230,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedPodiumTestRoute: typeof AuthenticatedPodiumTestRoute
   AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
   AuthenticatedProfileIndexRoute: typeof AuthenticatedProfileIndexRoute
   AuthenticatedVocationalTestIndexRoute: typeof AuthenticatedVocationalTestIndexRoute
@@ -218,6 +238,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedPodiumTestRoute: AuthenticatedPodiumTestRoute,
   AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
   AuthenticatedProfileIndexRoute: AuthenticatedProfileIndexRoute,
   AuthenticatedVocationalTestIndexRoute: AuthenticatedVocationalTestIndexRoute,

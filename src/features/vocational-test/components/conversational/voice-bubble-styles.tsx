@@ -90,6 +90,29 @@ export function getStateStyles(state: ConversationalBubbleState, audioLevel: num
         `,
         border: '2px solid rgba(147, 51, 234, 0.3)',
       }
+    case 'results-display':
+      return {
+        background: `
+          radial-gradient(circle at 50% 50%, 
+            rgba(34, 197, 94, 0.4) 0%, 
+            rgba(16, 185, 129, 0.3) 25%,
+            rgba(59, 130, 246, 0.2) 50%,
+            rgba(147, 51, 234, 0.1) 75%,
+            transparent 100%
+          ),
+          linear-gradient(135deg, 
+            rgba(255, 255, 255, 0.2) 0%, 
+            rgba(255, 255, 255, 0.05) 100%
+          )
+        `,
+        boxShadow: `
+          0 0 100px rgba(34, 197, 94, 0.5),
+          0 0 150px rgba(16, 185, 129, 0.4),
+          0 0 200px rgba(59, 130, 246, 0.3),
+          inset 0 2px 0 rgba(255, 255, 255, 0.3)
+        `,
+        border: '2px solid rgba(34, 197, 94, 0.4)',
+      }
     default:
       return {
         background: `

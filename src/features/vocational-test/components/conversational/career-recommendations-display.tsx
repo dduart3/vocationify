@@ -1,4 +1,16 @@
-import { GraduationCap, TrendingUp, Info, Trophy, Medal, Award } from 'lucide-react'
+import { GraduationCap, TrendingUp, Info, Trophy, Medal, Award, Eye, X, Star, Sparkles } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { gsap } from 'gsap'
+
+// Try to import ScrollTrigger - fallback if not available
+let ScrollTrigger: any = null
+try {
+  const ScrollTriggerModule = require('gsap/ScrollTrigger')
+  ScrollTrigger = ScrollTriggerModule.ScrollTrigger
+  gsap.registerPlugin(ScrollTrigger)
+} catch (e) {
+  console.log('ScrollTrigger not available, using intersection observer fallback')
+}
 
 interface CareerSuggestion {
   careerId: string
@@ -14,23 +26,23 @@ interface CareerRecommendationsDisplayProps {
 // Get badge styles based on ranking
 const getBadgeStyles = (index: number) => {
   switch (index) {
-    case 0: // First place - Green
-      return {
-        badge: "bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg shadow-green-500/25",
-        icon: Trophy,
-        ring: "ring-1 ring-green-400/20"
-      }
-    case 1: // Second place - Blue
-      return {
-        badge: "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg shadow-blue-500/25",
-        icon: Medal,
-        ring: "ring-2 ring-blue-400/50"
-      }
-    case 2: // Third place - Yellow/Gold
+    case 0: // First place - Gold
       return {
         badge: "bg-gradient-to-r from-yellow-500 to-amber-500 text-white shadow-lg shadow-yellow-500/25",
+        icon: Trophy,
+        ring: "ring-1 ring-yellow-400/20"
+      }
+    case 1: // Second place - Silver
+      return {
+        badge: "bg-gradient-to-r from-slate-400 to-gray-500 text-white shadow-lg shadow-slate-500/25",
+        icon: Medal,
+        ring: "ring-2 ring-slate-400/50"
+      }
+    case 2: // Third place - Bronze
+      return {
+        badge: "bg-gradient-to-r from-orange-600 to-amber-700 text-white shadow-lg shadow-orange-600/25",
         icon: Award,
-        ring: "ring-2 ring-yellow-400/50"
+        ring: "ring-2 ring-orange-500/50"
       }
     default: // Fourth+ - Purple
       return {
@@ -49,42 +61,274 @@ const getConfidenceBadgeStyle = (confidence: number) => {
   return "bg-gray-500/10 backdrop-blur-sm text-gray-300"
 }
 
+
 export function CareerRecommendationsDisplay({ careerSuggestions }: CareerRecommendationsDisplayProps) {
+  const podiumRef = useRef<HTMLDivElement>(null)
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([])
+  const [selectedCareer, setSelectedCareer] = useState<{ career: CareerSuggestion; rank: string } | null>(null)
+  
+  useEffect(() => {
+    if (!podiumRef.current || careerSuggestions.length < 3) return
+
+    // Set initial state - cards start from ground level
+    gsap.set(cardRefs.current, { y: 200, opacity: 0 })
+
+    if (ScrollTrigger) {
+      // Use ScrollTrigger if available
+      console.log('Using ScrollTrigger')
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: podiumRef.current,
+          start: "top 80%",
+          toggleActions: "play none none reverse",
+          once: false,
+          markers: true
+        }
+      })
+      
+      // Animation sequence
+      tl.to(cardRefs.current[2], { y: 0, opacity: 1, duration: 1, ease: 'power2.out' })
+        .to(cardRefs.current[1], { y: 0, opacity: 1, duration: 1.2, ease: 'power2.out' }, '-=0.7')
+        .to(cardRefs.current[0], { y: 0, opacity: 1, duration: 1.5, ease: 'back.out(1.7)' }, '-=0.9')
+        .to(cardRefs.current, { x: '+=3', duration: 0.1, yoyo: true, repeat: 3, ease: 'power2.inOut' }, '+=0.2')
+
+      return () => {
+        ScrollTrigger.getAll().forEach((trigger: any) => trigger.kill())
+      }
+    } else {
+      // Fallback: Use Intersection Observer
+      console.log('Using Intersection Observer fallback')
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              // Animate podium blocks rising
+              const tl = gsap.timeline()
+              tl.to(cardRefs.current[2], { y: 0, opacity: 1, duration: 1, ease: 'power2.out' })
+                .to(cardRefs.current[1], { y: 0, opacity: 1, duration: 1.2, ease: 'power2.out' }, '-=0.7')
+                .to(cardRefs.current[0], { y: 0, opacity: 1, duration: 1.5, ease: 'back.out(1.7)' }, '-=0.9')
+                .to(cardRefs.current, { x: '+=3', duration: 0.1, yoyo: true, repeat: 3, ease: 'power2.inOut' }, '+=0.2')
+            }
+          })
+        },
+        { threshold: 0.3 }
+      )
+
+      observer.observe(podiumRef.current)
+
+      return () => {
+        observer.disconnect()
+      }
+    }
+  }, [careerSuggestions])
+
   if (!careerSuggestions?.length) return null
 
-  // Helper function to render podium cards
-  const renderPodiumCard = (career: CareerSuggestion, index: number, heightClass: string) => {
-    const badgeStyle = getBadgeStyles(index)
-    const BadgeIcon = badgeStyle.icon
-    const confidenceStyle = getConfidenceBadgeStyle(career.confidence)
-    
+  // Render single connected podium with text inside blocks and proper medal colors
+  const renderUnifiedPodium = () => {
     return (
-      <div key={career.careerId} className={`flex-1 ${heightClass} flex flex-col justify-end min-w-0 max-w-sm mx-3`}>
-        <div className="bg-white/8 backdrop-blur-xl rounded-3xl p-6 shadow-2xl hover:bg-white/12 transition-all duration-300 hover:scale-105 h-full flex flex-col">
-          {/* Badge */}
-          <div className="text-center mb-4">
-            <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full ${badgeStyle.badge} font-bold text-sm shadow-xl`}>
-              <BadgeIcon className="w-5 h-5" />
-              {index === 0 ? 'CAMPEÓN' : index === 1 ? '2° LUGAR' : '3° LUGAR'}
+      <div className="flex items-end  justify-center max-w-6xl mx-auto">
+        {/* 2nd Place Block - Left - Silver */}
+        <div 
+          ref={(el) => cardRefs.current[1] = el}
+          className="w-80 h-96 shadow-2xl flex flex-col justify-center items-center p-6 text-center relative overflow-hidden border-2 rounded-t-2xl"
+          style={{
+            background: 'linear-gradient(to top, var(--silver-900), var(--silver-700), var(--silver-500))',
+            borderColor: 'var(--silver-900)',
+          }}
+        >
+          {/* Silver metallic overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-white/10 to-white/5"></div>
+          
+          {/* Decorative Elements */}
+          <div className="absolute top-4 left-4 w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">
+            <div className="w-3 h-3 bg-silver-300 rounded-full"></div>
+          </div>
+          <div className="absolute top-4 right-4 w-6 h-6 bg-white/5 rounded-full"></div>
+          <div className="absolute bottom-4 left-4 w-4 h-4 bg-white/10 rotate-45"></div>
+          <div className="absolute bottom-6 right-6 w-2 h-2 bg-silver-400 rounded-full"></div>
+          
+          {/* Subtle pattern overlay */}
+          <div className="absolute inset-0 opacity-10" style={{
+            backgroundImage: 'radial-gradient(circle at 25% 25%, white 1px, transparent 1px), radial-gradient(circle at 75% 75%, white 1px, transparent 1px)',
+            backgroundSize: '20px 20px'
+          }}></div>
+          
+          <div className="relative z-10 flex flex-col items-center space-y-4">
+            {/* Medal Badge */}
+            <div 
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-black font-bold text-sm shadow-xl"
+              style={{ background: 'linear-gradient(135deg, var(--silver-300), var(--silver-500))' }}
+            >
+              <Medal className="w-4 h-4" />
+              SEGUNDA
             </div>
+            
+            {/* Career Name */}
+            <h3 className="text-white font-semibold text-xl leading-tight px-4 text-center" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
+              {careerSuggestions[1]?.name}
+            </h3>
+            
+            {/* Confidence */}
+            <div 
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-sm text-white font-semibold text-base shadow-lg"
+              style={{
+                backgroundColor: careerSuggestions[1]?.confidence >= 85 ? 'rgba(6, 95, 70, 0.4)' : 
+                                careerSuggestions[1]?.confidence >= 75 ? 'rgba(30, 64, 175, 0.4)' :
+                                careerSuggestions[1]?.confidence >= 65 ? 'rgba(180, 83, 9, 0.4)' : 'rgba(55, 65, 81, 0.4)'
+              }}
+            >
+              <TrendingUp className="w-4 h-4" />
+              {careerSuggestions[1]?.confidence}%
+            </div>
+
+            {/* View Details Button */}
+            <button
+              onClick={() => setSelectedCareer({ career: careerSuggestions[1], rank: 'SEGUNDA' })}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white font-medium text-base transition-all hover:scale-105"
+            >
+              <Eye className="w-4 h-4" />
+              Ver detalles
+            </button>
           </div>
+        </div>
+
+        {/* 1st Place Block - Center - Gold */}
+        <div 
+          ref={(el) => cardRefs.current[0] = el}
+          className="w-80 shadow-2xl flex flex-col justify-center items-center p-8 text-center relative overflow-hidden border-2 rounded-t-2xl"
+          style={{
+            height: '32rem',
+            background: 'linear-gradient(to top, var(--gold-800), var(--gold-600), var(--gold-400))',
+            borderColor: 'var(--gold-900)',
+          }}
+        >
+          {/* Gold metallic overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-white/10 to-white/5"></div>
           
-          {/* Career name */}
-          <h4 className="text-white font-bold text-center mb-4 leading-tight text-xl">
-            {career.name}
-          </h4>
-          
-          {/* Confidence */}
-          <div className={`flex items-center justify-center gap-2 px-3 py-2 rounded-full ${confidenceStyle} font-semibold text-sm mb-4 self-center`}>
-            <TrendingUp className="w-4 h-4" />
-            {career.confidence}%
+          {/* Champion Crown Elements */}
+          <div className="absolute top-6 left-6 w-10 h-10 bg-white/15 rounded-full flex items-center justify-center">
+            <Star className="w-4 h-4 text-gold-200" />
           </div>
+          <div className="absolute top-6 right-6 w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">
+            <Sparkles className="w-3 h-3 text-white/60" />
+          </div>
+          <div className="absolute top-16 left-1/2 transform -translate-x-1/2 w-6 h-6 bg-white/15 rotate-45"></div>
           
-          {/* Reasoning */}
-          <div className="bg-white/3 backdrop-blur-sm rounded-2xl p-4 flex-1 flex items-center">
-            <p className="text-white/90 text-sm leading-relaxed text-center">
-              {career.reasoning}
-            </p>
+          {/* Victory laurels */}
+          <div className="absolute bottom-8 left-6 w-6 h-6 bg-white/10 rounded-full"></div>
+          <div className="absolute bottom-8 right-6 w-4 h-4 bg-gold-300 rounded-full"></div>
+          <div className="absolute bottom-16 left-8 w-3 h-3 bg-white/15 rotate-45"></div>
+          <div className="absolute bottom-16 right-8 w-3 h-3 bg-white/15 rotate-45"></div>
+          
+          {/* Premium pattern overlay */}
+          <div className="absolute inset-0 opacity-15" style={{
+            backgroundImage: 'radial-gradient(circle at 30% 30%, white 1.5px, transparent 1.5px), radial-gradient(circle at 70% 70%, white 1.5px, transparent 1.5px)',
+            backgroundSize: '30px 30px'
+          }}></div>
+          
+          <div className="relative z-10 flex flex-col items-center space-y-6">
+            {/* Crown/Trophy Badge */}
+            <div 
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-black font-bold text-lg shadow-xl"
+              style={{ background: 'linear-gradient(135deg, var(--gold-200), var(--gold-400))' }}
+            >
+              <Trophy className="w-5 h-5" />
+              CAMPEÓN
+            </div>
+            
+            {/* Career Name */}
+            <h3 className="text-white font-semibold text-2xl leading-tight px-4 text-center" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
+              {careerSuggestions[0]?.name}
+            </h3>
+            
+            {/* Confidence */}
+            <div 
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-sm text-white font-semibold text-base shadow-lg"
+              style={{
+                backgroundColor: careerSuggestions[0]?.confidence >= 85 ? 'rgba(6, 95, 70, 0.4)' : 
+                                careerSuggestions[0]?.confidence >= 75 ? 'rgba(30, 64, 175, 0.4)' :
+                                careerSuggestions[0]?.confidence >= 65 ? 'rgba(180, 83, 9, 0.4)' : 'rgba(55, 65, 81, 0.4)'
+              }}
+            >
+              <TrendingUp className="w-4 h-4" />
+              {careerSuggestions[0]?.confidence}%
+            </div>
+
+            {/* View Details Button */}
+            <button
+              onClick={() => setSelectedCareer({ career: careerSuggestions[0], rank: 'CAMPEÓN' })}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white font-medium text-base transition-all hover:scale-105"
+            >
+              <Eye className="w-4 h-4" />
+              Ver detalles
+            </button>
+          </div>
+        </div>
+
+        {/* 3rd Place Block - Right - Bronze */}
+        <div 
+          ref={(el) => cardRefs.current[2] = el}
+          className="w-80 h-80 shadow-2xl flex flex-col justify-center items-center p-6 text-center relative overflow-hidden border-2 rounded-t-2xl"
+          style={{
+            background: 'linear-gradient(to top, var(--bronze-900), var(--bronze-700), var(--bronze-500))',
+            borderColor: 'var(--bronze-900)',
+          }}
+        >
+          {/* Bronze metallic overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-white/10 to-white/5"></div>
+          
+          {/* Bronze Decorative Elements */}
+          <div className="absolute top-4 left-4 w-7 h-7 bg-white/12 rounded-full flex items-center justify-center">
+            <div className="w-3 h-3 bg-bronze-300 rounded-full"></div>
+          </div>
+          <div className="absolute top-4 right-4 w-5 h-5 bg-white/8 rounded-full"></div>
+          <div className="absolute bottom-4 left-4 w-4 h-4 bg-white/12 rotate-45"></div>
+          <div className="absolute bottom-6 right-6 w-3 h-3 bg-bronze-400 rounded-full"></div>
+          <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-white/15 rounded-full"></div>
+          
+          {/* Achievement pattern */}
+          <div className="absolute inset-0 opacity-12" style={{
+            backgroundImage: 'radial-gradient(circle at 20% 80%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px)',
+            backgroundSize: '25px 25px'
+          }}></div>
+          
+          <div className="relative z-10 flex flex-col items-center space-y-4">
+            {/* Medal Badge */}
+            <div 
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-black font-bold text-sm shadow-xl"
+              style={{ background: 'linear-gradient(135deg, var(--bronze-300), var(--bronze-500))' }}
+            >
+              <Award className="w-4 h-4" />
+              TERCERA
+            </div>
+            
+            {/* Career Name */}
+            <h3 className="text-white font-semibold text-xl leading-tight px-4 text-center" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
+              {careerSuggestions[2]?.name}
+            </h3>
+            
+            {/* Confidence */}
+            <div 
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-sm text-white font-semibold text-base shadow-lg"
+              style={{
+                backgroundColor: careerSuggestions[2]?.confidence >= 85 ? 'rgba(6, 95, 70, 0.4)' : 
+                                careerSuggestions[2]?.confidence >= 75 ? 'rgba(30, 64, 175, 0.4)' :
+                                careerSuggestions[2]?.confidence >= 65 ? 'rgba(180, 83, 9, 0.4)' : 'rgba(55, 65, 81, 0.4)'
+              }}
+            >
+              <TrendingUp className="w-4 h-4" />
+              {careerSuggestions[2]?.confidence}%
+            </div>
+
+            {/* View Details Button */}
+            <button
+              onClick={() => setSelectedCareer({ career: careerSuggestions[2], rank: 'TERCERA' })}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white font-medium text-base transition-all hover:scale-105"
+            >
+              <Eye className="w-4 h-4" />
+              Ver detalles
+            </button>
           </div>
         </div>
       </div>
@@ -154,19 +398,15 @@ export function CareerRecommendationsDisplay({ careerSuggestions }: CareerRecomm
         </div>
       </div>
       
-      {/* Podium Layout - First 3 careers */}
+      {/* Olympic Podium Layout - First 3 careers */}
       {careerSuggestions.length >= 3 ? (
         <>
-          {/* Olympic Podium Style - 2nd, 1st, 3rd arrangement */}
-          <div className="hidden md:flex items-end justify-center gap-6 mb-12 max-w-6xl mx-auto px-8 py-4">
-            {/* 2nd Place - Left side, shorter */}
-            {renderPodiumCard(careerSuggestions[1], 1, 'h-80')}
-            
-            {/* 1st Place - Center, tallest */}
-            {renderPodiumCard(careerSuggestions[0], 0, 'h-96')}
-            
-            {/* 3rd Place - Right side, shortest */}
-            {renderPodiumCard(careerSuggestions[2], 2, 'h-72')}
+          {/* Single Connected Olympic Podium */}
+          <div 
+            ref={podiumRef}
+            className="hidden md:block mb-12 px-4 py-8"
+          >
+            {renderUnifiedPodium()}
           </div>
           
           {/* Mobile/tablet fallback - vertical stack */}
@@ -214,6 +454,84 @@ export function CareerRecommendationsDisplay({ careerSuggestions }: CareerRecomm
           </div>
         </div>
       </div>
+
+      {/* Career Details Modal */}
+      {selectedCareer && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div 
+            className="backdrop-blur-xl rounded-3xl max-w-2xl w-full max-h-[80vh] overflow-auto relative shadow-2xl"
+            style={{
+              background: selectedCareer.rank === 'CAMPEÓN' 
+                ? 'linear-gradient(135deg, rgba(125, 99, 21, 0.95), rgba(184, 148, 31, 0.95), rgba(255, 204, 51, 0.95))'
+                : selectedCareer.rank === 'SEGUNDA'
+                ? 'linear-gradient(135deg, rgba(92, 92, 92, 0.95), rgba(143, 143, 143, 0.95), rgba(192, 192, 192, 0.95))'
+                : 'linear-gradient(135deg, rgba(117, 51, 25, 0.95), rgba(162, 84, 37, 0.95), rgba(205, 127, 50, 0.95))'
+            }}
+          >
+            
+            {/* Close Button */}
+            <button
+              onClick={() => setSelectedCareer(null)}
+              className="absolute top-4 right-4 z-10 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full p-2 transition-all duration-200 hover:scale-105"
+            >
+              <X className="w-5 h-5 text-white" />
+            </button>
+
+            {/* Modal Header with Medal Badge */}
+            <div className="text-center p-8 pb-6">
+              <div className="inline-flex items-center gap-3 mb-4">
+                {selectedCareer.rank === 'CAMPEÓN' ? (
+                  <div 
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-black font-bold text-lg shadow-xl"
+                    style={{ background: 'linear-gradient(135deg, var(--gold-200), var(--gold-400))' }}
+                  >
+                    <Trophy className="w-5 h-5" />
+                    {selectedCareer.rank}
+                  </div>
+                ) : selectedCareer.rank === 'SEGUNDA' ? (
+                  <div 
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-black font-bold text-sm shadow-xl"
+                    style={{ background: 'linear-gradient(135deg, var(--silver-300), var(--silver-500))' }}
+                  >
+                    <Medal className="w-4 h-4" />
+                    {selectedCareer.rank}
+                  </div>
+                ) : (
+                  <div 
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-black font-bold text-sm shadow-xl"
+                    style={{ background: 'linear-gradient(135deg, var(--bronze-300), var(--bronze-500))' }}
+                  >
+                    <Award className="w-4 h-4" />
+                    {selectedCareer.rank}
+                  </div>
+                )}
+              </div>
+              
+              <h3 className="text-white font-bold text-2xl mb-2 leading-tight">
+                {selectedCareer.career.name}
+              </h3>
+              
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black/30 backdrop-blur-sm text-white font-semibold text-lg">
+                <TrendingUp className="w-5 h-5" />
+                {selectedCareer.career.confidence}% de compatibilidad
+              </div>
+            </div>
+
+            {/* Modal Content */}
+            <div className="px-8 pb-8">
+              <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6">
+                <h4 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
+                  <Info className="w-5 h-5 text-blue-400" />
+                  ¿Por qué es perfecta para ti?
+                </h4>
+                <p className="text-white/90 leading-relaxed text-base">
+                  {selectedCareer.career.reasoning}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

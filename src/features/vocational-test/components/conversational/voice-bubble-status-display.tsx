@@ -33,6 +33,8 @@ export function VoiceBubbleStatusDisplay({
         return 'Procesando tu respuesta'
       case 'session-starting':
         return 'Iniciando conversación'
+      case 'results-display':
+        return '🎉 ¡Aquí están tus resultados!'
       default:
         return '¡Hola! Soy ARIA'
     }
@@ -57,6 +59,8 @@ export function VoiceBubbleStatusDisplay({
         return 'Analizando tu respuesta y preparando mi siguiente pregunta...'
       case 'session-starting':
         return 'Iniciando tu sesión de orientación vocacional conversacional...'
+      case 'results-display':
+        return '¡Perfecto! He analizado tus respuestas y aquí están tus carreras ideales. La página de resultados detallados se cargará en unos segundos...'
       default:
         return 'Tu asistente de orientación vocacional conversacional. Haz clic para comenzar una charla natural sobre tu futuro.'
     }

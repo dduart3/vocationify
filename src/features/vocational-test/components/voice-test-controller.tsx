@@ -1,6 +1,9 @@
 import { useState } from 'react'
-import { IconPlayerPlay, IconMicrophone, IconVolume, IconTarget, IconTrophy } from '@tabler/icons-react'
+import { IconPlayerPlay, IconMicrophone, IconVolume, IconTarget, IconTrophy, IconArrowRight } from '@tabler/icons-react'
 import { ConversationalVoiceBubble } from './conversational'
+import { CareerRecommendationsDisplay } from './conversational/career-recommendations-display'
+import { useConversationalResults } from '../hooks/use-conversational-session'
+import { useNavigate } from '@tanstack/react-router'
 
 type TestState = 'idle' | 'conversational' | 'completed'
 
@@ -10,14 +13,26 @@ interface VoiceTestControllerProps {
 
 export function VoiceTestController({ onTestComplete }: VoiceTestControllerProps) {
   const [testState, setTestState] = useState<TestState>('idle')
+  const [completedSessionId, setCompletedSessionId] = useState<string | null>(null)
+  const navigate = useNavigate()
+  
+  // Get results for completed session
+  const { data: results } = useConversationalResults(completedSessionId || '', !!completedSessionId && testState === 'completed')
 
   const handleStartConversation = () => {
     setTestState('conversational')
   }
 
   const handleTestComplete = (sessionId: string) => {
+    setCompletedSessionId(sessionId)
     setTestState('completed')
     onTestComplete?.(sessionId)
+  }
+
+  const handleViewFullResults = () => {
+    if (completedSessionId) {
+      navigate({ to: '/vocational-test/results/$sessionId', params: { sessionId: completedSessionId } })
+    }
   }
 
   const renderContent = () => {
@@ -75,7 +90,7 @@ export function VoiceTestController({ onTestComplete }: VoiceTestControllerProps
 
       case 'completed':
         return (
-          <div className="text-center space-y-6">
+          <div className="text-center space-y-8">
             <div className="flex justify-center mb-4">
               <IconTrophy className="w-16 h-16 text-yellow-400" />
             </div>
@@ -86,6 +101,24 @@ export function VoiceTestController({ onTestComplete }: VoiceTestControllerProps
               <p className="text-slate-300 text-lg">
                 ARIA ha analizado tu conversación y generado tu perfil vocacional personalizado
               </p>
+            </div>
+
+            {/* Show Olympic Podium with Career Recommendations */}
+            {results?.careerRecommendations && results.careerRecommendations.length > 0 && (
+              <CareerRecommendationsDisplay careerSuggestions={results.careerRecommendations} />
+            )}
+
+            {/* Manual Navigation Button */}
+            <div className="mt-12">
+              <button
+                onClick={handleViewFullResults}
+                className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 transition-all duration-300"
+              >
+                <span className="text-white font-semibold text-lg">
+                  Ver Análisis Completo
+                </span>
+                <IconArrowRight className="w-6 h-6 text-white" />
+              </button>
             </div>
           </div>
         )
