@@ -451,26 +451,81 @@ export function CareerRecommendationsDisplay({ careerSuggestions }: CareerRecomm
       {selectedCareer && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div 
-            className="backdrop-blur-xl rounded-3xl max-w-2xl w-full max-h-[80vh] overflow-auto relative shadow-2xl"
+            className="rounded-3xl max-w-2xl w-full max-h-[80vh] overflow-auto relative shadow-2xl border-2"
             style={{
               background: selectedCareer.rank === 'CAMPEÓN' 
-                ? 'linear-gradient(135deg, rgba(125, 99, 21, 0.95), rgba(184, 148, 31, 0.95), rgba(255, 204, 51, 0.95))'
+                ? 'linear-gradient(to top, var(--gold-800), var(--gold-600), var(--gold-400))'
                 : selectedCareer.rank === 'SEGUNDA'
-                ? 'linear-gradient(135deg, rgba(92, 92, 92, 0.95), rgba(143, 143, 143, 0.95), rgba(192, 192, 192, 0.95))'
-                : 'linear-gradient(135deg, rgba(117, 51, 25, 0.95), rgba(162, 84, 37, 0.95), rgba(205, 127, 50, 0.95))'
+                ? 'linear-gradient(to top, var(--silver-900), var(--silver-700), var(--silver-500))'
+                : 'linear-gradient(to top, var(--bronze-900), var(--bronze-700), var(--bronze-500))',
+              borderColor: selectedCareer.rank === 'CAMPEÓN'
+                ? 'var(--gold-900)'
+                : selectedCareer.rank === 'SEGUNDA' 
+                ? 'var(--silver-900)'
+                : 'var(--bronze-900)'
             }}
           >
+            {/* Metallic overlay - exactly like podium */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-white/10 to-white/5"></div>
+            
+            {/* Decorative Elements - exactly like podium */}
+            {selectedCareer.rank === 'CAMPEÓN' ? (
+              <>
+                <div className="absolute top-6 left-6 w-10 h-10 bg-white/15 rounded-full flex items-center justify-center">
+                  <Star className="w-4 h-4 text-gold-200" />
+                </div>
+                <div className="absolute top-6 right-6 w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">
+                  <Sparkles className="w-3 h-3 text-white/60" />
+                </div>
+                <div className="absolute top-16 left-1/2 transform -translate-x-1/2 w-6 h-6 bg-white/15 rotate-45"></div>
+                <div className="absolute bottom-8 left-6 w-6 h-6 bg-white/10 rounded-full"></div>
+                <div className="absolute bottom-8 right-6 w-4 h-4 bg-gold-300 rounded-full"></div>
+                <div className="absolute bottom-16 left-8 w-3 h-3 bg-white/15 rotate-45"></div>
+                <div className="absolute bottom-16 right-8 w-3 h-3 bg-white/15 rotate-45"></div>
+                <div className="absolute inset-0 opacity-15" style={{
+                  backgroundImage: 'radial-gradient(circle at 30% 30%, white 1.5px, transparent 1.5px), radial-gradient(circle at 70% 70%, white 1.5px, transparent 1.5px)',
+                  backgroundSize: '30px 30px'
+                }}></div>
+              </>
+            ) : selectedCareer.rank === 'SEGUNDA' ? (
+              <>
+                <div className="absolute top-4 left-4 w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">
+                  <div className="w-3 h-3 bg-silver-300 rounded-full"></div>
+                </div>
+                <div className="absolute top-4 right-4 w-6 h-6 bg-white/5 rounded-full"></div>
+                <div className="absolute bottom-4 left-4 w-4 h-4 bg-white/10 rotate-45"></div>
+                <div className="absolute bottom-6 right-6 w-2 h-2 bg-silver-400 rounded-full"></div>
+                <div className="absolute inset-0 opacity-10" style={{
+                  backgroundImage: 'radial-gradient(circle at 25% 25%, white 1px, transparent 1px), radial-gradient(circle at 75% 75%, white 1px, transparent 1px)',
+                  backgroundSize: '20px 20px'
+                }}></div>
+              </>
+            ) : (
+              <>
+                <div className="absolute top-4 left-4 w-7 h-7 bg-white/12 rounded-full flex items-center justify-center">
+                  <div className="w-3 h-3 bg-bronze-300 rounded-full"></div>
+                </div>
+                <div className="absolute top-4 right-4 w-5 h-5 bg-white/8 rounded-full"></div>
+                <div className="absolute bottom-4 left-4 w-4 h-4 bg-white/12 rotate-45"></div>
+                <div className="absolute bottom-6 right-6 w-3 h-3 bg-bronze-400 rounded-full"></div>
+                <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-white/15 rounded-full"></div>
+                <div className="absolute inset-0 opacity-12" style={{
+                  backgroundImage: 'radial-gradient(circle at 20% 80%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px)',
+                  backgroundSize: '25px 25px'
+                }}></div>
+              </>
+            )}
             
             {/* Close Button */}
             <button
               onClick={() => setSelectedCareer(null)}
-              className="absolute top-4 right-4 z-10 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full p-2 transition-all duration-200 hover:scale-105"
+              className="absolute top-4 right-4 z-20 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full p-2 transition-all duration-200 hover:scale-105"
             >
               <X className="w-5 h-5 text-white" />
             </button>
 
             {/* Modal Header with Medal Badge */}
-            <div className="text-center p-8 pb-6">
+            <div className="relative z-10 text-center p-8 pb-6">
               <div className="inline-flex items-center gap-3 mb-4">
                 {selectedCareer.rank === 'CAMPEÓN' ? (
                   <div 
@@ -510,7 +565,7 @@ export function CareerRecommendationsDisplay({ careerSuggestions }: CareerRecomm
             </div>
 
             {/* Modal Content */}
-            <div className="px-8 pb-8">
+            <div className="relative z-10 px-8 pb-8">
               <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6">
                 <h4 className="text-white font-bold text-lg mb-4 flex items-center gap-2">
                   <Info className="w-5 h-5 text-blue-400" />

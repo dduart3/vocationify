@@ -77,10 +77,10 @@ export function ConversationalTestResults({
   // Backend now properly returns RIASEC scores from session_riasec_scores table (or 50s as fallback)
   const riasecScores = results.riasecScores || { R: 50, I: 50, A: 50, S: 50, E: 50, C: 50 }
   const topCareers = results.careerRecommendations?.slice(0, 3).map(rec => ({
-    name: rec.career?.name || 'Carrera no encontrada',
+    name: rec.name || 'Carrera no encontrada',
     confidence: rec.confidence,
     reasoning: rec.reasoning,
-    careerId: rec.career_id
+    careerId: rec.careerId
   })) || []
   const confidence = results.riasecAssessment?.confidence || 75
 
