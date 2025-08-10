@@ -389,14 +389,6 @@ export function CareerRecommendationsDisplay({ careerSuggestions }: CareerRecomm
 
   return (
     <div className="mt-12 max-w-full mx-auto px-8">
-      <div className="text-center mb-12">
-        <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/5 backdrop-blur-xl rounded-full">
-          <GraduationCap className="w-6 h-6 text-blue-400" />
-          <h3 className="font-bold text-xl bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
-            Tus Carreras Perfectas
-          </h3>
-        </div>
-      </div>
       
       {/* Olympic Podium Layout - First 3 careers */}
       {careerSuggestions.length >= 3 ? (

@@ -145,21 +145,7 @@ export function ConversationalVoiceBubble({ onTestComplete }: ConversationalVoic
     
     // Check if conversation should complete (only when truly complete, not during career exploration)
     if (currentAIResponse.nextPhase === 'complete' || sessionResults?.conversationPhase === 'complete') {
-      console.log('✅ Conversation complete - showing final recommendations')
-      setState('results-display')
-      
-      // Give time to show the podium animation, then navigate to results page
-      setTimeout(() => {
-        if (sessionResults?.sessionId || sessionId) {
-          const resultSessionId = sessionResults?.sessionId || sessionId!
-          console.log('🔄 Navigating to results page after podium display:', resultSessionId)
-          navigate({ to: '/vocational-test/results/$sessionId', params: { sessionId: resultSessionId } })
-        }
-        // Also trigger completion callback for backward compatibility
-        if (sessionResults?.conversationPhase === 'complete') {
-          onTestComplete?.(sessionResults.sessionId)
-        }
-      }, 8000) // 8 seconds to enjoy the podium animation
+      console.log('✅ Conversation complete - NO AUTO REDIRECT - let useEffect handle completion')
       return
     }
     
@@ -295,9 +281,9 @@ export function ConversationalVoiceBubble({ onTestComplete }: ConversationalVoic
         sessionResults={sessionResults}
       />
 
-      {/* Career Recommendations Display - Show during recommendations or final completion */}
-      {currentAIResponse?.careerSuggestions && (currentAIResponse?.intent === 'recommendation' || currentAIResponse?.nextPhase === 'complete' || state === 'results-display') && (
-        <CareerRecommendationsDisplay careerSuggestions={currentAIResponse.careerSuggestions} />
+      {/* Career Recommendations Display - ONLY show when test is actually complete (not during conversation) */}
+      {state === 'complete' && sessionResults?.careerRecommendations && (
+        <CareerRecommendationsDisplay careerSuggestions={sessionResults.careerRecommendations} />
       )}
 
       {/* Career Exploration UI - shown when AI provides career recommendations */}
