@@ -286,10 +286,10 @@ export function ConversationalVoiceBubble({ onTestComplete }: ConversationalVoic
         <CareerRecommendationsDisplay careerSuggestions={sessionResults.careerRecommendations} />
       )}
 
-      {/* Career Exploration UI - shown when AI provides career recommendations */}
+      {/* Career Exploration UI - shown when AI provides career recommendations - STICKY AT BOTTOM */}
       {currentAIResponse?.intent === 'recommendation' && currentAIResponse?.nextPhase === 'career_exploration' && (state === 'idle' || state === 'listening') && (
-        <div className="mt-8 bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 shadow-xl max-w-md">
-          <div className="text-center space-y-4">
+        <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-black/80 backdrop-blur-md border-t border-white/20">
+          <div className="max-w-md mx-auto text-center space-y-4">
             <h3 className="text-white font-semibold text-lg">
               ¿Qué te gustaría hacer ahora?
             </h3>
@@ -356,10 +356,10 @@ export function ConversationalVoiceBubble({ onTestComplete }: ConversationalVoic
         </div>
       )}
 
-      {/* Completion Check UI - shown when AI suggests finishing */}
+      {/* Completion Check UI - shown when AI suggests finishing - STICKY AT BOTTOM */}
       {currentAIResponse?.intent === 'completion_check' && state === 'idle' && (
-        <div className="mt-8 bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 shadow-xl max-w-md">
-          <div className="text-center space-y-4">
+        <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-black/80 backdrop-blur-md border-t border-white/20">
+          <div className="max-w-md mx-auto text-center space-y-4">
             <h3 className="text-white font-semibold text-lg">
               ¿Qué te gustaría hacer?
             </h3>

@@ -19,6 +19,12 @@ import {
 
 export function VocationalTest() {
   const [interactionMode, setInteractionMode] = useState<'voice' | 'chat'>('voice')
+  const [isTestCompleted, setIsTestCompleted] = useState(false)
+
+  const handleTestComplete = (sessionId: string) => {
+    setIsTestCompleted(true)
+    console.log('Test completed:', sessionId)
+  }
 
   return (
     <div className="flex-1 min-h-screen relative overflow-hidden">
@@ -56,23 +62,25 @@ export function VocationalTest() {
               tu asistente inteligente de orientación profesional
             </p>
 
-            {/* Interaction Mode Toggle */}
-            <InteractionToggle 
-              mode={interactionMode} 
-              onModeChange={setInteractionMode} 
-            />
+            {/* Interaction Mode Toggle - Hide when test is completed */}
+            {!isTestCompleted && (
+              <InteractionToggle 
+                mode={interactionMode} 
+                onModeChange={setInteractionMode} 
+              />
+            )}
           </div>
 
           {/* Main Test Area */}
           {interactionMode === 'voice' ? (
-            <VoiceTestController onTestComplete={(sessionId) => console.log('Test completed:', sessionId)} />
+            <VoiceTestController onTestComplete={handleTestComplete} />
           ) : (
             /* Chat Interface */
             <div className="flex justify-center">
               <ChatInterface 
                 onSwitchToVoice={() => setInteractionMode('voice')}
                 isVoiceAvailable={true}
-                onTestComplete={(sessionId) => console.log('Test completed:', sessionId)}
+                onTestComplete={handleTestComplete}
               />
             </div>
           )}
