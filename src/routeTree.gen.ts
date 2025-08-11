@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedTestFormattingRouteImport } from './routes/_authenticated/test-formatting'
 import { Route as AuthenticatedPodiumTestRouteImport } from './routes/_authenticated/podium-test'
 import { Route as authRegisterRouteImport } from './routes/(auth)/register'
 import { Route as authLoginRouteImport } from './routes/(auth)/login'
@@ -29,6 +30,12 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedTestFormattingRoute =
+  AuthenticatedTestFormattingRouteImport.update({
+    id: '/test-formatting',
+    path: '/test-formatting',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedPodiumTestRoute = AuthenticatedPodiumTestRouteImport.update({
   id: '/podium-test',
   path: '/podium-test',
@@ -80,6 +87,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof authLoginRoute
   '/register': typeof authRegisterRoute
   '/podium-test': typeof AuthenticatedPodiumTestRoute
+  '/test-formatting': typeof AuthenticatedTestFormattingRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/profile': typeof AuthenticatedProfileIndexRoute
   '/vocational-test': typeof AuthenticatedVocationalTestIndexRoute
@@ -91,6 +99,7 @@ export interface FileRoutesByTo {
   '/login': typeof authLoginRoute
   '/register': typeof authRegisterRoute
   '/podium-test': typeof AuthenticatedPodiumTestRoute
+  '/test-formatting': typeof AuthenticatedTestFormattingRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/profile': typeof AuthenticatedProfileIndexRoute
   '/vocational-test': typeof AuthenticatedVocationalTestIndexRoute
@@ -104,6 +113,7 @@ export interface FileRoutesById {
   '/(auth)/login': typeof authLoginRoute
   '/(auth)/register': typeof authRegisterRoute
   '/_authenticated/podium-test': typeof AuthenticatedPodiumTestRoute
+  '/_authenticated/test-formatting': typeof AuthenticatedTestFormattingRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/_authenticated/profile/': typeof AuthenticatedProfileIndexRoute
   '/_authenticated/vocational-test/': typeof AuthenticatedVocationalTestIndexRoute
@@ -117,6 +127,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/podium-test'
+    | '/test-formatting'
     | '/dashboard'
     | '/profile'
     | '/vocational-test'
@@ -128,6 +139,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/podium-test'
+    | '/test-formatting'
     | '/dashboard'
     | '/profile'
     | '/vocational-test'
@@ -140,6 +152,7 @@ export interface FileRouteTypes {
     | '/(auth)/login'
     | '/(auth)/register'
     | '/_authenticated/podium-test'
+    | '/_authenticated/test-formatting'
     | '/_authenticated/dashboard/'
     | '/_authenticated/profile/'
     | '/_authenticated/vocational-test/'
@@ -169,6 +182,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/test-formatting': {
+      id: '/_authenticated/test-formatting'
+      path: '/test-formatting'
+      fullPath: '/test-formatting'
+      preLoaderRoute: typeof AuthenticatedTestFormattingRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/podium-test': {
       id: '/_authenticated/podium-test'
@@ -231,6 +251,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedPodiumTestRoute: typeof AuthenticatedPodiumTestRoute
+  AuthenticatedTestFormattingRoute: typeof AuthenticatedTestFormattingRoute
   AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
   AuthenticatedProfileIndexRoute: typeof AuthenticatedProfileIndexRoute
   AuthenticatedVocationalTestIndexRoute: typeof AuthenticatedVocationalTestIndexRoute
@@ -239,6 +260,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPodiumTestRoute: AuthenticatedPodiumTestRoute,
+  AuthenticatedTestFormattingRoute: AuthenticatedTestFormattingRoute,
   AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
   AuthenticatedProfileIndexRoute: AuthenticatedProfileIndexRoute,
   AuthenticatedVocationalTestIndexRoute: AuthenticatedVocationalTestIndexRoute,

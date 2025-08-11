@@ -135,7 +135,7 @@ export function HeroSection() {
             {/* CTA Buttons */}
             <div ref={buttonsRef} className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
               <Link
-                to="/register"
+                to="/vocational-test"
                 className="group inline-flex items-center gap-3 px-8 py-4 rounded-xl font-semibold text-lg text-white transition-all duration-300 hover:scale-105"
                 style={{
                   background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.8) 0%, rgba(147, 51, 234, 0.8) 100%)',
