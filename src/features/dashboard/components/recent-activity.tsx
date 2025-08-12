@@ -1,7 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { Link } from '@tanstack/react-router'
-import { IconBrain, IconClock, IconEye } from '@tabler/icons-react'
+import { Brain, Clock, Eye } from 'lucide-react'
 import { useUserTestHistory } from '../hooks/use-dashboard-data'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 
@@ -53,101 +51,137 @@ export function RecentActivity() {
 
   if (isLoading) {
     return (
-      <Card className="glass-card">
-        <CardHeader>
-          <CardTitle className="text-white">Tests Recientes</CardTitle>
-        </CardHeader>
-        <CardContent className="flex items-center justify-center py-8">
+      <div
+        className="p-8 rounded-3xl backdrop-blur-xl"
+        style={{
+          background: `
+            linear-gradient(135deg, 
+              rgba(255, 255, 255, 0.08) 0%, 
+              rgba(255, 255, 255, 0.04) 100%
+            )
+          `,
+          boxShadow: `
+            0 8px 32px 0 rgba(31, 38, 135, 0.37),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1)
+          `
+        }}
+      >
+        <h2 className="text-2xl font-bold text-white mb-6">Tests Recientes</h2>
+        <div className="flex items-center justify-center py-8">
           <LoadingSpinner />
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     )
   }
 
   if (!testHistory || testHistory.length === 0) {
     return (
-      <Card className="glass-card">
-        <CardHeader>
-          <CardTitle className="text-white">Tests Recientes</CardTitle>
-        </CardHeader>
-        <CardContent className="text-center py-8">
-          <p className="text-slate-400 mb-4">
+      <div
+        className="p-8 rounded-3xl backdrop-blur-xl"
+        style={{
+          background: `
+            linear-gradient(135deg, 
+              rgba(255, 255, 255, 0.08) 0%, 
+              rgba(255, 255, 255, 0.04) 100%
+            )
+          `,
+          boxShadow: `
+            0 8px 32px 0 rgba(31, 38, 135, 0.37),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1)
+          `
+        }}
+      >
+        <h2 className="text-2xl font-bold text-white mb-6">Tests Recientes</h2>
+        <div className="text-center py-8">
+          <p className="text-white/60 mb-6">
             No has completado ningún test aún
           </p>
-          <Button asChild className="bg-blue-600 hover:bg-blue-700">
-            <Link to="/vocational-test">
+          <Link to="/vocational-test">
+            <div className="inline-flex px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 rounded-xl text-white font-semibold transition-all duration-300 hover:scale-105">
               Realizar Primer Test
-            </Link>
-          </Button>
-        </CardContent>
-      </Card>
+            </div>
+          </Link>
+        </div>
+      </div>
     )
   }
 
   return (
-    <Card className="glass-card">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-white">Tests Recientes</CardTitle>
-        <Button
-          asChild
-          variant="ghost"
-          size="sm" 
-          className="text-slate-400 hover:text-white hover:bg-white/10"
-        >
-          <Link to="/vocational-test">
+    <div
+      className="p-8 rounded-3xl backdrop-blur-xl"
+      style={{
+        background: `
+          linear-gradient(135deg, 
+            rgba(255, 255, 255, 0.08) 0%, 
+            rgba(255, 255, 255, 0.04) 100%
+          )
+        `,
+        boxShadow: `
+          0 8px 32px 0 rgba(31, 38, 135, 0.37),
+          inset 0 1px 0 rgba(255, 255, 255, 0.1)
+        `
+      }}
+    >
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-bold text-white">Tests Recientes</h2>
+        <Link to="/vocational-test">
+          <div className="text-sm text-white/60 hover:text-white transition-colors">
             Ver Todo el Historial
-          </Link>
-        </Button>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          {testHistory.map((test) => {
-            const topCareer = test.careerRecommendations?.[0]
-            const dominantType = getRiasecTypeSpanish(test.riasecScores)
-            
-            return (
-              <div 
-                key={test.sessionId} 
-                className="flex items-start gap-4 p-3 rounded-lg hover:bg-white/5 transition-colors duration-200 group"
-              >
-                <div className="p-2 rounded-lg bg-white/10 text-blue-400">
-                  <IconBrain size={16} />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-white">
-                    Test Vocacional Completado
-                  </p>
-                  <p className="text-xs text-slate-400 mt-1">
-                    Perfil dominante: {dominantType}
-                    {topCareer?.career?.name && (
-                      <> • Top carrera: {topCareer.career.name}</>
-                    )}
-                  </p>
-                  <div className="flex items-center justify-between mt-2">
-                    <div className="flex items-center gap-1">
-                      <IconClock size={12} className="text-slate-500" />
-                      <span className="text-xs text-slate-500">
-                        {formatDistanceToNow(test.completedAt)}
-                      </span>
-                    </div>
-                    <Button
-                      asChild
-                      variant="ghost"
-                      size="sm"
-                      className="opacity-0 group-hover:opacity-100 transition-opacity text-slate-400 hover:text-white h-auto p-1"
-                    >
-                      <Link to="/vocational-test/results/$sessionId" params={{ sessionId: test.sessionId }}>
-                        <IconEye size={14} className="mr-1" />
-                        Ver
-                      </Link>
-                    </Button>
+          </div>
+        </Link>
+      </div>
+      
+      <div className="space-y-4">
+        {testHistory.map((test) => {
+          const topCareer = test.careerRecommendations?.[0]
+          const dominantType = getRiasecTypeSpanish(test.riasecScores)
+          
+          return (
+            <div 
+              key={test.sessionId}
+              className="flex items-start gap-4 p-4 rounded-2xl backdrop-blur-md hover:scale-[1.02] transition-all duration-300 group"
+              style={{
+                background: `
+                  linear-gradient(135deg, 
+                    rgba(255, 255, 255, 0.06) 0%, 
+                    rgba(255, 255, 255, 0.02) 100%
+                  )
+                `,
+                boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+              }}
+            >
+              <div className="p-3 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 group-hover:rotate-12 transition-transform duration-300">
+                <Brain className="w-5 h-5 text-white" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-white mb-1">
+                  Test Vocacional Completado
+                </p>
+                <p className="text-sm text-white/60 mb-3">
+                  Perfil dominante: {dominantType}
+                  {topCareer?.career?.name && (
+                    <> • Top carrera: {topCareer.career.name}</>
+                  )}
+                </p>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-white/40" />
+                    <span className="text-sm text-white/50">
+                      {formatDistanceToNow(test.completedAt)}
+                    </span>
                   </div>
+                  <Link to="/vocational-test/results/$sessionId" params={{ sessionId: test.sessionId }}>
+                    <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 text-sm text-white/60 hover:text-white">
+                      <Eye className="w-4 h-4" />
+                      Ver
+                    </div>
+                  </Link>
                 </div>
               </div>
-            )
-          })}
-        </div>
-      </CardContent>
-    </Card>
+            </div>
+          )
+        })}
+      </div>
+    </div>
   )
 }

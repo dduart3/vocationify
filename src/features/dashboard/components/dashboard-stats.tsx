@@ -1,5 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { IconBrain, IconChartBar, IconClock, IconTarget } from '@tabler/icons-react'
+import { Brain, BarChart3, Clock, Target } from 'lucide-react'
 import { useDashboardStats } from '../hooks/use-dashboard-data'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 
@@ -10,11 +9,26 @@ export function DashboardStats() {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {Array.from({ length: 4 }).map((_, i) => (
-          <Card key={i} className="glass-card">
-            <CardContent className="flex items-center justify-center py-8">
+          <div
+            key={i}
+            className="p-6 rounded-3xl backdrop-blur-xl"
+            style={{
+              background: `
+                linear-gradient(135deg, 
+                  rgba(255, 255, 255, 0.08) 0%, 
+                  rgba(255, 255, 255, 0.04) 100%
+                )
+              `,
+              boxShadow: `
+                0 8px 32px 0 rgba(31, 38, 135, 0.37),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1)
+              `
+            }}
+          >
+            <div className="flex items-center justify-center py-8">
               <LoadingSpinner size="sm" />
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         ))}
       </div>
     )
@@ -24,11 +38,26 @@ export function DashboardStats() {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {Array.from({ length: 4 }).map((_, i) => (
-          <Card key={i} className="glass-card">
-            <CardContent className="flex items-center justify-center py-8">
+          <div
+            key={i}
+            className="p-6 rounded-3xl backdrop-blur-xl"
+            style={{
+              background: `
+                linear-gradient(135deg, 
+                  rgba(255, 255, 255, 0.08) 0%, 
+                  rgba(255, 255, 255, 0.04) 100%
+                )
+              `,
+              boxShadow: `
+                0 8px 32px 0 rgba(31, 38, 135, 0.37),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1)
+              `
+            }}
+          >
+            <div className="flex items-center justify-center py-8">
               <p className="text-slate-400 text-sm">Sin datos</p>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         ))}
       </div>
     )
@@ -54,7 +83,7 @@ export function DashboardStats() {
       description: dashboardStats.totalTests > dashboardStats.completedTests 
         ? `${dashboardStats.totalTests - dashboardStats.completedTests} en progreso`
         : 'Todos completados',
-      icon: IconBrain,
+      icon: Brain,
       color: 'from-blue-500 to-blue-600',
     },
     {
@@ -62,52 +91,65 @@ export function DashboardStats() {
       value: `${dashboardStats.averageConfidence}%`,
       description: dashboardStats.averageConfidence >= 80 ? 'Muy alta' : 
                    dashboardStats.averageConfidence >= 60 ? 'Alta' : 'En desarrollo',
-      icon: IconChartBar,
+      icon: BarChart3,
       color: 'from-green-500 to-green-600',
     },
     {
       title: 'Último Test',
       value: formatTimeAgo(dashboardStats.lastTestDate),
       description: dashboardStats.lastTestDate ? 'Test completado' : 'Aún no has empezado',
-      icon: IconClock,
+      icon: Clock,
       color: 'from-purple-500 to-purple-600',
     },
     {
       title: 'Perfil Activo',
       value: dashboardStats.completedTests > 0 ? 'Sí' : 'No',
       description: dashboardStats.completedTests > 0 ? 'Con recomendaciones' : 'Completa un test',
-      icon: IconTarget,
+      icon: Target,
       color: 'from-orange-500 to-orange-600',
     },
   ]
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {stats.map((stat) => (
-        <Card 
-          key={stat.title} 
-          className="glass-card hover:scale-105 transition-transform duration-300"
-        >
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-slate-300">
-              {stat.title}
-            </CardTitle>
-            <div 
-              className={`p-2 rounded-lg bg-gradient-to-r ${stat.color}`}
-            >
-              <stat.icon size={16} className="text-white" />
+      {stats.map((stat) => {
+        const IconComponent = stat.icon
+        return (
+          <div
+            key={stat.title}
+            className="p-6 rounded-3xl backdrop-blur-xl hover:scale-105 transition-all duration-300 group"
+            style={{
+              background: `
+                linear-gradient(135deg, 
+                  rgba(255, 255, 255, 0.08) 0%, 
+                  rgba(255, 255, 255, 0.04) 100%
+                )
+              `,
+              boxShadow: `
+                0 8px 32px 0 rgba(31, 38, 135, 0.37),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1)
+              `
+            }}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-medium text-white/80">
+                {stat.title}
+              </h3>
+              <div
+                className={`p-2 rounded-xl bg-gradient-to-r ${stat.color} group-hover:rotate-12 transition-transform duration-300`}
+              >
+                <IconComponent className="w-4 h-4 text-white" />
+              </div>
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white mb-1">
+            <div className="text-3xl font-bold text-white mb-2">
               {stat.value}
             </div>
-            <p className="text-xs text-slate-400">
+            <p className="text-sm text-white/60">
               {stat.description}
             </p>
-          </CardContent>
-        </Card>
-      ))}
+          </div>
+        )
+      })}
     </div>
   )
 }
