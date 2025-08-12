@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { Brain, Mic, GraduationCap, User } from 'lucide-react'
+import { Brain, GraduationCap, User } from 'lucide-react'
 
 const actions = [
   {
@@ -8,13 +8,6 @@ const actions = [
     icon: Brain,
     href: '/vocational-test',
     color: 'from-blue-500 to-blue-600',
-  },
-  {
-    title: 'Asistente de Voz',
-    description: 'Orientación personalizada',
-    icon: Mic,
-    href: '/vocational-test',
-    color: 'from-purple-500 to-purple-600',
   },
   {
     title: 'Explorar Universidades',

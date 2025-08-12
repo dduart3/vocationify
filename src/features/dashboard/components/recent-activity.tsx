@@ -1,7 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { Brain, Clock, Eye } from 'lucide-react'
 import { useUserTestHistory } from '../hooks/use-dashboard-data'
-import { LoadingSpinner } from '@/components/ui/loading-spinner'
 
 function formatDistanceToNow(dateString: string): string {
   const date = new Date(dateString)
@@ -66,9 +65,37 @@ export function RecentActivity() {
           `
         }}
       >
-        <h2 className="text-2xl font-bold text-white mb-6">Tests Recientes</h2>
-        <div className="flex items-center justify-center py-8">
-          <LoadingSpinner />
+        <div className="flex items-center justify-between mb-6">
+          <div className="h-6 bg-white/20 rounded animate-pulse w-32"></div>
+          <div className="h-4 bg-white/10 rounded animate-pulse w-24"></div>
+        </div>
+        
+        <div className="space-y-4">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div 
+              key={i}
+              className="flex items-start gap-4 p-4 rounded-2xl backdrop-blur-md"
+              style={{
+                background: `
+                  linear-gradient(135deg, 
+                    rgba(255, 255, 255, 0.06) 0%, 
+                    rgba(255, 255, 255, 0.02) 100%
+                  )
+                `,
+                boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+              }}
+            >
+              <div className="w-11 h-11 bg-white/20 rounded-xl animate-pulse"></div>
+              <div className="flex-1 min-w-0">
+                <div className="h-4 bg-white/20 rounded animate-pulse w-40 mb-2"></div>
+                <div className="h-4 bg-white/10 rounded animate-pulse w-full mb-3"></div>
+                <div className="flex items-center justify-between">
+                  <div className="h-3 bg-white/10 rounded animate-pulse w-24"></div>
+                  <div className="h-3 bg-white/10 rounded animate-pulse w-8"></div>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     )

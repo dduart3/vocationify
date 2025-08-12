@@ -1,83 +1,90 @@
 import { Link } from '@tanstack/react-router';
 import { useAuthStore } from '@/stores/auth-store';
-import { useRef, useEffect, useState } from 'react';
-import gsap from 'gsap';
+import { useState, useRef, useCallback } from 'react';
 import { 
-  IconDashboard, 
-  IconFileText, 
-  IconChartBar, 
-  IconSchool, 
-  IconSettings,
-  IconLogout,
-  IconChevronRight
-} from '@tabler/icons-react';
+  LayoutDashboard, 
+  FileText, 
+  BarChart3, 
+  GraduationCap, 
+  Settings,
+  LogOut,
+  ChevronRight
+} from 'lucide-react';
 import { Logo } from '../logo';
-
 
 export function Sidebar() {
   const { user, profile, signOut } = useAuthStore();
-  const sidebarRef = useRef<HTMLDivElement>(null);
-  const arrowRef = useRef<HTMLDivElement>(null);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isTransitioningRef = useRef(false);
 
-  useEffect(() => {
-    if (sidebarRef.current && arrowRef.current) {
-      // Animate sidebar width
-      gsap.to(sidebarRef.current, {
-        width: isSidebarOpen ? '240px' : '50px',
-        ease: 'power3.out',
-        duration: 0.5,
-      });
-
-      // Animate arrow position to follow the sidebar edge
-      gsap.to(arrowRef.current, {
-        left: isSidebarOpen ? '232px' : '42px',
-        ease: 'power3.out',
-        duration: 0.5,
-      });
-
-      gsap.to('.sidebar-content', {
-        opacity: isSidebarOpen ? 1 : 0,
-        x: isSidebarOpen ? 0 : -20,
-        delay: isSidebarOpen ? 0.2 : 0,
-        duration: 0.3,
-      });
-
-      gsap.to('.chevron-arrow', {
-        rotate: isSidebarOpen ? 180 : 0,
-        duration: 0.4,
-        ease: 'power2.out',
-      });
-
-      // Animate collapsed logo
-      gsap.to('.collapsed-logo', {
-        opacity: isSidebarOpen ? 0 : 1,
-        scale: isSidebarOpen ? 0.8 : 1,
-        delay: isSidebarOpen ? 0 : 0.3,
-        duration: 0.3,
-        ease: 'power2.out',
-      });
+  const clearExistingTimeout = useCallback(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
     }
-  }, [isSidebarOpen]);
+  }, []);
 
-  const handleMouseEnter = () => {
-    setIsSidebarOpen(true);
-  };
+  const handleMouseEnter = useCallback(() => {
+    // Prevent rapid state changes during transitions
+    if (isTransitioningRef.current) return;
+    
+    clearExistingTimeout();
+    
+    if (!isOpen) {
+      isTransitioningRef.current = true;
+      setIsOpen(true);
+      
+      // Reset transition lock after animation completes
+      setTimeout(() => {
+        isTransitioningRef.current = false;
+      }, 350); // Slightly longer than CSS transition
+    }
+  }, [isOpen, clearExistingTimeout]);
 
-  const handleMouseLeave = () => {
-    setIsSidebarOpen(false);
-  };
+  const handleMouseLeave = useCallback(() => {
+    // Prevent rapid state changes during transitions
+    if (isTransitioningRef.current) return;
+    
+    clearExistingTimeout();
+    
+    if (isOpen) {
+      // Add significant delay before closing
+      timeoutRef.current = setTimeout(() => {
+        isTransitioningRef.current = true;
+        setIsOpen(false);
+        
+        // Reset transition lock after animation completes
+        setTimeout(() => {
+          isTransitioningRef.current = false;
+        }, 350);
+        
+        timeoutRef.current = null;
+      }, 300); // 300ms delay before closing
+    }
+  }, [isOpen, clearExistingTimeout]);
+
+  // Cleanup on unmount
+  React.useEffect(() => {
+    return () => {
+      clearExistingTimeout();
+    };
+  }, [clearExistingTimeout]);
 
   return (
-    <div className="fixed left-0 top-0 h-full z-50 flex">
+    <div 
+      ref={containerRef}
+      className="fixed left-0 top-0 h-full z-50"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      style={{ width: isOpen ? '280px' : '80px' }}
+    >
       {/* Main Sidebar */}
       <div
-        ref={sidebarRef}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        className="flex flex-col py-6 px-3 relative"
-        style={{ 
-          width: '50px',
+        className="h-full flex flex-col py-8 px-4 transition-all duration-300 ease-out"
+        style={{
+          width: isOpen ? '256px' : '64px',
           background: `linear-gradient(180deg, 
             rgba(15, 23, 42, 0.95) 0%, 
             rgba(30, 41, 59, 0.90) 50%,
@@ -91,74 +98,79 @@ export function Sidebar() {
           `
         }}
       >
-        {/* Collapsed Logo - Only visible when sidebar is closed */}
-        <div className="collapsed-logo absolute top-6 left-1/2 -translate-x-1/2 opacity-0">
-          <Link to="/dashboard" className="block group">
-            <Logo 
-              size={28} 
-              className="group-hover:scale-110 transition-transform duration-300 drop-shadow-lg" 
-            />
+        {/* Logo Section */}
+        <div className="mb-10">
+          <Link to="/dashboard" className="flex items-center group/logo">
+            <div className="w-8 h-8 flex-shrink-0">
+              <Logo 
+                size={32} 
+                className="group-hover/logo:scale-110 transition-transform duration-300" 
+              />
+            </div>
+            {isOpen && (
+              <span className="ml-4 font-bold text-lg text-white transition-opacity duration-300 whitespace-nowrap overflow-hidden">
+                Vocationify
+              </span>
+            )}
           </Link>
         </div>
 
-        <div className="flex flex-col flex-1 sidebar-content opacity-0">
-          {/* Logo */}
-          <Link to="/dashboard" className="flex items-center space-x-3 mb-8 group">
-            <Logo 
-              size={32} 
-              className="group-hover:scale-110 transition-transform duration-300" 
-            />
-            <span className="font-bold text-lg text-white">Vocationify</span>
-          </Link>
-
-          {/* User Profile */}
-          <div className="flex items-center space-x-3 mb-6 p-3 rounded-lg bg-gradient-to-r from-white/10 to-white/5 border border-white/10">
-            <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
-              <span className="text-white text-sm font-semibold">
-                {(profile?.first_name || user?.email || 'U')[0]?.toUpperCase()}
-              </span>
-            </div>
-            <div className="flex flex-col flex-1 min-w-0">
-              <span className="text-sm font-medium text-white truncate">
-                {profile?.first_name || user?.email?.split('@')[0] || 'Usuario'}
-              </span>
-              <span className="text-xs text-slate-400">Estudiante</span>
+        {/* User Profile */}
+        {isOpen && (
+          <div className="mb-8 transition-opacity duration-300">
+            <div className="flex items-center p-3 rounded-xl bg-gradient-to-r from-white/10 to-white/5 border border-white/10">
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg flex-shrink-0">
+                <span className="text-white text-sm font-semibold">
+                  {(profile?.first_name || user?.email || 'U')[0]?.toUpperCase()}
+                </span>
+              </div>
+              <div className="ml-3 flex flex-col flex-1 min-w-0">
+                <span className="text-sm font-medium text-white truncate">
+                  {profile?.first_name || user?.email?.split('@')[0] || 'Usuario'}
+                </span>
+                <span className="text-xs text-slate-400">Estudiante</span>
+              </div>
             </div>
           </div>
+        )}
 
-          {/* Navigation */}
-          <nav className="flex-1 space-y-1">
-            <SidebarLink to="/dashboard" icon={<IconDashboard size={16} />} label="Dashboard" />
-            <SidebarLink to="/vocational-test" icon={<IconFileText size={16} />} label="Test Vocacional" />
-            <SidebarLink to="/results" icon={<IconChartBar size={16} />} label="Mis Resultados" />
-            <SidebarLink to="/careers" icon={<IconSchool size={16} />} label="Carreras" />
-            <SidebarLink to="/profile" icon={<IconSettings size={16} />} label="Mi Perfil" />
-          </nav>
+        {/* Navigation */}
+        <nav className="flex-1 space-y-3">
+          <SidebarLink to="/dashboard" icon={<LayoutDashboard size={20} />} label="Dashboard" isOpen={isOpen} />
+          <SidebarLink to="/vocational-test" icon={<FileText size={20} />} label="Test Vocacional" isOpen={isOpen} />
+          <SidebarLink to="/results" icon={<BarChart3 size={20} />} label="Mis Resultados" isOpen={isOpen} />
+          <SidebarLink to="/careers" icon={<GraduationCap size={20} />} label="Carreras" isOpen={isOpen} />
+          <SidebarLink to="/profile" icon={<Settings size={20} />} label="Mi Perfil" isOpen={isOpen} />
+        </nav>
 
-          {/* Sign Out */}
-          <div className="mt-auto pt-4">
-            <button
-              onClick={() => signOut()}
-              className="flex items-center w-full p-2 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all duration-300 group"
-            >
-              <IconLogout size={16} className="mr-3 group-hover:scale-110 transition-transform duration-300" />
-              <span className="text-xs font-medium">Cerrar Sesión</span>
-            </button>
-          </div>
+        {/* Sign Out */}
+        <div className="mt-8">
+          <button
+            onClick={() => signOut()}
+            className="flex items-center w-full p-3 rounded-xl text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all duration-300 group/logout"
+            title={!isOpen ? "Cerrar Sesión" : undefined}
+          >
+            <LogOut size={20} className="flex-shrink-0 group-hover/logout:scale-110 transition-transform duration-300" />
+            {isOpen && (
+              <span className="ml-4 text-sm font-medium whitespace-nowrap">
+                Cerrar Sesión
+              </span>
+            )}
+          </button>
         </div>
       </div>
 
-      {/* Chevron Arrow - Follows the sidebar edge dynamically */}
+      {/* Expansion Indicator */}
       <div 
-        ref={arrowRef}
-        className="flex items-center justify-center absolute top-1/2 -translate-y-1/2 cursor-pointer"
-        style={{ left: '42px' }}
-        onMouseEnter={handleMouseEnter}
+        className="absolute top-1/2 -translate-y-1/2 transition-all duration-300"
+        style={{ left: isOpen ? '240px' : '48px' }}
       >
-        <div className="chevron-arrow p-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 shadow-lg">
-          <IconChevronRight 
-            size={16} 
-            className="text-slate-300 hover:text-white transition-colors duration-300" 
+        <div className="p-1.5 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 shadow-lg">
+          <ChevronRight 
+            size={14} 
+            className={`text-slate-300 transition-transform duration-300 ${
+              isOpen ? 'rotate-180' : 'rotate-0'
+            }`}
           />
         </div>
       </div>
@@ -170,21 +182,27 @@ interface SidebarLinkProps {
   to: string;
   icon: React.ReactNode;
   label: string;
+  isOpen: boolean;
 }
 
-function SidebarLink({ to, icon, label }: SidebarLinkProps) {
+function SidebarLink({ to, icon, label, isOpen }: SidebarLinkProps) {
   return (
     <Link
       to={to}
       activeProps={{ 
-        className: 'bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white' 
+        className: 'bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white border-blue-400/30' 
       }}
-      className="flex items-center p-2 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-all duration-300 group"
+      className="flex items-center p-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 border border-transparent transition-all duration-300 group/link"
+      title={!isOpen ? label : undefined}
     >
-      <span className="mr-3 group-hover:scale-110 transition-transform duration-300">
+      <span className="flex-shrink-0 group-hover/link:scale-110 transition-transform duration-300">
         {icon}
       </span>
-      <span className="text-xs font-medium">{label}</span>
+      {isOpen && (
+        <span className="ml-4 text-sm font-medium whitespace-nowrap">
+          {label}
+        </span>
+      )}
     </Link>
   );
 }
