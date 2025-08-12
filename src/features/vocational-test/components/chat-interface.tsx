@@ -17,9 +17,10 @@ interface ChatInterfaceProps {
   onSwitchToVoice?: () => void
   isVoiceAvailable?: boolean
   onTestComplete?: (sessionId: string) => void
+  onConversationStart?: () => void
 }
 
-export function ChatInterface({ onSwitchToVoice, isVoiceAvailable = true, onTestComplete }: ChatInterfaceProps) {
+export function ChatInterface({ onSwitchToVoice, isVoiceAvailable = true, onTestComplete, onConversationStart }: ChatInterfaceProps) {
   const { user } = useAuthStore()
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -34,6 +35,7 @@ export function ChatInterface({ onSwitchToVoice, isVoiceAvailable = true, onTest
   const [sessionId, setSessionId] = useState<string | null>(null)
   const [questionOrder, setQuestionOrder] = useState(1)
   const [currentQuestionId, setCurrentQuestionId] = useState<string | null>(null)
+  const [hasStarted, setHasStarted] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -52,6 +54,12 @@ export function ChatInterface({ onSwitchToVoice, isVoiceAvailable = true, onTest
 
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return
+
+    // Call onConversationStart on first message
+    if (!hasStarted) {
+      setHasStarted(true)
+      onConversationStart?.()
+    }
 
     const userMessage: Message = {
       id: Date.now().toString(),

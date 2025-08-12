@@ -5,25 +5,20 @@ import { InteractionToggle } from './components/interaction-toggle'
 import { 
   IconSparkles, 
 } from '@tabler/icons-react'
-import { 
-  Target, 
-  Mic, 
-  BarChart3, 
-  GraduationCap,
-  Brain,
-  Briefcase,
-  School,
-  Clock,
-  Database
-} from 'lucide-react'
+
 
 export function VocationalTest() {
   const [interactionMode, setInteractionMode] = useState<'voice' | 'chat'>('voice')
   const [isTestCompleted, setIsTestCompleted] = useState(false)
+  const [hasConversationStarted, setHasConversationStarted] = useState(false)
 
   const handleTestComplete = (sessionId: string) => {
     setIsTestCompleted(true)
     console.log('Test completed:', sessionId)
+  }
+
+  const handleConversationStart = () => {
+    setHasConversationStarted(true)
   }
 
   return (
@@ -45,25 +40,24 @@ export function VocationalTest() {
       <div className="relative z-10 container mx-auto px-6 py-8">
         <div className="max-w-6xl mx-auto">
           {/* Header Section */}
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-white/10 mb-8">
-              <IconSparkles className="w-4 h-4 text-blue-400 mr-2" />
-              <span className="text-blue-400 text-sm font-medium">Powered by AI</span>
+          <div className="text-center mb-8">
+            <div className="relative">
+              {/* Subtle animated background */}
+              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-96 h-16 bg-gradient-to-r from-blue-500/8 via-purple-500/10 to-indigo-500/8 blur-3xl rounded-full animate-pulse" />
+              
+              <h1 className="relative text-6xl md:text-7xl font-black mb-4 leading-tight">
+                <span className="bg-gradient-to-r from-white via-blue-50 to-purple-50 bg-clip-text text-transparent">
+                  Test Vocacional
+                </span>
+                <br />
+                <span className="bg-gradient-to-r from-blue-300 via-purple-300 to-indigo-300 bg-clip-text text-transparent">
+                  con IA
+                </span>
+              </h1>
             </div>
-            
-            <h1 className="text-5xl font-bold mb-6">
-              <span className="bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent">
-                Test Vocacional RIASEC
-              </span>
-            </h1>
-            
-            <p className="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed mb-8">
-              Descubre tu perfil vocacional con <span className="text-blue-400 font-semibold">ARIA</span>, 
-              tu asistente inteligente de orientación profesional
-            </p>
 
-            {/* Interaction Mode Toggle - Hide when test is completed */}
-            {!isTestCompleted && (
+            {/* Interaction Mode Toggle - Show only when conversation has started but not completed */}
+            {hasConversationStarted && !isTestCompleted && (
               <InteractionToggle 
                 mode={interactionMode} 
                 onModeChange={setInteractionMode} 
@@ -73,7 +67,10 @@ export function VocationalTest() {
 
           {/* Main Test Area */}
           {interactionMode === 'voice' ? (
-            <VoiceTestController onTestComplete={handleTestComplete} />
+            <VoiceTestController 
+              onTestComplete={handleTestComplete} 
+              onConversationStart={handleConversationStart}
+            />
           ) : (
             /* Chat Interface */
             <div className="flex justify-center">
@@ -81,6 +78,7 @@ export function VocationalTest() {
                 onSwitchToVoice={() => setInteractionMode('voice')}
                 isVoiceAvailable={true}
                 onTestComplete={handleTestComplete}
+                onConversationStart={handleConversationStart}
               />
             </div>
           )}
