@@ -18,9 +18,11 @@ interface ChatInterfaceProps {
   isVoiceAvailable?: boolean
   onTestComplete?: (sessionId: string) => void
   onConversationStart?: () => void
+  testState?: 'idle' | 'conversational' | 'completed'
+  setTestState?: (state: 'idle' | 'conversational' | 'completed') => void
 }
 
-export function ChatInterface({ onSwitchToVoice, isVoiceAvailable = true, onTestComplete, onConversationStart }: ChatInterfaceProps) {
+export function ChatInterface({ onSwitchToVoice, isVoiceAvailable = true, onTestComplete, onConversationStart, testState: externalTestState, setTestState: setExternalTestState }: ChatInterfaceProps) {
   const { user } = useAuthStore()
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -59,6 +61,8 @@ export function ChatInterface({ onSwitchToVoice, isVoiceAvailable = true, onTest
     if (!hasStarted) {
       setHasStarted(true)
       onConversationStart?.()
+      // Update shared test state if provided
+      setExternalTestState?.('conversational')
     }
 
     const userMessage: Message = {

@@ -10,12 +10,20 @@ type TestState = 'idle' | 'conversational' | 'completed'
 interface VoiceTestControllerProps {
   onTestComplete?: (sessionId: string) => void
   onConversationStart?: () => void
+  testState?: TestState
+  setTestState?: (state: TestState) => void
+  completedSessionId?: string | null
 }
 
-export function VoiceTestController({ onTestComplete, onConversationStart }: VoiceTestControllerProps) {
-  const [testState, setTestState] = useState<TestState>('idle')
-  const [completedSessionId, setCompletedSessionId] = useState<string | null>(null)
+export function VoiceTestController({ onTestComplete, onConversationStart, testState: externalTestState, setTestState: setExternalTestState, completedSessionId: externalCompletedSessionId }: VoiceTestControllerProps) {
+  const [internalTestState, setInternalTestState] = useState<TestState>('idle')
+  const [internalCompletedSessionId, setInternalCompletedSessionId] = useState<string | null>(null)
   const navigate = useNavigate()
+  
+  // Use external state if provided, otherwise use internal state
+  const testState = externalTestState ?? internalTestState
+  const setTestState = setExternalTestState ?? setInternalTestState
+  const completedSessionId = externalCompletedSessionId ?? internalCompletedSessionId
   
   // Get results for completed session
   const { data: results } = useConversationalResults(completedSessionId || '', !!completedSessionId && testState === 'completed')
@@ -26,8 +34,10 @@ export function VoiceTestController({ onTestComplete, onConversationStart }: Voi
   }
 
   const handleTestComplete = (sessionId: string) => {
-    setCompletedSessionId(sessionId)
-    setTestState('completed')
+    if (!setExternalTestState) {
+      setInternalCompletedSessionId(sessionId)
+      setInternalTestState('completed')
+    }
     onTestComplete?.(sessionId)
   }
 
@@ -60,17 +70,15 @@ export function VoiceTestController({ onTestComplete, onConversationStart }: Voi
 
             {/* Enhanced CTA Button */}
             <div className="relative inline-block">
-              <div className="absolute -inset-4 bg-gradient-to-r from-blue-500/30 to-purple-500/30 rounded-full blur-xl opacity-75 animate-pulse"></div>
+              <div className="absolute -inset-2 bg-gradient-to-r from-blue-500/30 to-purple-500/30 rounded-2xl blur-lg opacity-75 animate-pulse"></div>
               <button
                 onClick={handleStartConversation}
-                className="relative group inline-flex items-center gap-4 px-12 py-6 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/25"
+                className="relative group inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/25"
               >
-                <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
-                  <IconPlayerPlay className="w-6 h-6 text-white ml-1" />
+                <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
+                  <IconPlayerPlay className="w-4 h-4 text-white ml-0.5" />
                 </div>
-                <div className="text-left">
-                  <div className="text-white font-bold text-xl">Iniciar Test</div>
-                </div>
+                <div className="text-white font-bold text-lg">Iniciar Test</div>
               </button>
             </div>
 

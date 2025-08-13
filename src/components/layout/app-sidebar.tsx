@@ -1,7 +1,7 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { useAuthStore } from "@/stores/auth-store";
 import { useSidebarStore } from "@/stores/sidebar-store";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useCallback } from "react";
 import gsap from "gsap";
 import {
   IconDashboard,
@@ -48,6 +48,7 @@ export function AppSidebar() {
   const location = useLocation();
   const sidebarRef = useRef<HTMLDivElement>(null);
   const arrowRef = useRef<HTMLDivElement>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (sidebarRef.current && arrowRef.current) {
@@ -107,13 +108,37 @@ export function AppSidebar() {
     }
   }, [isHovered]);
 
-  const handleMouseEnter = () => {
-    setHovered(true);
-  };
+  // Clear any existing timeout
+  const clearHoverTimeout = useCallback(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+  }, []);
 
-  const handleMouseLeave = () => {
-    setHovered(false);
-  };
+  // Debounced hover handlers - ONLY CHANGE to fix race conditions
+  const handleMouseEnter = useCallback(() => {
+    clearHoverTimeout();
+    if (!isHovered) {
+      setHovered(true);
+    }
+  }, [isHovered, setHovered, clearHoverTimeout]);
+
+  const handleMouseLeave = useCallback(() => {
+    clearHoverTimeout();
+    // Add small delay before closing to prevent flickering
+    timeoutRef.current = setTimeout(() => {
+      setHovered(false);
+      timeoutRef.current = null;
+    }, 150); // Small 150ms delay
+  }, [setHovered, clearHoverTimeout]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      clearHoverTimeout();
+    };
+  }, [clearHoverTimeout]);
 
   const handleSignOut = async () => {
     try {
@@ -212,7 +237,7 @@ export function AppSidebar() {
           </Link>
 
           {/* Navigation */}
-          <nav className="flex-1 space-y-1">
+          <nav className="flex-1 space-y-3">
             {menuItems.map((item) => {
               const isActive = location.pathname === item.url;
               return (
@@ -294,7 +319,7 @@ function SidebarLink({ to, icon, label, isActive }: SidebarLinkProps) {
       <span className="mr-3 group-hover:scale-110 transition-transform duration-300">
         {icon}
       </span>
-      <span className="text-xs font-medium">{label}</span>
+      <span className="text-sm font-normal">{label}</span>
     </Link>
   );
 }

@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedTestFormattingRouteImport } from './routes/_authenticated/test-formatting'
-import { Route as AuthenticatedPodiumTestRouteImport } from './routes/_authenticated/podium-test'
 import { Route as authRegisterRouteImport } from './routes/(auth)/register'
 import { Route as authLoginRouteImport } from './routes/(auth)/login'
 import { Route as authAuthCallbackRouteImport } from './routes/(auth)/auth-callback'
@@ -36,11 +35,6 @@ const AuthenticatedTestFormattingRoute =
     path: '/test-formatting',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedPodiumTestRoute = AuthenticatedPodiumTestRouteImport.update({
-  id: '/podium-test',
-  path: '/podium-test',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const authRegisterRoute = authRegisterRouteImport.update({
   id: '/(auth)/register',
   path: '/register',
@@ -86,7 +80,6 @@ export interface FileRoutesByFullPath {
   '/auth-callback': typeof authAuthCallbackRoute
   '/login': typeof authLoginRoute
   '/register': typeof authRegisterRoute
-  '/podium-test': typeof AuthenticatedPodiumTestRoute
   '/test-formatting': typeof AuthenticatedTestFormattingRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/profile': typeof AuthenticatedProfileIndexRoute
@@ -98,7 +91,6 @@ export interface FileRoutesByTo {
   '/auth-callback': typeof authAuthCallbackRoute
   '/login': typeof authLoginRoute
   '/register': typeof authRegisterRoute
-  '/podium-test': typeof AuthenticatedPodiumTestRoute
   '/test-formatting': typeof AuthenticatedTestFormattingRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/profile': typeof AuthenticatedProfileIndexRoute
@@ -112,7 +104,6 @@ export interface FileRoutesById {
   '/(auth)/auth-callback': typeof authAuthCallbackRoute
   '/(auth)/login': typeof authLoginRoute
   '/(auth)/register': typeof authRegisterRoute
-  '/_authenticated/podium-test': typeof AuthenticatedPodiumTestRoute
   '/_authenticated/test-formatting': typeof AuthenticatedTestFormattingRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/_authenticated/profile/': typeof AuthenticatedProfileIndexRoute
@@ -126,7 +117,6 @@ export interface FileRouteTypes {
     | '/auth-callback'
     | '/login'
     | '/register'
-    | '/podium-test'
     | '/test-formatting'
     | '/dashboard'
     | '/profile'
@@ -138,7 +128,6 @@ export interface FileRouteTypes {
     | '/auth-callback'
     | '/login'
     | '/register'
-    | '/podium-test'
     | '/test-formatting'
     | '/dashboard'
     | '/profile'
@@ -151,7 +140,6 @@ export interface FileRouteTypes {
     | '/(auth)/auth-callback'
     | '/(auth)/login'
     | '/(auth)/register'
-    | '/_authenticated/podium-test'
     | '/_authenticated/test-formatting'
     | '/_authenticated/dashboard/'
     | '/_authenticated/profile/'
@@ -188,13 +176,6 @@ declare module '@tanstack/react-router' {
       path: '/test-formatting'
       fullPath: '/test-formatting'
       preLoaderRoute: typeof AuthenticatedTestFormattingRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/podium-test': {
-      id: '/_authenticated/podium-test'
-      path: '/podium-test'
-      fullPath: '/podium-test'
-      preLoaderRoute: typeof AuthenticatedPodiumTestRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/(auth)/register': {
@@ -250,7 +231,6 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedPodiumTestRoute: typeof AuthenticatedPodiumTestRoute
   AuthenticatedTestFormattingRoute: typeof AuthenticatedTestFormattingRoute
   AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
   AuthenticatedProfileIndexRoute: typeof AuthenticatedProfileIndexRoute
@@ -259,7 +239,6 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedPodiumTestRoute: AuthenticatedPodiumTestRoute,
   AuthenticatedTestFormattingRoute: AuthenticatedTestFormattingRoute,
   AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
   AuthenticatedProfileIndexRoute: AuthenticatedProfileIndexRoute,

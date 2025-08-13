@@ -6,19 +6,25 @@ import {
   IconSparkles, 
 } from '@tabler/icons-react'
 
+type TestState = 'idle' | 'conversational' | 'completed'
 
 export function VocationalTest() {
   const [interactionMode, setInteractionMode] = useState<'voice' | 'chat'>('voice')
   const [isTestCompleted, setIsTestCompleted] = useState(false)
   const [hasConversationStarted, setHasConversationStarted] = useState(false)
+  const [testState, setTestState] = useState<TestState>('idle')
+  const [completedSessionId, setCompletedSessionId] = useState<string | null>(null)
 
   const handleTestComplete = (sessionId: string) => {
     setIsTestCompleted(true)
+    setTestState('completed')
+    setCompletedSessionId(sessionId)
     console.log('Test completed:', sessionId)
   }
 
   const handleConversationStart = () => {
     setHasConversationStarted(true)
+    setTestState('conversational')
   }
 
   return (
@@ -70,6 +76,9 @@ export function VocationalTest() {
             <VoiceTestController 
               onTestComplete={handleTestComplete} 
               onConversationStart={handleConversationStart}
+              testState={testState}
+              setTestState={setTestState}
+              completedSessionId={completedSessionId}
             />
           ) : (
             /* Chat Interface */
@@ -79,6 +88,8 @@ export function VocationalTest() {
                 isVoiceAvailable={true}
                 onTestComplete={handleTestComplete}
                 onConversationStart={handleConversationStart}
+                testState={testState}
+                setTestState={setTestState}
               />
             </div>
           )}
