@@ -9,7 +9,7 @@ import {
   IconChartBar,
   IconSchool,
   IconBuilding,
-  IconSettings,
+  IconUser,
   IconLogout,
   IconChevronRight,
 } from "@tabler/icons-react";
@@ -42,9 +42,9 @@ const menuItems = [
     icon: IconBuilding,
   },
   {
-    title: "Configuración",
-    url: "/configuracion",
-    icon: IconSettings,
+    title: "Mi Perfil",
+    url: "/profile",
+    icon: IconUser,
   },
 ];
 
@@ -259,19 +259,22 @@ export function AppSidebar() {
           </nav>
 
           {/* User Profile - Moved to bottom */}
-          <div className="flex items-center space-x-3 mb-3 p-2 rounded-lg bg-white/5">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+          <Link 
+            to="/profile"
+            className="flex items-center space-x-3 mb-3 p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-all duration-300 group"
+          >
+            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
               <span className="text-white text-xs font-semibold">
                 {(profile?.first_name || user?.email || "U")[0]?.toUpperCase()}
               </span>
             </div>
             <div className="flex flex-col">
-              <span className="text-xs font-medium text-white">
+              <span className="text-xs font-medium text-white group-hover:text-blue-300 transition-colors duration-300">
                 {profile?.first_name || user?.email?.split("@")[0]}
               </span>
-              <span className="text-xs text-neutral-400">Estudiante</span>
+              <span className="text-xs text-neutral-400 group-hover:text-neutral-300 transition-colors duration-300">Estudiante</span>
             </div>
-          </div>
+          </Link>
 
           {/* Sign Out */}
           <div className="pt-2">
