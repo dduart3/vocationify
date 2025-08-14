@@ -16,8 +16,13 @@ import { Route as authRegisterRouteImport } from './routes/(auth)/register'
 import { Route as authLoginRouteImport } from './routes/(auth)/login'
 import { Route as authAuthCallbackRouteImport } from './routes/(auth)/auth-callback'
 import { Route as AuthenticatedVocationalTestIndexRouteImport } from './routes/_authenticated/vocational-test/index'
+import { Route as AuthenticatedSchoolsIndexRouteImport } from './routes/_authenticated/schools/index'
+import { Route as AuthenticatedResultsIndexRouteImport } from './routes/_authenticated/results/index'
 import { Route as AuthenticatedProfileIndexRouteImport } from './routes/_authenticated/profile/index'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard/index'
+import { Route as AuthenticatedCareersIndexRouteImport } from './routes/_authenticated/careers/index'
+import { Route as AuthenticatedSchoolsSchoolIdRouteImport } from './routes/_authenticated/schools/$schoolId'
+import { Route as AuthenticatedCareersCareerIdRouteImport } from './routes/_authenticated/careers/$careerId'
 import { Route as AuthenticatedVocationalTestResultsSessionIdRouteImport } from './routes/_authenticated/vocational-test/results.$sessionId'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -56,6 +61,18 @@ const AuthenticatedVocationalTestIndexRoute =
     path: '/vocational-test/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedSchoolsIndexRoute =
+  AuthenticatedSchoolsIndexRouteImport.update({
+    id: '/schools/',
+    path: '/schools/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedResultsIndexRoute =
+  AuthenticatedResultsIndexRouteImport.update({
+    id: '/results/',
+    path: '/results/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedProfileIndexRoute =
   AuthenticatedProfileIndexRouteImport.update({
     id: '/profile/',
@@ -66,6 +83,24 @@ const AuthenticatedDashboardIndexRoute =
   AuthenticatedDashboardIndexRouteImport.update({
     id: '/dashboard/',
     path: '/dashboard/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedCareersIndexRoute =
+  AuthenticatedCareersIndexRouteImport.update({
+    id: '/careers/',
+    path: '/careers/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedSchoolsSchoolIdRoute =
+  AuthenticatedSchoolsSchoolIdRouteImport.update({
+    id: '/schools/$schoolId',
+    path: '/schools/$schoolId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedCareersCareerIdRoute =
+  AuthenticatedCareersCareerIdRouteImport.update({
+    id: '/careers/$careerId',
+    path: '/careers/$careerId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedVocationalTestResultsSessionIdRoute =
@@ -81,8 +116,13 @@ export interface FileRoutesByFullPath {
   '/login': typeof authLoginRoute
   '/register': typeof authRegisterRoute
   '/test-formatting': typeof AuthenticatedTestFormattingRoute
+  '/careers/$careerId': typeof AuthenticatedCareersCareerIdRoute
+  '/schools/$schoolId': typeof AuthenticatedSchoolsSchoolIdRoute
+  '/careers': typeof AuthenticatedCareersIndexRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/profile': typeof AuthenticatedProfileIndexRoute
+  '/results': typeof AuthenticatedResultsIndexRoute
+  '/schools': typeof AuthenticatedSchoolsIndexRoute
   '/vocational-test': typeof AuthenticatedVocationalTestIndexRoute
   '/vocational-test/results/$sessionId': typeof AuthenticatedVocationalTestResultsSessionIdRoute
 }
@@ -92,8 +132,13 @@ export interface FileRoutesByTo {
   '/login': typeof authLoginRoute
   '/register': typeof authRegisterRoute
   '/test-formatting': typeof AuthenticatedTestFormattingRoute
+  '/careers/$careerId': typeof AuthenticatedCareersCareerIdRoute
+  '/schools/$schoolId': typeof AuthenticatedSchoolsSchoolIdRoute
+  '/careers': typeof AuthenticatedCareersIndexRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/profile': typeof AuthenticatedProfileIndexRoute
+  '/results': typeof AuthenticatedResultsIndexRoute
+  '/schools': typeof AuthenticatedSchoolsIndexRoute
   '/vocational-test': typeof AuthenticatedVocationalTestIndexRoute
   '/vocational-test/results/$sessionId': typeof AuthenticatedVocationalTestResultsSessionIdRoute
 }
@@ -105,8 +150,13 @@ export interface FileRoutesById {
   '/(auth)/login': typeof authLoginRoute
   '/(auth)/register': typeof authRegisterRoute
   '/_authenticated/test-formatting': typeof AuthenticatedTestFormattingRoute
+  '/_authenticated/careers/$careerId': typeof AuthenticatedCareersCareerIdRoute
+  '/_authenticated/schools/$schoolId': typeof AuthenticatedSchoolsSchoolIdRoute
+  '/_authenticated/careers/': typeof AuthenticatedCareersIndexRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/_authenticated/profile/': typeof AuthenticatedProfileIndexRoute
+  '/_authenticated/results/': typeof AuthenticatedResultsIndexRoute
+  '/_authenticated/schools/': typeof AuthenticatedSchoolsIndexRoute
   '/_authenticated/vocational-test/': typeof AuthenticatedVocationalTestIndexRoute
   '/_authenticated/vocational-test/results/$sessionId': typeof AuthenticatedVocationalTestResultsSessionIdRoute
 }
@@ -118,8 +168,13 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/test-formatting'
+    | '/careers/$careerId'
+    | '/schools/$schoolId'
+    | '/careers'
     | '/dashboard'
     | '/profile'
+    | '/results'
+    | '/schools'
     | '/vocational-test'
     | '/vocational-test/results/$sessionId'
   fileRoutesByTo: FileRoutesByTo
@@ -129,8 +184,13 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/test-formatting'
+    | '/careers/$careerId'
+    | '/schools/$schoolId'
+    | '/careers'
     | '/dashboard'
     | '/profile'
+    | '/results'
+    | '/schools'
     | '/vocational-test'
     | '/vocational-test/results/$sessionId'
   id:
@@ -141,8 +201,13 @@ export interface FileRouteTypes {
     | '/(auth)/login'
     | '/(auth)/register'
     | '/_authenticated/test-formatting'
+    | '/_authenticated/careers/$careerId'
+    | '/_authenticated/schools/$schoolId'
+    | '/_authenticated/careers/'
     | '/_authenticated/dashboard/'
     | '/_authenticated/profile/'
+    | '/_authenticated/results/'
+    | '/_authenticated/schools/'
     | '/_authenticated/vocational-test/'
     | '/_authenticated/vocational-test/results/$sessionId'
   fileRoutesById: FileRoutesById
@@ -206,6 +271,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedVocationalTestIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/schools/': {
+      id: '/_authenticated/schools/'
+      path: '/schools'
+      fullPath: '/schools'
+      preLoaderRoute: typeof AuthenticatedSchoolsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/results/': {
+      id: '/_authenticated/results/'
+      path: '/results'
+      fullPath: '/results'
+      preLoaderRoute: typeof AuthenticatedResultsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/profile/': {
       id: '/_authenticated/profile/'
       path: '/profile'
@@ -220,6 +299,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/careers/': {
+      id: '/_authenticated/careers/'
+      path: '/careers'
+      fullPath: '/careers'
+      preLoaderRoute: typeof AuthenticatedCareersIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/schools/$schoolId': {
+      id: '/_authenticated/schools/$schoolId'
+      path: '/schools/$schoolId'
+      fullPath: '/schools/$schoolId'
+      preLoaderRoute: typeof AuthenticatedSchoolsSchoolIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/careers/$careerId': {
+      id: '/_authenticated/careers/$careerId'
+      path: '/careers/$careerId'
+      fullPath: '/careers/$careerId'
+      preLoaderRoute: typeof AuthenticatedCareersCareerIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/vocational-test/results/$sessionId': {
       id: '/_authenticated/vocational-test/results/$sessionId'
       path: '/vocational-test/results/$sessionId'
@@ -232,16 +332,26 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedTestFormattingRoute: typeof AuthenticatedTestFormattingRoute
+  AuthenticatedCareersCareerIdRoute: typeof AuthenticatedCareersCareerIdRoute
+  AuthenticatedSchoolsSchoolIdRoute: typeof AuthenticatedSchoolsSchoolIdRoute
+  AuthenticatedCareersIndexRoute: typeof AuthenticatedCareersIndexRoute
   AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
   AuthenticatedProfileIndexRoute: typeof AuthenticatedProfileIndexRoute
+  AuthenticatedResultsIndexRoute: typeof AuthenticatedResultsIndexRoute
+  AuthenticatedSchoolsIndexRoute: typeof AuthenticatedSchoolsIndexRoute
   AuthenticatedVocationalTestIndexRoute: typeof AuthenticatedVocationalTestIndexRoute
   AuthenticatedVocationalTestResultsSessionIdRoute: typeof AuthenticatedVocationalTestResultsSessionIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedTestFormattingRoute: AuthenticatedTestFormattingRoute,
+  AuthenticatedCareersCareerIdRoute: AuthenticatedCareersCareerIdRoute,
+  AuthenticatedSchoolsSchoolIdRoute: AuthenticatedSchoolsSchoolIdRoute,
+  AuthenticatedCareersIndexRoute: AuthenticatedCareersIndexRoute,
   AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
   AuthenticatedProfileIndexRoute: AuthenticatedProfileIndexRoute,
+  AuthenticatedResultsIndexRoute: AuthenticatedResultsIndexRoute,
+  AuthenticatedSchoolsIndexRoute: AuthenticatedSchoolsIndexRoute,
   AuthenticatedVocationalTestIndexRoute: AuthenticatedVocationalTestIndexRoute,
   AuthenticatedVocationalTestResultsSessionIdRoute:
     AuthenticatedVocationalTestResultsSessionIdRoute,

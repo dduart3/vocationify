@@ -8,6 +8,7 @@ import {
   IconFileText,
   IconChartBar,
   IconSchool,
+  IconBuilding,
   IconSettings,
   IconLogout,
   IconChevronRight,
@@ -27,13 +28,18 @@ const menuItems = [
   },
   {
     title: "Resultados",
-    url: "/resultados",
+    url: "/results",
     icon: IconChartBar,
   },
   {
     title: "Explorar Carreras",
-    url: "/carreras",
+    url: "/careers",
     icon: IconSchool,
+  },
+  {
+    title: "Instituciones",
+    url: "/schools",
+    icon: IconBuilding,
   },
   {
     title: "Configuración",
