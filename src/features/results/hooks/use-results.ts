@@ -135,8 +135,9 @@ export function useResultDetail(resultId: string) {
   return useQuery({
     queryKey: ['result', resultId],
     queryFn: async (): Promise<TestResult | null> => {
-      const { data, error } = await supabase
-        .from('conversational_sessions')
+      // Get the test session
+      const { data: session, error } = await supabase
+        .from('test_sessions')
         .select('*')
         .eq('id', resultId)
         .single()
@@ -145,22 +146,68 @@ export function useResultDetail(resultId: string) {
         throw error
       }
 
-      if (!data) {
+      if (!session) {
         return null
       }
 
+      // Get RIASEC scores for this session
+      const { data: riasecScores, error: riasecError } = await supabase
+        .from('session_riasec_scores')
+        .select('*')
+        .eq('session_id', session.id)
+        .single()
+
+      if (riasecError && riasecError.code !== 'PGRST116') throw riasecError
+
+      // Get test results with career recommendations
+      const { data: testResult, error: resultsError } = await supabase
+        .from('test_results')
+        .select('*')
+        .eq('session_id', session.id)
+        .single()
+
+      if (resultsError && resultsError.code !== 'PGRST116') throw resultsError
+
+      // Get career names for the recommendations
+      const careerIds = testResult?.career_recommendations?.map((rec: any) => rec.career_id) || []
+      const { data: careers, error: careersError } = await supabase
+        .from('careers')
+        .select('id, name')
+        .in('id', careerIds)
+
+      if (careersError) throw careersError
+
+      // Enrich career recommendations with career names
+      const enrichedRecommendations = testResult?.career_recommendations?.map((rec: any) => {
+        const career = careers?.find(c => c.id === rec.career_id)
+        return {
+          ...rec,
+          career_name: career?.name || 'Carrera no encontrada'
+        }
+      }) || []
+
       return {
-        id: data.id,
-        user_id: data.user_id,
-        session_id: data.session_id,
-        test_type: 'conversational',
-        status: data.status,
-        riasec_scores: data.riasec_scores || { R: 50, I: 50, A: 50, S: 50, E: 50, C: 50 },
-        confidence_score: data.confidence_score || 75,
-        top_career_recommendations: data.career_recommendations || [],
-        created_at: data.created_at,
-        completed_at: data.completed_at,
-        duration_minutes: data.duration_minutes
+        id: session.id,
+        user_id: session.user_id,
+        status: session.status,
+        started_at: session.started_at,
+        completed_at: session.completed_at,
+        created_at: session.created_at,
+        session_type: session.session_type,
+        conversation_history: session.conversation_history,
+        current_phase: session.current_phase,
+        ai_provider: session.ai_provider,
+        confidence_level: session.confidence_level,
+        riasec_scores: {
+          R: riasecScores?.realistic_score || 50,
+          I: riasecScores?.investigative_score || 50,
+          A: riasecScores?.artistic_score || 50,
+          S: riasecScores?.social_score || 50,
+          E: riasecScores?.enterprising_score || 50,
+          C: riasecScores?.conventional_score || 50
+        },
+        career_recommendations: enrichedRecommendations,
+        personality_description: testResult?.personality_description || null
       }
     },
     enabled: !!resultId,
