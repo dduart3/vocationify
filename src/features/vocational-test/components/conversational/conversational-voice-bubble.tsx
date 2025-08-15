@@ -16,9 +16,10 @@ import '../../styles/voice-bubble.css'
 
 interface ConversationalVoiceBubbleProps {
   onTestComplete?: (sessionId: string) => void
+  resumingSessionId?: string | null
 }
 
-export function ConversationalVoiceBubble({ onTestComplete }: ConversationalVoiceBubbleProps) {
+export function ConversationalVoiceBubble({ onTestComplete, resumingSessionId }: ConversationalVoiceBubbleProps) {
   const { user } = useAuthStore()
   const navigate = useNavigate()
   const [state, setState] = useState<ConversationalBubbleState>('idle')
@@ -48,6 +49,15 @@ export function ConversationalVoiceBubble({ onTestComplete }: ConversationalVoic
   const silenceTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const lastTranscriptRef = useRef<string>('')
   const currentResponseRef = useRef<string>('')
+
+  // Handle session resumption
+  useEffect(() => {
+    if (resumingSessionId && !sessionId) {
+      console.log('🔄 Resuming session:', resumingSessionId)
+      setSessionId(resumingSessionId)
+      setState('listening') // Start listening immediately for resumed sessions
+    }
+  }, [resumingSessionId, sessionId])
 
   // Simple silence detection - restart timer whenever transcript changes
   useEffect(() => {

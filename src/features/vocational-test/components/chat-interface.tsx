@@ -20,9 +20,10 @@ interface ChatInterfaceProps {
   onConversationStart?: () => void
   testState?: 'idle' | 'conversational' | 'completed'
   setTestState?: (state: 'idle' | 'conversational' | 'completed') => void
+  resumingSessionId?: string | null
 }
 
-export function ChatInterface({ onSwitchToVoice, isVoiceAvailable = true, onTestComplete, onConversationStart, testState: externalTestState, setTestState: setExternalTestState }: ChatInterfaceProps) {
+export function ChatInterface({ onSwitchToVoice, isVoiceAvailable = true, onTestComplete, onConversationStart, testState: externalTestState, setTestState: setExternalTestState, resumingSessionId }: ChatInterfaceProps) {
   const { user } = useAuthStore()
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -53,6 +54,26 @@ export function ChatInterface({ onSwitchToVoice, isVoiceAvailable = true, onTest
   useEffect(() => {
     scrollToBottom()
   }, [messages])
+
+  // Handle session resumption
+  useEffect(() => {
+    if (resumingSessionId && !sessionId) {
+      console.log('🔄 Resuming chat session:', resumingSessionId)
+      setSessionId(resumingSessionId)
+      setHasStarted(true)
+      onConversationStart?.()
+      setExternalTestState?.('conversational')
+      
+      // Add a system message indicating the session was resumed
+      const resumeMessage: Message = {
+        id: `resume-${Date.now()}`,
+        content: 'Sesión reanudada. Puedes continuar desde donde lo dejaste.',
+        sender: 'aria',
+        timestamp: new Date()
+      }
+      setMessages(prev => [...prev, resumeMessage])
+    }
+  }, [resumingSessionId, sessionId, onConversationStart, setExternalTestState])
 
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return

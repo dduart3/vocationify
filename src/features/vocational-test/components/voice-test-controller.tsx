@@ -13,9 +13,10 @@ interface VoiceTestControllerProps {
   testState?: TestState
   setTestState?: (state: TestState) => void
   completedSessionId?: string | null
+  resumingSessionId?: string | null
 }
 
-export function VoiceTestController({ onTestComplete, onConversationStart, testState: externalTestState, setTestState: setExternalTestState, completedSessionId: externalCompletedSessionId }: VoiceTestControllerProps) {
+export function VoiceTestController({ onTestComplete, onConversationStart, testState: externalTestState, setTestState: setExternalTestState, completedSessionId: externalCompletedSessionId, resumingSessionId }: VoiceTestControllerProps) {
   const [internalTestState, setInternalTestState] = useState<TestState>('idle')
   const [internalCompletedSessionId, setInternalCompletedSessionId] = useState<string | null>(null)
   const navigate = useNavigate()
@@ -227,7 +228,7 @@ export function VoiceTestController({ onTestComplete, onConversationStart, testS
         )
 
       case 'conversational':
-        return <ConversationalVoiceBubble onTestComplete={handleTestComplete} />
+        return <ConversationalVoiceBubble onTestComplete={handleTestComplete} resumingSessionId={resumingSessionId} />
 
       case 'completed':
         return (

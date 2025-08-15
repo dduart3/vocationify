@@ -1,7 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { VoiceTestController } from './components/voice-test-controller'
 import { ChatInterface } from './components/chat-interface'
 import { InteractionToggle } from './components/interaction-toggle'
+import { ResumeSessionBanner } from './components/resume-session-banner'
+import { useIncompleteSession } from './hooks/use-incomplete-session'
+import { useSearch } from '@tanstack/react-router'
 import { 
   IconSparkles, 
 } from '@tabler/icons-react'
@@ -14,6 +17,44 @@ export function VocationalTest() {
   const [hasConversationStarted, setHasConversationStarted] = useState(false)
   const [testState, setTestState] = useState<TestState>('idle')
   const [completedSessionId, setCompletedSessionId] = useState<string | null>(null)
+  const [showResumePrompt, setShowResumePrompt] = useState(false)
+  const [resumingSessionId, setResumingSessionId] = useState<string | null>(null)
+  
+  // Get URL search params to check if we're resuming a session
+  const search = useSearch({ from: '/_authenticated/vocational-test/' })
+  const urlSessionId = search.sessionId
+  
+  // Check for incomplete sessions
+  const { data: incompleteSession, isLoading: isLoadingIncomplete } = useIncompleteSession()
+
+  // Handle session resumption
+  useEffect(() => {
+    // If we have a sessionId in URL, we're resuming a session
+    if (urlSessionId) {
+      setResumingSessionId(urlSessionId)
+      setTestState('conversational')
+      setHasConversationStarted(true)
+      return
+    }
+
+    // If we have an incomplete session and no conversation has started, show resume prompt
+    if (incompleteSession && !hasConversationStarted && !isTestCompleted) {
+      setShowResumePrompt(true)
+    }
+  }, [incompleteSession, urlSessionId, hasConversationStarted, isTestCompleted])
+
+  const handleResumeSession = () => {
+    if (incompleteSession) {
+      setResumingSessionId(incompleteSession.id)
+      setTestState('conversational')
+      setHasConversationStarted(true)
+      setShowResumePrompt(false)
+    }
+  }
+
+  const handleDismissResume = () => {
+    setShowResumePrompt(false)
+  }
 
   const handleTestComplete = (sessionId: string) => {
     setIsTestCompleted(true)
@@ -29,6 +70,15 @@ export function VocationalTest() {
 
   return (
     <div className="flex-1 min-h-screen relative overflow-hidden">
+      {/* Resume Session Banner */}
+      {showResumePrompt && incompleteSession && (
+        <ResumeSessionBanner
+          session={incompleteSession}
+          onResume={handleResumeSession}
+          onDismiss={handleDismissResume}
+        />
+      )}
+
       {/* Background remains the same */}
       <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(120,119,198,0.3),transparent_50%)]" />
@@ -79,6 +129,7 @@ export function VocationalTest() {
               testState={testState}
               setTestState={setTestState}
               completedSessionId={completedSessionId}
+              resumingSessionId={resumingSessionId}
             />
           ) : (
             /* Chat Interface */
@@ -90,6 +141,7 @@ export function VocationalTest() {
                 onConversationStart={handleConversationStart}
                 testState={testState}
                 setTestState={setTestState}
+                resumingSessionId={resumingSessionId}
               />
             </div>
           )}
