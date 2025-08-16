@@ -21,9 +21,10 @@ interface ChatInterfaceProps {
   testState?: 'idle' | 'conversational' | 'completed'
   setTestState?: (state: 'idle' | 'conversational' | 'completed') => void
   resumingSessionId?: string | null
+  hasIncompleteSession?: boolean
 }
 
-export function ChatInterface({ onSwitchToVoice, isVoiceAvailable = true, onTestComplete, onConversationStart, testState: externalTestState, setTestState: setExternalTestState, resumingSessionId }: ChatInterfaceProps) {
+export function ChatInterface({ onSwitchToVoice, isVoiceAvailable = true, onTestComplete, onConversationStart, testState: externalTestState, setTestState: setExternalTestState, resumingSessionId, hasIncompleteSession }: ChatInterfaceProps) {
   const { user } = useAuthStore()
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -77,6 +78,11 @@ export function ChatInterface({ onSwitchToVoice, isVoiceAvailable = true, onTest
 
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return
+
+    // Prevent starting new session if there's an incomplete one
+    if (hasIncompleteSession && !hasStarted) {
+      return
+    }
 
     // Call onConversationStart on first message
     if (!hasStarted) {
@@ -222,14 +228,14 @@ export function ChatInterface({ onSwitchToVoice, isVoiceAvailable = true, onTest
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Escribe tu respuesta aquí..."
+              placeholder={hasIncompleteSession && !hasStarted ? "Tienes un test en progreso..." : "Escribe tu respuesta aquí..."}
               className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300"
-              disabled={isTyping}
+              disabled={isTyping || (hasIncompleteSession && !hasStarted)}
             />
           </div>
           <button
             onClick={handleSendMessage}
-            disabled={!inputValue.trim() || isTyping}
+            disabled={!inputValue.trim() || isTyping || (hasIncompleteSession && !hasStarted)}
             className="p-3 rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 group"
           >
             <IconSend className="w-5 h-5 text-white group-hover:scale-110 transition-transform duration-300" />

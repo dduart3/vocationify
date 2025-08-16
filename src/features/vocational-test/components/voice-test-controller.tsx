@@ -14,9 +14,10 @@ interface VoiceTestControllerProps {
   setTestState?: (state: TestState) => void
   completedSessionId?: string | null
   resumingSessionId?: string | null
+  hasIncompleteSession?: boolean
 }
 
-export function VoiceTestController({ onTestComplete, onConversationStart, testState: externalTestState, setTestState: setExternalTestState, completedSessionId: externalCompletedSessionId, resumingSessionId }: VoiceTestControllerProps) {
+export function VoiceTestController({ onTestComplete, onConversationStart, testState: externalTestState, setTestState: setExternalTestState, completedSessionId: externalCompletedSessionId, resumingSessionId, hasIncompleteSession }: VoiceTestControllerProps) {
   const [internalTestState, setInternalTestState] = useState<TestState>('idle')
   const [internalCompletedSessionId, setInternalCompletedSessionId] = useState<string | null>(null)
   const navigate = useNavigate()
@@ -30,6 +31,11 @@ export function VoiceTestController({ onTestComplete, onConversationStart, testS
   const { data: results } = useConversationalResults(completedSessionId || '', !!completedSessionId && testState === 'completed')
 
   const handleStartConversation = () => {
+    // Prevent starting new test if there's an incomplete session
+    if (hasIncompleteSession) {
+      return
+    }
+    
     setTestState('conversational')
     onConversationStart?.()
   }
@@ -71,17 +77,39 @@ export function VoiceTestController({ onTestComplete, onConversationStart, testS
 
             {/* Enhanced CTA Button */}
             <div className="relative inline-block">
-              <div className="absolute -inset-2 bg-gradient-to-r from-blue-500/30 to-purple-500/30 rounded-2xl blur-lg opacity-75 animate-pulse"></div>
+              <div className={`absolute -inset-2 rounded-2xl blur-lg opacity-75 ${
+                hasIncompleteSession 
+                  ? 'bg-gradient-to-r from-amber-500/30 to-orange-500/30' 
+                  : 'bg-gradient-to-r from-blue-500/30 to-purple-500/30 animate-pulse'
+              }`}></div>
               <button
                 onClick={handleStartConversation}
-                className="relative group inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/25"
+                disabled={hasIncompleteSession}
+                className={`relative group inline-flex items-center gap-3 px-8 py-4 rounded-2xl transition-all duration-500 ${
+                  hasIncompleteSession 
+                    ? 'bg-gradient-to-r from-amber-500/50 to-orange-500/50 cursor-not-allowed opacity-70'
+                    : 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/25'
+                }`}
               >
-                <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
+                <div className={`w-8 h-8 bg-white/20 rounded-full flex items-center justify-center transition-transform duration-300 ${
+                  hasIncompleteSession ? '' : 'group-hover:rotate-12'
+                }`}>
                   <IconPlayerPlay className="w-4 h-4 text-white ml-0.5" />
                 </div>
-                <div className="text-white font-bold text-lg">Iniciar Test</div>
+                <div className="text-white font-bold text-lg">
+                  {hasIncompleteSession ? 'Test en Progreso' : 'Iniciar Test'}
+                </div>
               </button>
             </div>
+            
+            {/* Message when incomplete session exists */}
+            {hasIncompleteSession && (
+              <div className="text-center mt-4">
+                <p className="text-amber-300 text-sm">
+                  Tienes un test en progreso. Complétalo o cancélalo para iniciar uno nuevo.
+                </p>
+              </div>
+            )}
 
             {/* Enhanced Feature Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto pt-12">

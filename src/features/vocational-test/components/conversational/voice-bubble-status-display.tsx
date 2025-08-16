@@ -18,6 +18,7 @@ interface VoiceBubbleStatusDisplayProps {
     confidenceLevel: number
     conversationHistory: Array<{ role: string; content: string }>
   } | null
+  isResuming?: boolean
 }
 
 // Helper function to get career icon
@@ -120,13 +121,17 @@ export function VoiceBubbleStatusDisplay({
   currentAIResponse,
   speechRecognitionAvailable,
   isSpeaking = false,
-  sessionResults
+  sessionResults,
+  isResuming = false
 }: VoiceBubbleStatusDisplayProps) {
   const getStateMessage = (state: ConversationalBubbleState): string => {
     switch (state) {
       case 'listening':
         return 'Te estoy escuchando'
       case 'speaking':
+        if (isResuming) {
+          return '🔄 Reanudando conversación...'
+        }
         return isSpeaking ? '🎙️ ARIA está hablando...' : 'ARIA está preparando su respuesta'
       case 'thinking':
         return 'Procesando tu respuesta'

@@ -139,6 +139,11 @@ export const conversationalAPI = {
     return response.data.data
   },
 
+  getSessionDetails: async (sessionId: string): Promise<any> => {
+    const response = await api.get(`/conversations/sessions/${sessionId}`)
+    return response.data.data
+  },
+
   getResults: async (sessionId: string): Promise<SessionResults> => {
     const response = await api.get(`/conversations/sessions/${sessionId}/results`)
     return response.data.data

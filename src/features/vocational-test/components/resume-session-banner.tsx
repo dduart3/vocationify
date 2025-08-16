@@ -36,10 +36,13 @@ export function ResumeSessionBanner({ session, onDismiss, onResume }: ResumeSess
 
   const handleResume = () => {
     onResume()
-    navigate({ 
-      to: '/_authenticated/vocational-test',
-      search: { sessionId: session.id }
-    })
+    // Only navigate if we're not already on the vocational test page
+    if (window.location.pathname !== '/vocational-test') {
+      navigate({ 
+        to: '/vocational-test',
+        search: { sessionId: session.id }
+      })
+    }
   }
 
   return (

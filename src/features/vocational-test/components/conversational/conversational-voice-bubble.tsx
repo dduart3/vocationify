@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { useCreateConversationalSession, useSendMessage, useConversationalResults } from '../../hooks'
+import { useSessionDetails } from '../../hooks/use-session-details'
 import { useTTSService } from '../../hooks/use-tts-service'
 import { useAuthStore } from '@/stores/auth-store'
 import type { ConversationResponse } from '../../types'
@@ -30,6 +31,7 @@ export function ConversationalVoiceBubble({ onTestComplete, resumingSessionId }:
   const createSession = useCreateConversationalSession()
   const sendMessage = useSendMessage()
   const { data: sessionResults } = useConversationalResults(sessionId || '', !!sessionId)
+  const { data: sessionDetails } = useSessionDetails(resumingSessionId, !!resumingSessionId)
   
   // Services
   const tts = useTTSService()
@@ -52,12 +54,48 @@ export function ConversationalVoiceBubble({ onTestComplete, resumingSessionId }:
 
   // Handle session resumption
   useEffect(() => {
-    if (resumingSessionId && !sessionId) {
-      console.log('🔄 Resuming session:', resumingSessionId)
+    if (resumingSessionId && sessionDetails && sessionId !== resumingSessionId) {
+      console.log('🔄 Resuming session:', resumingSessionId, 'with details:', sessionDetails)
       setSessionId(resumingSessionId)
-      setState('listening') // Start listening immediately for resumed sessions
+      
+      // Check the last message to determine what to do
+      const lastMessage = sessionDetails.conversationHistory[sessionDetails.conversationHistory.length - 1]
+      
+      if (lastMessage && lastMessage.role === 'assistant') {
+        // Last message was from AI - user needs to respond, so repeat the question
+        console.log('🔄 Last message was from AI, repeating question')
+        setCurrentAIResponse({
+          message: lastMessage.content,
+          intent: 'continuation' as const,
+          nextPhase: sessionDetails.currentPhase as any
+        })
+        setState('speaking')
+      } else if (lastMessage && lastMessage.role === 'user') {
+        // Last message was from user - AI needs to respond, so continue the conversation
+        console.log('🔄 Last message was from user, continuing conversation')
+        setState('thinking')
+        
+        // Process the last user message through the AI
+        setTimeout(async () => {
+          try {
+            const response = await sendMessage.mutateAsync({
+              sessionId: resumingSessionId,
+              message: '[CONTINUING_SESSION]' // Special marker for continuing
+            })
+            setCurrentAIResponse(response)
+            setState('speaking')
+          } catch (error) {
+            console.error('❌ Error continuing session:', error)
+            setState('listening')
+          }
+        }, 500)
+      } else {
+        // No conversation history - start fresh
+        console.log('🔄 No conversation history, starting fresh')
+        setState('listening')
+      }
     }
-  }, [resumingSessionId, sessionId])
+  }, [resumingSessionId, sessionId, sessionDetails, sendMessage])
 
   // Simple silence detection - restart timer whenever transcript changes
   useEffect(() => {
@@ -223,7 +261,15 @@ export function ConversationalVoiceBubble({ onTestComplete, resumingSessionId }:
     console.log(`🖱️ Click in state: ${state}`)
 
     if (state === 'idle') {
-      // Start new session
+      // If we have a resumingSessionId, don't create new session - resume the existing one
+      if (resumingSessionId) {
+        console.log('🔄 Resuming session from click:', resumingSessionId)
+        setSessionId(resumingSessionId)
+        setState('listening')
+        return
+      }
+
+      // Start new session only if no resuming session
       try {
         setState('session-starting')
         const session = await createSession.mutateAsync(user?.id)
@@ -281,6 +327,7 @@ export function ConversationalVoiceBubble({ onTestComplete, resumingSessionId }:
         disabled={state === 'thinking' || state === 'session-starting'}
       />
       
+
       {/* Status Display */}
       <VoiceBubbleStatusDisplay
         state={state}
@@ -289,6 +336,7 @@ export function ConversationalVoiceBubble({ onTestComplete, resumingSessionId }:
         speechRecognitionAvailable={speechRecognition.isSupported}
         isSpeaking={tts.isSpeaking}
         sessionResults={sessionResults}
+        isResuming={!!resumingSessionId && !!sessionDetails}
       />
 
       {/* Career Recommendations Display - ONLY show when test is actually complete (not during conversation) */}

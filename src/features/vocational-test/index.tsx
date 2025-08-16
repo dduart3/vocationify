@@ -21,8 +21,8 @@ export function VocationalTest() {
   const [resumingSessionId, setResumingSessionId] = useState<string | null>(null)
   
   // Get URL search params to check if we're resuming a session
-  const search = useSearch({ from: '/_authenticated/vocational-test/' })
-  const urlSessionId = search.sessionId
+  const search = useSearch({ from: '/_authenticated/vocational-test/' }) as { sessionId?: string }
+  const urlSessionId = search?.sessionId
   
   // Check for incomplete sessions
   const { data: incompleteSession, isLoading: isLoadingIncomplete } = useIncompleteSession()
@@ -130,6 +130,7 @@ export function VocationalTest() {
               setTestState={setTestState}
               completedSessionId={completedSessionId}
               resumingSessionId={resumingSessionId}
+              hasIncompleteSession={!!incompleteSession && !urlSessionId}
             />
           ) : (
             /* Chat Interface */
@@ -142,6 +143,7 @@ export function VocationalTest() {
                 testState={testState}
                 setTestState={setTestState}
                 resumingSessionId={resumingSessionId}
+                hasIncompleteSession={!!incompleteSession && !urlSessionId}
               />
             </div>
           )}
