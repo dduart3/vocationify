@@ -6,17 +6,17 @@ export function SchoolsPage() {
   const [typeFilter, setTypeFilter] = useState<'all' | 'public' | 'private'>('all')
 
   return (
-    <div className="flex-1 min-h-screen bg-gray-50">
-      <div className="container mx-auto px-6 py-8">
+    <div className="min-h-screen p-6">
+      <div className="max-w-6xl mx-auto">
+        
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-4 text-gray-900">
-            Explorar Instituciones
-          </h1>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-white mb-2">Instituciones Educativas</h1>
+          <p className="text-neutral-400">Explora universidades e instituciones en Venezuela</p>
         </div>
 
         {/* Filters */}
-        <div className="max-w-4xl mx-auto mb-8">
+        <div className="mb-6">
           <SchoolFilters
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
@@ -26,7 +26,7 @@ export function SchoolsPage() {
         </div>
 
         {/* Table */}
-        <div className="max-w-6xl mx-auto">
+        <div>
           <SchoolsTable
             searchTerm={searchTerm}
             typeFilter={typeFilter}
