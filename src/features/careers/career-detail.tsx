@@ -6,8 +6,8 @@ interface CareerDetailPageProps {
 
 export function CareerDetailPage({ careerId }: CareerDetailPageProps) {
   return (
-    <div className="flex-1 min-h-screen bg-gray-50">
-      <div className="container mx-auto px-6 py-8">
+    <div className="min-h-screen p-6">
+      <div className="max-w-4xl mx-auto">
         <CareerDetail careerId={careerId} />
       </div>
     </div>

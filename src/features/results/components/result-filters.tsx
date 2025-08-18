@@ -16,25 +16,25 @@ export function ResultFilters({
   return (
     <div className="flex gap-4">
       <div className="relative flex-1">
-        <IconSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+        <IconSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-white/40" />
         <input
           type="text"
           placeholder="Buscar resultados..."
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
+          className="w-full pl-12 pr-4 py-3 bg-white/10 backdrop-blur-md rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
       </div>
       
       <select
         value={dateFilter}
         onChange={(e) => onDateChange(e.target.value as any)}
-        className="px-4 py-3 bg-white border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
+        className="px-4 py-3 bg-white/10 backdrop-blur-md rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
       >
-        <option value="all" className="bg-white">Todos los períodos</option>
-        <option value="last_week" className="bg-white">Última semana</option>
-        <option value="last_month" className="bg-white">Último mes</option>
-        <option value="last_year" className="bg-white">Último año</option>
+        <option value="all" className="bg-white text-gray-900">Todos los períodos</option>
+        <option value="last_week" className="bg-white text-gray-900">Última semana</option>
+        <option value="last_month" className="bg-white text-gray-900">Último mes</option>
+        <option value="last_year" className="bg-white text-gray-900">Último año</option>
       </select>
     </div>
   )

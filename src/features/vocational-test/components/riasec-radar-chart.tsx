@@ -60,7 +60,7 @@ export function RiasecRadarChart({ scores, size = 300 }: RiasecRadarChartProps) 
       cy={center}
       r={(percentage / 100) * radius}
       fill="none"
-      stroke="#e2e8f0"
+      stroke="#374151"
       strokeWidth="1"
       strokeDasharray={percentage === 100 ? "none" : "4,4"}
     />
@@ -76,7 +76,7 @@ export function RiasecRadarChart({ scores, size = 300 }: RiasecRadarChartProps) 
         y1={center}
         x2={center + Math.cos((index * 2 * Math.PI) / 6 - Math.PI / 2) * radius}
         y2={center + Math.sin((index * 2 * Math.PI) / 6 - Math.PI / 2) * radius}
-        stroke="#e2e8f0"
+        stroke="#374151"
         strokeWidth="1"
       />
     )
@@ -136,7 +136,7 @@ export function RiasecRadarChart({ scores, size = 300 }: RiasecRadarChartProps) 
                 x={labelPos.x}
                 y={labelPos.y - 4}
                 textAnchor="middle"
-                className="text-xs font-semibold fill-slate-700"
+                className="text-xs font-semibold fill-white"
               >
                 {label.key}
               </text>
@@ -144,7 +144,7 @@ export function RiasecRadarChart({ scores, size = 300 }: RiasecRadarChartProps) 
                 x={labelPos.x}
                 y={labelPos.y + 20}
                 textAnchor="middle"
-                className="text-xs font-medium fill-slate-600"
+                className="text-xs font-medium fill-neutral-300"
               >
                 {label.label}
               </text>
@@ -178,7 +178,7 @@ export function RiasecRadarChart({ scores, size = 300 }: RiasecRadarChartProps) 
               className="w-3 h-3 rounded-full"
               style={{ backgroundColor: label.color }}
             />
-            <span className="text-slate-700 font-medium">
+            <span className="text-neutral-300 font-medium">
               {label.key} - {label.label}
             </span>
           </div>

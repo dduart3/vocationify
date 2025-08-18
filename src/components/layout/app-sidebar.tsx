@@ -32,7 +32,7 @@ const menuItems = [
     icon: IconChartBar,
   },
   {
-    title: "Explorar Carreras",
+    title: "Carreras",
     url: "/careers",
     icon: IconSchool,
   },
@@ -55,6 +55,16 @@ export function AppSidebar() {
   const sidebarRef = useRef<HTMLDivElement>(null);
   const arrowRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Helper function to check if current route matches parent route
+  const isRouteActive = (itemUrl: string) => {
+    const currentPath = location.pathname;
+    // Exact match
+    if (currentPath === itemUrl) return true;
+    // Parent route match (e.g., /careers matches /careers/123)
+    if (currentPath.startsWith(itemUrl + '/')) return true;
+    return false;
+  };
 
   useEffect(() => {
     if (sidebarRef.current && arrowRef.current) {
@@ -185,7 +195,7 @@ export function AppSidebar() {
         {/* Collapsed Navigation Icons - Only visible when sidebar is closed */}
         <div className="collapsed-nav absolute top-20 left-1/2 -translate-x-1/2 opacity-0 flex flex-col space-y-3">
           {menuItems.map((item) => {
-            const isActive = location.pathname === item.url;
+            const isActive = isRouteActive(item.url);
             return (
               <Link
                 key={item.url}
@@ -245,7 +255,7 @@ export function AppSidebar() {
           {/* Navigation */}
           <nav className="flex-1 space-y-3">
             {menuItems.map((item) => {
-              const isActive = location.pathname === item.url;
+              const isActive = isRouteActive(item.url);
               return (
                 <SidebarLink
                   key={item.url}

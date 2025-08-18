@@ -14,14 +14,14 @@ export function CareerDetail({ careerId }: CareerDetailProps) {
 
   const getRiasecColor = (type: string) => {
     const colors: Record<string, string> = {
-      'realistic': 'bg-green-100 text-green-800 border-green-200',
-      'investigative': 'bg-blue-100 text-blue-800 border-blue-200', 
-      'artistic': 'bg-purple-100 text-purple-800 border-purple-200',
-      'social': 'bg-orange-100 text-orange-800 border-orange-200',
-      'enterprising': 'bg-yellow-100 text-yellow-800 border-yellow-200',
-      'conventional': 'bg-gray-100 text-gray-800 border-gray-200'
+      'realistic': 'bg-green-500/20 text-green-400',
+      'investigative': 'bg-blue-500/20 text-blue-400', 
+      'artistic': 'bg-purple-500/20 text-purple-400',
+      'social': 'bg-orange-500/20 text-orange-400',
+      'enterprising': 'bg-yellow-500/20 text-yellow-400',
+      'conventional': 'bg-cyan-500/20 text-cyan-400'
     }
-    return colors[type.toLowerCase()] || 'bg-gray-100 text-gray-800 border-gray-200'
+    return colors[type.toLowerCase()] || 'bg-cyan-500/20 text-cyan-400'
   }
 
   const getRiasecDisplayName = (type: string) => {
@@ -51,7 +51,7 @@ export function CareerDetail({ careerId }: CareerDetailProps) {
     return (
       <div className="max-w-4xl mx-auto space-y-6">
         {Array(6).fill(0).map((_, i) => (
-          <div key={i} className="animate-pulse bg-gray-200 rounded-lg h-32" />
+          <div key={i} className="animate-pulse bg-white/20 rounded-lg h-32" />
         ))}
       </div>
     )
@@ -61,12 +61,12 @@ export function CareerDetail({ careerId }: CareerDetailProps) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <IconSchool className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">Carrera no encontrada</h3>
-          <p className="text-gray-600 mb-6">La carrera que buscas no existe o ha sido eliminada.</p>
+          <IconSchool className="w-16 h-16 text-red-400 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-white mb-2">Carrera no encontrada</h3>
+          <p className="text-neutral-400 mb-6">La carrera que buscas no existe o ha sido eliminada.</p>
           <Link
             to="/careers"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 rounded-lg transition-colors duration-200"
           >
             <IconArrowLeft className="w-4 h-4" />
             Volver a carreras
@@ -82,22 +82,22 @@ export function CareerDetail({ careerId }: CareerDetailProps) {
       <div className="flex items-center gap-4 mb-8">
         <Link
           to="/careers"
-          className="p-3 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 transition-colors duration-200 shadow-sm"
+          className="p-3 rounded-lg bg-white/10 hover:bg-white/20 transition-colors duration-200"
         >
-          <IconArrowLeft className="w-5 h-5 text-gray-600" />
+          <IconArrowLeft className="w-5 h-5 text-white" />
         </Link>
         <div className="flex-1">
-          <h1 className="text-3xl font-bold text-gray-900">{career.name}</h1>
-          <p className="text-gray-600 mt-1">Información detallada de la carrera</p>
+          <h1 className="text-3xl font-bold text-white">{career.name}</h1>
+          <p className="text-neutral-400 mt-1">Información detallada de la carrera</p>
         </div>
         <button
           onClick={() => setIsFavorite(!isFavorite)}
-          className="p-3 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 transition-colors duration-200 shadow-sm"
+          className="p-3 rounded-lg bg-white/10 hover:bg-white/20 transition-colors duration-200"
         >
           {isFavorite ? (
             <IconBookmarkFilled className="w-5 h-5 text-pink-400" />
           ) : (
-            <IconBookmark className="w-5 h-5 text-gray-400" />
+            <IconBookmark className="w-5 h-5 text-neutral-400" />
           )}
         </button>
       </div>
@@ -107,22 +107,22 @@ export function CareerDetail({ careerId }: CareerDetailProps) {
         {/* Career Details */}
         <div className="lg:col-span-2 space-y-6">
           {/* Description */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Descripción</h2>
-            <p className="text-gray-700 leading-relaxed">
+          <div className="bg-white/10 backdrop-blur-md rounded-lg p-6">
+            <h2 className="text-xl font-bold text-white mb-4">Descripción</h2>
+            <p className="text-neutral-300 leading-relaxed">
               {career.description}
             </p>
           </div>
 
           {/* Skills */}
           {career.key_skills && career.key_skills.length > 0 && (
-            <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Habilidades Clave</h2>
+            <div className="bg-white/10 backdrop-blur-md rounded-lg p-6">
+              <h2 className="text-xl font-bold text-white mb-4">Habilidades Clave</h2>
               <div className="flex flex-wrap gap-2">
                 {career.key_skills.map((skill, index) => (
                   <span
                     key={index}
-                    className="px-3 py-1.5 bg-blue-100 text-blue-800 border border-blue-200 rounded-lg text-sm font-medium"
+                    className="px-3 py-1.5 bg-blue-500/20 text-blue-400  rounded-lg text-sm font-medium"
                   >
                     {skill}
                   </span>
@@ -133,13 +133,13 @@ export function CareerDetail({ careerId }: CareerDetailProps) {
 
           {/* Work Environment */}
           {career.work_environment && career.work_environment.length > 0 && (
-            <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Ambiente de Trabajo</h2>
+            <div className="bg-white/10 backdrop-blur-md rounded-lg p-6">
+              <h2 className="text-xl font-bold text-white mb-4">Ambiente de Trabajo</h2>
               <div className="flex flex-wrap gap-2">
                 {career.work_environment.map((env, index) => (
                   <span
                     key={index}
-                    className="px-3 py-1.5 bg-purple-100 text-purple-800 border border-purple-200 rounded-lg text-sm font-medium"
+                    className="px-3 py-1.5 bg-purple-500/20 text-purple-400  rounded-lg text-sm font-medium"
                   >
                     {env}
                   </span>
@@ -150,13 +150,13 @@ export function CareerDetail({ careerId }: CareerDetailProps) {
 
           {/* Related Careers */}
           {career.related_careers && career.related_careers.length > 0 && (
-            <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Carreras Relacionadas</h2>
+            <div className="bg-white/10 backdrop-blur-md rounded-lg p-6">
+              <h2 className="text-xl font-bold text-white mb-4">Carreras Relacionadas</h2>
               <div className="flex flex-wrap gap-2">
                 {career.related_careers.map((relatedCareer, index) => (
                   <span
                     key={index}
-                    className="px-3 py-1.5 bg-green-100 text-green-800 border border-green-200 rounded-lg text-sm font-medium"
+                    className="px-3 py-1.5 bg-green-500/20 text-green-400  rounded-lg text-sm font-medium"
                   >
                     {relatedCareer}
                   </span>
@@ -169,14 +169,14 @@ export function CareerDetail({ careerId }: CareerDetailProps) {
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Quick Stats */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Información General</h2>
+          <div className="bg-white/10 backdrop-blur-md rounded-lg p-6">
+            <h2 className="text-xl font-bold text-white mb-4">Información General</h2>
             <div className="space-y-4">
               <div className="flex items-center gap-3">
-                <IconClock className="w-5 h-5 text-gray-400" />
+                <IconClock className="w-5 h-5 text-neutral-400" />
                 <div>
-                  <p className="text-sm text-gray-500">Duración</p>
-                  <p className="text-gray-900 font-medium">{career.duration_years} años</p>
+                  <p className="text-sm text-neutral-400">Duración</p>
+                  <p className="text-white font-medium">{career.duration_years} años</p>
                 </div>
               </div>
               
@@ -184,10 +184,10 @@ export function CareerDetail({ careerId }: CareerDetailProps) {
           </div>
 
           {/* RIASEC Profile */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Perfil RIASEC</h2>
+          <div className="bg-white/10 backdrop-blur-md rounded-lg p-6">
+            <h2 className="text-xl font-bold text-white mb-4">Perfil RIASEC</h2>
             <div className="space-y-3">
-              <div className={`px-3 py-2 rounded-lg border ${getRiasecColor(career.primary_riasec_type)}`}>
+              <div className={`px-3 py-2 rounded-lg ${getRiasecColor(career.primary_riasec_type)}`}>
                 <div className="flex items-center gap-2">
                   <IconTarget className="w-4 h-4" />
                   <span className="font-medium">{getRiasecDisplayName(career.primary_riasec_type)}</span>
@@ -196,7 +196,7 @@ export function CareerDetail({ careerId }: CareerDetailProps) {
               </div>
               
               {career.secondary_riasec_type && (
-                <div className={`px-3 py-2 rounded-lg border opacity-75 ${getRiasecColor(career.secondary_riasec_type)}`}>
+                <div className={`px-3 py-2 rounded-lg opacity-75 ${getRiasecColor(career.secondary_riasec_type)}`}>
                   <div className="flex items-center gap-2">
                     <IconTarget className="w-4 h-4" />
                     <span className="font-medium">{getRiasecDisplayName(career.secondary_riasec_type)}</span>
@@ -208,7 +208,7 @@ export function CareerDetail({ careerId }: CareerDetailProps) {
 
             {/* RIASEC Scores */}
             <div className="mt-4 space-y-2">
-              <h3 className="text-sm font-medium text-gray-700">Puntuaciones detalladas:</h3>
+              <h3 className="text-sm font-medium text-neutral-300">Puntuaciones detalladas:</h3>
               {[
                 { key: 'realistic', label: 'Realista', score: career.realistic_score },
                 { key: 'investigative', label: 'Investigativo', score: career.investigative_score },
@@ -218,15 +218,15 @@ export function CareerDetail({ careerId }: CareerDetailProps) {
                 { key: 'conventional', label: 'Convencional', score: career.conventional_score },
               ].map((item) => (
                 <div key={item.key} className="flex items-center justify-between">
-                  <span className="text-sm text-gray-700">{item.label}</span>
+                  <span className="text-sm text-neutral-300">{item.label}</span>
                   <div className="flex items-center gap-2">
-                    <div className="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="w-20 h-2 bg-white/20 rounded-full overflow-hidden">
                       <div 
-                        className="h-full bg-blue-500 rounded-full"
+                        className="h-full bg-blue-400 rounded-full"
                         style={{ width: `${item.score}%` }}
                       />
                     </div>
-                    <span className="text-xs text-gray-500 w-12">{item.score}/100</span>
+                    <span className="text-xs text-neutral-400 w-12">{item.score}/100</span>
                   </div>
                 </div>
               ))}
@@ -237,41 +237,43 @@ export function CareerDetail({ careerId }: CareerDetailProps) {
 
       {/* Schools Section */}
       {career.schools && career.schools.length > 0 && (
-        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">Dónde Estudiar</h2>
+        <div className="bg-white/10 backdrop-blur-md rounded-lg p-6">
+          <h2 className="text-xl font-bold text-white mb-6">Dónde Estudiar</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {career.schools.map((schoolCareer, index) => (
-              <div key={index} className="bg-gray-50 border border-gray-100 rounded-lg p-4">
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 bg-green-100 border border-green-200 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <IconBuilding className="w-5 h-5 text-green-600" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h3 className="font-semibold text-gray-900 text-sm leading-tight">
-                      {schoolCareer.school.name}
-                    </h3>
-                    {schoolCareer.school.location?.city && (
-                      <div className="flex items-center gap-1 mt-1">
-                        <IconMapPin className="w-3 h-3 text-gray-400" />
-                        <span className="text-xs text-gray-500">
-                          {schoolCareer.school.location.city}
-                          {schoolCareer.school.location.state && `, ${schoolCareer.school.location.state}`}
-                        </span>
-                      </div>
-                    )}
-                    {schoolCareer.shifts && schoolCareer.shifts.length > 0 && (
-                      <div className="flex items-center gap-1 mt-1">
-                        <IconClock className="w-3 h-3 text-gray-400" />
-                        <span className="text-xs text-gray-500">
-                          {Array.isArray(schoolCareer.shifts) 
-                            ? schoolCareer.shifts.join(', ') 
-                            : schoolCareer.shifts}
-                        </span>
-                      </div>
-                    )}
+              <Link key={index} to="/schools/$schoolId" params={{ schoolId: schoolCareer.school.id }}>
+                <div className="bg-white/5 rounded-lg p-4 hover:bg-white/10 transition-colors duration-200 cursor-pointer">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 bg-green-500/20  rounded-lg flex items-center justify-center flex-shrink-0">
+                      <IconBuilding className="w-5 h-5 text-green-400" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-semibold text-white text-sm leading-tight">
+                        {schoolCareer.school.name}
+                      </h3>
+                      {schoolCareer.school.location?.city && (
+                        <div className="flex items-center gap-1 mt-1">
+                          <IconMapPin className="w-3 h-3 text-neutral-400" />
+                          <span className="text-xs text-neutral-400">
+                            {schoolCareer.school.location.city}
+                            {schoolCareer.school.location.state && `, ${schoolCareer.school.location.state}`}
+                          </span>
+                        </div>
+                      )}
+                      {schoolCareer.shifts && schoolCareer.shifts.length > 0 && (
+                        <div className="flex items-center gap-1 mt-1">
+                          <IconClock className="w-3 h-3 text-neutral-400" />
+                          <span className="text-xs text-neutral-400">
+                            {Array.isArray(schoolCareer.shifts) 
+                              ? schoolCareer.shifts.join(', ') 
+                              : schoolCareer.shifts}
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>

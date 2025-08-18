@@ -9,10 +9,8 @@ function ResultDetailPage() {
   const { sessionId } = Route.useParams()
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="container mx-auto px-4">
-        <ResultDetail resultId={sessionId} />
-      </div>
+    <div className="min-h-screen p-6">
+      <ResultDetail resultId={sessionId} />
     </div>
   )
 }
