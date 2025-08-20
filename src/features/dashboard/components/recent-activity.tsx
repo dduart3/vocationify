@@ -151,11 +151,6 @@ export function RecentActivity() {
     >
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-white">Tests Recientes</h2>
-        <Link to="/vocational-test">
-          <div className="text-sm text-white/60 hover:text-white transition-colors">
-            Ver Todo el Historial
-          </div>
-        </Link>
       </div>
       
       <div className="space-y-4">

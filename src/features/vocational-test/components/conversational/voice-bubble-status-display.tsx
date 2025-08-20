@@ -137,6 +137,14 @@ export function VoiceBubbleStatusDisplay({
         return 'Procesando tu respuesta'
       case 'session-starting':
         return 'Iniciando conversación'
+      case 'enhanced-exploration':
+        return '🔍 Exploración profunda en curso'
+      case 'career-matching':
+        return '🎯 Analizando compatibilidad de carreras'
+      case 'reality-check':
+        return '⚠️ Reality Check: Preguntas discriminatorias'
+      case 'final-results':
+        return '🏆 Generando resultados finales'
       case 'results-display':
         return '🎉 ¡Aquí están tus resultados!'
       default:
@@ -163,20 +171,34 @@ export function VoiceBubbleStatusDisplay({
         return 'Analizando tu respuesta y preparando mi siguiente pregunta...'
       case 'session-starting':
         return 'Iniciando tu sesión de orientación vocacional conversacional...'
+      case 'enhanced-exploration':
+        return 'Realizando preguntas profundas sobre tus intereses, habilidades y valores. Este proceso tomará 12-15 preguntas para un perfil RIASEC completo.'
+      case 'career-matching':
+        return 'Analizando tu perfil vocacional completo para identificar las 3 carreras más compatibles contigo...'
+      case 'reality-check':
+        return 'Fase de verificación: evaluando si estás preparado/a para los aspectos más desafiantes de tus carreras ideales.'
+      case 'final-results':
+        return 'Compilando tu evaluación completa con resultados ajustados por reality check...'
       case 'results-display':
         return '¡Perfecto! He analizado tus respuestas y aquí están tus carreras ideales. La página de resultados detallados se cargará en unos segundos...'
       default:
-        return 'Tu asistente de orientación vocacional conversacional. Haz clic para comenzar una charla natural sobre tu futuro.'
+        return 'Tu asistente de orientación vocacional conversacional con metodología enhanced + reality check. Haz clic para comenzar.'
     }
   }
 
   const getPhaseTranslation = (phase: string): string => {
     const translations: Record<string, string> = {
       'greeting': 'Saludo',
+      'enhanced_exploration': 'Exploración Profunda',
+      'career_matching': 'Análisis de Carreras',
+      'reality_check': 'Reality Check',
+      'final_results': 'Resultados Finales',
+      'complete': 'Completa',
+      // Legacy phases for backward compatibility
       'exploration': 'Exploración',
       'assessment': 'Evaluación',
       'recommendation': 'Recomendación',
-      'complete': 'Completa'
+      'career_exploration': 'Exploración de Carreras'
     }
     return translations[phase] || phase
   }

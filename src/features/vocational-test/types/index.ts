@@ -113,7 +113,7 @@ export interface ConversationResponse {
     confidence: number
     reasoning: string
   }>
-  nextPhase?: 'greeting' | 'exploration' | 'assessment' | 'recommendation' | 'career_exploration' | 'complete'
+  nextPhase?: 'greeting' | 'enhanced_exploration' | 'career_matching' | 'reality_check' | 'final_results' | 'complete'
 }
 
 export interface SessionResults {
@@ -127,7 +127,7 @@ export interface SessionResults {
     C: number
   }
   confidenceLevel: number
-  conversationPhase: 'greeting' | 'exploration' | 'assessment' | 'recommendation' | 'career_exploration' | 'complete'
+  conversationPhase: 'greeting' | 'enhanced_exploration' | 'career_matching' | 'reality_check' | 'final_results' | 'complete'
   careerRecommendations: Array<{
     career_id: string
     confidence: number
@@ -135,4 +135,54 @@ export interface SessionResults {
     career: Career | null
   }>
   conversationHistory: ConversationMessage[]
+}
+
+// New types for enhanced 4-phase methodology
+export interface DiscriminatingQuestion {
+  question: string
+  careerAspect: 'physical' | 'emotional' | 'economic' | 'time_commitment' | 'social' | 'educational' | 'environmental'
+  importance: 1 | 2 | 3 | 4 | 5  // Impact on career fit
+  followUpEnabled: boolean
+}
+
+export interface CareerDiscriminatingContext {
+  career: {
+    id: string
+    name: string
+    description: string
+    workEnvironment?: any
+    challenges?: string[]
+    requirements?: string[]
+  }
+  userProfile: {
+    riasecScores: Record<string, number>
+    interests: string[]
+    previousResponses: Array<{
+      question: string
+      response: string
+    }>
+  }
+}
+
+// Enhanced progress tracking for 4-phase test
+export interface TestPhaseProgress {
+  currentPhase: 'greeting' | 'enhanced_exploration' | 'career_matching' | 'reality_check' | 'final_results' | 'complete'
+  phaseName: string
+  phaseDescription: string
+  progress: number  // 0-100 percentage
+  totalQuestions?: number
+  answeredQuestions?: number
+  estimatedTimeRemaining?: string
+}
+
+// Enhanced career matching result
+export interface CareerMatchingResult {
+  career: Career
+  compatibilityScore: number
+  riasecMatch: number
+  thematicMatch: number
+  reasoning: string
+  discriminatingQuestions?: DiscriminatingQuestion[]
+  realityCheckPassed?: boolean
+  realityCheckScore?: number
 }

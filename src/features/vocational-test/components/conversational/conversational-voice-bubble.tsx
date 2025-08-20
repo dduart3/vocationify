@@ -9,6 +9,8 @@ import { VoiceBubbleCore } from './voice-bubble-core'
 import { VoiceBubbleParticleSystem } from './voice-bubble-particle-system'
 import { VoiceBubbleStatusDisplay } from './voice-bubble-status-display'
 import { CareerRecommendationsDisplay } from './career-recommendations-display'
+import { EnhancedProgressIndicator } from './enhanced-progress-indicator'
+import { TestCompletionDisplay } from './test-completion-display'
 import { useSpeechRecognition } from '../../hooks/use-speech-recognition'
 import { useAudioVisualization, useMorphAnimation } from './voice-bubble-hooks'
 import { getStateStyles } from './voice-bubble-styles'
@@ -64,11 +66,13 @@ export function ConversationalVoiceBubble({ onTestComplete, resumingSessionId }:
       if (lastMessage && lastMessage.role === 'assistant') {
         // Last message was from AI - user needs to respond, so repeat the question
         console.log('🔄 Last message was from AI, repeating question')
-        setCurrentAIResponse({
+        const aiResponse: ConversationResponse = {
           message: lastMessage.content,
-          intent: 'continuation' as const,
-          nextPhase: sessionDetails.currentPhase as any
-        })
+          intent: 'question' as const,
+          nextPhase: sessionDetails.currentPhase as any,
+          suggestedFollowUp: []
+        }
+        setCurrentAIResponse(aiResponse)
         setState('speaking')
       } else if (lastMessage && lastMessage.role === 'user') {
         // Last message was from user - AI needs to respond, so continue the conversation
@@ -191,17 +195,41 @@ export function ConversationalVoiceBubble({ onTestComplete, resumingSessionId }:
   const startListening = () => {
     if (!currentAIResponse) return
     
-    // Check if conversation should complete (only when truly complete, not during career exploration)
+    // Check if conversation should complete (only when truly complete)
     if (currentAIResponse.nextPhase === 'complete' || sessionResults?.conversationPhase === 'complete') {
       console.log('✅ Conversation complete - NO AUTO REDIRECT - let useEffect handle completion')
       return
     }
     
-    // Continue listening for career exploration phase
-    if (currentAIResponse.nextPhase === 'career_exploration' || sessionResults?.conversationPhase === 'career_exploration') {
-      console.log('🎯 Entering career exploration phase - continuing conversation')
-      setState('listening')
-      // Do not navigate away - stay in conversation mode for career exploration
+    // Handle enhanced exploration phase with continuous listening
+    if (currentAIResponse.nextPhase === 'enhanced_exploration' || sessionResults?.conversationPhase === 'enhanced_exploration') {
+      console.log('🔍 Enhanced exploration phase - continuing deep assessment')
+      setState('enhanced-exploration')
+      setTimeout(() => setState('listening'), 500)
+      return
+    }
+    
+    // Handle career matching phase (brief processing phase)
+    if (currentAIResponse.nextPhase === 'career_matching' || sessionResults?.conversationPhase === 'career_matching') {
+      console.log('🎯 Career matching phase - AI analyzing profile')
+      setState('career-matching')
+      setTimeout(() => setState('listening'), 500)
+      return
+    }
+    
+    // Handle reality check phase with discriminating questions
+    if (currentAIResponse.nextPhase === 'reality_check' || sessionResults?.conversationPhase === 'reality_check') {
+      console.log('⚠️ Reality check phase - discriminating questions')
+      setState('reality-check')
+      setTimeout(() => setState('listening'), 500)
+      return
+    }
+    
+    // Handle final results phase
+    if (currentAIResponse.nextPhase === 'final_results' || sessionResults?.conversationPhase === 'final_results') {
+      console.log('🏆 Final results phase - comprehensive assessment')
+      setState('final-results')
+      setTimeout(() => setState('listening'), 500)
       return
     }
     
@@ -300,20 +328,40 @@ export function ConversationalVoiceBubble({ onTestComplete, resumingSessionId }:
   // Check for conversation completion - but let final speech finish first
   useEffect(() => {
     if (sessionResults?.conversationPhase === 'complete' && state !== 'speaking') {
-      // Only complete if we're not currently speaking - NO AUTO REDIRECT
-      setState('complete')
-      console.log('🏁 Conversation completed - showing results without redirect')
-      onTestComplete?.(sessionResults.sessionId)
+      // Only complete if we're not currently speaking
+      console.log('🏁 Conversation completed - transitioning to completion state')
+      setTimeout(() => {
+        setState('test-finished')
+        onTestComplete?.(sessionResults.sessionId)
+      }, 2000) // 2 second delay to let the final message be absorbed
     } else if (sessionResults?.conversationPhase === 'complete' && state === 'speaking') {
       // If we're speaking when completion is detected, wait for speech to finish
       console.log('🏁 Conversation complete but ARIA is still speaking - will complete after speech')
     }
   }, [sessionResults, onTestComplete, state])
 
+  // Show completion display when test is finished
+  if (state === 'test-finished') {
+    return (
+      <TestCompletionDisplay 
+        sessionId={sessionId || ''}
+        sessionResults={sessionResults}
+        onViewResults={() => onTestComplete?.(sessionId || '')}
+      />
+    )
+  }
+
   return (
     <div className="relative flex flex-col items-center space-y-12 py-8">
       {/* Particle Canvas Background */}
       <VoiceBubbleParticleSystem state={state} audioLevel={audioLevel} />
+
+      {/* Enhanced Progress Indicator */}
+      <EnhancedProgressIndicator
+        currentPhase={sessionResults?.conversationPhase || currentAIResponse?.nextPhase || 'enhanced_exploration'}
+        currentResponse={currentAIResponse}
+        conversationHistory={sessionResults?.conversationHistory || []}
+      />
 
       {/* Main Voice Bubble Container */}
       <VoiceBubbleCore
@@ -344,8 +392,8 @@ export function ConversationalVoiceBubble({ onTestComplete, resumingSessionId }:
         <CareerRecommendationsDisplay careerSuggestions={sessionResults.careerRecommendations} />
       )}
 
-      {/* Career Exploration UI - shown when AI provides career recommendations - STICKY AT BOTTOM */}
-      {currentAIResponse?.intent === 'recommendation' && currentAIResponse?.nextPhase === 'career_exploration' && (state === 'idle' || state === 'listening') && (
+      {/* Career Matching Phase UI - shown when AI provides top career matches */}
+      {currentAIResponse?.intent === 'recommendation' && currentAIResponse?.nextPhase === 'reality_check' && (state === 'idle' || state === 'listening') && (
         <div 
           className="fixed bottom-0 left-0 right-0 z-50 p-4"
           style={{
@@ -361,7 +409,7 @@ export function ConversationalVoiceBubble({ onTestComplete, resumingSessionId }:
         >
           <div className="max-w-4xl mx-auto text-center space-y-3">
             <h3 className="text-white font-semibold text-sm">
-              ¿Qué te gustaría hacer ahora?
+              Top 3 carreras identificadas - Ahora verificaremos si estás preparado/a para sus realidades
             </h3>
             <div className="flex flex-wrap gap-3 justify-center">
               <button
@@ -370,17 +418,17 @@ export function ConversationalVoiceBubble({ onTestComplete, resumingSessionId }:
                   try {
                     const response = await sendMessage.mutateAsync({
                       sessionId: sessionId!,
-                      message: '¿Podrías contarme más detalles sobre estas carreras? Me interesa saber sobre el campo laboral y las oportunidades.'
+                      message: 'Estoy listo/a para las preguntas sobre las realidades de estas carreras.'
                     })
                     setCurrentAIResponse(response)
                   } catch (error) {
-                    console.error('❌ Error sending career exploration message:', error)
+                    console.error('❌ Error proceeding to reality check:', error)
                     setState('listening')
                   }
                 }}
-                className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm"
+                className="bg-orange-600 hover:bg-orange-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm"
               >
-                Conocer más detalles
+                Continuar con Reality Check
               </button>
               <button
                 onClick={async () => {
@@ -388,103 +436,65 @@ export function ConversationalVoiceBubble({ onTestComplete, resumingSessionId }:
                   try {
                     const response = await sendMessage.mutateAsync({
                       sessionId: sessionId!,
-                      message: '¿Podrías sugerirme otras carreras alternativas que también podrían interesarme?'
+                      message: '¿Podrías explicarme qué son las preguntas discriminatorias?'
                     })
                     setCurrentAIResponse(response)
                   } catch (error) {
-                    console.error('❌ Error sending alternative careers message:', error)
-                    setState('listening')
-                  }
-                }}
-                className="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm"
-              >
-                Ver otras opciones
-              </button>
-              <button
-                onClick={async () => {
-                  setState('thinking')
-                  try {
-                    const response = await sendMessage.mutateAsync({
-                      sessionId: sessionId!,
-                      message: 'Estoy satisfecho con estas recomendaciones. Me gustaría ver los resultados finales.'
-                    })
-                    setCurrentAIResponse(response)
-                  } catch (error) {
-                    console.error('❌ Error sending completion message:', error)
+                    console.error('❌ Error asking about discriminating questions:', error)
                     setState('listening')
                   }
                 }}
                 className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm"
               >
-                Ver resultados finales
+                ¿Qué es Reality Check?
               </button>
             </div>
             <p className="text-sm text-white/70 mt-4">
-              También puedes hacer cualquier pregunta hablando naturalmente
+              Evaluaremos aspectos desafiantes de cada carrera para asegurar compatibilidad real
             </p>
           </div>
         </div>
       )}
 
-      {/* Completion Check UI - shown when AI suggests finishing - STICKY AT BOTTOM */}
-      {currentAIResponse?.intent === 'completion_check' && state === 'idle' && (
+      {/* Final Results Phase UI - shown when AI provides final comprehensive results */}
+      {currentAIResponse?.intent === 'farewell' && currentAIResponse?.nextPhase === 'complete' && (state === 'idle' || state === 'listening') && (
         <div 
           className="fixed bottom-0 left-0 right-0 z-50 p-4"
           style={{
             background: `
               linear-gradient(135deg, 
-                rgba(0, 0, 0, 0.8) 0%, 
-                rgba(0, 0, 0, 0.6) 100%
+                rgba(0, 100, 0, 0.8) 0%, 
+                rgba(0, 150, 0, 0.6) 100%
               )
             `,
             backdropFilter: 'blur(20px)',
-            borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+            borderTop: '1px solid rgba(255, 255, 255, 0.2)',
           }}
         >
           <div className="max-w-4xl mx-auto text-center space-y-3">
             <h3 className="text-white font-semibold text-sm">
-              ¿Qué te gustaría hacer?
+              🎉 ¡Test completado exitosamente! Tu perfil vocacional está listo
             </h3>
             <div className="flex flex-wrap gap-3 justify-center">
               <button
-                onClick={async () => {
-                  // Send confirmation message to complete
-                  setState('thinking')
-                  try {
-                    const response = await sendMessage.mutateAsync({
-                      sessionId: sessionId!,
-                      message: 'Ver resultados finales'
-                    })
-                    setCurrentAIResponse(response)
-                  } catch (error) {
-                    console.error('❌ Error sending completion confirmation:', error)
-                    setState('idle')
-                  }
+                onClick={() => {
+                  setState('complete')
+                  onTestComplete?.(sessionId!)
                 }}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm"
+                className="bg-white/90 hover:bg-white text-green-800 font-medium py-2 px-4 rounded-lg transition-colors text-sm"
               >
-                Ver resultados finales
+                Ver perfil completo
               </button>
               <button
-                onClick={async () => {
-                  // Send message to continue exploring
-                  setState('thinking')
-                  try {
-                    const response = await sendMessage.mutateAsync({
-                      sessionId: sessionId!,
-                      message: 'Explorar más carreras'
-                    })
-                    setCurrentAIResponse(response)
-                  } catch (error) {
-                    console.error('❌ Error sending continue message:', error)
-                    setState('idle')
-                  }
-                }}
+                onClick={() => navigate({ to: '/results' })}
                 className="bg-white/20 hover:bg-white/30 text-white font-medium py-2 px-4 rounded-lg transition-colors border border-white/30 text-sm"
               >
-                Explorar más carreras
+                Ir a mis resultados
               </button>
             </div>
+            <p className="text-sm text-white/70 mt-4">
+              Resultado basado en evaluación profunda + reality check completado
+            </p>
           </div>
         </div>
       )}

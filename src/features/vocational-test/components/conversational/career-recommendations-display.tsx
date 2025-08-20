@@ -1,4 +1,4 @@
-import { GraduationCap, TrendingUp, Info, Trophy, Medal, Award, Eye, X, Star, Sparkles } from 'lucide-react'
+import { GraduationCap, TrendingUp, Info, Trophy, Medal, Award, Eye, X, Star, Sparkles, CheckCircle, AlertCircle, ShieldCheck } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
 
@@ -17,6 +17,15 @@ interface CareerSuggestion {
   name: string
   confidence: number
   reasoning: string
+  realityCheckPassed?: boolean
+  realityCheckScore?: number
+  discriminatingQuestions?: Array<{
+    question: string
+    careerAspect: string
+    importance: number
+    userResponse?: string
+    impactOnScore?: number
+  }>
 }
 
 interface CareerRecommendationsDisplayProps {
@@ -59,6 +68,35 @@ const getConfidenceBadgeStyle = (confidence: number) => {
   if (confidence >= 75) return "bg-blue-500/10 backdrop-blur-sm text-blue-300"
   if (confidence >= 65) return "bg-yellow-500/10 backdrop-blur-sm text-yellow-300"
   return "bg-gray-500/10 backdrop-blur-sm text-gray-300"
+}
+
+// Get reality check badge information
+const getRealityCheckBadge = (career: CareerSuggestion) => {
+  if (career.realityCheckPassed === undefined) {
+    // Reality check not performed or not available
+    return null
+  }
+  
+  if (career.realityCheckPassed) {
+    return {
+      icon: CheckCircle,
+      text: 'Reality Check ✓',
+      className: 'bg-green-500/20 text-green-300 border border-green-500/30',
+      score: career.realityCheckScore
+    }
+  } else {
+    return {
+      icon: AlertCircle,
+      text: 'Reality Check ✗',
+      className: 'bg-red-500/20 text-red-300 border border-red-500/30',
+      score: career.realityCheckScore
+    }
+  }
+}
+
+// Determine if reality check information should be shown
+const hasRealityCheckData = (careers: CareerSuggestion[]) => {
+  return careers.some(career => career.realityCheckPassed !== undefined)
 }
 
 
@@ -182,6 +220,19 @@ export function CareerRecommendationsDisplay({ careerSuggestions }: CareerRecomm
               {careerSuggestions[1]?.confidence}%
             </div>
 
+            {/* Reality Check Badge */}
+            {(() => {
+              const realityCheck = getRealityCheckBadge(careerSuggestions[1])
+              if (!realityCheck) return null
+              const IconComponent = realityCheck.icon
+              return (
+                <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium ${realityCheck.className}`}>
+                  <IconComponent className="w-3 h-3" />
+                  {realityCheck.text}
+                </div>
+              )
+            })()}
+
             {/* View Details Button */}
             <button
               onClick={() => setSelectedCareer({ career: careerSuggestions[1], rank: 'SEGUNDA' })}
@@ -255,6 +306,19 @@ export function CareerRecommendationsDisplay({ careerSuggestions }: CareerRecomm
               {careerSuggestions[0]?.confidence}%
             </div>
 
+            {/* Reality Check Badge */}
+            {(() => {
+              const realityCheck = getRealityCheckBadge(careerSuggestions[0])
+              if (!realityCheck) return null
+              const IconComponent = realityCheck.icon
+              return (
+                <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium ${realityCheck.className}`}>
+                  <IconComponent className="w-3 h-3" />
+                  {realityCheck.text}
+                </div>
+              )
+            })()}
+
             {/* View Details Button */}
             <button
               onClick={() => setSelectedCareer({ career: careerSuggestions[0], rank: 'CAMPEÓN' })}
@@ -320,6 +384,19 @@ export function CareerRecommendationsDisplay({ careerSuggestions }: CareerRecomm
               <TrendingUp className="w-4 h-4" />
               {careerSuggestions[2]?.confidence}%
             </div>
+
+            {/* Reality Check Badge */}
+            {(() => {
+              const realityCheck = getRealityCheckBadge(careerSuggestions[2])
+              if (!realityCheck) return null
+              const IconComponent = realityCheck.icon
+              return (
+                <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium ${realityCheck.className}`}>
+                  <IconComponent className="w-3 h-3" />
+                  {realityCheck.text}
+                </div>
+              )
+            })()}
 
             {/* View Details Button */}
             <button
@@ -431,20 +508,54 @@ export function CareerRecommendationsDisplay({ careerSuggestions }: CareerRecomm
       
       {/* Helper functions moved outside JSX */}
       
-      {/* Info section with pure glassmorphism */}
-      <div className="mt-16 bg-white/6 backdrop-blur-xl rounded-3xl p-6 shadow-xl">
-        <div className="flex items-start gap-4 text-blue-300">
-          <div className="bg-blue-500/20 backdrop-blur-sm rounded-full p-2">
-            <Info className="w-5 h-5 text-blue-400" />
-          </div>
-          <div className="text-sm leading-relaxed">
-            <p className="font-bold text-white mb-2">¿Cómo calculamos esto?</p>
-            <p className="text-white/80">
-              Analizamos tu perfil RIASEC, intereses únicos y compatibilidad natural con cada carrera. 
-              Las recomendaciones están ordenadas por afinidad total.
-            </p>
+      {/* Info section with reality check information */}
+      <div className="mt-16 space-y-4">
+        <div className="bg-white/6 backdrop-blur-xl rounded-3xl p-6 shadow-xl">
+          <div className="flex items-start gap-4 text-blue-300">
+            <div className="bg-blue-500/20 backdrop-blur-sm rounded-full p-2">
+              <Info className="w-5 h-5 text-blue-400" />
+            </div>
+            <div className="text-sm leading-relaxed">
+              <p className="font-bold text-white mb-2">¿Cómo calculamos esto?</p>
+              <p className="text-white/80">
+                Analizamos tu perfil RIASEC, intereses únicos y compatibilidad natural con cada carrera. 
+                Las recomendaciones están ordenadas por afinidad total.
+              </p>
+              {hasRealityCheckData(careerSuggestions) && (
+                <p className="text-white/80 mt-3">
+                  <strong className="text-green-300">Reality Check aplicado:</strong> Evaluamos si estás preparado/a para los aspectos más desafiantes de cada carrera.
+                </p>
+              )}
+            </div>
           </div>
         </div>
+
+        {/* Reality Check Summary */}
+        {hasRealityCheckData(careerSuggestions) && (
+          <div className="bg-white/4 backdrop-blur-xl rounded-2xl p-4 shadow-lg border border-white/10">
+            <div className="flex items-center gap-3 mb-3">
+              <ShieldCheck className="w-5 h-5 text-orange-400" />
+              <h4 className="text-white font-semibold">Resumen del Reality Check</h4>
+            </div>
+            <div className="space-y-2">
+              {careerSuggestions.slice(0, 3).map((career, index) => {
+                const realityCheck = getRealityCheckBadge(career)
+                if (!realityCheck) return null
+                const IconComponent = realityCheck.icon
+                
+                return (
+                  <div key={career.careerId} className="flex items-center justify-between text-sm">
+                    <span className="text-white/80">{career.name}</span>
+                    <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs ${realityCheck.className}`}>
+                      <IconComponent className="w-3 h-3" />
+                      {career.realityCheckPassed ? 'Preparado/a' : 'Necesita consideración'}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Career Details Modal */}
