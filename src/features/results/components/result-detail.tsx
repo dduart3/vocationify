@@ -3,6 +3,7 @@ import { Link } from '@tanstack/react-router'
 import { IconArrowLeft, IconBrain, IconTrophy, IconUser, IconTarget, IconBuilding, IconExternalLink } from '@tabler/icons-react'
 import { useResultDetail } from '../hooks/use-results'
 import { RiasecRadarChart } from '@/features/vocational-test/components/riasec-radar-chart'
+import { GlassmorphismSkeleton } from '@/components/ui/glassmorphism-loader'
 
 interface ResultDetailProps {
   resultId: string
@@ -70,10 +71,15 @@ export function ResultDetail({ resultId }: ResultDetailProps) {
 
   if (isLoading) {
     return (
-      <div className="max-w-4xl mx-auto space-y-6">
-        {Array(6).fill(0).map((_, i) => (
-          <div key={i} className="animate-pulse bg-white/20 rounded-lg h-32" />
-        ))}
+      <div className="max-w-7xl mx-auto space-y-6">
+        <GlassmorphismSkeleton count={1} height="h-16" />
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <GlassmorphismSkeleton count={4} height="h-20" />
+        </div>
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+          <GlassmorphismSkeleton count={2} height="h-80" />
+          <GlassmorphismSkeleton count={2} height="h-80" />
+        </div>
       </div>
     )
   }
@@ -130,10 +136,10 @@ export function ResultDetail({ resultId }: ResultDetailProps) {
             <IconUser className="w-4 h-4 text-neutral-400" />
             <span className="text-sm text-neutral-400">Tipo Principal</span>
           </div>
-          <div className={`text-lg font-bold ${getRiasecColor(topTypes[0]?.type || '')}`}>
+          <div className={`inline-flex items-center px-3 py-2 rounded-full text-sm font-semibold ${getRiasecColor(topTypes[0]?.type || '')}`}>
             {topTypes[0]?.name || 'N/A'}
           </div>
-          <div className="text-sm text-neutral-300">{topTypes[0]?.score || 0}% de compatibilidad</div>
+          <div className="text-sm text-neutral-300 mt-2">{topTypes[0]?.score || 0}% de compatibilidad</div>
         </div>
 
         {/* Secondary Type */}
@@ -142,10 +148,10 @@ export function ResultDetail({ resultId }: ResultDetailProps) {
             <IconTarget className="w-4 h-4 text-neutral-400" />
             <span className="text-sm text-neutral-400">Tipo Secundario</span>
           </div>
-          <div className={`text-lg font-bold ${getRiasecColor(topTypes[1]?.type || '')}`}>
+          <div className={`inline-flex items-center px-3 py-2 rounded-full text-sm font-semibold ${getRiasecColor(topTypes[1]?.type || '')}`}>
             {topTypes[1]?.name || 'N/A'}
           </div>
-          <div className="text-sm text-neutral-300">{topTypes[1]?.score || 0}% de compatibilidad</div>
+          <div className="text-sm text-neutral-300 mt-2">{topTypes[1]?.score || 0}% de compatibilidad</div>
         </div>
 
         {/* Test Type */}

@@ -10,6 +10,7 @@ import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { Toaster } from '@/components/ui/sonner'
 import { toast } from 'sonner'
 import { handleServerError } from '@/utils/handle-server-error'
+import { GlassmorphismLoader } from '@/components/ui/glassmorphism-loader'
 import './index.css'
 
 // Generated Routes
@@ -95,12 +96,11 @@ const router = createRouter({
   defaultPreload: 'intent',
   defaultPreloadStaleTime: 0,
   defaultPendingComponent: () => (
-    <div className="flex items-center justify-center min-h-screen">
-      <div className="flex flex-col items-center gap-4">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
-        <p className="text-sm text-muted-foreground">Loading...</p>
-      </div>
-    </div>
+    <GlassmorphismLoader 
+      size="lg" 
+      text="Cargando página..." 
+      fullScreen 
+    />
   ),
   defaultErrorComponent: ({ error }) => (
     <div className="flex flex-col items-center justify-center min-h-screen p-8">

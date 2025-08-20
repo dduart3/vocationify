@@ -1,6 +1,7 @@
 import { createFileRoute, Outlet, useNavigate } from '@tanstack/react-router'
 import { AppSidebar } from '@/components/layout/app-sidebar'
 import { useAuthStore } from '@/stores/auth-store'
+import { GlassmorphismLoader } from '@/components/ui/glassmorphism-loader'
 import { useEffect } from 'react'
 
 export const Route = createFileRoute('/_authenticated')({
@@ -21,9 +22,11 @@ function AuthenticatedLayout() {
   // Show loading while checking auth
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center">
-        <div className="text-white">Loading...</div>
-      </div>
+      <GlassmorphismLoader 
+        size="lg" 
+        text="Verificando autenticación..." 
+        fullScreen 
+      />
     )
   }
 
