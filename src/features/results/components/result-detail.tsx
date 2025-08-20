@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
-import { IconArrowLeft, IconBrain, IconTrophy, IconUser, IconTarget, IconBuilding } from '@tabler/icons-react'
+import { IconArrowLeft, IconBrain, IconTrophy, IconUser, IconTarget, IconBuilding, IconExternalLink } from '@tabler/icons-react'
 import { useResultDetail } from '../hooks/use-results'
 import { RiasecRadarChart } from '@/features/vocational-test/components/riasec-radar-chart'
 
@@ -55,6 +55,17 @@ export function ResultDetail({ resultId }: ResultDetailProps) {
       hour: '2-digit',
       minute: '2-digit'
     })
+  }
+
+  const getStatusDisplayName = (status: string) => {
+    const statusMap: Record<string, string> = {
+      'completed': 'Completado',
+      'in_progress': 'En progreso',
+      'pending': 'Pendiente',
+      'failed': 'Fallido',
+      'cancelled': 'Cancelado'
+    }
+    return statusMap[status.toLowerCase()] || status
   }
 
   if (isLoading) {
@@ -172,24 +183,44 @@ export function ResultDetail({ resultId }: ResultDetailProps) {
                 Carreras Recomendadas
               </h2>
               <div className="space-y-4">
-                {result.career_recommendations.map((career: any, index: number) => (
-                  <div key={index} className="bg-white/5 rounded-lg p-4">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold ${
-                          index === 0 ? 'bg-blue-500' : index === 1 ? 'bg-green-500' : 'bg-neutral-500'
-                        }`}>
-                          {index + 1}
+                {result.career_recommendations.map((career: any, index: number) => {
+                  const CareerComponent = career.career_id ? Link : 'div'
+                  const linkProps = career.career_id ? {
+                    to: '/careers/$careerId' as const,
+                    params: { careerId: career.career_id }
+                  } : {}
+                  
+                  return (
+                    <CareerComponent 
+                      key={index} 
+                      className={`bg-white/5 rounded-lg p-4 block ${career.career_id ? 'hover:bg-white/10 cursor-pointer transition-colors duration-200' : ''}`}
+                      {...linkProps}
+                    >
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold ${
+                            index === 0 ? 'bg-blue-500' : index === 1 ? 'bg-green-500' : 'bg-neutral-500'
+                          }`}>
+                            {index + 1}
+                          </div>
+                          <div>
+                            <h3 className={`font-semibold text-white ${career.career_id ? 'group-hover:text-blue-400' : ''}`}>
+                              {career.career_name}
+                            </h3>
+                            <div className="text-sm text-blue-400 font-medium">{career.confidence}% compatibilidad</div>
+                          </div>
                         </div>
-                        <div>
-                          <h3 className="font-semibold text-white">{career.career_name}</h3>
-                          <div className="text-sm text-blue-400 font-medium">{career.confidence}% compatibilidad</div>
-                        </div>
+                        {career.career_id && (
+                          <div className="flex items-center gap-1 text-blue-400 text-xs font-medium opacity-75 hover:opacity-100 transition-opacity">
+                            <span>Ver carrera</span>
+                            <IconExternalLink className="w-3 h-3" />
+                          </div>
+                        )}
                       </div>
-                    </div>
-                    <p className="text-neutral-300 text-sm leading-relaxed">{career.reasoning}</p>
-                  </div>
-                ))}
+                      <p className="text-neutral-300 text-sm leading-relaxed">{career.reasoning}</p>
+                    </CareerComponent>
+                  )
+                })}
               </div>
             </div>
           )}
@@ -232,7 +263,7 @@ export function ResultDetail({ resultId }: ResultDetailProps) {
                 <IconBuilding className="w-5 h-5 text-neutral-400" />
                 <div>
                   <p className="text-sm text-neutral-400">Estado</p>
-                  <p className="text-white font-medium capitalize">{result.status}</p>
+                  <p className="text-white font-medium">{getStatusDisplayName(result.status)}</p>
                 </div>
               </div>
             </div>

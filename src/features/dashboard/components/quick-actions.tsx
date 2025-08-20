@@ -13,7 +13,7 @@ const actions = [
     title: 'Explorar Universidades',
     description: 'Encuentra tu institución',
     icon: GraduationCap,
-    href: '/universities',
+    href: '/schools',
     color: 'from-green-500 to-green-600',
   },
   {
