@@ -342,18 +342,29 @@ export function ConversationalVoiceBubble({ onTestComplete, resumingSessionId }:
 
   // Check for conversation completion - but let final speech finish first
   useEffect(() => {
-    if (sessionResults?.conversationPhase === 'complete' && state !== 'speaking') {
+    console.log('🔍 Completion check:', {
+      conversationPhase: sessionResults?.conversationPhase,
+      currentPhase: sessionResults?.currentPhase,
+      nextPhase: currentAIResponse?.nextPhase,
+      state
+    })
+    
+    const isComplete = sessionResults?.conversationPhase === 'complete' ||
+                      sessionResults?.currentPhase === 'complete' ||
+                      currentAIResponse?.nextPhase === 'complete'
+    
+    if (isComplete && state !== 'speaking') {
       // Only complete if we're not currently speaking
       console.log('🏁 Conversation completed - transitioning to completion state')
       setTimeout(() => {
         setState('test-finished')
-        onTestComplete?.(sessionResults.sessionId)
+        onTestComplete?.(sessionResults?.sessionId || sessionId || '')
       }, 2000) // 2 second delay to let the final message be absorbed
-    } else if (sessionResults?.conversationPhase === 'complete' && state === 'speaking') {
+    } else if (isComplete && state === 'speaking') {
       // If we're speaking when completion is detected, wait for speech to finish
       console.log('🏁 Conversation complete but ARIA is still speaking - will complete after speech')
     }
-  }, [sessionResults, onTestComplete, state])
+  }, [sessionResults, onTestComplete, state, currentAIResponse, sessionId])
 
   // Show completion display when test is finished
   if (state === 'test-finished') {

@@ -216,11 +216,9 @@ export function VoiceBubbleStatusDisplay({
       
       {/* Current AI Message Display */}
       {currentAIResponse && (state === 'speaking' || state === 'listening') && (() => {
-        // Only show career suggestions when it's appropriate (not during questions)
-        const shouldShowCareers = (currentAIResponse.intent === 'recommendation' || 
-                                  currentAIResponse.intent === 'completion_check') &&
-                                  currentAIResponse.nextPhase !== 'reality_check' &&
-                                  sessionResults?.conversationPhase !== 'reality_check'
+        // Show career suggestions when AI provides recommendations
+        const shouldShowCareers = currentAIResponse.intent === 'recommendation' || 
+                                  currentAIResponse.intent === 'completion_check'
         const formattedContent = formatAIMessage(currentAIResponse.message, shouldShowCareers ? currentAIResponse.careerSuggestions : undefined)
         
         return (
