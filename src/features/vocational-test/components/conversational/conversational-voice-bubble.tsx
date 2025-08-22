@@ -29,10 +29,18 @@ export function ConversationalVoiceBubble({ onTestComplete, resumingSessionId }:
   const [sessionId, setSessionId] = useState<string | null>(null)
   const [currentAIResponse, setCurrentAIResponse] = useState<ConversationResponse | null>(null)
 
+  // State for completion detection
+  const [shouldPollForCompletion, setShouldPollForCompletion] = useState(false)
+  const [completionDetected, setCompletionDetected] = useState(false)
+  
   // API hooks
   const createSession = useCreateConversationalSession()
   const sendMessage = useSendMessage()
-  const { data: sessionResults } = useConversationalResults(sessionId || '', !!sessionId)
+  const { data: sessionResults, refetch: refetchResults } = useConversationalResults(
+    sessionId || '', 
+    !!sessionId, 
+    shouldPollForCompletion
+  )
   const { data: sessionDetails } = useSessionDetails(resumingSessionId, !!resumingSessionId)
   
   // Services
@@ -144,6 +152,13 @@ export function ConversationalVoiceBubble({ onTestComplete, resumingSessionId }:
       // Start TTS with completion callback
       tts.speak(currentAIResponse.message, () => {
         console.log('✅ TTS onend callback fired - speech actually finished')
+        
+        // Check for completion before transitioning to listening
+        if (currentAIResponse.nextPhase === 'complete' || completionDetected) {
+          console.log('🏁 Speech finished but completion detected - not transitioning to listening')
+          return
+        }
+        
         setTimeout(() => {
           startListening()
         }, 300) // Small delay for natural feel
@@ -195,9 +210,9 @@ export function ConversationalVoiceBubble({ onTestComplete, resumingSessionId }:
   const startListening = () => {
     if (!currentAIResponse) return
     
-    // Check if conversation should complete (only when truly complete)
-    if (currentAIResponse.nextPhase === 'complete' || sessionResults?.conversationPhase === 'complete') {
-      console.log('✅ Conversation complete - NO AUTO REDIRECT - let useEffect handle completion')
+    // Check for immediate completion to avoid transitioning to listening
+    if (currentAIResponse.nextPhase === 'complete' || completionDetected) {
+      console.log('🏁 Completion detected - not starting listening mode')
       return
     }
     
@@ -388,7 +403,7 @@ export function ConversationalVoiceBubble({ onTestComplete, resumingSessionId }:
       />
 
       {/* Career Recommendations Display - ONLY show when test is actually complete (not during conversation) */}
-      {state === 'complete' && sessionResults?.careerRecommendations && (
+      {state === 'complete' && sessionResults?.conversationPhase === 'complete' && sessionResults?.careerRecommendations && (
         <CareerRecommendationsDisplay careerSuggestions={sessionResults.careerRecommendations} />
       )}
 
@@ -421,6 +436,7 @@ export function ConversationalVoiceBubble({ onTestComplete, resumingSessionId }:
                       message: 'Estoy listo/a para las preguntas sobre las realidades de estas carreras.'
                     })
                     setCurrentAIResponse(response)
+                    setState('speaking') // ← MISSING LINE - transition to speaking to show AI response
                   } catch (error) {
                     console.error('❌ Error proceeding to reality check:', error)
                     setState('listening')
@@ -439,6 +455,7 @@ export function ConversationalVoiceBubble({ onTestComplete, resumingSessionId }:
                       message: '¿Podrías explicarme qué son las preguntas discriminatorias?'
                     })
                     setCurrentAIResponse(response)
+                    setState('speaking') // ← MISSING LINE - transition to speaking to show AI response
                   } catch (error) {
                     console.error('❌ Error asking about discriminating questions:', error)
                     setState('listening')

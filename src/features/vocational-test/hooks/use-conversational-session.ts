@@ -25,23 +25,35 @@ export const useSendMessage = () => {
     mutationFn: ({ sessionId, message }: { sessionId: string; message: string }) => 
       conversationalAPI.sendMessage(sessionId, message),
     onSuccess: (data: ConversationResponse, variables) => {
-      // Update session results cache if we have results
-      queryClient.invalidateQueries({ 
-        queryKey: queryKeys.conversations.results(variables.sessionId) 
-      })
+      // Invalidate and immediately refetch if completion detected
+      if (data.nextPhase === 'complete') {
+        console.log('🎯 Completion detected in AI response - force refreshing session results')
+        queryClient.invalidateQueries({ 
+          queryKey: queryKeys.conversations.results(variables.sessionId) 
+        })
+        // Force immediate refetch for completion
+        queryClient.refetchQueries({ 
+          queryKey: queryKeys.conversations.results(variables.sessionId) 
+        })
+      } else {
+        // Standard invalidation for non-completion responses
+        queryClient.invalidateQueries({ 
+          queryKey: queryKeys.conversations.results(variables.sessionId) 
+        })
+      }
     },
   })
 }
 
 // Get conversational session results
-export const useConversationalResults = (sessionId: string, enabled: boolean = true) => {
+export const useConversationalResults = (sessionId: string, enabled: boolean = true, shouldPoll: boolean = false) => {
   return useQuery({
     queryKey: queryKeys.conversations.results(sessionId),
     queryFn: () => conversationalAPI.getResults(sessionId),
     enabled: enabled && !!sessionId,
-    staleTime: 5 * 60 * 1000, // 5 minutes (completed results don't change)
+    staleTime: shouldPoll ? 0 : 5 * 60 * 1000, // No stale time when polling for completion
     refetchOnWindowFocus: false, // Don't refetch on window focus
-    refetchInterval: false, // Disable automatic refetching entirely for results page
+    refetchInterval: shouldPoll ? 3000 : false, // Poll every 3 seconds when needed
   })
 }
 
