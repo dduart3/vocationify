@@ -10,13 +10,15 @@ interface PhaseTransitionButtonProps {
   onTransition: () => void
   isLoading?: boolean
   disabled?: boolean
+  isRealityCheckReady?: boolean
 }
 
 export function PhaseTransitionButton({ 
   currentPhase, 
   onTransition, 
   isLoading = false,
-  disabled = false 
+  disabled = false,
+  isRealityCheckReady = false
 }: PhaseTransitionButtonProps) {
   const getButtonConfig = (phase: Phase) => {
     switch (phase) {
@@ -36,6 +38,14 @@ export function PhaseTransitionButton({
           description: 'Obtén tu evaluación completa'
         }
       
+      case 'complete':
+        return {
+          text: 'Ver Resultados Finales',
+          icon: <ArrowRight className="w-5 h-5" />,
+          bgColor: 'bg-blue-600 hover:bg-blue-700',
+          description: 'Revisa tu evaluación completa'
+        }
+      
       default:
         return {
           text: 'Continuar',
@@ -46,8 +56,8 @@ export function PhaseTransitionButton({
     }
   }
 
-  // Don't show button for exploration or complete phases
-  if (currentPhase === 'exploration' || currentPhase === 'complete') {
+  // Only show button for career_matching and complete phases
+  if (currentPhase !== 'career_matching' && currentPhase !== 'complete') {
     return null
   }
 

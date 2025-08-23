@@ -57,6 +57,17 @@ const api = {
     const data = await response.json()
     if (!response.ok) throw new Error(data.error || 'Failed to transition phase')
     return data.session
+  },
+
+  completeRealityCheck: async (sessionId: string): Promise<SessionState> => {
+    const response = await fetch(`${API_BASE}/complete-reality-check`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sessionId })
+    })
+    const data = await response.json()
+    if (!response.ok) throw new Error(data.error || 'Failed to complete reality check')
+    return data.session
   }
 }
 
@@ -110,7 +121,7 @@ export function useVocationalTest({ userId, sessionId }: UseVocationalTestProps)
       // Update session data in cache
       queryClient.setQueryData(['vocational-session-v2', sessionIdRef.current], data.session)
       setCurrentAIResponse(data.aiResponse)
-      console.log(`✅ V2 message processed, new phase: ${data.session.currentPhase}`)
+      console.log(`✅ V2 message processed, new phase: ${data.session.current_phase}`)
     },
     onError: (error) => {
       console.error('❌ Failed to send V2 message:', error)
@@ -125,10 +136,25 @@ export function useVocationalTest({ userId, sessionId }: UseVocationalTestProps)
     },
     onSuccess: (updatedSession) => {
       queryClient.setQueryData(['vocational-session-v2', sessionIdRef.current], updatedSession)
-      console.log(`✅ V2 phase transitioned to: ${updatedSession.currentPhase}`)
+      console.log(`✅ V2 phase transitioned to: ${updatedSession.current_phase}`)
     },
     onError: (error) => {
       console.error('❌ Failed to transition V2 phase:', error)
+    }
+  })
+
+  // Complete reality check mutation
+  const completeRealityCheckMutation = useMutation({
+    mutationFn: () => {
+      if (!sessionIdRef.current) throw new Error('No active session')
+      return api.completeRealityCheck(sessionIdRef.current)
+    },
+    onSuccess: (updatedSession) => {
+      queryClient.setQueryData(['vocational-session-v2', sessionIdRef.current], updatedSession)
+      console.log(`✅ V2 reality check completed, phase: ${updatedSession.current_phase}`)
+    },
+    onError: (error) => {
+      console.error('❌ Failed to complete V2 reality check:', error)
     }
   })
 
@@ -149,8 +175,13 @@ export function useVocationalTest({ userId, sessionId }: UseVocationalTestProps)
     transitionPhaseMutation.mutate({ targetPhase })
   }, [transitionPhaseMutation.mutate])
 
+  const completeRealityCheck = useCallback(() => {
+    console.log('🎯 V2 completing reality check with final recommendations')
+    completeRealityCheckMutation.mutate()
+  }, [completeRealityCheckMutation.mutate])
+
   // Get UI behavior based on current phase
-  const uiBehavior: UIBehavior = session ? getUIBehavior(session.currentPhase) : { autoListen: false, showCareers: false }
+  const uiBehavior: UIBehavior = session ? getUIBehavior(session.current_phase) : { autoListen: false, showCareers: false }
 
   // Simple state helpers
   const setUIState = useCallback((state: UIState) => {
@@ -166,7 +197,7 @@ export function useVocationalTest({ userId, sessionId }: UseVocationalTestProps)
     sessionError,
 
     // Current state
-    currentPhase: session?.currentPhase || 'exploration',
+    currentPhase: session?.current_phase || 'exploration',
     currentUIState,
     currentAIResponse,
     uiBehavior,
@@ -175,22 +206,36 @@ export function useVocationalTest({ userId, sessionId }: UseVocationalTestProps)
     startSession,
     sendMessage,
     transitionToPhase,
+    completeRealityCheck,
     setUIState,
 
     // Loading states
     isStarting: startSessionMutation.isPending,
     isSending: sendMessageMutation.isPending,
-    isTransitioning: transitionPhaseMutation.isPending,
+    isTransitioning: transitionPhaseMutation.isPending || completeRealityCheckMutation.isPending,
 
     // Computed helpers
     hasSession: !!session,
-    isComplete: session?.currentPhase === 'complete',
+    isComplete: session?.current_phase === 'complete',
     recommendations: session?.recommendations || currentAIResponse?.recommendations,
-    riasecScores: session?.riasecScores || currentAIResponse?.riasecScores,
+    riasecScores: session?.riasec_scores || currentAIResponse?.riasecScores,
     
     // Simple phase checks
-    isExploration: session?.currentPhase === 'exploration',
-    isRecommendations: session?.currentPhase === 'career_matching',
-    isRealityCheck: session?.currentPhase === 'reality_check'
+    isExploration: session?.current_phase === 'exploration',
+    isRecommendations: session?.current_phase === 'career_matching',
+    isRealityCheck: session?.current_phase === 'reality_check',
+    
+    // Reality check completion readiness - show button after sufficient questions
+    isRealityCheckReady: (() => {
+      if (session?.current_phase !== 'reality_check') return false;
+      
+      // Simple approach: show button after total conversation length indicates enough questions
+      const totalMessages = session?.conversation_history?.length || 0;
+      const realityCheckStartCount = session?.metadata?.realityCheckStartMessageCount || 0;
+      const messagesInRealityCheck = totalMessages - realityCheckStartCount;
+      
+      // Show button after 6+ messages in reality check (3+ Q&A pairs)
+      return messagesInRealityCheck >= 6;
+    })()
   }
 }

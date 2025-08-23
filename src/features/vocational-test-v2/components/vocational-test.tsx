@@ -24,11 +24,13 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
     hasSession,
     isComplete,
     recommendations,
+    isRealityCheckReady,
     
     // Actions
     startSession,
     sendMessage,
     transitionToPhase,
+    completeRealityCheck,
     
     // Loading states
     isStarting,
@@ -76,38 +78,7 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
     )
   }
 
-  // Completion screen
-  if (isComplete) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-green-900 via-blue-900 to-indigo-900">
-        <div className="text-center text-white max-w-2xl px-6">
-          <div className="mb-8">
-            <Trophy className="w-20 h-20 text-yellow-400 mx-auto mb-4" />
-            <h1 className="text-4xl font-bold mb-4">¡Test V2 Completado!</h1>
-            <p className="text-lg text-white/80">
-              Has completado exitosamente tu evaluación vocacional usando la nueva implementación limpia. 
-              Tus resultados están listos para revisar.
-            </p>
-          </div>
-          
-          {recommendations && recommendations.length > 0 && (
-            <CareerRecommendations 
-              recommendations={recommendations}
-              className="mb-8"
-            />
-          )}
-          
-          <button
-            onClick={() => onComplete?.(currentSessionId!)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-semibold flex items-center gap-2 mx-auto"
-          >
-            Ver Resultados Detallados
-            <ArrowRight className="w-5 h-5" />
-          </button>
-        </div>
-      </div>
-    )
-  }
+  // Note: Removed immediate completion screen - now handled by PhaseTransitionButton
 
   // Main test interface
   return (
@@ -152,26 +123,29 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
           </div>
         )}
 
-        {/* Phase Transition Button */}
-        <PhaseTransitionButton
-          currentPhase={currentPhase}
-          onTransition={() => {
-            if (currentPhase === 'career_matching') {
-              transitionToPhase('reality_check')
-            } else if (currentPhase === 'reality_check') {
-              transitionToPhase('complete')
-            }
-          }}
-          isLoading={isTransitioning}
-        />
-
-        {/* Message Input */}
-        <MessageInput
-          onSendMessage={sendMessage}
-          disabled={isSending || isTransitioning}
-          isLoading={isSending}
-          placeholder="Responde a ARIA..."
-        />
+        {/* Conditional Input Area - Show transition button OR message input */}
+        {(currentPhase === 'career_matching' || currentPhase === 'complete') ? (
+          <PhaseTransitionButton
+            currentPhase={currentPhase}
+            onTransition={() => {
+              if (currentPhase === 'career_matching') {
+                transitionToPhase('reality_check')
+              } else if (currentPhase === 'complete') {
+                // Navigate to detailed results page
+                onComplete?.(currentSessionId!)
+              }
+            }}
+            isLoading={isTransitioning}
+            isRealityCheckReady={isRealityCheckReady}
+          />
+        ) : (
+          <MessageInput
+            onSendMessage={sendMessage}
+            disabled={isSending || isTransitioning}
+            isLoading={isSending}
+            placeholder="Responde a ARIA..."
+          />
+        )}
       </div>
     </div>
   )

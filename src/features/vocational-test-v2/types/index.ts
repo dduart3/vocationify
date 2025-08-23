@@ -8,13 +8,13 @@ export type UIState = 'idle' | 'listening' | 'thinking' | 'speaking'
 export interface SessionState {
   id: string
   user_id: string
-  currentPhase: Phase
-  conversationHistory: Array<{
+  current_phase: Phase  // Match database field name
+  conversation_history: Array<{  // Match database field name
     role: 'user' | 'assistant'
     content: string
     timestamp: string
   }>
-  riasecScores: RiasecScores
+  riasec_scores: RiasecScores  // Match database field name
   recommendations: CareerRecommendation[]
   metadata: Record<string, any>
   created_at: string
