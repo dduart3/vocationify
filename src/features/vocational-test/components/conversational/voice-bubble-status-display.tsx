@@ -94,7 +94,7 @@ const formatAIMessage = (message: string, careerSuggestions?: any[]) => {
   if (careerSuggestions && careerSuggestions.length > 0) {
     // Find the intro text before career listings
     const introMatch = formatted.match(/^(.*?)(?=\d+\.\s*\*?\*?[A-ZÁÉÍÓÚ])/s)
-    const introText = introMatch ? introMatch[1].trim() : ''
+    const introText = introMatch ? introMatch[1].trim() : formatted.trim() // Use full message if no match
     
     return {
       introText,

@@ -210,6 +210,12 @@ export function ConversationalVoiceBubble({ onTestComplete, resumingSessionId }:
   const startListening = () => {
     if (!currentAIResponse) return
     
+    console.log('🔍 startListening() called with:', {
+      nextPhase: currentAIResponse.nextPhase,
+      conversationPhase: sessionResults?.conversationPhase,
+      intent: currentAIResponse.intent
+    })
+    
     // Check for immediate completion to avoid transitioning to listening
     if (currentAIResponse.nextPhase === 'complete' || completionDetected) {
       console.log('🏁 Completion detected - not starting listening mode')
@@ -224,19 +230,18 @@ export function ConversationalVoiceBubble({ onTestComplete, resumingSessionId }:
       return
     }
     
-    // Handle career matching phase (brief processing phase)
-    if (currentAIResponse.nextPhase === 'career_matching' || sessionResults?.conversationPhase === 'career_matching') {
-      console.log('🎯 Career matching phase - AI analyzing profile')
-      setState('career-matching')
-      setTimeout(() => setState('listening'), 500)
-      return
-    }
-    
-    // Handle reality check phase with discriminating questions
+    // Handle reality check phase with discriminating questions (check first to override career_matching)
     if (currentAIResponse.nextPhase === 'reality_check' || sessionResults?.conversationPhase === 'reality_check') {
       console.log('⚠️ Reality check phase - discriminating questions')
       setState('reality-check')
       setTimeout(() => setState('listening'), 500)
+      return
+    }
+    
+    // Handle career matching phase (show careers + continue button, DON'T listen)
+    if (currentAIResponse.nextPhase === 'career_matching' || sessionResults?.conversationPhase === 'career_matching') {
+      console.log('🎯 Career matching phase - showing careers and continue button')
+      setState('idle') // Show careers and button, but don't listen
       return
     }
     
@@ -355,8 +360,9 @@ export function ConversationalVoiceBubble({ onTestComplete, resumingSessionId }:
     
     if (isComplete && state !== 'speaking') {
       // Only complete if we're not currently speaking
-      console.log('🏁 Conversation completed - transitioning to completion state')
+      console.log('🏁 Conversation completed - transitioning to completion state in 2 seconds')
       setTimeout(() => {
+        console.log('🎯 Actually transitioning to test-finished state now')
         setState('test-finished')
         onTestComplete?.(sessionResults?.sessionId || sessionId || '')
       }, 2000) // 2 second delay to let the final message be absorbed
@@ -419,7 +425,7 @@ export function ConversationalVoiceBubble({ onTestComplete, resumingSessionId }:
       )}
 
       {/* Career Matching Phase UI - shown when AI provides top career matches */}
-      {currentAIResponse?.intent === 'recommendation' && currentAIResponse?.nextPhase === 'reality_check' && (state === 'idle' || state === 'listening') && (
+      {currentAIResponse?.intent === 'recommendation' && currentAIResponse?.nextPhase === 'career_matching' && (state === 'idle' || state === 'listening') && (
         <div 
           className="fixed bottom-0 left-0 right-0 z-50 p-4"
           style={{
