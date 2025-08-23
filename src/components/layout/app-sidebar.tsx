@@ -27,6 +27,12 @@ const menuItems = [
     icon: IconFileText,
   },
   {
+    title: "Test Vocacional V2",
+    url: "/vocational-test-v2",
+    icon: IconFileText,
+    badge: "NEW",
+  },
+  {
     title: "Resultados",
     url: "/results",
     icon: IconChartBar,
@@ -263,6 +269,7 @@ export function AppSidebar() {
                   icon={<item.icon size={16} />}
                   label={item.title}
                   isActive={isActive}
+                  badge={item.badge}
                 />
               );
             })}
@@ -325,20 +332,28 @@ interface SidebarLinkProps {
   icon: React.ReactNode;
   label: string;
   isActive?: boolean;
+  badge?: string;
 }
 
-function SidebarLink({ to, icon, label, isActive }: SidebarLinkProps) {
+function SidebarLink({ to, icon, label, isActive, badge }: SidebarLinkProps) {
   return (
     <Link
       to={to}
-      className={`flex items-center p-2 rounded-lg text-neutral-300 hover:text-white hover:bg-white/5 transition-all duration-300 group ${
+      className={`flex items-center justify-between p-2 rounded-lg text-neutral-300 hover:text-white hover:bg-white/5 transition-all duration-300 group ${
         isActive ? "bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white" : ""
       }`}
     >
-      <span className="mr-3 group-hover:scale-110 transition-transform duration-300">
-        {icon}
-      </span>
-      <span className="text-sm font-normal">{label}</span>
+      <div className="flex items-center">
+        <span className="mr-3 group-hover:scale-110 transition-transform duration-300">
+          {icon}
+        </span>
+        <span className="text-sm font-normal">{label}</span>
+      </div>
+      {badge && (
+        <span className="px-2 py-1 text-xs font-semibold bg-green-500/20 text-green-300 rounded-full border border-green-500/30">
+          {badge}
+        </span>
+      )}
     </Link>
   );
 }
