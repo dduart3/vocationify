@@ -40,89 +40,159 @@ export function MessageInput({
   const isDisabled = disabled || isLoading || !isValid
 
   return (
-    <div className="border-t border-white/10 bg-white/5 backdrop-blur-sm">
-      <form onSubmit={handleSubmit} className="p-6">
-        <div className="flex gap-3 max-w-4xl mx-auto">
-          
-          {/* Text Input */}
-          <div className="flex-1 relative">
-            <textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder={placeholder}
-              disabled={disabled}
-              rows={1}
-              className="
-                w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3
-                text-white placeholder-white/50 resize-none
-                focus:outline-none focus:border-blue-400 focus:bg-white/15
-                disabled:opacity-50 disabled:cursor-not-allowed
-                min-h-[48px] max-h-32
-              "
+    <div className="flex-shrink-0 relative">
+      {/* Subtle gradient overlay */}
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-black/10 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-900/5 via-purple-900/5 to-indigo-900/5" />
+      </div>
+      
+      <div className="relative">
+        <form onSubmit={handleSubmit} className="p-6">
+          <div className="max-w-4xl mx-auto">
+            {/* Sleek modern input design */}
+            <div 
+              className="bg-white/6 backdrop-blur-xl rounded-3xl shadow-2xl relative overflow-hidden"
               style={{
-                height: 'auto',
-                minHeight: '48px'
+                background: `
+                  linear-gradient(135deg, 
+                    rgba(255, 255, 255, 0.06) 0%, 
+                    rgba(255, 255, 255, 0.04) 100%
+                  )
+                `,
+                boxShadow: `
+                  0 8px 32px 0 rgba(0, 0, 0, 0.3),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.08)
+                `
               }}
-              onInput={(e) => {
-                const target = e.target as HTMLTextAreaElement
-                target.style.height = 'auto'
-                target.style.height = Math.min(target.scrollHeight, 128) + 'px'
-              }}
-            />
-            
-            {/* Character counter for longer messages */}
-            {input.length > 100 && (
-              <div className="absolute bottom-1 right-2 text-xs text-white/40">
-                {input.length}/500
+            >
+              <div className="p-6">
+                <div className="flex gap-4 items-center">
+                  
+                  {/* Modern Text Input */}
+                  <div className="flex-1">
+                    <textarea
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      onKeyPress={handleKeyPress}
+                      placeholder={placeholder}
+                      disabled={disabled}
+                      rows={1}
+                      className="
+                        w-full bg-transparent border-0 px-0 py-2
+                        text-white text-lg placeholder-white/50 resize-none
+                        focus:outline-none focus:ring-0
+                        disabled:opacity-50 disabled:cursor-not-allowed
+                        min-h-[40px] max-h-32 overflow-y-hidden
+                        leading-relaxed scrollbar-none
+                      "
+                      style={{
+                        height: 'auto',
+                        minHeight: '40px'
+                      }}
+                      onInput={(e) => {
+                        const target = e.target as HTMLTextAreaElement
+                        target.style.height = 'auto'
+                        target.style.height = Math.min(target.scrollHeight, 128) + 'px'
+                      }}
+                    />
+                    
+                    {/* Subtle underline */}
+                    <div className={`h-px mt-2 transition-all duration-300 ${
+                      input.trim() ? 'bg-gradient-to-r from-blue-400 via-purple-400 to-indigo-400' : 'bg-white/5'
+                    }`} />
+                    
+                    {/* Character counter for longer messages */}
+                    {input.length > 100 && (
+                      <div className="mt-2 text-right text-xs text-white/40">
+                        {input.length}/500
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Elegant Send Button - better alignment */}
+                  <button
+                    type="submit"
+                    disabled={isDisabled}
+                    className={`
+                      relative group flex-shrink-0
+                      w-12 h-12 rounded-2xl
+                      transition-all duration-300
+                      flex items-center justify-center
+                      ${isDisabled
+                        ? 'bg-white/5 text-white/30 cursor-not-allowed'
+                        : 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white hover:scale-110 hover:rotate-12 shadow-lg hover:shadow-xl hover:shadow-blue-500/20'
+                      }
+                    `}
+                  >
+                    {/* Button inner glow */}
+                    {!isDisabled && (
+                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-400/30 to-purple-400/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm" />
+                    )}
+                    
+                    <div className="relative z-10">
+                      {isLoading ? (
+                        <Loader className="w-5 h-5 animate-spin" />
+                      ) : (
+                        <Send className="w-5 h-5" />
+                      )}
+                    </div>
+                  </button>
+                </div>
               </div>
-            )}
+            </div>
           </div>
 
-          {/* Send Button */}
-          <button
-            type="submit"
-            disabled={isDisabled}
-            className={`
-              px-6 py-3 rounded-xl font-medium flex items-center gap-2
-              transition-all duration-200 min-w-[120px] justify-center
-              ${isDisabled
-                ? 'bg-white/10 text-white/40 cursor-not-allowed'
-                : 'bg-blue-600 hover:bg-blue-700 text-white hover:scale-105 active:scale-95 shadow-lg'
-              }
-            `}
-          >
-            {isLoading ? (
-              <>
-                <Loader className="w-4 h-4 animate-spin" />
-                Enviando...
-              </>
-            ) : (
-              <>
-                <Send className="w-4 h-4" />
-                Enviar
-              </>
-            )}
-          </button>
-        </div>
-
-        {/* Input status/hints */}
-        {disabled && !isLoading && (
-          <div className="mt-3 text-center">
-            <p className="text-white/50 text-sm">
-              💭 ARIA está procesando tu respuesta anterior...
-            </p>
-          </div>
-        )}
-        
-        {isLoading && (
-          <div className="mt-3 text-center">
-            <p className="text-white/60 text-sm">
-              🤖 ARIA está pensando...
-            </p>
-          </div>
-        )}
-      </form>
+          {/* Elegant status indicators */}
+          {(disabled && !isLoading) && (
+            <div className="mt-4 text-center">
+              <div 
+                className="inline-flex items-center gap-3 px-4 py-2 rounded-2xl backdrop-blur-sm"
+                style={{
+                  background: `
+                    linear-gradient(135deg, 
+                      rgba(255, 255, 255, 0.04) 0%, 
+                      rgba(255, 255, 255, 0.01) 100%
+                    )
+                  `,
+                  boxShadow: `
+                    inset 0 1px 0 rgba(255, 255, 255, 0.03)
+                  `
+                }}
+              >
+                <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" />
+                <p className="text-white/70 text-sm">
+                  ARIA está procesando tu respuesta...
+                </p>
+              </div>
+            </div>
+          )}
+          
+          {isLoading && (
+            <div className="mt-4 text-center">
+              <div 
+                className="inline-flex items-center gap-3 px-4 py-2 rounded-2xl backdrop-blur-sm"
+                style={{
+                  background: `
+                    linear-gradient(135deg, 
+                      rgba(59, 130, 246, 0.06) 0%, 
+                      rgba(147, 51, 234, 0.06) 100%
+                    )
+                  `,
+                  boxShadow: `
+                    inset 0 1px 0 rgba(59, 130, 246, 0.03)
+                  `
+                }}
+              >
+                <Loader className="w-4 h-4 animate-spin text-blue-400" />
+                <p className="text-white/80 text-sm font-medium">
+                  ARIA está pensando...
+                </p>
+              </div>
+            </div>
+          )}
+        </form>
+      </div>
     </div>
   )
 }

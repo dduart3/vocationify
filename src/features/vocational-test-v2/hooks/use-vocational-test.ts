@@ -34,6 +34,17 @@ const api = {
     return data.session
   },
 
+  findUserSession: async (userId: string): Promise<SessionState | null> => {
+    const response = await fetch(`${API_BASE}/user/${userId}/active-session`)
+    if (!response.ok) {
+      if (response.status === 404) return null
+      const data = await response.json()
+      throw new Error(data.error || 'Failed to find user session')
+    }
+    const data = await response.json()
+    return data.session
+  },
+
   sendMessage: async (sessionId: string, message: string): Promise<{
     session: SessionState
     aiResponse: AIResponse
@@ -79,14 +90,38 @@ export interface UseVocationalTestProps {
 export function useVocationalTest({ userId, sessionId }: UseVocationalTestProps) {
   const [currentUIState, setCurrentUIState] = useState<UIState>('idle')
   const [currentAIResponse, setCurrentAIResponse] = useState<AIResponse | null>(null)
+  const [userDecisionMade, setUserDecisionMade] = useState<boolean>(!!sessionId)
   const queryClient = useQueryClient()
   const sessionIdRef = useRef<string | undefined>(sessionId)
 
-  // Get current session data
+  // Check for existing user session if no sessionId provided
+  const { data: existingSession } = useQuery({
+    queryKey: ['find-active-session-v2', userId],
+    queryFn: () => api.findUserSession(userId),
+    enabled: !sessionId && !!userId, // Only run if no sessionId provided
+    refetchOnWindowFocus: false,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  })
+
+  // Function to resume existing session
+  const resumeSession = useCallback(() => {
+    if (existingSession) {
+      sessionIdRef.current = existingSession.id
+      setUserDecisionMade(true)
+      // Set the existing session data immediately
+      queryClient.setQueryData(['vocational-session-v2', existingSession.id], existingSession)
+      // Also invalidate to ensure fresh data
+      queryClient.invalidateQueries({ queryKey: ['vocational-session-v2', existingSession.id] })
+      console.log('📋 User chose to resume existing V2 session:', existingSession.id)
+      console.log('💬 Loaded conversation history:', existingSession.conversation_history?.length, 'messages')
+    }
+  }, [existingSession, queryClient])
+
+  // Get current session data (only after user decision or if sessionId provided)
   const { data: session, isLoading: sessionLoading, error: sessionError } = useQuery({
     queryKey: ['vocational-session-v2', sessionIdRef.current],
     queryFn: () => sessionIdRef.current ? api.getSession(sessionIdRef.current) : null,
-    enabled: !!sessionIdRef.current,
+    enabled: !!sessionIdRef.current && userDecisionMade,
     refetchOnWindowFocus: false
   })
 
@@ -95,6 +130,7 @@ export function useVocationalTest({ userId, sessionId }: UseVocationalTestProps)
     mutationFn: () => api.startSession(userId),
     onSuccess: (newSession) => {
       sessionIdRef.current = newSession.id
+      setUserDecisionMade(true)
       queryClient.setQueryData(['vocational-session-v2', newSession.id], newSession)
       console.log('✅ New V2 session started with AI greeting:', newSession.id)
       
@@ -204,6 +240,7 @@ export function useVocationalTest({ userId, sessionId }: UseVocationalTestProps)
 
     // Actions
     startSession,
+    resumeSession,
     sendMessage,
     transitionToPhase,
     completeRealityCheck,
@@ -214,8 +251,10 @@ export function useVocationalTest({ userId, sessionId }: UseVocationalTestProps)
     isSending: sendMessageMutation.isPending,
     isTransitioning: transitionPhaseMutation.isPending || completeRealityCheckMutation.isPending,
 
-    // Computed helpers
-    hasSession: !!session,
+    // Computed helpers  
+    hasSession: !!session && userDecisionMade,
+    hasExistingSession: !!existingSession,
+    existingSession,
     isComplete: session?.current_phase === 'complete',
     recommendations: session?.recommendations || currentAIResponse?.recommendations,
     riasecScores: session?.riasec_scores || currentAIResponse?.riasecScores,

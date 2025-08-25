@@ -1,7 +1,7 @@
 // CareerRecommendations component
 // Responsibility: Display career recommendations in card format
 
-import { Star, TrendingUp, BookOpen } from 'lucide-react'
+import { Star, TrendingUp, BookOpen, Target } from 'lucide-react'
 
 interface CareerRecommendation {
   careerId: string
@@ -41,8 +41,9 @@ export function CareerRecommendations({
     <div className={`space-y-4 ${className}`}>
       {showTitle && (
         <div className="text-center">
-          <h3 className="text-xl font-semibold text-white mb-2">
-            🎯 Tus Carreras Recomendadas
+          <h3 className="text-xl font-semibold text-white mb-2 flex items-center justify-center gap-2">
+            <Target className="w-6 h-6 text-blue-400" />
+            Tus Carreras Recomendadas
           </h3>
           <p className="text-white/70 text-sm">
             Basado en tus intereses y respuestas
@@ -54,7 +55,7 @@ export function CareerRecommendations({
         {recommendations.map((career, index) => (
           <div
             key={career.careerId}
-            className="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/20 hover:bg-white/15 transition-all duration-200"
+            className="bg-white/10 backdrop-blur-sm rounded-xl p-5 hover:bg-white/15 transition-all duration-200"
           >
             <div className="flex items-start gap-4">
               {/* Ranking Number */}
@@ -99,7 +100,7 @@ export function CareerRecommendations({
       </div>
       
       {/* Summary Stats */}
-      <div className="mt-6 p-4 bg-white/5 rounded-lg border border-white/10">
+      <div className="mt-6 p-4 bg-white/5 rounded-lg">
         <div className="flex items-center justify-center gap-6 text-sm text-white/70">
           <div className="flex items-center gap-2">
             <Star className="w-4 h-4 text-yellow-400" />
