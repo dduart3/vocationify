@@ -1,13 +1,15 @@
 // Clean vocational test component
 // Responsibility: Orchestrate sub-components and manage overall flow
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Trophy, ArrowRight, Clock, Play, X, Mic, Volume2, Target, Sparkles, Brain } from 'lucide-react'
 import { useVocationalTest } from '../hooks/use-vocational-test'
 import { ConversationHistory } from './conversation-history'
 import { CareerRecommendations } from './career-recommendations'
 import { PhaseTransitionButton } from './phase-transition-button'
 import { MessageInput } from './message-input'
+import { UIModeSwitcher, type UIMode } from './ui-mode-switcher'
+import { VoiceInterface } from './voice-interface'
 
 interface VocationalTestProps {
   userId: string
@@ -16,6 +18,8 @@ interface VocationalTestProps {
 }
 
 export function VocationalTest({ userId, sessionId, onComplete }: VocationalTestProps) {
+  const [uiMode, setUIMode] = useState<UIMode>('voice')
+  
   const {
     session,
     sessionId: currentSessionId,
@@ -367,7 +371,7 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900">
         <div className="text-white text-center">
           <div className="animate-spin w-8 h-8 border-2 border-white border-t-transparent rounded-full mx-auto mb-4"></div>
-          <p>Iniciando tu sesión vocacional V2...</p>
+          <p>Iniciando tu sesión vocacional...</p>
         </div>
       </div>
     )
@@ -582,14 +586,37 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
               background: linear-gradient(135deg, rgba(59, 130, 246, 0.6), rgba(147, 51, 234, 0.6));
             }
           `}</style>
-          <ConversationHistory 
-            messages={session?.conversation_history || []}
-            currentPhase={currentPhase}
-          />
+          
+          {/* UI Mode Switcher */}
+          <div className="relative z-20 pt-6">
+            <UIModeSwitcher 
+              currentMode={uiMode}
+              onModeChange={setUIMode}
+              disabled={isSending || isTransitioning}
+            />
+          </div>
+          
+          {/* Content based on UI mode */}
+          {uiMode === 'chat' ? (
+            <ConversationHistory 
+              messages={session?.conversation_history || []}
+              currentPhase={currentPhase}
+              enableVoice={true}
+              autoSpeakNewMessages={false}
+            />
+          ) : (
+            <VoiceInterface
+              onSendMessage={sendMessage}
+              disabled={isSending || isTransitioning || (uiBehavior.showCareers && recommendations && recommendations.length > 0)}
+              isLoading={isSending}
+              currentQuestion={session?.conversation_history?.slice(-1)[0]?.role === 'assistant' ? session.conversation_history.slice(-1)[0].content : undefined}
+              messages={session?.conversation_history || []}
+            />
+          )}
         </div>
 
-        {/* Input Area - Always at bottom when no overlay */}
-        {!(uiBehavior.showCareers && recommendations && recommendations.length > 0) && (
+        {/* Input Area - Only show for chat mode when no overlay */}
+        {uiMode === 'chat' && !(uiBehavior.showCareers && recommendations && recommendations.length > 0) && (
           <>
             {(currentPhase === 'career_matching' || currentPhase === 'complete') ? (
               <PhaseTransitionButton
@@ -609,6 +636,7 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
                 onSendMessage={sendMessage}
                 disabled={isSending || isTransitioning}
                 isLoading={isSending}
+                enableVoice={true}
                 placeholder="Responde a ARIA..."
               />
             )}

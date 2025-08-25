@@ -11,9 +11,9 @@ export function useResults(filters?: Partial<ResultFilters>, sortOptions?: Resul
     queryFn: async (): Promise<TestResult[]> => {
       if (!user?.id) throw new Error('User not authenticated')
 
-      // Get test sessions for the current user
+      // Get vocational sessions for the current user
       let query = supabase
-        .from('test_sessions')
+        .from('vocational_sessions')
         .select('*')
         .eq('user_id', user.id)
 
@@ -60,25 +60,9 @@ export function useResults(filters?: Partial<ResultFilters>, sortOptions?: Resul
 
       if (!sessions || sessions.length === 0) return []
 
-      // Get RIASEC scores for these sessions
-      const { data: riasecScores, error: riasecError } = await supabase
-        .from('session_riasec_scores')
-        .select('*')
-        .in('session_id', sessions.map(s => s.id))
-
-      if (riasecError) throw riasecError
-
-      // Get test results with career recommendations
-      const { data: testResults, error: resultsError } = await supabase
-        .from('test_results')
-        .select('*')
-        .in('session_id', sessions.map(s => s.id))
-
-      if (resultsError) throw resultsError
-
       // Get career names for the recommendations
-      const allCareerIds = testResults?.flatMap(result => 
-        result.career_recommendations?.map((rec: any) => rec.career_id) || []
+      const allCareerIds = sessions?.flatMap(session => 
+        (session.recommendations as any[])?.map((rec: any) => rec.careerId || rec.career_id) || []
       ).filter(Boolean) || []
 
       const { data: careers, error: careersError } = await supabase
@@ -90,40 +74,47 @@ export function useResults(filters?: Partial<ResultFilters>, sortOptions?: Resul
 
       // Transform the data to match our TestResult interface
       return sessions.map(session => {
-        const riasec = riasecScores?.find(r => r.session_id === session.id)
-        const result = testResults?.find(r => r.session_id === session.id)
+        const riasecScores = session.riasec_scores as any || {}
+        const recommendations = session.recommendations as any[] || []
 
         // Enrich career recommendations with career names
-        const enrichedRecommendations = result?.career_recommendations?.map((rec: any) => {
-          const career = careers?.find(c => c.id === rec.career_id)
+        const enrichedRecommendations = recommendations.map((rec: any) => {
+          const career = careers?.find(c => c.id === (rec.careerId || rec.career_id))
           return {
             ...rec,
-            career_name: career?.name || 'Carrera no encontrada'
+            career_id: rec.careerId || rec.career_id,
+            career_name: rec.name || career?.name || 'Carrera no encontrada',
+            confidence: rec.confidence || 0
           }
-        }) || []
+        })
+
+        // Calculate confidence level from recommendations average
+        const avgConfidence = recommendations.length > 0
+          ? Math.round(recommendations.reduce((sum, rec) => sum + (rec.confidence || 0), 0) / recommendations.length)
+          : 0
 
         return {
           id: session.id,
           user_id: session.user_id,
-          status: session.status,
-          started_at: session.started_at,
-          completed_at: session.completed_at,
+          status: recommendations.length > 0 ? 'completed' : 'in_progress', // Derive status from having recommendations
+          started_at: session.created_at, // Use created_at as started_at
+          completed_at: recommendations.length > 0 ? session.updated_at : null, // Use updated_at if completed
           created_at: session.created_at,
-          session_type: session.session_type,
+          session_type: 'conversational', // All V2 sessions are conversational
           conversation_history: session.conversation_history,
           current_phase: session.current_phase,
-          ai_provider: session.ai_provider,
-          confidence_level: session.confidence_level,
+          ai_provider: 'openai', // Default for V2
+          confidence_level: avgConfidence,
           riasec_scores: {
-            R: riasec?.realistic_score || 50,
-            I: riasec?.investigative_score || 50,
-            A: riasec?.artistic_score || 50,
-            S: riasec?.social_score || 50,
-            E: riasec?.enterprising_score || 50,
-            C: riasec?.conventional_score || 50
+            R: riasecScores.realistic || 0,
+            I: riasecScores.investigative || 0,
+            A: riasecScores.artistic || 0,
+            S: riasecScores.social || 0,
+            E: riasecScores.enterprising || 0,
+            C: riasecScores.conventional || 0
           },
           career_recommendations: enrichedRecommendations,
-          personality_description: result?.personality_description || null
+          personality_description: null // Not stored in V2 sessions yet
         }
       })
     },
@@ -135,9 +126,9 @@ export function useResultDetail(resultId: string) {
   return useQuery({
     queryKey: ['result', resultId],
     queryFn: async (): Promise<TestResult | null> => {
-      // Get the test session
+      // Get the vocational session
       const { data: session, error } = await supabase
-        .from('test_sessions')
+        .from('vocational_sessions')
         .select('*')
         .eq('id', resultId)
         .single()
@@ -150,26 +141,11 @@ export function useResultDetail(resultId: string) {
         return null
       }
 
-      // Get RIASEC scores for this session
-      const { data: riasecScores, error: riasecError } = await supabase
-        .from('session_riasec_scores')
-        .select('*')
-        .eq('session_id', session.id)
-        .single()
-
-      if (riasecError && riasecError.code !== 'PGRST116') throw riasecError
-
-      // Get test results with career recommendations
-      const { data: testResult, error: resultsError } = await supabase
-        .from('test_results')
-        .select('*')
-        .eq('session_id', session.id)
-        .single()
-
-      if (resultsError && resultsError.code !== 'PGRST116') throw resultsError
+      const riasecScores = session.riasec_scores as any || {}
+      const recommendations = session.recommendations as any[] || []
 
       // Get career names for the recommendations
-      const careerIds = testResult?.career_recommendations?.map((rec: any) => rec.career_id) || []
+      const careerIds = recommendations?.map((rec: any) => rec.careerId || rec.career_id) || []
       const { data: careers, error: careersError } = await supabase
         .from('careers')
         .select('id, name')
@@ -178,36 +154,43 @@ export function useResultDetail(resultId: string) {
       if (careersError) throw careersError
 
       // Enrich career recommendations with career names
-      const enrichedRecommendations = testResult?.career_recommendations?.map((rec: any) => {
-        const career = careers?.find(c => c.id === rec.career_id)
+      const enrichedRecommendations = recommendations.map((rec: any) => {
+        const career = careers?.find(c => c.id === (rec.careerId || rec.career_id))
         return {
           ...rec,
-          career_name: career?.name || 'Carrera no encontrada'
+          career_id: rec.careerId || rec.career_id,
+          career_name: rec.name || career?.name || 'Carrera no encontrada',
+          confidence: rec.confidence || 0
         }
-      }) || []
+      })
+
+      // Calculate confidence level from recommendations average
+      const avgConfidence = recommendations.length > 0
+        ? Math.round(recommendations.reduce((sum, rec) => sum + (rec.confidence || 0), 0) / recommendations.length)
+        : 0
 
       return {
         id: session.id,
         user_id: session.user_id,
-        status: session.status,
-        started_at: session.started_at,
-        completed_at: session.completed_at,
+        status: recommendations.length > 0 ? 'completed' : 'in_progress',
+        started_at: session.created_at,
+        completed_at: recommendations.length > 0 ? session.updated_at : null,
         created_at: session.created_at,
-        session_type: session.session_type,
+        session_type: 'conversational',
         conversation_history: session.conversation_history,
         current_phase: session.current_phase,
-        ai_provider: session.ai_provider,
-        confidence_level: session.confidence_level,
+        ai_provider: 'openai',
+        confidence_level: avgConfidence,
         riasec_scores: {
-          R: riasecScores?.realistic_score || 50,
-          I: riasecScores?.investigative_score || 50,
-          A: riasecScores?.artistic_score || 50,
-          S: riasecScores?.social_score || 50,
-          E: riasecScores?.enterprising_score || 50,
-          C: riasecScores?.conventional_score || 50
+          R: riasecScores.realistic || 0,
+          I: riasecScores.investigative || 0,
+          A: riasecScores.artistic || 0,
+          S: riasecScores.social || 0,
+          E: riasecScores.enterprising || 0,
+          C: riasecScores.conventional || 0
         },
         career_recommendations: enrichedRecommendations,
-        personality_description: testResult?.personality_description || null
+        personality_description: null
       }
     },
     enabled: !!resultId,

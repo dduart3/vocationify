@@ -27,12 +27,6 @@ const menuItems = [
     icon: IconFileText,
   },
   {
-    title: "Test Vocacional V2",
-    url: "/vocational-test-v2",
-    icon: IconFileText,
-    badge: "NEW",
-  },
-  {
     title: "Resultados",
     url: "/results",
     icon: IconChartBar,
@@ -269,7 +263,6 @@ export function AppSidebar() {
                   icon={<item.icon size={16} />}
                   label={item.title}
                   isActive={isActive}
-                  badge={item.badge}
                 />
               );
             })}

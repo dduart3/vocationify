@@ -50,7 +50,7 @@ export function VoiceTestController({ onTestComplete, onConversationStart, testS
 
   const handleViewFullResults = () => {
     if (completedSessionId) {
-      navigate({ to: '/vocational-test/results/$sessionId', params: { sessionId: completedSessionId } })
+      navigate({ to: '/results/$sessionId', params: { sessionId: completedSessionId } })
     }
   }
 

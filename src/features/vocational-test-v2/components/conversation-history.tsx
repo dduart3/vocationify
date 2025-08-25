@@ -1,9 +1,10 @@
 // ConversationHistory component
 // Responsibility: Display conversation messages in chat bubble format
 
-import { useEffect, useRef } from 'react'
-import { User, Bot } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { User, Bot, Volume2, VolumeX, Play, Pause } from 'lucide-react'
 import { PhaseSeparator } from './phase-separator'
+import { useTextToSpeech } from '@/features/vocational-test/hooks/use-text-to-speech'
 
 interface Message {
   role: 'user' | 'assistant'
@@ -14,6 +15,8 @@ interface Message {
 interface ConversationHistoryProps {
   messages: Message[]
   currentPhase: string
+  enableVoice?: boolean
+  autoSpeakNewMessages?: boolean
 }
 
 // Function to detect phase transitions based on message patterns
@@ -69,8 +72,42 @@ function detectPhaseTransitions(messages: Message[]): Array<{ index: number, fro
   return transitions
 }
 
-export function ConversationHistory({ messages, currentPhase }: ConversationHistoryProps) {
+export function ConversationHistory({ 
+  messages, 
+  currentPhase, 
+  enableVoice = true,
+  autoSpeakNewMessages = false 
+}: ConversationHistoryProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const [currentlyPlayingMessage, setCurrentlyPlayingMessage] = useState<number | null>(null)
+  const previousMessageCountRef = useRef(messages.length)
+
+  // Text-to-speech hook
+  const {
+    speak,
+    stop,
+    isSpeaking,
+    isSupported: isSpeechSupported
+  } = useTextToSpeech({
+    language: 'es-VE',
+    rate: 0.9,
+    pitch: 1,
+    volume: 0.8
+  })
+
+  // Auto-speak new AI messages
+  useEffect(() => {
+    if (autoSpeakNewMessages && enableVoice && isSpeechSupported && messages.length > previousMessageCountRef.current) {
+      const newMessages = messages.slice(previousMessageCountRef.current)
+      const newAIMessage = newMessages.find(msg => msg.role === 'assistant')
+      
+      if (newAIMessage) {
+        const messageIndex = messages.findIndex(msg => msg === newAIMessage)
+        handleSpeakMessage(messageIndex, newAIMessage.content)
+      }
+    }
+    previousMessageCountRef.current = messages.length
+  }, [messages, autoSpeakNewMessages, enableVoice, isSpeechSupported])
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -81,6 +118,21 @@ export function ConversationHistory({ messages, currentPhase }: ConversationHist
       })
     }
   }, [messages])
+
+  const handleSpeakMessage = (messageIndex: number, content: string) => {
+    if (!enableVoice || !isSpeechSupported) return
+
+    if (currentlyPlayingMessage === messageIndex && isSpeaking) {
+      stop()
+      setCurrentlyPlayingMessage(null)
+    } else {
+      stop() // Stop any current speech
+      setCurrentlyPlayingMessage(messageIndex)
+      speak(content, () => {
+        setCurrentlyPlayingMessage(null)
+      })
+    }
+  }
 
   if (messages.length === 0) {
     return (
@@ -160,13 +212,36 @@ export function ConversationHistory({ messages, currentPhase }: ConversationHist
                 <p className="text-sm leading-relaxed whitespace-pre-wrap">
                   {message.content}
                 </p>
-                <div className={`text-xs mt-2 ${
+                <div className={`flex items-center justify-between mt-2 ${
                   message.role === 'user' ? 'text-blue-100' : 'text-white/50'
                 }`}>
-                  {new Date(message.timestamp).toLocaleTimeString('es-ES', {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  })}
+                  <div className="text-xs">
+                    {new Date(message.timestamp).toLocaleTimeString('es-ES', {
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
+                  </div>
+                  
+                  {/* Voice control button for AI messages */}
+                  {message.role === 'assistant' && enableVoice && isSpeechSupported && (
+                    <button
+                      onClick={() => handleSpeakMessage(index, message.content)}
+                      className="flex items-center gap-1 px-2 py-1 rounded-lg bg-white/5 hover:bg-white/10 transition-colors duration-200 group"
+                      title={currentlyPlayingMessage === index && isSpeaking ? "Detener audio" : "Reproducir audio"}
+                    >
+                      {currentlyPlayingMessage === index && isSpeaking ? (
+                        <>
+                          <Pause className="w-3 h-3 text-white/70 group-hover:text-white" />
+                          <span className="text-xs text-white/70 group-hover:text-white">Pausar</span>
+                        </>
+                      ) : (
+                        <>
+                          <Volume2 className="w-3 h-3 text-white/70 group-hover:text-white" />
+                          <span className="text-xs text-white/70 group-hover:text-white">Reproducir</span>
+                        </>
+                      )}
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

@@ -46,7 +46,7 @@ function getRiasecTypeSpanish(scores: any): string {
 }
 
 export function RecentActivity() {
-  const { data: testHistory, isLoading } = useUserTestHistory(5)
+  const { data: testHistory, isLoading } = useUserTestHistory(3)
 
   if (isLoading) {
     return (
@@ -192,7 +192,7 @@ export function RecentActivity() {
                       {formatDistanceToNow(test.completedAt)}
                     </span>
                   </div>
-                  <Link to="/vocational-test/results/$sessionId" params={{ sessionId: test.sessionId }}>
+                  <Link to="/results/$sessionId" params={{ sessionId: test.sessionId }}>
                     <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 text-sm text-white/60 hover:text-white">
                       <Eye className="w-4 h-4" />
                       Ver

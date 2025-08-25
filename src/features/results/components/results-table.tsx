@@ -220,7 +220,7 @@ export function ResultsTable({ searchTerm, dateFilter }: ResultsTableProps) {
               table.getRowModel().rows.map((row, index) => (
                 <Link
                   key={row.id}
-                  to="/vocational-test/results/$sessionId"
+                  to="/results/$sessionId"
                   params={{ sessionId: row.original.id }}
                   className="table-row hover:bg-white/5 transition-colors duration-200 cursor-pointer"
                 >

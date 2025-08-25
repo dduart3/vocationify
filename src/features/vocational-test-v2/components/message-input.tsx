@@ -1,23 +1,49 @@
 // MessageInput component
-// Responsibility: Handle user input (text for now, voice later)
+// Responsibility: Handle user input (text and voice)
 
-import { useState } from 'react'
-import { Send, Loader } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Send, Loader, Mic, MicOff, Volume2, VolumeX } from 'lucide-react'
+import { useSpeechRecognition } from '@/features/vocational-test/hooks/use-speech-recognition'
 
 interface MessageInputProps {
   onSendMessage: (message: string) => void
   disabled?: boolean
   isLoading?: boolean
   placeholder?: string
+  enableVoice?: boolean
 }
 
 export function MessageInput({ 
   onSendMessage, 
   disabled = false, 
   isLoading = false,
-  placeholder = "Escribe tu respuesta..." 
+  placeholder = "Escribe tu respuesta...",
+  enableVoice = true
 }: MessageInputProps) {
   const [input, setInput] = useState('')
+  const [isVoiceMode, setIsVoiceMode] = useState(false)
+  
+  // Speech recognition hook
+  const {
+    transcript,
+    isListening,
+    isSupported: isSpeechSupported,
+    startListening,
+    stopListening,
+    resetTranscript,
+    error: speechError
+  } = useSpeechRecognition({
+    language: 'es-VE',
+    continuous: false,
+    interimResults: true
+  })
+
+  // Update input with speech transcript
+  useEffect(() => {
+    if (transcript && isVoiceMode) {
+      setInput(transcript)
+    }
+  }, [transcript, isVoiceMode])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -26,7 +52,25 @@ export function MessageInput({
     if (trimmedInput && !disabled && !isLoading) {
       onSendMessage(trimmedInput)
       setInput('')
+      resetTranscript()
+      if (isListening) {
+        stopListening()
+      }
     }
+  }
+
+  const handleVoiceToggle = () => {
+    if (isListening) {
+      stopListening()
+    } else {
+      setIsVoiceMode(true)
+      startListening()
+    }
+  }
+
+  const handleTextInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInput(e.target.value)
+    setIsVoiceMode(false) // Switch to text mode when typing
   }
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -73,7 +117,7 @@ export function MessageInput({
                   <div className="flex-1">
                     <textarea
                       value={input}
-                      onChange={(e) => setInput(e.target.value)}
+                      onChange={handleTextInputChange}
                       onKeyPress={handleKeyPress}
                       placeholder={placeholder}
                       disabled={disabled}
@@ -109,6 +153,48 @@ export function MessageInput({
                       </div>
                     )}
                   </div>
+
+                  {/* Voice Button - only show if voice is enabled and supported */}
+                  {enableVoice && isSpeechSupported && (
+                    <button
+                      type="button"
+                      onClick={handleVoiceToggle}
+                      disabled={disabled || isLoading}
+                      className={`
+                        relative group flex-shrink-0
+                        w-12 h-12 rounded-2xl
+                        transition-all duration-300
+                        flex items-center justify-center
+                        ${disabled || isLoading
+                          ? 'bg-white/5 text-white/30 cursor-not-allowed'
+                          : isListening
+                            ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg animate-pulse'
+                            : isVoiceMode && transcript
+                              ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg'
+                              : 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white hover:scale-110 shadow-lg hover:shadow-xl hover:shadow-orange-500/20'
+                        }
+                      `}
+                    >
+                      {/* Button inner glow */}
+                      {!(disabled || isLoading) && (
+                        <div className={`absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm ${
+                          isListening
+                            ? 'bg-gradient-to-r from-red-400/30 to-red-400/30'
+                            : isVoiceMode && transcript
+                              ? 'bg-gradient-to-r from-green-400/30 to-green-400/30'
+                              : 'bg-gradient-to-r from-orange-400/30 to-orange-400/30'
+                        }`} />
+                      )}
+                      
+                      <div className="relative z-10">
+                        {isListening ? (
+                          <MicOff className="w-5 h-5" />
+                        ) : (
+                          <Mic className="w-5 h-5" />
+                        )}
+                      </div>
+                    </button>
+                  )}
 
                   {/* Elegant Send Button - better alignment */}
                   <button
@@ -187,6 +273,81 @@ export function MessageInput({
                 <Loader className="w-4 h-4 animate-spin text-blue-400" />
                 <p className="text-white/80 text-sm font-medium">
                   ARIA está pensando...
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Voice Status Indicators */}
+          {enableVoice && isSpeechSupported && isListening && (
+            <div className="mt-4 text-center">
+              <div 
+                className="inline-flex items-center gap-3 px-4 py-2 rounded-2xl backdrop-blur-sm"
+                style={{
+                  background: `
+                    linear-gradient(135deg, 
+                      rgba(239, 68, 68, 0.06) 0%, 
+                      rgba(220, 38, 38, 0.06) 100%
+                    )
+                  `,
+                  boxShadow: `
+                    inset 0 1px 0 rgba(239, 68, 68, 0.03)
+                  `
+                }}
+              >
+                <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse" />
+                <p className="text-white/80 text-sm font-medium">
+                  🎤 Escuchando tu respuesta...
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Voice Transcript Feedback */}
+          {enableVoice && isSpeechSupported && isVoiceMode && transcript && !isListening && (
+            <div className="mt-4 text-center">
+              <div 
+                className="inline-flex items-center gap-3 px-4 py-2 rounded-2xl backdrop-blur-sm"
+                style={{
+                  background: `
+                    linear-gradient(135deg, 
+                      rgba(34, 197, 94, 0.06) 0%, 
+                      rgba(22, 163, 74, 0.06) 100%
+                    )
+                  `,
+                  boxShadow: `
+                    inset 0 1px 0 rgba(34, 197, 94, 0.03)
+                  `
+                }}
+              >
+                <div className="w-2 h-2 bg-green-400 rounded-full" />
+                <p className="text-white/80 text-sm font-medium">
+                  ✓ Texto capturado por voz - Presiona enviar o continúa hablando
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Voice Error Indicator */}
+          {enableVoice && speechError && (
+            <div className="mt-4 text-center">
+              <div 
+                className="inline-flex items-center gap-3 px-4 py-2 rounded-2xl backdrop-blur-sm"
+                style={{
+                  background: `
+                    linear-gradient(135deg, 
+                      rgba(239, 68, 68, 0.06) 0%, 
+                      rgba(220, 38, 38, 0.06) 100%
+                    )
+                  `,
+                  boxShadow: `
+                    inset 0 1px 0 rgba(239, 68, 68, 0.03)
+                  `
+                }}
+              >
+                <div className="w-2 h-2 bg-red-400 rounded-full" />
+                <p className="text-white/80 text-sm font-medium">
+                  ❌ Error de reconocimiento de voz - Intenta de nuevo
                 </p>
               </div>
             </div>

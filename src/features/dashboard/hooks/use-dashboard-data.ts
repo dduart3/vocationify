@@ -32,37 +32,42 @@ export function useDashboardStats() {
     queryFn: async (): Promise<DashboardStats> => {
       if (!user?.id) throw new Error('User not authenticated')
 
-      // Get test sessions count
+      // Get vocational sessions
       const { data: sessions, error: sessionsError } = await supabase
-        .from('test_sessions')
-        .select('id, status, completed_at')
+        .from('vocational_sessions')
+        .select('id, current_phase, riasec_scores, recommendations, created_at, updated_at')
         .eq('user_id', user.id)
-        .order('completed_at', { ascending: false })
+        .order('created_at', { ascending: false })
 
       if (sessionsError) throw sessionsError
 
       const totalTests = sessions?.length || 0
-      const completedTests = sessions?.filter(s => s.status === 'completed').length || 0
-      const lastTestDate = sessions?.[0]?.completed_at
+      // Consider completed tests as those that have recommendations (completed the full flow)
+      const completedTests = sessions?.filter(s => 
+        s.recommendations && 
+        Array.isArray(s.recommendations) && 
+        s.recommendations.length > 0
+      ).length || 0
+      const lastTestDate = sessions?.[0]?.created_at
 
-      // Get average confidence from results
-      const { data: results, error: resultsError } = await supabase
-        .from('test_results')
-        .select('id, session_id')
-        .in('session_id', sessions?.map(s => s.id) || [])
+      // Calculate average confidence from completed sessions
+      const completedSessions = sessions?.filter(s => 
+        s.recommendations && 
+        Array.isArray(s.recommendations) && 
+        s.recommendations.length > 0
+      ) || []
 
-      if (resultsError) throw resultsError
-
-      // For conversational sessions, get confidence from session_riasec_scores
-      const { data: riasecData, error: riasecError } = await supabase
-        .from('session_riasec_scores')
-        .select('*')
-        .in('session_id', sessions?.map(s => s.id) || [])
-
-      if (riasecError) throw riasecError
-
-      // Calculate average confidence (mock for now since we don't store it yet)
-      const averageConfidence = completedTests > 0 ? 85 : 0
+      let averageConfidence = 0
+      if (completedSessions.length > 0) {
+        const totalConfidence = completedSessions.reduce((sum, session) => {
+          // Get highest confidence from recommendations
+          const highestConfidence = Math.max(
+            ...(session.recommendations as any[])?.map(r => r.confidence || 0) || [0]
+          )
+          return sum + highestConfidence
+        }, 0)
+        averageConfidence = Math.round(totalConfidence / completedSessions.length)
+      }
 
       return {
         totalTests,
@@ -83,56 +88,47 @@ export function useUserTestHistory(limit: number = 5) {
     queryFn: async (): Promise<UserTestHistory[]> => {
       if (!user?.id) throw new Error('User not authenticated')
 
-      // Get recent completed test sessions
+      // Get recent completed vocational sessions
       const { data: sessions, error: sessionsError } = await supabase
-        .from('test_sessions')
-        .select('id, completed_at, session_type')
+        .from('vocational_sessions')
+        .select('id, riasec_scores, recommendations, created_at, updated_at')
         .eq('user_id', user.id)
-        .eq('status', 'completed')
-        .not('completed_at', 'is', null)
-        .order('completed_at', { ascending: false })
+        .not('recommendations', 'is', null)
+        .order('created_at', { ascending: false })
         .limit(limit)
 
       if (sessionsError) throw sessionsError
       if (!sessions || sessions.length === 0) return []
 
-      // Get RIASEC scores for these sessions
-      const { data: riasecScores, error: riasecError } = await supabase
-        .from('session_riasec_scores')
-        .select('*')
-        .in('session_id', sessions.map(s => s.id))
-
-      if (riasecError) throw riasecError
-
-      // Get test results with career recommendations
-      const { data: testResults, error: resultsError } = await supabase
-        .from('test_results')
-        .select(`
-          session_id,
-          career_recommendations
-        `)
-        .in('session_id', sessions.map(s => s.id))
-
-      if (resultsError) throw resultsError
-
-      // Combine the data
+      // Transform the data to match the expected interface
       const history: UserTestHistory[] = sessions.map(session => {
-        const riasec = riasecScores?.find(r => r.session_id === session.id)
-        const result = testResults?.find(r => r.session_id === session.id)
+        const riasecScores = session.riasec_scores as any || {}
+        const recommendations = session.recommendations as any[] || []
+        
+        // Calculate confidence level from recommendations
+        const avgConfidence = recommendations.length > 0
+          ? Math.round(recommendations.reduce((sum, rec) => sum + (rec.confidence || 0), 0) / recommendations.length)
+          : 0
 
         return {
           sessionId: session.id,
-          completedAt: session.completed_at!,
+          completedAt: session.created_at!,
           riasecScores: {
-            R: riasec?.realistic_score || 0,
-            I: riasec?.investigative_score || 0,
-            A: riasec?.artistic_score || 0,
-            S: riasec?.social_score || 0,
-            E: riasec?.enterprising_score || 0,
-            C: riasec?.conventional_score || 0
+            R: riasecScores.realistic || 0,
+            I: riasecScores.investigative || 0,
+            A: riasecScores.artistic || 0,
+            S: riasecScores.social || 0,
+            E: riasecScores.enterprising || 0,
+            C: riasecScores.conventional || 0
           },
-          confidenceLevel: 85, // Mock for now
-          careerRecommendations: result?.career_recommendations || []
+          confidenceLevel: avgConfidence,
+          careerRecommendations: recommendations.map(rec => ({
+            career_id: rec.careerId || rec.career_id,
+            confidence: rec.confidence,
+            career: {
+              name: rec.name || rec.career_name
+            }
+          }))
         }
       })
 
@@ -150,14 +146,13 @@ export function useLatestRiasecProfile() {
     queryFn: async (): Promise<RiasecScores | null> => {
       if (!user?.id) throw new Error('User not authenticated')
 
-      // Get the most recent completed session
+      // Get the most recent session with RIASEC scores
       const { data: session, error: sessionError } = await supabase
-        .from('test_sessions')
-        .select('id')
+        .from('vocational_sessions')
+        .select('riasec_scores')
         .eq('user_id', user.id)
-        .eq('status', 'completed')
-        .not('completed_at', 'is', null)
-        .order('completed_at', { ascending: false })
+        .not('riasec_scores', 'is', null)
+        .order('created_at', { ascending: false })
         .limit(1)
         .single()
 
@@ -166,27 +161,17 @@ export function useLatestRiasecProfile() {
         throw sessionError
       }
 
-      if (!session) return null
+      if (!session?.riasec_scores) return null
 
-      // Get RIASEC scores for this session
-      const { data: riasec, error: riasecError } = await supabase
-        .from('session_riasec_scores')
-        .select('*')
-        .eq('session_id', session.id)
-        .single()
-
-      if (riasecError) {
-        if (riasecError.code === 'PGRST116') return null // No data found
-        throw riasecError
-      }
+      const riasecScores = session.riasec_scores as any || {}
 
       return {
-        R: riasec.realistic_score || 0,
-        I: riasec.investigative_score || 0,
-        A: riasec.artistic_score || 0,
-        S: riasec.social_score || 0,
-        E: riasec.enterprising_score || 0,
-        C: riasec.conventional_score || 0
+        R: riasecScores.realistic || 0,
+        I: riasecScores.investigative || 0,
+        A: riasecScores.artistic || 0,
+        S: riasecScores.social || 0,
+        E: riasecScores.enterprising || 0,
+        C: riasecScores.conventional || 0
       }
     },
     enabled: !!user?.id

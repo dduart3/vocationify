@@ -1,16 +1,13 @@
 import { useState } from 'react'
-import { Link } from '@tanstack/react-router'
+import { Link, useParams } from '@tanstack/react-router'
 import { IconArrowLeft, IconBrain, IconTrophy, IconUser, IconTarget, IconBuilding, IconExternalLink } from '@tabler/icons-react'
 import { useResultDetail } from '../hooks/use-results'
 import { RiasecRadarChart } from '@/features/vocational-test/components/riasec-radar-chart'
 import { GlassmorphismSkeleton } from '@/components/ui/glassmorphism-loader'
 
-interface ResultDetailProps {
-  resultId: string
-}
-
-export function ResultDetail({ resultId }: ResultDetailProps) {
-  const { data: result, isLoading, error } = useResultDetail(resultId)
+export function ResultDetail() {
+  const { sessionId } = useParams({ from: '/_authenticated/results/$sessionId' })
+  const { data: result, isLoading, error } = useResultDetail(sessionId)
 
   const getRiasecDisplayName = (type: string) => {
     const names: Record<string, string> = {
@@ -86,18 +83,50 @@ export function ResultDetail({ resultId }: ResultDetailProps) {
 
   if (error || !result) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <IconBrain className="w-16 h-16 text-red-400 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-white mb-2">Resultado no encontrado</h3>
-          <p className="text-neutral-400 mb-6">El resultado que buscas no existe o ha sido eliminado.</p>
-          <Link
-            to="/results"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 rounded-lg transition-colors duration-200"
+      <div className="flex-1 min-h-screen relative overflow-hidden">
+        {/* Beautiful background similar to vocational test */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(120,119,198,0.3),transparent_50%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,255,255,0.1),transparent_50%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_40%,rgba(59,130,246,0.15),transparent_50%)]" />
+        </div>
+
+        {/* Floating Elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+          <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
+        </div>
+
+        <div className="relative z-10 flex items-center justify-center min-h-screen p-6">
+          <div 
+            className="text-center p-8 rounded-3xl backdrop-blur-xl max-w-md w-full"
+            style={{
+              background: `
+                linear-gradient(135deg, 
+                  rgba(255, 255, 255, 0.08) 0%, 
+                  rgba(255, 255, 255, 0.04) 100%
+                )
+              `,
+              boxShadow: `
+                0 8px 32px 0 rgba(31, 38, 135, 0.37),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1)
+              `
+            }}
           >
-            <IconArrowLeft className="w-4 h-4" />
-            Volver a resultados
-          </Link>
+            <IconBrain className="w-16 h-16 text-red-400 mx-auto mb-6" />
+            <h3 className="text-2xl font-bold text-white mb-4">Resultado no encontrado</h3>
+            <p className="text-white/70 mb-8 leading-relaxed">
+              El resultado que buscas no existe o ha sido eliminado.
+            </p>
+            <Link
+              to="/results"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold rounded-xl transition-all duration-300 hover:scale-105 shadow-lg"
+            >
+              <IconArrowLeft className="w-4 h-4" />
+              Volver a resultados
+            </Link>
+          </div>
         </div>
       </div>
     )
@@ -106,7 +135,7 @@ export function ResultDetail({ resultId }: ResultDetailProps) {
   const topTypes = getTopRiasecTypes(result.riasec_scores)
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="max-w-7xl mx-auto p-6 pt-8">
       {/* Compact Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
