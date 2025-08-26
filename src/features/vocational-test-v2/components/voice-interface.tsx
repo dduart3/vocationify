@@ -4,7 +4,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Mic, MicOff, Volume2, VolumeX, Brain, Loader, AlertCircle } from 'lucide-react'
 import { useSpeechRecognition } from '@/features/vocational-test/hooks/use-speech-recognition'
-import { useTextToSpeech } from '@/features/vocational-test/hooks/use-text-to-speech'
+import { useOpenAITTS } from '../hooks/use-openai-tts'
 import { useVoiceSettings } from '../hooks/use-voice-settings'
 import { VoiceSettingsToggle } from './voice-settings-toggle'
 
@@ -22,6 +22,7 @@ interface VoiceInterfaceProps {
   isLoading?: boolean
   currentQuestion?: string
   messages: Message[]
+  isComplete?: boolean
 }
 
 export function VoiceInterface({ 
@@ -29,7 +30,8 @@ export function VoiceInterface({
   disabled = false, 
   isLoading = false,
   currentQuestion,
-  messages
+  messages,
+  isComplete = false
 }: VoiceInterfaceProps) {
   const [voiceState, setVoiceState] = useState<VoiceState>('idle')
   const [silenceTimer, setSilenceTimer] = useState<NodeJS.Timeout | null>(null)
@@ -55,55 +57,70 @@ export function VoiceInterface({
     interimResults: true
   })
 
-  // Text-to-speech hook
+  // OpenAI Text-to-speech hook
   const {
     speak,
     stop: stopSpeech,
     isSpeaking,
-    isSupported: isTTSSupported
-  } = useTextToSpeech({
-    language: 'es-VE',
-    rate: settings.speechRate,
-    pitch: 1,
-    volume: settings.volume
+    isLoading: isTTSLoading,
+    isSupported: isTTSSupported,
+    error: ttsError
+  } = useOpenAITTS({
+    voice: 'shimmer', // Warm feminine voice, perfect for career guidance
+    model: 'gpt-4o-mini-tts', // Cheapest OpenAI TTS model for maximum cost savings
+    speed: (settings.speechRate || 1.0) * 1.12 // Slightly faster for more natural feel
   })
 
-  // Auto-speak initial question/message when component loads
+  // Auto-speak initial question/message when component loads (only ONCE for initial session)
   useEffect(() => {
-    let contentToSpeak = ''
-    
-    // Prioritize currentQuestion if available
-    if (currentQuestion) {
-      contentToSpeak = currentQuestion
-    } else if (messages.length > 0) {
-      // Find the latest AI message
-      const latestAIMessage = [...messages].reverse().find(msg => msg.role === 'assistant')
-      if (latestAIMessage) {
-        contentToSpeak = latestAIMessage.content
+    // Only speak the very first AI message when the component initially mounts
+    if (previousMessageCountRef.current === 0 && messages.length > 0) {
+      const firstAIMessage = messages.find(msg => msg.role === 'assistant')
+      
+      if (firstAIMessage && isTTSSupported && !isSpeaking) {
+        console.log(`🎯 Speaking initial AI message: "${firstAIMessage.content.substring(0, 50)}..."`)
+        speak(firstAIMessage.content, () => {
+          
+          // Auto-start listening after AI finishes speaking (only in auto mode and if test is not complete)
+          console.log('🎯 Initial message - checking auto-listen conditions:', {
+            listeningMode: settings.listeningMode,
+            disabled,
+            isLoading,
+            isComplete,
+            isListening,
+            isSpeaking,
+            isTTSLoading
+          })
+          
+          if (settings.listeningMode === 'auto' && !disabled && !isLoading && !isComplete) {
+            console.log('🎯 Scheduling initial auto-listening start...')
+            setTimeout(() => {
+              console.log('🎯 Initial timeout, re-checking conditions:', {
+                isListening,
+                isSpeaking,
+                isTTSLoading
+              })
+              
+              // Double-check that we're not still speaking before starting to listen
+              if (!isListening && !isSpeaking && !isTTSLoading) {
+                console.log('🎙️ Starting initial auto-listening')
+                setTranscript('')
+                transcriptRef.current = ''
+                resetTranscript()
+                startListening()
+              } else {
+                console.log('🚫 Skipping auto-listen - still speaking or already listening')
+              }
+            }, 1000) // Longer delay after speech ends to ensure audio completion
+          } else {
+            console.log('🚫 Initial auto-listen disabled due to conditions')
+          }
+        })
+        // Mark that we've handled the initial message
+        previousMessageCountRef.current = messages.length
       }
     }
-    
-    // Only speak on initial load, not on subsequent updates
-    if (contentToSpeak && isTTSSupported && previousMessageCountRef.current === 0) {
-      setVoiceState('speaking')
-      speak(contentToSpeak, () => {
-        setVoiceState('idle')
-        
-        // Auto-start listening after AI finishes speaking (only in auto mode)
-        if (settings.listeningMode === 'auto' && !disabled && !isLoading) {
-          setTimeout(() => {
-            if (!isListening) {
-              setTranscript('')
-              transcriptRef.current = ''
-              resetTranscript()
-              startListening()
-            }
-          }, 500) // Small delay after speech ends
-        }
-      })
-      previousMessageCountRef.current = messages.length
-    }
-  }, [currentQuestion, messages, speak, isTTSSupported, settings.listeningMode, disabled, isLoading, isListening, startListening, resetTranscript])
+  }, [messages.length, speak, isTTSSupported, settings.listeningMode, disabled, isLoading, isListening, startListening, resetTranscript, isComplete])
 
   // Auto-speak new AI messages and optionally start listening
   useEffect(() => {
@@ -112,26 +129,70 @@ export function VoiceInterface({
       const newAIMessage = newMessages.find(msg => msg.role === 'assistant')
       
       if (newAIMessage && isTTSSupported) {
-        setVoiceState('speaking')
-        speak(newAIMessage.content, () => {
-          setVoiceState('idle')
-          
-          // Auto-start listening after AI finishes speaking (only in auto mode)
-          if (settings.listeningMode === 'auto' && !disabled && !isLoading) {
-            setTimeout(() => {
-              if (!isListening) {
-                setTranscript('')
-                transcriptRef.current = ''
-                resetTranscript()
-                startListening()
-              }
-            }, 500) // Small delay after speech ends
+        // Count user responses to detect if we're around the completion threshold (6 questions)
+        const userResponseCount = messages.filter(msg => msg.role === 'user').length
+        
+        // If we're at the 6th user response and test isn't complete yet, 
+        // add a delay to allow backend completion fallback mechanism to work
+        const shouldDelay = userResponseCount >= 6 && !isComplete
+        const speakDelay = shouldDelay ? 2000 : 0 // 2 second delay for backend completion check
+        
+        setTimeout(() => {
+          // Re-check completion status after delay (backend might have completed it)
+          if (shouldDelay && isComplete) {
+            // Test was completed by backend during delay - speak the latest completion message instead
+            const latestMessage = [...messages].reverse().find(msg => msg.role === 'assistant')
+            if (latestMessage && latestMessage.content !== newAIMessage.content) {
+              // A newer completion message was received, speak that instead
+              speak(latestMessage.content, () => {
+                // No listening for completed test
+              })
+              return
+            }
           }
-        })
+          
+          // Speak the original message (either it's still valid or we're not at threshold)
+          speak(newAIMessage.content, () => {
+            
+            // Auto-start listening after AI finishes speaking (only in auto mode and if test is not complete)
+            console.log('🎯 Checking auto-listen conditions:', {
+              listeningMode: settings.listeningMode,
+              disabled,
+              isLoading,
+              isComplete,
+              isListening,
+              isSpeaking,
+              isTTSLoading
+            })
+            
+            if (settings.listeningMode === 'auto' && !disabled && !isLoading && !isComplete) {
+              setTimeout(() => {
+                console.log('🎯 In timeout, re-checking conditions:', {
+                  isListening,
+                  isSpeaking,
+                  isTTSLoading
+                })
+                
+                // Double-check that we're not still speaking before starting to listen
+                if (!isListening && !isSpeaking && !isTTSLoading) {
+                  console.log('🎙️ Starting auto-listening after speech completion')
+                  setTranscript('')
+                  transcriptRef.current = ''
+                  resetTranscript()
+                  startListening()
+                } else {
+                  console.log('🚫 Skipping auto-listen - still speaking or already listening')
+                }
+              }, 1000) // Longer delay after speech ends to ensure audio completion
+            } else {
+              console.log('🚫 Auto-listen disabled due to conditions')
+            }
+          })
+        }, speakDelay)
       }
     }
     previousMessageCountRef.current = messages.length
-  }, [messages, speak, isTTSSupported, settings.listeningMode, disabled, isLoading, isListening, startListening, resetTranscript])
+  }, [messages, speak, isTTSSupported, settings.listeningMode, disabled, isLoading, isListening, startListening, resetTranscript, isComplete])
 
   // Update transcript and manage silence detection with accumulation
   useEffect(() => {
@@ -174,20 +235,26 @@ export function VoiceInterface({
     }
   }, [speechTranscript, transcript, silenceTimer, isListening])
 
-  // Update voice state based on speech recognition
+  // Update voice state based on speech recognition and TTS
   useEffect(() => {
-    if (speechError) {
-      setVoiceState('error')
-    } else if (isListening) {
-      setVoiceState('listening')
-    } else if (isSpeaking) {
-      setVoiceState('speaking')
-    } else if (isLoading) {
-      setVoiceState('processing')
-    } else {
-      setVoiceState('idle')
-    }
-  }, [isListening, isSpeaking, isLoading, speechError])
+    const newState = speechError || ttsError ? 'error'
+      : isListening ? 'listening'
+      : isSpeaking ? 'speaking'
+      : (isTTSLoading || isLoading) ? 'processing'
+      : 'idle'
+    
+    console.log('🎯 Voice state update:', {
+      isListening,
+      isSpeaking,
+      isTTSLoading,
+      isLoading,
+      speechError: !!speechError,
+      ttsError: !!ttsError,
+      newState
+    })
+    
+    setVoiceState(newState)
+  }, [isListening, isSpeaking, isTTSLoading, isLoading, speechError, ttsError])
 
   const handleAutoSend = () => {
     const currentTranscript = transcriptRef.current.trim()
@@ -252,7 +319,7 @@ export function VoiceInterface({
         return {
           icon: <AlertCircle className="w-8 h-8 text-red-400" />,
           title: 'Error',
-          description: 'Problema con el micrófono',
+          description: ttsError ? 'Error con la síntesis de voz' : 'Problema con el micrófono',
           color: 'from-red-500/20 to-red-600/20',
           pulse: false
         }
@@ -400,6 +467,27 @@ export function VoiceInterface({
         >
           Enviar respuesta
         </button>
+      )}
+
+      {/* Error Display */}
+      {ttsError && (
+        <div className="w-full max-w-md mt-4">
+          <div 
+            className="p-4 rounded-2xl backdrop-blur-sm text-center border"
+            style={{
+              background: `
+                linear-gradient(135deg, 
+                  rgba(239, 68, 68, 0.1) 0%, 
+                  rgba(220, 38, 38, 0.1) 100%
+                )
+              `,
+              borderColor: 'rgba(239, 68, 68, 0.3)'
+            }}
+          >
+            <p className="text-red-300 text-sm mb-1">Error TTS:</p>
+            <p className="text-white text-xs">{ttsError}</p>
+          </div>
+        </div>
       )}
 
       {/* Voice Settings Toggle */}

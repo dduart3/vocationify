@@ -1,9 +1,11 @@
 import { useRef, useEffect } from 'react'
 import gsap from 'gsap'
 import { Link } from "@tanstack/react-router"
-import { ArrowRight, Play, Sparkles, TrendingUp, Users } from 'lucide-react'
+import { ArrowRight, Sparkles, TrendingUp, Users } from 'lucide-react'
+import { useAuthStore } from '@/stores/auth-store'
 
 export function HeroSection() {
+  const { isAuthenticated } = useAuthStore()
   const sectionRef = useRef<HTMLDivElement>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
   const subtitleRef = useRef<HTMLParagraphElement>(null)
@@ -132,10 +134,10 @@ export function HeroSection() {
               científico, resultados precisos, futuro profesional claro.
             </p>
 
-            {/* CTA Buttons */}
-            <div ref={buttonsRef} className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
+            {/* CTA Button */}
+            <div ref={buttonsRef} className="flex justify-center mb-16">
               <Link
-                to="/vocational-test"
+                to={isAuthenticated ? "/vocational-test" : "/register"}
                 className="group inline-flex items-center gap-3 px-8 py-4 rounded-xl font-semibold text-lg text-white transition-all duration-300 hover:scale-105"
                 style={{
                   background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.8) 0%, rgba(147, 51, 234, 0.8) 100%)',
@@ -144,22 +146,7 @@ export function HeroSection() {
                 }}
               >
                 <Sparkles size={20} />
-                Comenzar Análisis
-                <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform duration-300" />
-              </Link>
-              
-              <Link
-                to="/demo"
-                className="group inline-flex items-center gap-3 px-8 py-4 rounded-xl font-semibold text-lg text-white transition-all duration-300 hover:scale-105"
-                style={{
-                  background: 'transparent',
-                  backdropFilter: 'blur(12px)',
-                  boxShadow: '0 0 30px rgba(0, 0, 0, 0.2)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)'
-                }}
-              >
-                <Play size={20} />
-                Ver Demo
+                {isAuthenticated ? "Comenzar Análisis" : "Empezar Ahora"}
                 <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform duration-300" />
               </Link>
             </div>

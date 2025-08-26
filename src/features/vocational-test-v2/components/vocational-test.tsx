@@ -564,7 +564,7 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
             scrollbarColor: 'rgba(147, 51, 234, 0.3) rgba(255, 255, 255, 0.05)'
           }}
         >
-          <style jsx>{`
+          <style>{`
             .custom-scrollbar::-webkit-scrollbar {
               width: 8px;
             }
@@ -606,6 +606,7 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
               isLoading={isSending}
               currentQuestion={session?.conversation_history?.slice(-1)[0]?.role === 'assistant' ? session.conversation_history.slice(-1)[0].content : undefined}
               messages={session?.conversation_history || []}
+              isComplete={isComplete}
             />
           )}
         </div>
