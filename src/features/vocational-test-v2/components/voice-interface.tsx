@@ -35,6 +35,7 @@ export function VoiceInterface({
   const [silenceTimer, setSilenceTimer] = useState<NodeJS.Timeout | null>(null)
   const [transcript, setTranscript] = useState('')
   const previousMessageCountRef = useRef(messages.length)
+  const transcriptRef = useRef('')
   
   // Voice settings
   const { settings } = useVoiceSettings()
@@ -67,6 +68,43 @@ export function VoiceInterface({
     volume: settings.volume
   })
 
+  // Auto-speak initial question/message when component loads
+  useEffect(() => {
+    let contentToSpeak = ''
+    
+    // Prioritize currentQuestion if available
+    if (currentQuestion) {
+      contentToSpeak = currentQuestion
+    } else if (messages.length > 0) {
+      // Find the latest AI message
+      const latestAIMessage = [...messages].reverse().find(msg => msg.role === 'assistant')
+      if (latestAIMessage) {
+        contentToSpeak = latestAIMessage.content
+      }
+    }
+    
+    // Only speak on initial load, not on subsequent updates
+    if (contentToSpeak && isTTSSupported && previousMessageCountRef.current === 0) {
+      setVoiceState('speaking')
+      speak(contentToSpeak, () => {
+        setVoiceState('idle')
+        
+        // Auto-start listening after AI finishes speaking (only in auto mode)
+        if (settings.listeningMode === 'auto' && !disabled && !isLoading) {
+          setTimeout(() => {
+            if (!isListening) {
+              setTranscript('')
+              transcriptRef.current = ''
+              resetTranscript()
+              startListening()
+            }
+          }, 500) // Small delay after speech ends
+        }
+      })
+      previousMessageCountRef.current = messages.length
+    }
+  }, [currentQuestion, messages, speak, isTTSSupported, settings.listeningMode, disabled, isLoading, isListening, startListening, resetTranscript])
+
   // Auto-speak new AI messages and optionally start listening
   useEffect(() => {
     if (messages.length > previousMessageCountRef.current) {
@@ -83,6 +121,7 @@ export function VoiceInterface({
             setTimeout(() => {
               if (!isListening) {
                 setTranscript('')
+                transcriptRef.current = ''
                 resetTranscript()
                 startListening()
               }
@@ -94,10 +133,30 @@ export function VoiceInterface({
     previousMessageCountRef.current = messages.length
   }, [messages, speak, isTTSSupported, settings.listeningMode, disabled, isLoading, isListening, startListening, resetTranscript])
 
-  // Update transcript and manage silence detection
+  // Update transcript and manage silence detection with accumulation
   useEffect(() => {
-    if (speechTranscript !== transcript) {
-      setTranscript(speechTranscript)
+    if (speechTranscript && speechTranscript !== transcript) {
+      const newSpeech = speechTranscript.trim()
+      
+      if (newSpeech) {
+        setTranscript(prev => {
+          const prevText = prev.trim()
+          
+          // If new speech is completely different and not contained in previous
+          // this indicates a new speech segment after a pause
+          if (prevText && !prevText.includes(newSpeech) && !newSpeech.includes(prevText)) {
+            // Accumulate: add new speech to previous with proper spacing
+            const newTranscript = `${prevText} ${newSpeech}`
+            transcriptRef.current = newTranscript
+            return newTranscript
+          }
+          
+          // If new speech contains previous speech, it's an extension (Web Speech API concatenation)
+          // or if no previous text, just use the new speech
+          transcriptRef.current = newSpeech
+          return newSpeech
+        })
+      }
       
       // Reset silence timer when new speech is detected
       if (silenceTimer) {
@@ -106,7 +165,7 @@ export function VoiceInterface({
       }
 
       // Set up silence detection for auto-send (2.5 seconds of silence)
-      if (speechTranscript.trim() && isListening) {
+      if (newSpeech && isListening) {
         const timer = setTimeout(() => {
           handleAutoSend()
         }, 2500)
@@ -131,9 +190,11 @@ export function VoiceInterface({
   }, [isListening, isSpeaking, isLoading, speechError])
 
   const handleAutoSend = () => {
-    if (transcript.trim() && !disabled && !isLoading) {
-      onSendMessage(transcript.trim())
+    const currentTranscript = transcriptRef.current.trim()
+    if (currentTranscript && !disabled && !isLoading) {
+      onSendMessage(currentTranscript)
       setTranscript('')
+      transcriptRef.current = ''
       resetTranscript()
       stopListening()
       if (silenceTimer) {
@@ -155,6 +216,7 @@ export function VoiceInterface({
         stopSpeech()
       }
       setTranscript('')
+      transcriptRef.current = ''
       resetTranscript()
       startListening()
     }

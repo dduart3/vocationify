@@ -17,12 +17,13 @@ export function LogoutButton({ variant = 'default', className = '' }: LogoutButt
     try {
       setIsLoggingOut(true)
       await signOut()
-      navigate({ to: '/' })
+      // Don't navigate immediately - let the auth state change handle the redirect
+      // The /_authenticated route will redirect automatically when not authenticated
     } catch (error) {
       console.error('Logout error:', error)
-    } finally {
-      setIsLoggingOut(false)
+      setIsLoggingOut(false) // Reset loading on error
     }
+    // Don't set isLoggingOut to false here - component will unmount when logged out
   }
 
   const baseStyles = "flex items-center gap-2 transition-all duration-200"

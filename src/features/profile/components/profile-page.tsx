@@ -13,14 +13,24 @@ export function ProfilePage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [editData, setEditData] = useState<ProfileUpdateData>({
-    first_name: profile?.first_name || '',
-    last_name: profile?.last_name || ''
+    first_name: profile?.first_name || null,
+    last_name: profile?.last_name || null,
+    email: profile?.email || null,
+    phone: profile?.phone || null,
+    address: profile?.address || null,
+    avatar_url: profile?.avatar_url || null,
+    location: profile?.location || null
   })
 
   const handleEdit = () => {
     setEditData({
-      first_name: profile?.first_name || '',
-      last_name: profile?.last_name || ''
+      first_name: profile?.first_name || null,
+      last_name: profile?.last_name || null,
+      email: profile?.email || null,
+      phone: profile?.phone || null,
+      address: profile?.address || null,
+      avatar_url: profile?.avatar_url || null,
+      location: profile?.location || null
     })
     setError(null)
     setIsEditing(true)
@@ -28,7 +38,7 @@ export function ProfilePage() {
 
   const handleSave = async () => {
     // Validation
-    if (!editData.first_name.trim() || !editData.last_name.trim()) {
+    if (!editData.first_name?.trim() || !editData.last_name?.trim()) {
       setError('El nombre y apellido son obligatorios')
       return
     }
@@ -43,13 +53,23 @@ export function ProfilePage() {
       return
     }
 
+    // Optional email validation
+    if (editData.email && editData.email.trim() && !editData.email.includes('@')) {
+      setError('Ingrese un correo electrónico válido')
+      return
+    }
+
     setIsLoading(true)
     setError(null)
     
     try {
       await updateProfile({
         first_name: editData.first_name.trim(),
-        last_name: editData.last_name.trim()
+        last_name: editData.last_name.trim(),
+        email: editData.email?.trim() || null,
+        phone: editData.phone?.trim() || null,
+        address: editData.address?.trim() || null,
+        location: editData.location
       })
       setIsEditing(false)
     } catch (error: any) {
@@ -62,8 +82,13 @@ export function ProfilePage() {
 
   const handleCancel = () => {
     setEditData({
-      first_name: profile?.first_name || '',
-      last_name: profile?.last_name || ''
+      first_name: profile?.first_name || null,
+      last_name: profile?.last_name || null,
+      email: profile?.email || null,
+      phone: profile?.phone || null,
+      address: profile?.address || null,
+      avatar_url: profile?.avatar_url || null,
+      location: profile?.location || null
     })
     setError(null)
     setIsEditing(false)

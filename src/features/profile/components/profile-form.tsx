@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { IconUser } from '@tabler/icons-react'
+import { IconUser, IconMail, IconPhone, IconMapPin } from '@tabler/icons-react'
 import { useAuthStore } from '@/stores/auth-store'
+import { LocationPicker } from './location-picker'
 import type { ProfileUpdateData } from '../types'
 
 interface ProfileFormProps {
@@ -58,6 +59,103 @@ export function ProfileForm({ isEditing, editData, onDataChange }: ProfileFormPr
               </div>
             )}
           </div>
+        </div>
+
+        {/* Email */}
+        <div className="space-y-2">
+          <label className="text-sm text-neutral-300">Correo electrónico</label>
+          {isEditing ? (
+            <input
+              type="email"
+              value={editData.email || ''}
+              onChange={(e) => onDataChange({...editData, email: e.target.value})}
+              className="w-full p-3 bg-gradient-to-r from-white/10 to-white/5 rounded-xl text-white placeholder:text-neutral-400 focus:outline-none focus:ring-1 focus:ring-blue-500/50 backdrop-blur-sm shadow-inner"
+              placeholder="tu@email.com"
+            />
+          ) : (
+            <div className="p-3 bg-gradient-to-r from-white/8 to-white/3 rounded-xl text-white shadow-inner backdrop-blur-sm flex items-center gap-2">
+              <IconMail className="w-4 h-4 text-blue-400" />
+              {profile?.email || 'No especificado'}
+            </div>
+          )}
+        </div>
+
+        {/* Phone */}
+        <div className="space-y-2">
+          <label className="text-sm text-neutral-300">Teléfono</label>
+          {isEditing ? (
+            <input
+              type="tel"
+              value={editData.phone || ''}
+              onChange={(e) => onDataChange({...editData, phone: e.target.value})}
+              className="w-full p-3 bg-gradient-to-r from-white/10 to-white/5 rounded-xl text-white placeholder:text-neutral-400 focus:outline-none focus:ring-1 focus:ring-blue-500/50 backdrop-blur-sm shadow-inner"
+              placeholder="+58 412 123 4567"
+            />
+          ) : (
+            <div className="p-3 bg-gradient-to-r from-white/8 to-white/3 rounded-xl text-white shadow-inner backdrop-blur-sm flex items-center gap-2">
+              <IconPhone className="w-4 h-4 text-blue-400" />
+              {profile?.phone || 'No especificado'}
+            </div>
+          )}
+        </div>
+
+        {/* Address */}
+        <div className="space-y-2">
+          <label className="text-sm text-neutral-300">Dirección</label>
+          {isEditing ? (
+            <textarea
+              rows={3}
+              value={editData.address || ''}
+              onChange={(e) => onDataChange({...editData, address: e.target.value})}
+              className="w-full p-3 bg-gradient-to-r from-white/10 to-white/5 rounded-xl text-white placeholder:text-neutral-400 focus:outline-none focus:ring-1 focus:ring-blue-500/50 backdrop-blur-sm shadow-inner resize-none"
+              placeholder="Av. Universidad, Maracaibo, Zulia"
+            />
+          ) : (
+            <div className="p-3 bg-gradient-to-r from-white/8 to-white/3 rounded-xl text-white shadow-inner backdrop-blur-sm flex items-start gap-2">
+              <IconMapPin className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
+              <span>{profile?.address || 'No especificado'}</span>
+            </div>
+          )}
+        </div>
+
+        {/* Location */}
+        <div className="space-y-2">
+          <label className="text-sm text-neutral-300">Ubicación en el mapa</label>
+          {isEditing ? (
+            <div className="space-y-2">
+              <p className="text-xs text-neutral-400">
+                Haz clic en el mapa para seleccionar tu ubicación
+              </p>
+              <LocationPicker
+                value={editData.location}
+                onChange={(location) => onDataChange({...editData, location})}
+              />
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {profile?.location ? (
+                <div className="p-3 bg-gradient-to-r from-white/8 to-white/3 rounded-xl text-white shadow-inner backdrop-blur-sm">
+                  <div className="flex items-center gap-2 mb-2">
+                    <IconMapPin className="w-4 h-4 text-blue-400" />
+                    <span className="text-sm">
+                      Lat: {profile.location.latitude.toFixed(6)}, 
+                      Lng: {profile.location.longitude.toFixed(6)}
+                    </span>
+                  </div>
+                  <LocationPicker
+                    value={profile.location}
+                    onChange={() => {}} // Read-only when not editing
+                    readOnly={true}
+                  />
+                </div>
+              ) : (
+                <div className="p-3 bg-gradient-to-r from-white/8 to-white/3 rounded-xl text-white shadow-inner backdrop-blur-sm flex items-center gap-2">
+                  <IconMapPin className="w-4 h-4 text-blue-400" />
+                  No especificado
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

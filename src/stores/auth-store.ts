@@ -6,13 +6,16 @@ import { toast } from "sonner";
 
 export interface UserProfile {
   id: string;
-  email: string;
-  first_name: string;
-  last_name: string;
-  avatar_url?: string;
-  role: "user" | "admin";
-  created_at: string;
-  updated_at: string;
+  first_name: string | null;
+  last_name: string | null;
+  email: string | null;
+  address: string | null;
+  phone: string | null;
+  avatar_url: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+  role_id: number | null;
+  location: { latitude: number; longitude: number } | null;
 }
 
 interface AuthStore {
@@ -22,7 +25,8 @@ interface AuthStore {
   session: Session | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  error: string | null; // ← AGREGAR ESTA LÍNEA
+  error: string | null;
+  authListenerSet: boolean; // Track if auth state listener is set
 
   // Computed
   isAdmin: boolean;
@@ -37,7 +41,7 @@ interface AuthStore {
   // Auth methods
   signIn: (email: string, password: string) => Promise<void>;
   signInWithProvider: (provider: "google") => Promise<void>; // ← AGREGAR ESTA LÍNEA
-  signUp: (email: string, password: string, fullName?: string) => Promise<void>;
+  signUp: (email: string, password: string, profileData?: any) => Promise<void>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   updateProfile: (updates: Partial<UserProfile>) => Promise<void>;
@@ -58,10 +62,12 @@ export const useAuthStore = create<AuthStore>()(
         isLoading: true,
         isAuthenticated: false,
         error: null,
+        authListenerSet: false,
 
         // Computed
         get isAdmin() {
-          return get().profile?.role === "admin";
+          // role_id 1 is admin, role_id 2 is user
+          return get().profile?.role_id === 1;
         },
 
         // Setters
@@ -153,10 +159,8 @@ export const useAuthStore = create<AuthStore>()(
 
             if (error) throw error;
 
-            // OAuth redirect will handle the rest
-            toast.success("Redirecting...", {
-              description: `Opening ${provider} sign in...`,
-            });
+            // OAuth redirect will handle the rest - no success toast here
+            // The auth-callback component will show the success toast
           } catch (error: any) {
             console.error("Social sign in error:", error);
             set({ error: error.message });
@@ -168,16 +172,18 @@ export const useAuthStore = create<AuthStore>()(
           // No finally aquí porque la página se va a redirigir
         },
 
-        signUp: async (email: string, password: string, fullName?: string) => {
+        signUp: async (email: string, password: string, profileData?: any) => {
           try {
-            set({ isLoading: true });
+            set({ isLoading: true, error: null });
 
+            // Sign up with Supabase Auth
             const { data, error } = await supabase.auth.signUp({
               email,
               password,
               options: {
                 data: {
-                  full_name: fullName,
+                  first_name: profileData?.firstName,
+                  last_name: profileData?.lastName,
                 },
               },
             });
@@ -185,14 +191,37 @@ export const useAuthStore = create<AuthStore>()(
             if (error) throw error;
 
             if (data.user) {
-              toast.success("Account created!", {
-                description: "Please check your email to verify your account.",
+              // Create profile record in profiles table
+              const profileRecord = {
+                id: data.user.id,
+                first_name: profileData?.firstName || '',
+                last_name: profileData?.lastName || '',
+                email: email,
+                phone: profileData?.phone || null,
+                address: profileData?.address || null,
+                location: profileData?.location || null,
+                avatar_url: null,
+                role_id: 2, // Default user role (1=admin, 2=user)
+              };
+
+              const { error: profileError } = await supabase
+                .from('profiles')
+                .insert([profileRecord]);
+
+              if (profileError) {
+                console.error('Profile creation error:', profileError);
+                // Don't throw here as the user account was created successfully
+              }
+
+              toast.success("¡Cuenta creada exitosamente!", {
+                description: "Por favor verifica tu correo para activar tu cuenta.",
               });
             }
           } catch (error: any) {
             console.error("Sign up error:", error);
-            toast.error("Sign up failed", {
-              description: error.message || "Please try again.",
+            set({ error: error.message });
+            toast.error("Error al crear cuenta", {
+              description: error.message || "Por favor inténtalo de nuevo.",
             });
             throw error;
           } finally {
@@ -202,26 +231,30 @@ export const useAuthStore = create<AuthStore>()(
 
         signOut: async () => {
           try {
+            console.log("🔄 Starting signOut process...");
             set({ isLoading: true });
 
+            console.log("📤 Calling supabase.auth.signOut()...");
             const { error } = await supabase.auth.signOut();
 
             if (error) throw error;
 
-            get().reset();
-
+            console.log("✅ Supabase signOut successful - waiting for SIGNED_OUT event...");
+            // Don't call reset() here - let the auth state listener handle it
+            // This prevents double reset and race conditions
+            
             toast.success("Signed out", {
               description: "You have been successfully signed out.",
             });
           } catch (error: any) {
-            console.error("Sign out error:", error);
+            console.error("❌ Sign out error:", error);
+            set({ isLoading: false }); // Reset loading on error
             toast.error("Sign out failed", {
               description: error.message,
             });
             throw error;
-          } finally {
-            set({ isLoading: false });
           }
+          // Don't set isLoading: false here - let the reset() handle it
         },
 
         resetPassword: async (email: string) => {
@@ -301,28 +334,34 @@ export const useAuthStore = create<AuthStore>()(
               }
             }
 
-            // Listen for auth changes
-            supabase.auth.onAuthStateChange(async (event, session) => {
-              console.log("Auth state changed:", event, session?.user?.email);
+            // Only set up auth state listener once
+            if (!get().authListenerSet) {
+              set({ authListenerSet: true });
+              
+              // Listen for auth changes
+              supabase.auth.onAuthStateChange(async (event, session) => {
+                console.log("Auth state changed:", event, session?.user?.email);
 
-              if (event === "SIGNED_IN" && session?.user) {
-                // Fetch profile
-                const { data: profileData } = await supabase
-                  .from("profiles")
-                  .select("*")
-                  .eq("id", session.user.id)
-                  .single();
+                if (event === "SIGNED_IN" && session?.user) {
+                  // Fetch profile
+                  const { data: profileData } = await supabase
+                    .from("profiles")
+                    .select("*")
+                    .eq("id", session.user.id)
+                    .single();
 
-                set({
-                  user: session.user,
-                  session,
-                  profile: profileData as UserProfile,
-                  isAuthenticated: true,
-                });
-              } else if (event === "SIGNED_OUT") {
-                get().reset();
-              }
-            });
+                  set({
+                    user: session.user,
+                    session,
+                    profile: profileData as UserProfile,
+                    isAuthenticated: true,
+                  });
+                } else if (event === "SIGNED_OUT") {
+                  console.log("🚪 Auth state changed: SIGNED_OUT - resetting auth store");
+                  get().reset();
+                }
+              });
+            }
           } catch (error) {
             console.error("Auth initialization error:", error);
           } finally {
@@ -339,6 +378,7 @@ export const useAuthStore = create<AuthStore>()(
               isAuthenticated: false,
               isLoading: false,
               error: null,
+              authListenerSet: false, // Reset listener flag too
             },
             false,
             "reset"

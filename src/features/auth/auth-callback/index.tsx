@@ -48,21 +48,59 @@ export function AuthCallback() {
         if (error) throw error
 
         if (data.session?.user) {
+          console.log('🔍 Checking for existing profile for user:', data.session.user.email)
+          
           const { data: profileData, error: profileError } = await supabase
             .from('profiles')
             .select('*')
             .eq('id', data.session.user.id)
             .single()
+          
+          console.log('Profile query result:', { profileData, profileError })
 
-          if (profileError) {
+          if (profileError || !profileData) {
+            // Profile doesn't exist, create it
+            console.log('🆕 Profile does not exist, creating new profile for OAuth user:', data.session.user.email)
+            console.log('📋 Full user metadata from Google:', JSON.stringify(data.session.user.user_metadata, null, 2))
+            
+            // Extract names from Google OAuth user metadata
+            // Check what Supabase actually provides from Google
+            const rawDisplayName = data.session.user.user_metadata?.name
+            const rawFullName = data.session.user.user_metadata?.full_name
+            const rawDisplayName2 = data.session.user.user_metadata?.display_name
+            
+            console.log('Raw Google data - name:', rawDisplayName)
+            console.log('Raw Google data - full_name:', rawFullName) 
+            console.log('Raw Google data - display_name:', rawDisplayName2)
+            
+            // Use the display name that you can see in auth module
+            const fullName = rawDisplayName || rawFullName || rawDisplayName2 || ''
+            
+            console.log('Final extracted full name:', fullName)
+            
+            if (!fullName) {
+              console.warn('⚠️ No name found in Google user metadata!')
+            }
+            
+            const nameParts = fullName.trim().split(' ')
+            const firstName = nameParts[0] || ''
+            const lastName = nameParts.slice(1).join(' ') || ''
+            
+            console.log('✅ Parsed names - First:', firstName, 'Last:', lastName)
+
             const newProfile = {
               id: data.session.user.id,
-              email: data.session.user.email!,
-              full_name: data.session.user.user_metadata?.full_name || 
-                        data.session.user.user_metadata?.name,
-              avatar_url: data.session.user.user_metadata?.avatar_url,
-              role: 'user' as const,
+              first_name: firstName.trim() || null,
+              last_name: lastName.trim() || null,
+              email: data.session.user.email || null,
+              avatar_url: data.session.user.user_metadata?.avatar_url || null,
+              phone: null,
+              address: null,
+              location: null,
+              role_id: 2, // Default user role (1=admin, 2=user)
             }
+
+            console.log('📝 About to create profile with data:', newProfile)
 
             const { data: createdProfile, error: createError } = await supabase
               .from('profiles')
@@ -70,20 +108,108 @@ export function AuthCallback() {
               .select()
               .single()
 
-            if (createError) throw createError
-            setProfile(createdProfile)
+            if (createError) {
+              console.error('❌ Profile creation error:', createError)
+              console.error('❌ Error details:', {
+                message: createError.message,
+                code: createError.code,
+                details: createError.details,
+                hint: createError.hint
+              })
+              throw createError
+            }
+            
+            console.log('✅ Profile created successfully in database!')
+            console.log('✅ Created profile data:', createdProfile)
+            
+            // Verify the names were actually saved
+            if (createdProfile?.first_name && createdProfile?.last_name) {
+              console.log(`✅ Names saved correctly: ${createdProfile.first_name} ${createdProfile.last_name}`)
+            } else {
+              console.warn('⚠️ Names may not have been saved properly:', {
+                first_name: createdProfile?.first_name,
+                last_name: createdProfile?.last_name
+              })
+            }
+            setProfile(createdProfile as UserProfile)
           } else {
+            // Profile exists, check if names are missing and update them
+            console.log('Found existing profile:', profileData)
+            
+            if (!profileData.first_name || !profileData.last_name) {
+              console.log('🔄 Profile exists but names are missing, updating with Google data...')
+              console.log('📋 Full user metadata from Google:', JSON.stringify(data.session.user.user_metadata, null, 2))
+              
+              // Extract names from Google OAuth user metadata
+              const rawDisplayName = data.session.user.user_metadata?.name
+              const rawFullName = data.session.user.user_metadata?.full_name
+              const rawDisplayName2 = data.session.user.user_metadata?.display_name
+              
+              console.log('Raw Google data - name:', rawDisplayName)
+              console.log('Raw Google data - full_name:', rawFullName) 
+              console.log('Raw Google data - display_name:', rawDisplayName2)
+              
+              const fullName = rawDisplayName || rawFullName || rawDisplayName2 || ''
+              console.log('Final extracted full name:', fullName)
+              
+              if (fullName) {
+                const nameParts = fullName.trim().split(' ')
+                const firstName = nameParts[0] || ''
+                const lastName = nameParts.slice(1).join(' ') || ''
+                
+                console.log('✅ Parsed names - First:', firstName, 'Last:', lastName)
+                
+                // Update the profile with the names
+                const { data: updatedProfile, error: updateError } = await supabase
+                  .from('profiles')
+                  .update({
+                    first_name: firstName.trim() || null,
+                    last_name: lastName.trim() || null
+                  })
+                  .eq('id', data.session.user.id)
+                  .select()
+                  .single()
+                
+                if (updateError) {
+                  console.error('❌ Profile update error:', updateError)
+                } else {
+                  console.log('✅ Profile updated successfully with names!')
+                  console.log('✅ Updated profile:', updatedProfile)
+                  setProfile(updatedProfile as UserProfile)
+                  // Don't return here - continue with auth flow
+                }
+              } else {
+                console.warn('⚠️ No name found in Google user metadata to update profile')
+              }
+            }
+            
             setProfile(profileData)
           }
 
           setUser(data.session.user)
           setSession(data.session)
 
-          toast.success('¡Bienvenido!', {
-            description: 'Has iniciado sesión correctamente.',
-          })
+          // Set a flag to indicate OAuth login completion
+          sessionStorage.setItem('oauth-login-completed', 'true')
+          
+          // Add a small delay to prevent duplicate toasts and ensure state is set
+          setTimeout(() => {
+            // Only show toast if it hasn't been shown already
+            if (sessionStorage.getItem('oauth-toast-shown') !== 'true') {
+              sessionStorage.setItem('oauth-toast-shown', 'true')
+              toast.success('¡Bienvenido!', {
+                description: 'Has iniciado sesión correctamente.',
+              })
+            }
 
-          navigate({ to: '/dashboard' })
+            navigate({ to: '/dashboard' })
+            
+            // Clean up flags after navigation
+            setTimeout(() => {
+              sessionStorage.removeItem('oauth-login-completed')
+              sessionStorage.removeItem('oauth-toast-shown')
+            }, 1000)
+          }, 100)
         } else {
           throw new Error('No se encontró la sesión')
         }

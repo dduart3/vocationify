@@ -74,13 +74,8 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
     return phaseTranslations[phase] || 'En progreso'
   }
 
-  // Handle completion callback
-  useEffect(() => {
-    if (isComplete && onComplete && currentSessionId) {
-      console.log('🎉 V2 vocational test completed')
-      onComplete(currentSessionId)
-    }
-  }, [isComplete, onComplete, currentSessionId])
+  // Completion is now handled manually via the "Ver resultados" button
+  // No automatic redirect - user must click the button to go to results
 
   // No session - show start screen
   if (!hasSession && !isStarting) {

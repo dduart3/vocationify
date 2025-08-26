@@ -6,8 +6,13 @@ export interface UserActivity {
 }
 
 export interface ProfileUpdateData {
-  first_name: string
-  last_name: string
+  first_name: string | null
+  last_name: string | null
+  email: string | null
+  phone: string | null
+  address: string | null
+  avatar_url: string | null
+  location: { latitude: number; longitude: number } | null
 }
 
 export interface ProfilePageProps {
