@@ -17,8 +17,8 @@ export function handleServerError(error: unknown) {
     // Handle specific status codes
     switch (status) {
       case 400:
-        toast.error('Bad Request', {
-          description: data?.message || 'Please check your input and try again.',
+        toast.error('Solicitud Incorrecta', {
+          description: data?.message || 'Por favor revisa tu información e inténtalo de nuevo.',
         })
         break
         
@@ -31,20 +31,20 @@ export function handleServerError(error: unknown) {
         break
         
       case 404:
-        toast.error('Not Found', {
-          description: data?.message || 'The requested resource was not found.',
+        toast.error('No Encontrado', {
+          description: data?.message || 'El recurso solicitado no fue encontrado.',
         })
         break
         
       case 422:
-        toast.error('Validation Error', {
-          description: data?.message || 'Please check your input.',
+        toast.error('Error de Validación', {
+          description: data?.message || 'Por favor revisa tu información.',
         })
         break
         
       case 429:
-        toast.error('Too Many Requests', {
-          description: 'Please wait a moment before trying again.',
+        toast.error('Demasiadas Solicitudes', {
+          description: 'Por favor espera un momento antes de intentarlo de nuevo.',
         })
         break
         
@@ -53,23 +53,23 @@ export function handleServerError(error: unknown) {
         break
         
       case 503:
-        toast.error('Service Unavailable', {
-          description: 'The service is temporarily unavailable. Please try again later.',
+        toast.error('Servicio No Disponible', {
+          description: 'El servicio no está disponible temporalmente. Por favor inténtalo más tarde.',
         })
         break
         
       default:
         if (status && status >= 400) {
-          toast.error('Request Failed', {
-            description: data?.message || `Request failed with status ${status}`,
+          toast.error('Solicitud Fallida', {
+            description: data?.message || `La solicitud falló con estado ${status}`,
           })
         }
     }
   } else if (error instanceof Error) {
     // Handle network errors, etc.
     if (error.message.includes('Network Error')) {
-      toast.error('Network Error', {
-        description: 'Please check your internet connection and try again.',
+      toast.error('Error de Conexión', {
+        description: 'Por favor revisa tu conexión a internet e inténtalo de nuevo.',
       })
     } else {
       toast.error('Error', {
@@ -77,8 +77,8 @@ export function handleServerError(error: unknown) {
       })
     }
   } else {
-    toast.error('Unknown Error', {
-      description: 'An unexpected error occurred.',
+    toast.error('Error Desconocido', {
+      description: 'Ocurrió un error inesperado.',
     })
   }
 }

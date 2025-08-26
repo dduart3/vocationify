@@ -1,8 +1,10 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Link } from '@tanstack/react-router'
-import { IconArrowLeft, IconBuilding, IconPhone, IconMail, IconWorld, IconCalendar, IconUsers, IconBookmark, IconBookmarkFilled, IconSchool, IconClock, IconMapPin, IconAt } from '@tabler/icons-react'
+import { IconArrowLeft, IconBuilding, IconPhone, IconMail, IconWorld, IconCalendar, IconUsers, IconBookmark, IconBookmarkFilled, IconSchool, IconClock, IconMapPin, IconAt, IconTarget } from '@tabler/icons-react'
 import { SchoolMap } from './school-map'
 import { useSchoolWithCareers } from '../hooks/use-schools'
+import { useAuthStore } from '@/stores/auth-store'
+import { calculateDistance, formatDistance } from '@/utils/distance'
 
 interface SchoolDetailProps {
   schoolId: string
@@ -10,7 +12,22 @@ interface SchoolDetailProps {
 
 export function SchoolDetail({ schoolId }: SchoolDetailProps) {
   const { data: school, isLoading, error } = useSchoolWithCareers(schoolId)
+  const { profile } = useAuthStore()
   const [isFavorite, setIsFavorite] = useState(false)
+  
+  // Calculate distance from user location
+  const distanceFromUser = useMemo(() => {
+    if (!school?.location?.latitude || !school?.location?.longitude || !profile?.location) {
+      return null
+    }
+    
+    return calculateDistance(
+      profile.location.latitude,
+      profile.location.longitude,
+      school.location.latitude,
+      school.location.longitude
+    )
+  }, [school?.location, profile?.location])
 
   const getTypeColor = (type: string) => {
     return type === 'public' ? 'bg-blue-500/20 text-blue-400' : 'bg-green-500/20 text-green-400'
@@ -70,7 +87,17 @@ export function SchoolDetail({ schoolId }: SchoolDetailProps) {
             )}
             <div>
               <h1 className="text-3xl font-bold text-white">{school.name}</h1>
-              <p className="text-neutral-400 mt-1">Información detallada de la institución</p>
+              <div className="flex items-center gap-4 mt-1">
+                <p className="text-neutral-400">Información detallada de la institución</p>
+                {distanceFromUser !== null && (
+                  <div className="flex items-center gap-1 px-3 py-1 bg-blue-500/20 rounded-lg">
+                    <IconTarget className="w-4 h-4 text-blue-400" />
+                    <span className="text-blue-400 font-medium text-sm">
+                      {formatDistance(distanceFromUser)} de tu ubicación
+                    </span>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>

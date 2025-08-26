@@ -2,6 +2,7 @@
 // Responsibility: Display career recommendations in card format
 
 import { Star, TrendingUp, BookOpen, Target } from 'lucide-react'
+import { PDFExport } from './pdf-export'
 
 interface CareerRecommendation {
   careerId: string
@@ -38,16 +39,25 @@ export function CareerRecommendations({
   }
 
   return (
-    <div className={`space-y-4 ${className}`}>
+    <div className={`space-y-6 ${className}`} id="career-recommendations-content">
       {showTitle && (
         <div className="text-center">
           <h3 className="text-xl font-semibold text-white mb-2 flex items-center justify-center gap-2">
             <Target className="w-6 h-6 text-blue-400" />
             Tus Carreras Recomendadas
           </h3>
-          <p className="text-white/70 text-sm">
+          <p className="text-white/70 text-sm mb-4">
             Basado en tus intereses y respuestas
           </p>
+          
+          {/* PDF Export Button */}
+          <div className="flex justify-center">
+            <PDFExport 
+              contentId="career-recommendations-content"
+              fileName="mis-carreras-recomendadas"
+              title="Mis Carreras Recomendadas - Test Vocacional"
+            />
+          </div>
         </div>
       )}
       

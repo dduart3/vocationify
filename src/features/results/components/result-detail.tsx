@@ -4,6 +4,7 @@ import { IconArrowLeft, IconBrain, IconTrophy, IconUser, IconTarget, IconBuildin
 import { useResultDetail } from '../hooks/use-results'
 import { RiasecRadarChart } from '@/features/vocational-test/components/riasec-radar-chart'
 import { GlassmorphismSkeleton } from '@/components/ui/glassmorphism-loader'
+import { PDFExport } from '@/features/vocational-test-v2/components/pdf-export'
 
 export function ResultDetail() {
   const { sessionId } = useParams({ from: '/_authenticated/results/$sessionId' })
@@ -135,7 +136,7 @@ export function ResultDetail() {
   const topTypes = getTopRiasecTypes(result.riasec_scores)
 
   return (
-    <div className="max-w-7xl mx-auto p-6 pt-8">
+    <div className="max-w-7xl mx-auto p-6 pt-8" id="result-detail-content">
       {/* Compact Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
@@ -151,9 +152,18 @@ export function ResultDetail() {
           </div>
         </div>
         
-        {/* Status Badge */}
-        <div className="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm font-medium">
-          {getStatusDisplayName(result.status)}
+        <div className="flex items-center gap-3">
+          {/* PDF Export Button */}
+          <PDFExport 
+            contentId="result-detail-content"
+            fileName="resultado-test-vocacional"
+            title="Mi Resultado del Test Vocacional - Vocationify"
+          />
+          
+          {/* Status Badge */}
+          <div className="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm font-medium">
+            {getStatusDisplayName(result.status)}
+          </div>
         </div>
       </div>
 

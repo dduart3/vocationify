@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { IconUser, IconMail, IconPhone, IconMapPin } from '@tabler/icons-react'
+import { User, Mail, Phone, MapPin } from 'lucide-react'
 import { useAuthStore } from '@/stores/auth-store'
 import { LocationPicker } from './location-picker'
 import type { ProfileUpdateData } from '../types'
@@ -14,9 +14,9 @@ export function ProfileForm({ isEditing, editData, onDataChange }: ProfileFormPr
   const { profile } = useAuthStore()
 
   return (
-    <div className="space-y-4">
-      <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-        <IconUser className="w-5 h-5 text-blue-400" />
+    <div className="space-y-6">
+      <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
+        <User className="w-6 h-6 text-blue-400" />
         Información Personal
       </h3>
 
@@ -74,7 +74,7 @@ export function ProfileForm({ isEditing, editData, onDataChange }: ProfileFormPr
             />
           ) : (
             <div className="p-3 bg-gradient-to-r from-white/8 to-white/3 rounded-xl text-white shadow-inner backdrop-blur-sm flex items-center gap-2">
-              <IconMail className="w-4 h-4 text-blue-400" />
+              <Mail className="w-4 h-4 text-blue-400" />
               {profile?.email || 'No especificado'}
             </div>
           )}
@@ -93,7 +93,7 @@ export function ProfileForm({ isEditing, editData, onDataChange }: ProfileFormPr
             />
           ) : (
             <div className="p-3 bg-gradient-to-r from-white/8 to-white/3 rounded-xl text-white shadow-inner backdrop-blur-sm flex items-center gap-2">
-              <IconPhone className="w-4 h-4 text-blue-400" />
+              <Phone className="w-4 h-4 text-blue-400" />
               {profile?.phone || 'No especificado'}
             </div>
           )}
@@ -112,7 +112,7 @@ export function ProfileForm({ isEditing, editData, onDataChange }: ProfileFormPr
             />
           ) : (
             <div className="p-3 bg-gradient-to-r from-white/8 to-white/3 rounded-xl text-white shadow-inner backdrop-blur-sm flex items-start gap-2">
-              <IconMapPin className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
+              <MapPin className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
               <span>{profile?.address || 'No especificado'}</span>
             </div>
           )}
@@ -136,7 +136,7 @@ export function ProfileForm({ isEditing, editData, onDataChange }: ProfileFormPr
               {profile?.location ? (
                 <div className="p-3 bg-gradient-to-r from-white/8 to-white/3 rounded-xl text-white shadow-inner backdrop-blur-sm">
                   <div className="flex items-center gap-2 mb-2">
-                    <IconMapPin className="w-4 h-4 text-blue-400" />
+                    <MapPin className="w-4 h-4 text-blue-400" />
                     <span className="text-sm">
                       Lat: {profile.location.latitude.toFixed(6)}, 
                       Lng: {profile.location.longitude.toFixed(6)}
@@ -150,7 +150,7 @@ export function ProfileForm({ isEditing, editData, onDataChange }: ProfileFormPr
                 </div>
               ) : (
                 <div className="p-3 bg-gradient-to-r from-white/8 to-white/3 rounded-xl text-white shadow-inner backdrop-blur-sm flex items-center gap-2">
-                  <IconMapPin className="w-4 h-4 text-blue-400" />
+                  <MapPin className="w-4 h-4 text-blue-400" />
                   No especificado
                 </div>
               )}

@@ -1,7 +1,9 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Link } from '@tanstack/react-router'
 import { IconArrowLeft, IconSchool, IconTarget, IconClock, IconStar, IconBookmark, IconBookmarkFilled, IconMapPin, IconBuilding } from '@tabler/icons-react'
 import { useCareerWithSchools } from '../hooks/use-careers'
+import { useAuthStore } from '@/stores/auth-store'
+import { calculateDistance, formatDistance } from '@/utils/distance'
 import type { Career } from '../types'
 
 interface CareerDetailProps {
@@ -10,7 +12,35 @@ interface CareerDetailProps {
 
 export function CareerDetail({ careerId }: CareerDetailProps) {
   const { data: career, isLoading, error } = useCareerWithSchools(careerId)
+  const { profile } = useAuthStore()
   const [isFavorite, setIsFavorite] = useState(false)
+  
+  // Sort schools by distance if user has location
+  const sortedSchools = useMemo(() => {
+    if (!career?.schools || !profile?.location) {
+      return career?.schools || []
+    }
+    
+    const userLat = profile.location.latitude
+    const userLon = profile.location.longitude
+    
+    return [...career.schools].sort((a, b) => {
+      // If school doesn't have location, put it at the end
+      if (!a.school.location?.latitude || !a.school.location?.longitude) return 1
+      if (!b.school.location?.latitude || !b.school.location?.longitude) return -1
+      
+      const distanceA = calculateDistance(
+        userLat, userLon,
+        a.school.location.latitude, a.school.location.longitude
+      )
+      const distanceB = calculateDistance(
+        userLat, userLon,
+        b.school.location.latitude, b.school.location.longitude
+      )
+      
+      return distanceA - distanceB
+    })
+  }, [career?.schools, profile?.location])
 
   const getRiasecColor = (type: string) => {
     const colors: Record<string, string> = {
@@ -236,45 +266,73 @@ export function CareerDetail({ careerId }: CareerDetailProps) {
       </div>
 
       {/* Schools Section */}
-      {career.schools && career.schools.length > 0 && (
+      {sortedSchools && sortedSchools.length > 0 && (
         <div className="bg-white/10 backdrop-blur-md rounded-lg p-6">
-          <h2 className="text-xl font-bold text-white mb-6">Dónde Estudiar</h2>
+          <h2 className="text-xl font-bold text-white mb-2">Dónde Estudiar</h2>
+          {profile?.location && (
+            <p className="text-sm text-green-400 mb-4 flex items-center gap-1">
+              <IconMapPin className="w-4 h-4" />
+              Ordenado por distancia desde tu ubicación
+            </p>
+          )}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {career.schools.map((schoolCareer, index) => (
-              <Link key={index} to="/schools/$schoolId" params={{ schoolId: schoolCareer.school.id }}>
-                <div className="bg-white/5 rounded-lg p-4 hover:bg-white/10 transition-colors duration-200 cursor-pointer">
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-green-500/20  rounded-lg flex items-center justify-center flex-shrink-0">
-                      <IconBuilding className="w-5 h-5 text-green-400" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <h3 className="font-semibold text-white text-sm leading-tight">
-                        {schoolCareer.school.name}
-                      </h3>
-                      {schoolCareer.school.location?.city && (
-                        <div className="flex items-center gap-1 mt-1">
-                          <IconMapPin className="w-3 h-3 text-neutral-400" />
-                          <span className="text-xs text-neutral-400">
-                            {schoolCareer.school.location.city}
-                            {schoolCareer.school.location.state && `, ${schoolCareer.school.location.state}`}
-                          </span>
-                        </div>
-                      )}
-                      {schoolCareer.shifts && schoolCareer.shifts.length > 0 && (
-                        <div className="flex items-center gap-1 mt-1">
-                          <IconClock className="w-3 h-3 text-neutral-400" />
-                          <span className="text-xs text-neutral-400">
-                            {Array.isArray(schoolCareer.shifts) 
-                              ? schoolCareer.shifts.join(', ') 
-                              : schoolCareer.shifts}
-                          </span>
-                        </div>
-                      )}
+            {sortedSchools.map((schoolCareer, index) => {
+              // Calculate distance if user has location
+              const distance = profile?.location && 
+                schoolCareer.school.location?.latitude && 
+                schoolCareer.school.location?.longitude
+                ? calculateDistance(
+                    profile.location.latitude,
+                    profile.location.longitude,
+                    schoolCareer.school.location.latitude,
+                    schoolCareer.school.location.longitude
+                  )
+                : null
+                
+              return (
+                <Link key={index} to="/schools/$schoolId" params={{ schoolId: schoolCareer.school.id }}>
+                  <div className="bg-white/5 rounded-lg p-4 hover:bg-white/10 transition-colors duration-200 cursor-pointer">
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 bg-green-500/20  rounded-lg flex items-center justify-center flex-shrink-0">
+                        <IconBuilding className="w-5 h-5 text-green-400" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <h3 className="font-semibold text-white text-sm leading-tight">
+                          {schoolCareer.school.name}
+                        </h3>
+                        {schoolCareer.school.location?.city && (
+                          <div className="flex items-center gap-1 mt-1">
+                            <IconMapPin className="w-3 h-3 text-neutral-400" />
+                            <span className="text-xs text-neutral-400">
+                              {schoolCareer.school.location.city}
+                              {schoolCareer.school.location.state && `, ${schoolCareer.school.location.state}`}
+                            </span>
+                          </div>
+                        )}
+                        {distance !== null && (
+                          <div className="flex items-center gap-1 mt-1">
+                            <IconTarget className="w-3 h-3 text-blue-400" />
+                            <span className="text-xs text-blue-400 font-medium">
+                              {formatDistance(distance)} de distancia
+                            </span>
+                          </div>
+                        )}
+                        {schoolCareer.shifts && schoolCareer.shifts.length > 0 && (
+                          <div className="flex items-center gap-1 mt-1">
+                            <IconClock className="w-3 h-3 text-neutral-400" />
+                            <span className="text-xs text-neutral-400">
+                              {Array.isArray(schoolCareer.shifts) 
+                                ? schoolCareer.shifts.join(', ') 
+                                : schoolCareer.shifts}
+                            </span>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              )
+            })}
           </div>
         </div>
       )}

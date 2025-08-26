@@ -158,19 +158,6 @@ export function CTASection() {
                 </div>
               </div>
               
-              <Link
-                ref={buttonRef}
-                to="/register"
-                className="inline-flex items-center gap-3 px-8 py-4 rounded-xl font-semibold text-lg text-white transition-all duration-300 group"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.8) 0%, rgba(147, 51, 234, 0.8) 100%)',
-                  boxShadow: '0 10px 30px rgba(59, 130, 246, 0.3)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)'
-                }}
-              >
-                Comenzar Ahora - Es Gratis
-                <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform duration-300" />
-              </Link>
             </div>
 
             {/* Right Side - Testimonial Card */}

@@ -126,16 +126,16 @@ export const useAuthStore = create<AuthStore>()(
                 isAuthenticated: true,
               });
 
-              toast.success("Welcome back!", {
-                description: "You have successfully signed in.",
+              toast.success("¡Bienvenido de vuelta!", {
+                description: "Has iniciado sesión exitosamente.",
               });
             }
           } catch (error: any) {
             console.error("Sign in error:", error);
             set({ error: error.message });
-            toast.error("Sign in failed", {
+            toast.error("Error al iniciar sesión", {
               description:
-                error.message || "Please check your credentials and try again.",
+                error.message || "Por favor, verifica tus credenciales e inténtalo de nuevo.",
             });
             throw error;
           } finally {
@@ -164,8 +164,8 @@ export const useAuthStore = create<AuthStore>()(
           } catch (error: any) {
             console.error("Social sign in error:", error);
             set({ error: error.message });
-            toast.error("Social sign in failed", {
-              description: error.message || "Please try again.",
+            toast.error("Error al iniciar sesión social", {
+              description: error.message || "Por favor, inténtalo de nuevo.",
             });
             throw error;
           }
@@ -243,13 +243,13 @@ export const useAuthStore = create<AuthStore>()(
             // Don't call reset() here - let the auth state listener handle it
             // This prevents double reset and race conditions
             
-            toast.success("Signed out", {
-              description: "You have been successfully signed out.",
+            toast.success("Sesión cerrada", {
+              description: "Has cerrado sesión exitosamente.",
             });
           } catch (error: any) {
             console.error("❌ Sign out error:", error);
             set({ isLoading: false }); // Reset loading on error
-            toast.error("Sign out failed", {
+            toast.error("Error al cerrar sesión", {
               description: error.message,
             });
             throw error;
@@ -265,12 +265,12 @@ export const useAuthStore = create<AuthStore>()(
 
             if (error) throw error;
 
-            toast.success("Password reset email sent", {
-              description: "Please check your email for reset instructions.",
+            toast.success("Email de restablecimiento enviado", {
+              description: "Por favor, revisa tu correo para las instrucciones.",
             });
           } catch (error: any) {
             console.error("Password reset error:", error);
-            toast.error("Password reset failed", {
+            toast.error("Error al restablecer contraseña", {
               description: error.message,
             });
             throw error;
@@ -293,12 +293,12 @@ export const useAuthStore = create<AuthStore>()(
 
             set({ profile: data as UserProfile });
 
-            toast.success("Profile updated", {
-              description: "Your profile has been successfully updated.",
+            toast.success("Perfil actualizado", {
+              description: "Tu perfil ha sido actualizado exitosamente.",
             });
           } catch (error: any) {
             console.error("Profile update error:", error);
-            toast.error("Profile update failed", {
+            toast.error("Error al actualizar perfil", {
               description: error.message,
             });
             throw error;

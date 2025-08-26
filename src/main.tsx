@@ -29,16 +29,16 @@ const queryClient = new QueryClient({
         )
       },
       refetchOnWindowFocus: import.meta.env.PROD,
-      staleTime: 5 * 60 * 1000, // 5 minutes
-      gcTime: 10 * 60 * 1000, // 10 minutes
+      staleTime: 30 * 1000, // 30 seconds - much shorter for dynamic content
+      gcTime: 5 * 60 * 1000, // 5 minutes
     },
     mutations: {
       onError: (error) => {
         handleServerError(error)
         if (error instanceof AxiosError) {
           if (error.response?.status === 304) {
-            toast.error('Content not modified', {
-              description: 'The content has not been updated.',
+            toast.error('Contenido no modificado', {
+              description: 'El contenido no ha sido actualizado.',
             })
           }
         }
@@ -51,10 +51,10 @@ const queryClient = new QueryClient({
         const status = error.response?.status
         
         if (status === 401) {
-          toast.error('Session expired!', {
-            description: 'Please sign in again to continue.',
+          toast.error('¡Sesión expirada!', {
+            description: 'Por favor, inicia sesión nuevamente para continuar.',
             action: {
-              label: 'Sign In',
+              label: 'Iniciar Sesión',
               onClick: () => {
                 const redirect = `${router.history.location.href}`
                 router.navigate({ to: '/login', search: { redirect } })
@@ -64,10 +64,10 @@ const queryClient = new QueryClient({
         }
         
         if (status === 500) {
-          toast.error('Server Error!', {
-            description: 'Something went wrong on our end. Please try again.',
+          toast.error('¡Error del Servidor!', {
+            description: 'Algo salió mal de nuestro lado. Por favor, inténtalo de nuevo.',
             action: {
-              label: 'Retry',
+              label: 'Reintentar',
               onClick: () => window.location.reload(),
             },
           })
@@ -75,8 +75,8 @@ const queryClient = new QueryClient({
         }
         
         if (status === 403) {
-          toast.error('Access Denied!', {
-            description: 'You do not have permission to access this resource.',
+          toast.error('¡Acceso Denegado!', {
+            description: 'No tienes permisos para acceder a este recurso.',
           })
           router.navigate({ to: '/error/403' })
         }

@@ -48,7 +48,6 @@ export function useCareers(filters?: Partial<CareerFilters>, sortOptions?: Caree
 
       return data || []
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes
   })
 }
 
@@ -89,7 +88,6 @@ export function useCareerWithSchools(careerId: string) {
       }
     },
     enabled: !!careerId,
-    staleTime: 5 * 60 * 1000,
   })
 }
 
@@ -121,6 +119,5 @@ export function useCareerStats() {
         byDuration: durationCounts
       }
     },
-    staleTime: 10 * 60 * 1000, // 10 minutes
   })
 }

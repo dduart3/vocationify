@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { ProfileHeader } from './profile-header'
 import { ProfileForm } from './profile-form'
-import { AccountSettings } from './account-settings'
 import { ActivitySummary } from './activity-summary'
 import { AccountInfo } from './account-info'
 import { useAuthStore } from '@/stores/auth-store'
@@ -105,7 +104,21 @@ export function ProfilePage() {
         </div>
         
         {/* Profile Section */}
-        <div className="bg-white/5 rounded-xl p-6 mb-6">
+        <div 
+          className="backdrop-blur-xl rounded-3xl p-6 mb-6 shadow-2xl relative overflow-hidden"
+          style={{
+            background: `
+              linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.08) 0%, 
+                rgba(255, 255, 255, 0.04) 100%
+              )
+            `,
+            boxShadow: `
+              0 8px 32px 0 rgba(31, 38, 135, 0.37),
+              inset 0 1px 0 rgba(255, 255, 255, 0.1)
+            `
+          }}
+        >
           <ProfileHeader 
             isEditing={isEditing}
             isLoading={isLoading}
@@ -115,7 +128,18 @@ export function ProfilePage() {
           />
           
           {error && (
-            <div className="mb-4 p-3 bg-red-500/20 border border-red-500/30 rounded-lg text-red-300 text-sm">
+            <div 
+              className="mb-4 p-3 rounded-2xl backdrop-blur-sm text-red-300 text-sm border"
+              style={{
+                background: `
+                  linear-gradient(135deg, 
+                    rgba(239, 68, 68, 0.1) 0%, 
+                    rgba(220, 38, 38, 0.1) 100%
+                  )
+                `,
+                borderColor: 'rgba(239, 68, 68, 0.3)'
+              }}
+            >
               {error}
             </div>
           )}
@@ -134,7 +158,6 @@ export function ProfilePage() {
           <ActivitySummary />
           <div className="space-y-6">
             <AccountInfo />
-            <AccountSettings />
           </div>
         </div>
       </div>
