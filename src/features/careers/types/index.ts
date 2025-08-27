@@ -33,10 +33,8 @@ export interface School {
   location: {
     state?: string
     city?: string
-    coordinates?: {
-      lat: number
-      lng: number
-    }
+    latitude: number
+    longitude: number
   }
   type: 'university' | 'technical' | 'institute' | 'private' | 'public'
 }
