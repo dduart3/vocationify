@@ -1,8 +1,7 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { useAuthStore } from "@/stores/auth-store";
 import { useSidebarStore } from "@/stores/sidebar-store";
-import { useRef, useEffect, useCallback } from "react";
-import gsap from "gsap";
+import { useRef, useCallback, useEffect } from "react";
 import {
   IconDashboard,
   IconFileText,
@@ -52,8 +51,6 @@ export function AppSidebar() {
   const { user, profile, signOut } = useAuthStore();
   const { isHovered, setHovered } = useSidebarStore();
   const location = useLocation();
-  const sidebarRef = useRef<HTMLDivElement>(null);
-  const arrowRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Helper function to check if current route matches parent route
@@ -66,64 +63,6 @@ export function AppSidebar() {
     return false;
   };
 
-  useEffect(() => {
-    if (sidebarRef.current && arrowRef.current) {
-      // Animate sidebar width
-      gsap.to(sidebarRef.current, {
-        width: isHovered ? "240px" : "50px",
-        ease: "power3.out",
-        duration: 0.5,
-      });
-
-      // Animate arrow position to follow the sidebar edge
-      gsap.to(arrowRef.current, {
-        left: isHovered ? "232px" : "42px",
-        ease: "power3.out",
-        duration: 0.5,
-      });
-
-      gsap.to(".sidebar-content", {
-        opacity: isHovered ? 1 : 0,
-        x: isHovered ? 0 : -20,
-        delay: isHovered ? 0.2 : 0,
-        duration: 0.3,
-      });
-
-      gsap.to(".chevron-arrow", {
-        rotate: isHovered ? 180 : 0,
-        duration: 0.4,
-        ease: "power2.out",
-      });
-
-      // Animate collapsed logo
-      gsap.to(".collapsed-logo", {
-        opacity: isHovered ? 0 : 1,
-        scale: isHovered ? 0.8 : 1,
-        delay: isHovered ? 0 : 0.3,
-        duration: 0.3,
-        ease: "power2.out",
-      });
-
-      // Animate collapsed navigation icons
-      gsap.to(".collapsed-nav", {
-        opacity: isHovered ? 0 : 1,
-        y: isHovered ? -10 : 0,
-        delay: isHovered ? 0 : 0.3,
-        duration: 0.3,
-        ease: "power2.out",
-      });
-
-      // Animate collapsed avatar
-      gsap.to(".collapsed-avatar", {
-        opacity: isHovered ? 0 : 1,
-        scale: isHovered ? 0.8 : 1,
-        delay: isHovered ? 0 : 0.3,
-        duration: 0.3,
-        ease: "power2.out",
-      });
-    }
-  }, [isHovered]);
-
   // Clear any existing timeout
   const clearHoverTimeout = useCallback(() => {
     if (timeoutRef.current) {
@@ -132,13 +71,11 @@ export function AppSidebar() {
     }
   }, []);
 
-  // Debounced hover handlers - ONLY CHANGE to fix race conditions
+  // Simplified hover handlers
   const handleMouseEnter = useCallback(() => {
     clearHoverTimeout();
-    if (!isHovered) {
-      setHovered(true);
-    }
-  }, [isHovered, setHovered, clearHoverTimeout]);
+    setHovered(true);
+  }, [setHovered, clearHoverTimeout]);
 
   const handleMouseLeave = useCallback(() => {
     clearHoverTimeout();
@@ -146,7 +83,7 @@ export function AppSidebar() {
     timeoutRef.current = setTimeout(() => {
       setHovered(false);
       timeoutRef.current = null;
-    }, 150); // Small 150ms delay
+    }, 100); // Reduced delay
   }, [setHovered, clearHoverTimeout]);
 
   // Cleanup on unmount
@@ -168,12 +105,12 @@ export function AppSidebar() {
     <div className="fixed left-0 top-0 h-full z-50 flex">
       {/* Main Sidebar */}
       <div
-        ref={sidebarRef}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        className="flex flex-col py-6 px-3 relative"
+        className={`flex flex-col py-6 px-3 relative transition-all duration-500 ease-out ${
+          isHovered ? 'w-60' : 'w-[50px]'
+        }`}
         style={{
-          width: "50px",
           background: `linear-gradient(90deg,
             transparent 50%,                   
             transparent 100%
@@ -183,7 +120,9 @@ export function AppSidebar() {
         }}
       >
         {/* Collapsed Logo - Only visible when sidebar is closed */}
-        <div className="collapsed-logo absolute top-6 left-1/2 -translate-x-1/2 opacity-0">
+        <div className={`absolute top-6 left-1/2 -translate-x-1/2 transition-all duration-300 ${
+          isHovered ? 'opacity-0 scale-75' : 'opacity-100 scale-100 delay-300'
+        }`}>
           <Link to="/" className="block group">
             <Logo
               size={28}
@@ -193,7 +132,9 @@ export function AppSidebar() {
         </div>
 
         {/* Collapsed Navigation Icons - Only visible when sidebar is closed */}
-        <div className="collapsed-nav absolute top-20 left-1/2 -translate-x-1/2 opacity-0 flex flex-col space-y-3">
+        <div className={`absolute top-20 left-1/2 -translate-x-1/2 flex flex-col space-y-3 transition-all duration-300 ${
+          isHovered ? 'opacity-0 -translate-y-3' : 'opacity-100 translate-y-0 delay-300'
+        }`}>
           {menuItems.map((item) => {
             const isActive = isRouteActive(item.url);
             return (
@@ -217,7 +158,9 @@ export function AppSidebar() {
         </div>
 
         {/* Collapsed Avatar - Only visible when sidebar is closed */}
-        <div className="collapsed-avatar absolute bottom-16 left-1/2 -translate-x-1/2 opacity-0">
+        <div className={`absolute bottom-16 left-1/2 -translate-x-1/2 transition-all duration-300 ${
+          isHovered ? 'opacity-0 scale-75' : 'opacity-100 scale-100 delay-300'
+        }`}>
           <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform duration-300 cursor-pointer">
             <span className="text-white text-xs font-semibold">
               {(profile?.first_name || user?.email || "U")[0]?.toUpperCase()}
@@ -226,7 +169,9 @@ export function AppSidebar() {
         </div>
 
         {/* Collapsed Sign Out - Only visible when sidebar is closed */}
-        <div className="collapsed-nav absolute bottom-6 left-1/2 -translate-x-1/2 opacity-0">
+        <div className={`absolute bottom-6 left-1/2 -translate-x-1/2 transition-all duration-300 ${
+          isHovered ? 'opacity-0 -translate-y-3' : 'opacity-100 translate-y-0 delay-300'
+        }`}>
           <button
             onClick={handleSignOut}
             className="p-2 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-500/20 transition-all duration-300 group flex items-center justify-center"
@@ -239,7 +184,9 @@ export function AppSidebar() {
           </button>
         </div>
 
-        <div className="flex flex-col flex-1 sidebar-content opacity-0">
+        <div className={`flex flex-col flex-1 transition-all duration-300 ${
+          isHovered ? 'opacity-100 translate-x-0 delay-200' : 'opacity-0 -translate-x-5'
+        }`}>
           {/* Logo */}
           <Link
             to="/"
@@ -304,15 +251,17 @@ export function AppSidebar() {
 
       {/* Chevron Arrow - Follows the sidebar edge dynamically */}
       <div
-        ref={arrowRef}
-        className="flex items-center justify-center absolute top-1/2 -translate-y-1/2 cursor-pointer bg-none"
-        style={{ left: "42px" }}
+        className={`flex items-center justify-center absolute top-1/2 -translate-y-1/2 cursor-pointer bg-none transition-all duration-500 ease-out ${
+          isHovered ? 'left-[232px]' : 'left-[42px]'
+        }`}
         onMouseEnter={handleMouseEnter}
       >
-        <div className="chevron-arrow p-1  ">
+        <div className="p-1">
           <IconChevronRight
             size={22}
-            className="text-neutral-300 hover:text-white transition-colors duration-300"
+            className={`text-neutral-300 hover:text-white transition-all duration-400 ease-out ${
+              isHovered ? 'rotate-180' : 'rotate-0'
+            }`}
           />
         </div>
       </div>

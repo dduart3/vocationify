@@ -62,14 +62,14 @@ export function Header() {
                 >
                   <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
                     <span className="text-white text-xs font-semibold">
-                      {(profile?.full_name ||
+                      {(profile?.first_name ||
                         user?.email ||
                         "U")[0]?.toUpperCase()}
                     </span>
                   </div>
                   <div className="flex flex-col">
                     <span className="text-xs font-medium text-white">
-                      {profile?.full_name || user?.email?.split("@")[0]}
+                      {profile ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || user?.email?.split("@")[0] : user?.email?.split("@")[0]}
                     </span>
                     <span className="text-xs text-neutral-400">Estudiante</span>
                   </div>
@@ -90,7 +90,7 @@ export function Header() {
                     }}
                   >
                     <Link
-                      to="/configuracion"
+                      to="/profile"
                       className="flex items-center p-2 rounded-lg text-neutral-300 hover:text-white hover:bg-white/5 transition-all duration-300 group mx-2"
                       onClick={() => setIsUserMenuOpen(false)}
                     >
@@ -218,14 +218,12 @@ export function Header() {
                     <div className="flex items-center space-x-3 mb-6 p-2 rounded-lg bg-white/5">
                       <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
                         <span className="text-white text-xs font-semibold">
-                          {(profile?.full_name ||
-                            user?.email ||
-                            "U")[0]?.toUpperCase()}
+                          {(profile ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || user?.email || "U" : user?.email || "U")[0]?.toUpperCase()}
                         </span>
                       </div>
                       <div className="flex flex-col">
                         <span className="text-xs font-medium text-white">
-                          {profile?.full_name || user?.email?.split("@")[0]}
+                          {profile ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || user?.email?.split("@")[0] : user?.email?.split("@")[0]}
                         </span>
                         <span className="text-xs text-neutral-400">
                           Estudiante
@@ -234,7 +232,7 @@ export function Header() {
                     </div>
 
                     <Link
-                      to="/configuracion"
+                      to="/profile"
                       className="flex items-center p-2 rounded-lg text-neutral-300 hover:text-white hover:bg-white/5 transition-all duration-300 group mb-1"
                       onClick={() => setIsMenuOpen(false)}
                     >

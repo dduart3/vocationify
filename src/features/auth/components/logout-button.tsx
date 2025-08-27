@@ -1,5 +1,4 @@
 import { useAuthStore } from '@/stores/auth-store'
-import { useNavigate } from '@tanstack/react-router'
 import { IconLogout, IconLoader2 } from '@tabler/icons-react'
 import { useState } from 'react'
 
@@ -10,7 +9,6 @@ interface LogoutButtonProps {
 
 export function LogoutButton({ variant = 'default', className = '' }: LogoutButtonProps) {
   const { signOut } = useAuthStore()
-  const navigate = useNavigate()
   const [isLoggingOut, setIsLoggingOut] = useState(false)
 
   const handleLogout = async () => {

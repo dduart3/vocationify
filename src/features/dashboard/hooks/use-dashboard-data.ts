@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/stores/auth-store'
-import type { RiasecScores, SessionResults } from '@/features/vocational-test/types'
+import type { RiasecScores } from '@/features/vocational-test/types'
 
 interface DashboardStats {
   totalTests: number
@@ -114,12 +114,12 @@ export function useUserTestHistory(limit: number = 5) {
           sessionId: session.id,
           completedAt: session.created_at!,
           riasecScores: {
-            R: riasecScores.realistic || 0,
-            I: riasecScores.investigative || 0,
-            A: riasecScores.artistic || 0,
-            S: riasecScores.social || 0,
-            E: riasecScores.enterprising || 0,
-            C: riasecScores.conventional || 0
+            realistic: riasecScores.realistic || 0,
+            investigative: riasecScores.investigative || 0,
+            artistic: riasecScores.artistic || 0,
+            social: riasecScores.social || 0,
+            enterprising: riasecScores.enterprising || 0,
+            conventional: riasecScores.conventional || 0
           },
           confidenceLevel: avgConfidence,
           careerRecommendations: recommendations.map(rec => ({
@@ -166,12 +166,12 @@ export function useLatestRiasecProfile() {
       const riasecScores = session.riasec_scores as any || {}
 
       return {
-        R: riasecScores.realistic || 0,
-        I: riasecScores.investigative || 0,
-        A: riasecScores.artistic || 0,
-        S: riasecScores.social || 0,
-        E: riasecScores.enterprising || 0,
-        C: riasecScores.conventional || 0
+        realistic: riasecScores.realistic || 0,
+        investigative: riasecScores.investigative || 0,
+        artistic: riasecScores.artistic || 0,
+        social: riasecScores.social || 0,
+        enterprising: riasecScores.enterprising || 0,
+        conventional: riasecScores.conventional || 0
       }
     },
     enabled: !!user?.id

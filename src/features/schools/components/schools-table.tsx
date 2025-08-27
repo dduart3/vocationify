@@ -10,7 +10,7 @@ import {
   createColumnHelper,
   type ColumnDef,
 } from '@tanstack/react-table'
-import { IconBuilding, IconMapPin, IconUsers, IconBookmark, IconBookmarkFilled, IconEye, IconChevronUp, IconChevronDown, IconChevronLeft, IconChevronRight } from '@tabler/icons-react'
+import { IconBuilding, IconUsers, IconBookmark, IconBookmarkFilled, IconEye, IconChevronUp, IconChevronDown, IconChevronLeft, IconChevronRight } from '@tabler/icons-react'
 import { useSchools } from '../hooks/use-schools'
 import type { School } from '../types'
 
@@ -50,7 +50,7 @@ export function SchoolsTable({ searchTerm, typeFilter }: SchoolsTableProps) {
   }
 
   const columns = useMemo<ColumnDef<School>[]>(() => [
-    columnHelper.accessor('name', {
+    columnHelper.accessor('name' as any, {
       header: 'Institución',
       cell: ({ row }) => (
         <Link
@@ -66,7 +66,10 @@ export function SchoolsTable({ searchTerm, typeFilter }: SchoolsTableProps) {
               onError={(e) => {
                 // Fallback to icon if image fails to load
                 e.currentTarget.style.display = 'none'
-                e.currentTarget.nextElementSibling.style.display = 'block'
+                const nextElement = e.currentTarget.nextElementSibling as HTMLElement
+                if (nextElement) {
+                  nextElement.style.display = 'block'
+                }
               }}
             />
             <IconBuilding className="w-4 h-4 text-blue-400 hidden" />
@@ -81,13 +84,13 @@ export function SchoolsTable({ searchTerm, typeFilter }: SchoolsTableProps) {
       size: 300,
     }),
     
-    columnHelper.accessor('type', {
+    columnHelper.accessor('type' as any, {
       header: 'Tipo',
       cell: ({ getValue }) => (
         <div className="flex items-center gap-2">
           <IconUsers className="w-4 h-4 text-neutral-400" />
-          <span className={`font-medium ${getTypeColor(getValue())}`}>
-            {getTypeDisplayName(getValue())}
+          <span className={`font-medium ${getTypeColor(getValue() as string)}`}>
+            {getTypeDisplayName(getValue() as string)}
           </span>
         </div>
       ),
@@ -203,7 +206,7 @@ export function SchoolsTable({ searchTerm, typeFilter }: SchoolsTableProps) {
                 </td>
               </tr>
             ) : (
-              table.getRowModel().rows.map((row, index) => (
+              table.getRowModel().rows.map((row) => (
                 <tr key={row.id} className="hover:bg-white/5 transition-colors duration-200">
                   {row.getVisibleCells().map(cell => (
                     <td

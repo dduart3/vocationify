@@ -1,5 +1,4 @@
 import { IconShield, IconKey, IconShieldCheck, IconDownload, IconTrash } from '@tabler/icons-react'
-import { useAuthStore } from '@/stores/auth-store'
 
 export function AccountSettings() {
   const handleChangePassword = () => {

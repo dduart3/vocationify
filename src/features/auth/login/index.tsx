@@ -26,7 +26,7 @@ export function Login() {
   }
 
   const handleOtpLogin = () => {
-    navigate({ to: '/auth/otp' })
+    navigate({ to: '/otp' })
   }
 
   return (

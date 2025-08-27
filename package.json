@@ -35,7 +35,6 @@
     "clsx": "^2.1.1",
     "eslint-plugin-react": "^7.37.5",
     "gsap": "^3.13.0",
-    "html2canvas": "^1.4.1",
     "html2canvas-pro": "^1.5.11",
     "jspdf": "^3.0.2",
     "leaflet": "^1.9.4",
@@ -54,6 +53,7 @@
   "devDependencies": {
     "@eslint/js": "^9.25.0",
     "@tanstack/router-plugin": "^1.122.0",
+    "@types/dom-speech-recognition": "^0.0.6",
     "@types/node": "^24.0.3",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",

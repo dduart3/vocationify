@@ -10,6 +10,7 @@ interface AuthLayoutProps {
   subtitle: string
   showLogo?: boolean
   showBackButton?: boolean
+  backTo?: string
 }
 
 export function AuthLayout({ 
@@ -17,7 +18,8 @@ export function AuthLayout({
   title, 
   subtitle, 
   showLogo = true,
-  showBackButton = true
+  showBackButton = true,
+  backTo = "/"
 }: AuthLayoutProps) {
   // Refs for animations
   const containerRef = useRef<HTMLDivElement>(null)
@@ -137,7 +139,7 @@ export function AuthLayout({
         {showBackButton && (
           <div ref={backButtonRef} className="mb-4 sm:mb-6">
             <Link 
-              to="/"
+              to={backTo}
               className="inline-flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2 rounded-xl sm:rounded-2xl text-slate-300 hover:text-white transition-all duration-300 group text-sm"
               style={{
                 background: 'rgba(255, 255, 255, 0.05)',

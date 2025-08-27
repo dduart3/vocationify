@@ -71,18 +71,18 @@ const queryClient = new QueryClient({
               onClick: () => window.location.reload(),
             },
           })
-          router.navigate({ to: '/error/500' })
+          router.navigate({ to: '/' })
         }
         
         if (status === 403) {
           toast.error('¡Acceso Denegado!', {
             description: 'No tienes permisos para acceder a este recurso.',
           })
-          router.navigate({ to: '/error/403' })
+          router.navigate({ to: '/' })
         }
 
         if (status === 404) {
-          router.navigate({ to: '/error/404' })
+          router.navigate({ to: '/' })
         }
       }
     },

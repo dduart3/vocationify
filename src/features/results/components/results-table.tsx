@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useMemo } from 'react'
 import { Link } from '@tanstack/react-router'
 import {
   useReactTable,
@@ -10,7 +10,7 @@ import {
   createColumnHelper,
   type ColumnDef,
 } from '@tanstack/react-table'
-import { IconBrain, IconCalendar, IconTrophy, IconEye, IconChevronUp, IconChevronDown, IconChevronLeft, IconChevronRight, IconClock } from '@tabler/icons-react'
+import { IconBrain, IconTrophy, IconChevronUp, IconChevronDown, IconChevronLeft, IconChevronRight } from '@tabler/icons-react'
 import { useResults } from '../hooks/use-results'
 import type { TestResult } from '../types'
 
@@ -66,9 +66,9 @@ export function ResultsTable({ searchTerm, dateFilter }: ResultsTableProps) {
   }
 
   const columns = useMemo<ColumnDef<TestResult>[]>(() => [
-    columnHelper.accessor('created_at', {
+    columnHelper.accessor('created_at' as any, {
       header: 'Fecha',
-      cell: ({ getValue, row }) => (
+      cell: ({ getValue }) => (
         <div className="flex items-center gap-3 group">
           <div className="w-8 h-8 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
             <IconBrain className="w-4 h-4 text-blue-400" />
@@ -78,7 +78,7 @@ export function ResultsTable({ searchTerm, dateFilter }: ResultsTableProps) {
               Test Vocacional
             </div>
             <div className="text-xs text-neutral-400">
-              {formatDate(getValue())}
+              {formatDate(getValue() as string)}
             </div>
           </div>
         </div>
@@ -86,39 +86,45 @@ export function ResultsTable({ searchTerm, dateFilter }: ResultsTableProps) {
       size: 200,
     }),
     
-    columnHelper.accessor('riasec_scores', {
+    columnHelper.accessor('riasec_scores' as any, {
       header: 'Perfil RIASEC',
-      cell: ({ getValue }) => (
-        <div className="flex items-center gap-2">
-          <IconTrophy className="w-4 h-4 text-neutral-400" />
-          <span className={`font-medium ${getRiasecColor(getTopRiasecType(getValue()))}`}>
-            {getTopRiasecType(getValue())}
-          </span>
-        </div>
-      ),
+      cell: ({ getValue }) => {
+        const scores = getValue() as TestResult['riasec_scores']
+        return (
+          <div className="flex items-center gap-2">
+            <IconTrophy className="w-4 h-4 text-neutral-400" />
+            <span className={`font-medium ${getRiasecColor(getTopRiasecType(scores))}`}>
+              {getTopRiasecType(scores)}
+            </span>
+          </div>
+        )
+      },
       size: 150,
     }),
     
-    columnHelper.accessor('confidence_level', {
+    columnHelper.accessor('confidence_level' as any, {
       header: 'Confianza',
-      cell: ({ getValue }) => (
-        <div className="flex items-center gap-2">
-          <div className="w-12 h-2 bg-white/20 rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-blue-400 rounded-full"
-              style={{ width: `${getValue() || 0}%` }}
-            />
+      cell: ({ getValue }) => {
+        const confidence = getValue() as number | null
+        return (
+          <div className="flex items-center gap-2">
+            <div className="w-12 h-2 bg-white/20 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-blue-400 rounded-full"
+                style={{ width: `${confidence || 0}%` }}
+              />
+            </div>
+            <span className="text-white text-sm font-medium">{confidence || 'N/A'}%</span>
           </div>
-          <span className="text-white text-sm font-medium">{getValue() || 'N/A'}%</span>
-        </div>
-      ),
+        )
+      },
       size: 120,
     }),
 
-    columnHelper.accessor('career_recommendations', {
+    columnHelper.accessor('career_recommendations' as any, {
       header: 'Carrera Principal',
       cell: ({ getValue }) => {
-        const recommendations = getValue()
+        const recommendations = getValue() as TestResult['career_recommendations']
         const topCareer = recommendations?.[0]
         return topCareer ? (
           <div className="text-white">
@@ -138,7 +144,7 @@ export function ResultsTable({ searchTerm, dateFilter }: ResultsTableProps) {
 
   const table = useReactTable({
     data: results,
-    columns,
+    columns: columns as ColumnDef<TestResult>[],
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -217,7 +223,7 @@ export function ResultsTable({ searchTerm, dateFilter }: ResultsTableProps) {
                 </td>
               </tr>
             ) : (
-              table.getRowModel().rows.map((row, index) => (
+              table.getRowModel().rows.map((row) => (
                 <Link
                   key={row.id}
                   to="/results/$sessionId"

@@ -10,7 +10,7 @@ import {
   createColumnHelper,
   type ColumnDef,
 } from '@tanstack/react-table'
-import { IconSchool, IconTarget, IconClock, IconStar, IconBookmark, IconBookmarkFilled, IconEye, IconChevronUp, IconChevronDown, IconChevronLeft, IconChevronRight } from '@tabler/icons-react'
+import { IconSchool, IconTarget, IconClock, IconBookmark, IconBookmarkFilled, IconEye, IconChevronUp, IconChevronDown, IconChevronLeft, IconChevronRight } from '@tabler/icons-react'
 import { useCareers } from '../hooks/use-careers'
 import type { Career } from '../types'
 
@@ -70,7 +70,7 @@ export function CareersTable({ searchTerm, riasecFilter }: CareersTableProps) {
 
 
   const columns = useMemo<ColumnDef<Career>[]>(() => [
-    columnHelper.accessor('name', {
+    columnHelper.accessor('name' as any, {
       header: 'Carrera',
       cell: ({ row }) => (
         <Link
@@ -94,13 +94,13 @@ export function CareersTable({ searchTerm, riasecFilter }: CareersTableProps) {
       size: 300,
     }),
     
-    columnHelper.accessor('primary_riasec_type', {
+    columnHelper.accessor('primary_riasec_type' as any, {
       header: 'RIASEC',
       cell: ({ getValue, row }) => (
         <div className="flex items-center gap-2">
           <IconTarget className="w-4 h-4 text-neutral-400" />
-          <span className={`font-medium ${getRiasecColor(getValue())}`}>
-            {getRiasecDisplayName(getValue())}
+          <span className={`font-medium ${getRiasecColor(getValue() as string)}`}>
+            {getRiasecDisplayName(getValue() as string)}
           </span>
           {row.original.secondary_riasec_type && (
             <span className="text-neutral-400 text-sm">
@@ -112,12 +112,12 @@ export function CareersTable({ searchTerm, riasecFilter }: CareersTableProps) {
       size: 120,
     }),
     
-    columnHelper.accessor('duration_years', {
+    columnHelper.accessor('duration_years' as any, {
       header: 'Años',
       cell: ({ getValue }) => (
         <div className="flex items-center gap-2">
           <IconClock className="w-4 h-4 text-neutral-400" />
-          <span className="text-white">{getValue()}</span>
+          <span className="text-white">{getValue() as number}</span>
         </div>
       ),
       size: 80,
@@ -150,7 +150,7 @@ export function CareersTable({ searchTerm, riasecFilter }: CareersTableProps) {
       ),
       size: 100,
     }),
-  ], [favorites])
+  ] as ColumnDef<Career>[], [favorites])
 
   const table = useReactTable({
     data: careers,
@@ -232,7 +232,7 @@ export function CareersTable({ searchTerm, riasecFilter }: CareersTableProps) {
                 </td>
               </tr>
             ) : (
-              table.getRowModel().rows.map((row, index) => (
+              table.getRowModel().rows.map((row) => (
                 <tr key={row.id} className="hover:bg-white/5 transition-colors duration-200">
                   {row.getVisibleCells().map(cell => (
                     <td

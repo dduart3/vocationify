@@ -1,5 +1,5 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router'
-import { VocationalTest } from '@/features/vocational-test-v2'
+import { VocationalTest } from '@/features/vocational-test'
 import { useAuthStore } from '@/stores/auth-store'
 import { z } from 'zod'
 

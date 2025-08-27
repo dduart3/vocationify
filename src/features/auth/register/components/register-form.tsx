@@ -319,7 +319,7 @@ export function RegisterForm({ onSubmit, onSocialLogin, loading = false, error }
             name="password"
             validators={{
               onChange: ({ value }) => {
-                const result = registerSchema.shape.password.safeParse(value)
+                const result = registerSchema._def.schema.shape.password.safeParse(value)
                 return result.success ? undefined : result.error.issues[0]?.message
               }
             }}
@@ -536,7 +536,7 @@ export function RegisterForm({ onSubmit, onSocialLogin, loading = false, error }
               </p>
               <LocationPicker
                 value={field.state.value}
-                onChange={(location) => field.handleChange(location)}
+                onChange={(location) => field.handleChange(location || undefined)}
               />
             </div>
           )}

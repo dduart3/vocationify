@@ -15,6 +15,7 @@ export interface UserProfile {
   created_at: string | null;
   updated_at: string | null;
   role_id: number | null;
+  role?: string | null;
   location: { latitude: number; longitude: number } | null;
 }
 
@@ -307,6 +308,15 @@ export const useAuthStore = create<AuthStore>()(
 
         initialize: async () => {
           try {
+            const currentState = get();
+            
+            // If we're already authenticated and not loading, don't re-initialize
+            if (currentState.isAuthenticated && currentState.session && !currentState.isLoading) {
+              console.log("Auth already initialized, skipping");
+              return;
+            }
+            
+            console.log("Initializing auth...");
             set({ isLoading: true });
 
             // Get initial session
@@ -330,13 +340,36 @@ export const useAuthStore = create<AuthStore>()(
                   session,
                   profile: profileData as UserProfile,
                   isAuthenticated: true,
+                  isLoading: false, // Set loading to false when we have valid session
                 });
+                console.log("Auth initialized with profile");
+              } else {
+                // Profile fetch failed but we have session
+                set({
+                  user: session.user,
+                  session,
+                  profile: null,
+                  isAuthenticated: true,
+                  isLoading: false,
+                });
+                console.log("Auth initialized without profile");
               }
+            } else {
+              // No session found
+              set({
+                user: null,
+                session: null,
+                profile: null,
+                isAuthenticated: false,
+                isLoading: false,
+              });
+              console.log("Auth initialized - no session");
             }
 
             // Only set up auth state listener once
-            if (!get().authListenerSet) {
+            if (!currentState.authListenerSet) {
               set({ authListenerSet: true });
+              console.log("Setting up auth state listener");
               
               // Listen for auth changes
               supabase.auth.onAuthStateChange(async (event, session) => {
@@ -355,6 +388,7 @@ export const useAuthStore = create<AuthStore>()(
                     session,
                     profile: profileData as UserProfile,
                     isAuthenticated: true,
+                    isLoading: false,
                   });
                 } else if (event === "SIGNED_OUT") {
                   console.log("🚪 Auth state changed: SIGNED_OUT - resetting auth store");
@@ -364,7 +398,6 @@ export const useAuthStore = create<AuthStore>()(
             }
           } catch (error) {
             console.error("Auth initialization error:", error);
-          } finally {
             set({ isLoading: false });
           }
         },
@@ -393,9 +426,10 @@ export const useAuthStore = create<AuthStore>()(
           isAuthenticated: state.isAuthenticated,
         }),
         onRehydrateStorage: () => (state) => {
-          // Re-initialize auth on hydration
+          // Don't call initialize here - let __root.tsx handle it
+          // This prevents race conditions between rehydration and manual init
           if (state) {
-            state.initialize();
+            console.log("Auth store rehydrated, auth will be initialized by root component");
           }
         },
       }

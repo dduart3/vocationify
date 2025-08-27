@@ -30,11 +30,12 @@ type LoginFormData = z.infer<typeof loginSchema>
 interface LoginFormProps {
   onSubmit: (data: LoginFormData) => Promise<void>
   onSocialLogin: (provider: 'google') => Promise<void>
+  onOtpLogin: () => void
   loading?: boolean
   error?: string | null
 }
 
-export function LoginForm({ onSubmit, onSocialLogin, loading = false, error }: LoginFormProps) {
+export function LoginForm({ onSubmit, onSocialLogin, onOtpLogin, loading = false, error }: LoginFormProps) {
   const [showPassword, setShowPassword] = useState(false)
 
   // TanStack Form with Zod validation
@@ -240,7 +241,7 @@ export function LoginForm({ onSubmit, onSocialLogin, loading = false, error }: L
       {/* Forgot Password */}
       <div className="text-right">
         <Link 
-          to="/auth/forgot-password" 
+          to="/forgot-password" 
           className="text-xs text-blue-400 hover:text-blue-300 transition-colors duration-200 hover:underline"
         >
           ¿Olvidaste tu contraseña?
@@ -268,6 +269,23 @@ export function LoginForm({ onSubmit, onSocialLogin, loading = false, error }: L
       >
         <IconBrandGoogle size={16} className="text-red-400" />
         <span>Continuar con Google</span>
+      </button>
+
+      {/* OTP Login Button */}
+      <button
+        type="button"
+        onClick={onOtpLogin}
+        disabled={loading}
+        className="w-full py-3 px-4 rounded-lg transition-all duration-300 flex items-center justify-center space-x-3 text-sm font-medium hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed text-white"
+        style={{
+          background: 'rgba(255, 255, 255, 0.08)',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+        }}
+      >
+        <IconMail size={16} className="text-blue-400" />
+        <span>Acceder sin contraseña</span>
       </button>
 
       {/* Sign Up Link */}

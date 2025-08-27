@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { Link } from '@tanstack/react-router'
-import { IconArrowLeft, IconBuilding, IconPhone, IconMail, IconWorld, IconCalendar, IconUsers, IconBookmark, IconBookmarkFilled, IconSchool, IconClock, IconMapPin, IconAt, IconTarget } from '@tabler/icons-react'
+import { IconArrowLeft, IconBuilding, IconPhone, IconMail, IconWorld, IconUsers, IconBookmark, IconBookmarkFilled, IconSchool, IconClock, IconMapPin, IconTarget } from '@tabler/icons-react'
 import { SchoolMap } from './school-map'
 import { useSchoolWithCareers } from '../hooks/use-schools'
 import { useAuthStore } from '@/stores/auth-store'

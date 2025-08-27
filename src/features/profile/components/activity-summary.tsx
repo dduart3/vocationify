@@ -1,4 +1,4 @@
-import { BarChart3, Brain, Building, Trophy } from 'lucide-react'
+import { BarChart3, Brain } from 'lucide-react'
 import { useProfileStats } from '../hooks/use-profile-stats'
 
 export function ActivitySummary() {

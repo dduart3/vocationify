@@ -1,8 +1,7 @@
 import { useRef, useEffect } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { Link } from "@tanstack/react-router"
-import { ArrowRight, Clock, Shield, Star } from 'lucide-react'
+import { Clock, Shield, Star } from 'lucide-react'
 
 gsap.registerPlugin(ScrollTrigger)
 

@@ -1,14 +1,13 @@
 import { Link } from '@tanstack/react-router'
-import { Eye } from 'lucide-react'
 import { useLatestRiasecProfile } from '../hooks/use-dashboard-data'
 
 const riasecLabels = {
-  R: { name: 'Realista', description: 'Práctico y manual', color: 'bg-green-500' },
-  I: { name: 'Investigativo', description: 'Analítico y científico', color: 'bg-blue-500' },
-  A: { name: 'Artístico', description: 'Creativo y expresivo', color: 'bg-pink-500' },
-  S: { name: 'Social', description: 'Servicial y colaborativo', color: 'bg-orange-500' },
-  E: { name: 'Emprendedor', description: 'Líder y persuasivo', color: 'bg-purple-500' },
-  C: { name: 'Convencional', description: 'Organizado y detallista', color: 'bg-cyan-500' },
+  realistic: { name: 'Realista', description: 'Práctico y manual', color: 'bg-green-500' },
+  investigative: { name: 'Investigativo', description: 'Analítico y científico', color: 'bg-blue-500' },
+  artistic: { name: 'Artístico', description: 'Creativo y expresivo', color: 'bg-pink-500' },
+  social: { name: 'Social', description: 'Servicial y colaborativo', color: 'bg-orange-500' },
+  enterprising: { name: 'Emprendedor', description: 'Líder y persuasivo', color: 'bg-purple-500' },
+  conventional: { name: 'Convencional', description: 'Organizado y detallista', color: 'bg-cyan-500' },
 }
 
 export function VocationalProgress() {
@@ -94,7 +93,7 @@ export function VocationalProgress() {
       key: key as keyof typeof riasecLabels,
       area: riasecLabels[key as keyof typeof riasecLabels].name,
       description: riasecLabels[key as keyof typeof riasecLabels].description,
-      progress: Math.round(value),
+      progress: Math.round(value as number),
       color: riasecLabels[key as keyof typeof riasecLabels].color,
     }))
     .sort((a, b) => b.progress - a.progress)

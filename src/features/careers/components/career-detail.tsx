@@ -1,10 +1,9 @@
 import { useState, useMemo } from 'react'
 import { Link } from '@tanstack/react-router'
-import { IconArrowLeft, IconSchool, IconTarget, IconClock, IconStar, IconBookmark, IconBookmarkFilled, IconMapPin, IconBuilding } from '@tabler/icons-react'
+import { IconArrowLeft, IconSchool, IconTarget, IconClock, IconBookmark, IconBookmarkFilled, IconMapPin, IconBuilding } from '@tabler/icons-react'
 import { useCareerWithSchools } from '../hooks/use-careers'
 import { useAuthStore } from '@/stores/auth-store'
 import { calculateDistance, formatDistance } from '@/utils/distance'
-import type { Career } from '../types'
 
 interface CareerDetailProps {
   careerId: string
@@ -66,16 +65,7 @@ export function CareerDetail({ careerId }: CareerDetailProps) {
     return names[type.toLowerCase()] || type
   }
 
-  const getTopRiasecScore = (career: any) => {
-    return Math.max(
-      career.realistic_score,
-      career.investigative_score,
-      career.artistic_score,
-      career.social_score,
-      career.enterprising_score,
-      career.conventional_score
-    )
-  }
+
 
   if (isLoading) {
     return (

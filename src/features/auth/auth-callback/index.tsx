@@ -1,6 +1,6 @@
 import {  useNavigate } from '@tanstack/react-router'
 import { useEffect, useRef } from 'react'
-import { useAuthStore } from '@/stores/auth-store'
+import { useAuthStore, type UserProfile } from '@/stores/auth-store'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 import { IconLoader2, IconSparkles } from '@tabler/icons-react'

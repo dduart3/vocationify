@@ -1,10 +1,9 @@
-import { useState } from 'react'
 import { Link, useParams } from '@tanstack/react-router'
-import { IconArrowLeft, IconBrain, IconTrophy, IconUser, IconTarget, IconBuilding, IconExternalLink } from '@tabler/icons-react'
+import { IconArrowLeft, IconBrain, IconTrophy, IconUser, IconTarget, IconExternalLink } from '@tabler/icons-react'
 import { useResultDetail } from '../hooks/use-results'
-import { RiasecRadarChart } from '@/features/vocational-test/components/riasec-radar-chart'
 import { GlassmorphismSkeleton } from '@/components/ui/glassmorphism-loader'
-import { PDFExport } from '@/features/vocational-test-v2/components/pdf-export'
+import { PDFExport } from '../components/pdf-export'
+import { RiasecRadarChart } from '../components/riasec-radar-chart'
 
 export function ResultDetail() {
   const { sessionId } = useParams({ from: '/_authenticated/results/$sessionId' })
@@ -234,6 +233,7 @@ export function ResultDetail() {
               Visualización del Perfil RIASEC
             </h2>
             <div className="flex justify-center">
+
               <RiasecRadarChart scores={result.riasec_scores} size={280} />
             </div>
           </div>
@@ -271,18 +271,8 @@ export function ResultDetail() {
               </h2>
               <div className="space-y-3">
                 {result.career_recommendations.map((career: any, index: number) => {
-                  const CareerComponent = career.career_id ? Link : 'div'
-                  const linkProps = career.career_id ? {
-                    to: '/careers/$careerId' as const,
-                    params: { careerId: career.career_id }
-                  } : {}
-                  
-                  return (
-                    <CareerComponent 
-                      key={index} 
-                      className={`bg-white/5 rounded-lg p-4 block ${career.career_id ? 'hover:bg-white/10 cursor-pointer transition-colors duration-200' : ''}`}
-                      {...linkProps}
-                    >
+                  const careerContent = (
+                    <>
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-3">
                           <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-sm font-bold ${
@@ -302,7 +292,25 @@ export function ResultDetail() {
                         </div>
                       </div>
                       <p className="text-neutral-300 text-sm leading-relaxed">{career.reasoning}</p>
-                    </CareerComponent>
+                    </>
+                  )
+
+                  return career.career_id ? (
+                    <Link
+                      key={index}
+                      to="/careers/$careerId"
+                      params={{ careerId: String(career.career_id) }}
+                      className="bg-white/5 rounded-lg p-4 block hover:bg-white/10 cursor-pointer transition-colors duration-200"
+                    >
+                      {careerContent}
+                    </Link>
+                  ) : (
+                    <div
+                      key={index}
+                      className="bg-white/5 rounded-lg p-4 block"
+                    >
+                      {careerContent}
+                    </div>
                   )
                 })}
               </div>

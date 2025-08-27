@@ -1,7 +1,5 @@
-import { useState } from 'react'
 import { IconUser, IconMail, IconEdit, IconCheck, IconX, IconShield } from '@tabler/icons-react'
 import { useAuthStore } from '@/stores/auth-store'
-import type { ProfileUpdateData } from '../types'
 
 interface ProfileHeaderProps {
   isEditing: boolean

@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { User, Mail, Phone, MapPin } from 'lucide-react'
 import { useAuthStore } from '@/stores/auth-store'
 import { LocationPicker } from './location-picker'
@@ -28,7 +27,7 @@ export function ProfileForm({ isEditing, editData, onDataChange }: ProfileFormPr
             {isEditing ? (
               <input
                 type="text"
-                value={editData.first_name}
+                value={editData.first_name || ''}
                 onChange={(e) => onDataChange({...editData, first_name: e.target.value})}
                 className="w-full p-3 bg-gradient-to-r from-white/10 to-white/5 rounded-xl text-white placeholder:text-neutral-400 focus:outline-none focus:ring-1 focus:ring-blue-500/50 backdrop-blur-sm shadow-inner"
                 placeholder="Tu nombre"
@@ -47,7 +46,7 @@ export function ProfileForm({ isEditing, editData, onDataChange }: ProfileFormPr
             {isEditing ? (
               <input
                 type="text"
-                value={editData.last_name}
+                value={editData.last_name || ''}
                 onChange={(e) => onDataChange({...editData, last_name: e.target.value})}
                 className="w-full p-3 bg-gradient-to-r from-white/10 to-white/5 rounded-xl text-white placeholder:text-neutral-400 focus:outline-none focus:ring-1 focus:ring-blue-500/50 backdrop-blur-sm shadow-inner"
                 placeholder="Tu apellido"
