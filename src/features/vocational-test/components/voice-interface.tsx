@@ -36,7 +36,7 @@ export function VoiceInterface({
   const [voiceState, setVoiceState] = useState<VoiceState>('idle')
   const [silenceTimer, setSilenceTimer] = useState<NodeJS.Timeout | null>(null)
   const [transcript, setTranscript] = useState('')
-  const previousMessageCountRef = useRef(messages.length)
+  const previousMessageCountRef = useRef(0) // Always start at 0 to catch first message
   const transcriptRef = useRef('')
   
   // Voice settings
@@ -69,13 +69,20 @@ export function VoiceInterface({
 
   // Auto-speak initial question/message when component loads (only ONCE for initial session)
   useEffect(() => {
-    // Only speak the very first AI message when the component initially mounts
-    if (previousMessageCountRef.current === 0 && messages.length > 0) {
-      const firstAIMessage = messages.find(msg => msg.role === 'assistant')
+    // Handle the initial message when we first receive messages OR when messages go from 0 to having content
+    if (messages.length > 0 && previousMessageCountRef.current === 0) {
+      // For resumed sessions, speak the LAST AI message (most recent)
+      // For new sessions, speak the FIRST AI message  
+      const aiMessages = messages.filter(msg => msg.role === 'assistant')
+      const messageToSpeak = aiMessages.length > 0 ? aiMessages[aiMessages.length - 1] : null
       
-      if (firstAIMessage && isTTSSupported && !isSpeaking) {
-        console.log(`🎯 Speaking initial AI message: "${firstAIMessage.content.substring(0, 50)}..."`)
-        speak(firstAIMessage.content, () => {
+      if (messageToSpeak && isTTSSupported && !isSpeaking) {
+        console.log(`🎯 Speaking ${messages.length > 1 ? 'latest' : 'initial'} AI message: "${messageToSpeak.content.substring(0, 50)}..."`)
+        
+        // Update the ref immediately to prevent re-triggering
+        previousMessageCountRef.current = messages.length
+        
+        speak(messageToSpeak.content, () => {
           
           // Auto-start listening after AI finishes speaking (only in auto mode and if test is not complete)
           console.log('🎯 Initial message - checking auto-listen conditions:', {
@@ -112,11 +119,9 @@ export function VoiceInterface({
             console.log('🚫 Initial auto-listen disabled due to conditions')
           }
         })
-        // Mark that we've handled the initial message
-        previousMessageCountRef.current = messages.length
       }
     }
-  }, [messages.length, speak, isTTSSupported, settings.listeningMode, disabled, isLoading, isListening, startListening, resetTranscript, isComplete])
+  }, [messages, speak, isTTSSupported, settings.listeningMode, disabled, isLoading, isListening, startListening, resetTranscript, isComplete, isSpeaking, isTTSLoading])
 
   // Auto-speak new AI messages and optionally start listening
   useEffect(() => {
