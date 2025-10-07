@@ -177,14 +177,17 @@ export const useAuthStore = create<AuthStore>()(
           try {
             set({ isLoading: true, error: null });
 
-            // Sign up with Supabase Auth
+            // Sign up with Supabase Auth - pass all profile data in metadata
             const { data, error } = await supabase.auth.signUp({
               email,
               password,
               options: {
                 data: {
-                  first_name: profileData?.firstName,
-                  last_name: profileData?.lastName,
+                  first_name: profileData?.firstName || null,
+                  last_name: profileData?.lastName || null,
+                  phone: profileData?.phone || null,
+                  address: profileData?.address || null,
+                  location: profileData?.location ? JSON.stringify(profileData.location) : null,
                 },
               },
             });
@@ -192,28 +195,7 @@ export const useAuthStore = create<AuthStore>()(
             if (error) throw error;
 
             if (data.user) {
-              // Create profile record in profiles table
-              const profileRecord = {
-                id: data.user.id,
-                first_name: profileData?.firstName || '',
-                last_name: profileData?.lastName || '',
-                email: email,
-                phone: profileData?.phone || null,
-                address: profileData?.address || null,
-                location: profileData?.location || null,
-                avatar_url: null,
-                role_id: 2, // Default user role (1=admin, 2=user)
-              };
-
-              const { error: profileError } = await supabase
-                .from('profiles')
-                .insert([profileRecord]);
-
-              if (profileError) {
-                console.error('Profile creation error:', profileError);
-                // Don't throw here as the user account was created successfully
-              }
-
+              // Trigger will automatically create the profile with all data from raw_user_meta_data
               toast.success("¡Cuenta creada exitosamente!", {
                 description: "Por favor verifica tu correo para activar tu cuenta.",
               });
