@@ -118,8 +118,8 @@ export function RegisterForm({ onSubmit, onSocialLogin, loading = false, error }
         </div>
       )}
 
-      {/* Google Register Button First */}
-      <button
+      {/* Google Register Button - DISABLED */}
+      {/* <button
         onClick={() => onSocialLogin('google')}
         disabled={loading}
         className="w-full py-3 px-4 rounded-xl font-medium text-white transition-all duration-300 flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed group text-sm mb-4"
@@ -132,14 +132,14 @@ export function RegisterForm({ onSubmit, onSocialLogin, loading = false, error }
       >
         <IconBrandGoogle size={16} className="text-red-400" />
         <span>Registrarse con Google</span>
-      </button>
+      </button> */}
 
-      {/* Divider */}
-      <div className="flex items-center my-5">
+      {/* Divider - DISABLED */}
+      {/* <div className="flex items-center my-5">
         <div className="flex-1 h-px bg-gradient-to-r from-transparent via-slate-600 to-transparent"></div>
         <span className="px-4 text-xs text-slate-400 font-medium">o completa el formulario</span>
         <div className="flex-1 h-px bg-gradient-to-r from-transparent via-slate-600 to-transparent"></div>
-      </div>
+      </div> */}
 
       {/* Form */}
       <form 

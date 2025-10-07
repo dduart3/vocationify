@@ -249,14 +249,14 @@ export function LoginForm({ onSubmit, onSocialLogin, onOtpLogin, loading = false
       </div>
 
       {/* Divider */}
-      <div className="flex items-center my-5">
+      {/* <div className="flex items-center my-5">
         <div className="flex-1 h-px bg-gradient-to-r from-transparent via-slate-600 to-transparent"></div>
         <span className="px-4 text-xs text-slate-400 font-medium">o continúa con</span>
         <div className="flex-1 h-px bg-gradient-to-r from-transparent via-slate-600 to-transparent"></div>
-      </div>
+      </div> */}
 
-      {/* Google Login */}
-      <button
+      {/* Google Login - DISABLED */}
+      {/* <button
         onClick={() => onSocialLogin('google')}
         disabled={loading}
         className="w-full py-3 px-4 rounded-xl font-medium text-white transition-all duration-300 flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed group text-sm"
@@ -269,7 +269,7 @@ export function LoginForm({ onSubmit, onSocialLogin, onOtpLogin, loading = false
       >
         <IconBrandGoogle size={16} className="text-red-400" />
         <span>Continuar con Google</span>
-      </button>
+      </button> */}
 
       {/* OTP Login Button */}
       <button
