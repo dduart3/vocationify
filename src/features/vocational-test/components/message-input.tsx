@@ -83,29 +83,15 @@ export function MessageInput({
     <div className="flex-shrink-0 relative">
       {/* Subtle gradient overlay */}
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-black/10 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-900/5 via-purple-900/5 to-indigo-900/5" />
+        <div className="absolute inset-0 bg-gradient-to-t from-gray-100/30 via-gray-50/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-50/30 via-purple-50/30 to-indigo-50/30" />
       </div>
-      
+
       <div className="relative">
         <form onSubmit={handleSubmit} className="p-6">
           <div className="max-w-4xl mx-auto">
             {/* Sleek modern input design */}
-            <div 
-              className="bg-white/6 backdrop-blur-xl rounded-3xl shadow-2xl relative overflow-hidden"
-              style={{
-                background: `
-                  linear-gradient(135deg, 
-                    rgba(255, 255, 255, 0.06) 0%, 
-                    rgba(255, 255, 255, 0.04) 100%
-                  )
-                `,
-                boxShadow: `
-                  0 8px 32px 0 rgba(0, 0, 0, 0.3),
-                  inset 0 1px 0 rgba(255, 255, 255, 0.08)
-                `
-              }}
-            >
+            <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-lg shadow-gray-200/50 relative overflow-hidden border border-gray-200">
               <div className="p-6">
                 <div className="flex gap-4 items-center">
                   
@@ -120,7 +106,7 @@ export function MessageInput({
                       rows={1}
                       className="
                         w-full bg-transparent border-0 px-0 py-2
-                        text-white text-lg placeholder-white/50 resize-none
+                        text-gray-900 text-lg placeholder-gray-400 resize-none
                         focus:outline-none focus:ring-0
                         disabled:opacity-50 disabled:cursor-not-allowed
                         min-h-[40px] max-h-32 overflow-y-hidden
@@ -136,15 +122,15 @@ export function MessageInput({
                         target.style.height = Math.min(target.scrollHeight, 128) + 'px'
                       }}
                     />
-                    
+
                     {/* Subtle underline */}
                     <div className={`h-px mt-2 transition-all duration-300 ${
-                      input.trim() ? 'bg-gradient-to-r from-blue-400 via-purple-400 to-indigo-400' : 'bg-white/5'
+                      input.trim() ? 'bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-500' : 'bg-gray-200'
                     }`} />
-                    
+
                     {/* Character counter for longer messages */}
                     {input.length > 100 && (
-                      <div className="mt-2 text-right text-xs text-white/40">
+                      <div className="mt-2 text-right text-xs text-gray-500">
                         {input.length}/500
                       </div>
                     )}
@@ -162,25 +148,15 @@ export function MessageInput({
                         transition-all duration-300
                         flex items-center justify-center
                         ${disabled || isLoading
-                          ? 'bg-white/5 text-white/30 cursor-not-allowed'
+                          ? 'bg-gray-100 text-gray-300 cursor-not-allowed border border-gray-200'
                           : isListening
                             ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg animate-pulse'
                             : isVoiceMode && transcript
                               ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg'
-                              : 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white hover:scale-110 shadow-lg hover:shadow-xl hover:shadow-orange-500/20'
+                              : 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white hover:scale-110 shadow-lg'
                         }
                       `}
                     >
-                      {/* Button inner glow */}
-                      {!(disabled || isLoading) && (
-                        <div className={`absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm ${
-                          isListening
-                            ? 'bg-gradient-to-r from-red-400/30 to-red-400/30'
-                            : isVoiceMode && transcript
-                              ? 'bg-gradient-to-r from-green-400/30 to-green-400/30'
-                              : 'bg-gradient-to-r from-orange-400/30 to-orange-400/30'
-                        }`} />
-                      )}
                       
                       <div className="relative z-10">
                         {isListening ? (
@@ -202,15 +178,11 @@ export function MessageInput({
                       transition-all duration-300
                       flex items-center justify-center
                       ${isDisabled
-                        ? 'bg-white/5 text-white/30 cursor-not-allowed'
-                        : 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white hover:scale-110 hover:rotate-12 shadow-lg hover:shadow-xl hover:shadow-blue-500/20'
+                        ? 'bg-gray-100 text-gray-300 cursor-not-allowed border border-gray-200'
+                        : 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white hover:scale-110 hover:rotate-12 shadow-lg'
                       }
                     `}
                   >
-                    {/* Button inner glow */}
-                    {!isDisabled && (
-                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-400/30 to-purple-400/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm" />
-                    )}
                     
                     <div className="relative z-10">
                       {isLoading ? (
@@ -228,46 +200,20 @@ export function MessageInput({
           {/* Elegant status indicators */}
           {(disabled && !isLoading) && (
             <div className="mt-4 text-center">
-              <div 
-                className="inline-flex items-center gap-3 px-4 py-2 rounded-2xl backdrop-blur-sm"
-                style={{
-                  background: `
-                    linear-gradient(135deg, 
-                      rgba(255, 255, 255, 0.04) 0%, 
-                      rgba(255, 255, 255, 0.01) 100%
-                    )
-                  `,
-                  boxShadow: `
-                    inset 0 1px 0 rgba(255, 255, 255, 0.03)
-                  `
-                }}
-              >
-                <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" />
-                <p className="text-white/70 text-sm">
+              <div className="inline-flex items-center gap-3 px-4 py-2 rounded-2xl bg-blue-50 border border-blue-200">
+                <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse" />
+                <p className="text-gray-700 text-sm">
                   ARIA está procesando tu respuesta...
                 </p>
               </div>
             </div>
           )}
-          
+
           {isLoading && (
             <div className="mt-4 text-center">
-              <div 
-                className="inline-flex items-center gap-3 px-4 py-2 rounded-2xl backdrop-blur-sm"
-                style={{
-                  background: `
-                    linear-gradient(135deg, 
-                      rgba(59, 130, 246, 0.06) 0%, 
-                      rgba(147, 51, 234, 0.06) 100%
-                    )
-                  `,
-                  boxShadow: `
-                    inset 0 1px 0 rgba(59, 130, 246, 0.03)
-                  `
-                }}
-              >
-                <Loader className="w-4 h-4 animate-spin text-blue-400" />
-                <p className="text-white/80 text-sm font-medium">
+              <div className="inline-flex items-center gap-3 px-4 py-2 rounded-2xl bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200">
+                <Loader className="w-4 h-4 animate-spin text-blue-600" />
+                <p className="text-gray-900 text-sm font-medium">
                   ARIA está pensando...
                 </p>
               </div>
@@ -277,22 +223,9 @@ export function MessageInput({
           {/* Voice Status Indicators */}
           {enableVoice && isSpeechSupported && isListening && (
             <div className="mt-4 text-center">
-              <div 
-                className="inline-flex items-center gap-3 px-4 py-2 rounded-2xl backdrop-blur-sm"
-                style={{
-                  background: `
-                    linear-gradient(135deg, 
-                      rgba(239, 68, 68, 0.06) 0%, 
-                      rgba(220, 38, 38, 0.06) 100%
-                    )
-                  `,
-                  boxShadow: `
-                    inset 0 1px 0 rgba(239, 68, 68, 0.03)
-                  `
-                }}
-              >
-                <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse" />
-                <p className="text-white/80 text-sm font-medium">
+              <div className="inline-flex items-center gap-3 px-4 py-2 rounded-2xl bg-red-50 border border-red-200">
+                <div className="w-2 h-2 bg-red-600 rounded-full animate-pulse" />
+                <p className="text-gray-900 text-sm font-medium">
                   🎤 Escuchando tu respuesta...
                 </p>
               </div>
@@ -302,22 +235,9 @@ export function MessageInput({
           {/* Voice Transcript Feedback */}
           {enableVoice && isSpeechSupported && isVoiceMode && transcript && !isListening && (
             <div className="mt-4 text-center">
-              <div 
-                className="inline-flex items-center gap-3 px-4 py-2 rounded-2xl backdrop-blur-sm"
-                style={{
-                  background: `
-                    linear-gradient(135deg, 
-                      rgba(34, 197, 94, 0.06) 0%, 
-                      rgba(22, 163, 74, 0.06) 100%
-                    )
-                  `,
-                  boxShadow: `
-                    inset 0 1px 0 rgba(34, 197, 94, 0.03)
-                  `
-                }}
-              >
-                <div className="w-2 h-2 bg-green-400 rounded-full" />
-                <p className="text-white/80 text-sm font-medium">
+              <div className="inline-flex items-center gap-3 px-4 py-2 rounded-2xl bg-green-50 border border-green-200">
+                <div className="w-2 h-2 bg-green-600 rounded-full" />
+                <p className="text-gray-900 text-sm font-medium">
                   ✓ Texto capturado por voz - Presiona enviar o continúa hablando
                 </p>
               </div>
@@ -327,22 +247,9 @@ export function MessageInput({
           {/* Voice Error Indicator */}
           {enableVoice && speechError && (
             <div className="mt-4 text-center">
-              <div 
-                className="inline-flex items-center gap-3 px-4 py-2 rounded-2xl backdrop-blur-sm"
-                style={{
-                  background: `
-                    linear-gradient(135deg, 
-                      rgba(239, 68, 68, 0.06) 0%, 
-                      rgba(220, 38, 38, 0.06) 100%
-                    )
-                  `,
-                  boxShadow: `
-                    inset 0 1px 0 rgba(239, 68, 68, 0.03)
-                  `
-                }}
-              >
-                <div className="w-2 h-2 bg-red-400 rounded-full" />
-                <p className="text-white/80 text-sm font-medium">
+              <div className="inline-flex items-center gap-3 px-4 py-2 rounded-2xl bg-red-50 border border-red-200">
+                <div className="w-2 h-2 bg-red-600 rounded-full" />
+                <p className="text-gray-900 text-sm font-medium">
                   ❌ Error de reconocimiento de voz - Intenta de nuevo
                 </p>
               </div>

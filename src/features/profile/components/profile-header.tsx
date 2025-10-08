@@ -22,16 +22,16 @@ export function ProfileHeader({ isEditing, isLoading, onEdit, onSave, onCancel }
         
         {/* User Info */}
         <div>
-          <h2 className="text-2xl font-bold text-white mb-1">
+          <h2 className="text-2xl font-bold text-gray-900 mb-1">
             {profile?.first_name} {profile?.last_name}
           </h2>
-          <p className="text-neutral-300 flex items-center gap-2">
+          <p className="text-gray-600 flex items-center gap-2">
             <IconMail className="w-4 h-4" />
             {user?.email}
           </p>
           <div className="flex items-center gap-2 mt-2">
-            <IconShield className="w-4 h-4 text-blue-400" />
-            <span className="text-sm bg-blue-500/20 text-blue-300 px-2 py-1 rounded-full">
+            <IconShield className="w-4 h-4 text-blue-600" />
+            <span className="text-sm bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
               {profile?.role === 'admin' ? 'Administrador' : 'Usuario'}
             </span>
           </div>
@@ -42,7 +42,7 @@ export function ProfileHeader({ isEditing, isLoading, onEdit, onSave, onCancel }
       {!isEditing ? (
         <button
           onClick={onEdit}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 rounded-lg transition-all duration-300"
+          className="flex items-center gap-2 px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg transition-all duration-300"
         >
           <IconEdit className="w-4 h-4" />
           Editar
@@ -52,14 +52,14 @@ export function ProfileHeader({ isEditing, isLoading, onEdit, onSave, onCancel }
           <button
             onClick={onSave}
             disabled={isLoading}
-            className="flex items-center gap-2 px-4 py-2 bg-green-600/20 hover:bg-green-600/30 text-green-300 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-4 py-2 bg-green-50 hover:bg-green-100 text-green-700 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <IconCheck className="w-4 h-4" />
             {isLoading ? 'Guardando...' : 'Guardar'}
           </button>
           <button
             onClick={onCancel}
-            className="flex items-center gap-2 px-4 py-2 bg-red-600/20 hover:bg-red-600/30 text-red-300 rounded-lg transition-all duration-300"
+            className="flex items-center gap-2 px-4 py-2 bg-red-50 hover:bg-red-100 text-red-700 rounded-lg transition-all duration-300"
           >
             <IconX className="w-4 h-4" />
             Cancelar

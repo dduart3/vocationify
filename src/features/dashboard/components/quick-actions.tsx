@@ -28,49 +28,26 @@ const actions = [
 export function QuickActions() {
 
   return (
-    <div
-      className="p-8 rounded-3xl backdrop-blur-xl"
-      style={{
-        background: `
-          linear-gradient(135deg, 
-            rgba(255, 255, 255, 0.08) 0%, 
-            rgba(255, 255, 255, 0.04) 100%
-          )
-        `,
-        boxShadow: `
-          0 8px 32px 0 rgba(31, 38, 135, 0.37),
-          inset 0 1px 0 rgba(255, 255, 255, 0.1)
-        `
-      }}
-    >
-      <h2 className="text-2xl font-bold text-white mb-6">Acciones Rápidas</h2>
-      
+    <div className="p-8 rounded-3xl bg-white/80 backdrop-blur-sm border border-gray-300/50 shadow-lg shadow-gray-200/50">
+      <h2 className="text-2xl font-bold bg-gradient-to-br from-gray-900 to-gray-700 bg-clip-text text-transparent mb-6">Acciones Rápidas</h2>
+
       <div>
         {actions.map((action, index) => {
           const IconComponent = action.icon
           return (
             <Link key={action.title} to={action.href}>
               <div
-                className={`w-full p-4 rounded-2xl backdrop-blur-md hover:scale-[1.02] transition-all duration-300 group ${index < actions.length - 1 ? 'mb-6' : ''}`}
-                style={{
-                  background: `
-                    linear-gradient(135deg, 
-                      rgba(255, 255, 255, 0.06) 0%, 
-                      rgba(255, 255, 255, 0.02) 100%
-                    )
-                  `,
-                  boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.1)'
-                }}
+                className={`w-full p-5 rounded-2xl bg-gradient-to-br from-white to-gray-50/50 border-2 border-gray-200 hover:border-gray-400 hover:shadow-lg hover:shadow-gray-300/30 hover:scale-[1.02] transition-all duration-300 group ${index < actions.length - 1 ? 'mb-4' : ''}`}
               >
                 <div className="flex items-center gap-4">
-                  <div className={`p-3 rounded-xl bg-gradient-to-r ${action.color} group-hover:rotate-12 transition-transform duration-300`}>
+                  <div className={`p-3 rounded-xl bg-gradient-to-br ${action.color} shadow-md group-hover:rotate-12 group-hover:scale-110 transition-all duration-300`}>
                     <IconComponent className="w-5 h-5 text-white" />
                   </div>
                   <div className="text-left flex-1">
-                    <p className="font-semibold text-white mb-1">
+                    <p className="font-bold text-gray-900 mb-1">
                       {action.title}
                     </p>
-                    <p className="text-sm text-white/60">
+                    <p className="text-sm text-gray-600 font-medium">
                       {action.description}
                     </p>
                   </div>

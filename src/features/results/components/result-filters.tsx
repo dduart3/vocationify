@@ -16,25 +16,25 @@ export function ResultFilters({
   return (
     <div className="flex gap-4">
       <div className="relative flex-1">
-        <IconSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-white/40" />
+        <IconSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
         <input
           type="text"
           placeholder="Buscar resultados..."
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="w-full pl-12 pr-4 py-3 bg-white/10 backdrop-blur-md rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="w-full pl-12 pr-4 py-3 bg-white border-2 border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
         />
       </div>
-      
+
       <select
         value={dateFilter}
         onChange={(e) => onDateChange(e.target.value as any)}
-        className="px-4 py-3 bg-white/10 backdrop-blur-md rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+        className="px-4 py-3 bg-white border-2 border-gray-300 rounded-xl text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
       >
-        <option value="all" className="bg-white text-gray-900">Todos los períodos</option>
-        <option value="last_week" className="bg-white text-gray-900">Última semana</option>
-        <option value="last_month" className="bg-white text-gray-900">Último mes</option>
-        <option value="last_year" className="bg-white text-gray-900">Último año</option>
+        <option value="all">Todos los períodos</option>
+        <option value="last_week">Última semana</option>
+        <option value="last_month">Último mes</option>
+        <option value="last_year">Último año</option>
       </select>
     </div>
   )

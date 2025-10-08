@@ -15,14 +15,14 @@ export function RiasecRadarChart({ scores, size = 300 }: RiasecRadarChartProps) 
   const radius = (size - 80) / 2
   const labelOffset = 20
 
-  // RIASEC labels in Spanish
+  // RIASEC labels in Spanish with darker colors
   const labels = [
-    { key: 'R', label: 'Realista', color: '#ef4444' },
-    { key: 'I', label: 'Investigativo', color: '#3b82f6' },
-    { key: 'A', label: 'Artístico', color: '#8b5cf6' },
-    { key: 'S', label: 'Social', color: '#10b981' },
-    { key: 'E', label: 'Emprendedor', color: '#f59e0b' },
-    { key: 'C', label: 'Convencional', color: '#6b7280' }
+    { key: 'R', label: 'Realista', color: '#dc2626', bgColor: '#fef2f2' },
+    { key: 'I', label: 'Investigativo', color: '#2563eb', bgColor: '#eff6ff' },
+    { key: 'A', label: 'Artístico', color: '#7c3aed', bgColor: '#faf5ff' },
+    { key: 'S', label: 'Social', color: '#059669', bgColor: '#f0fdf4' },
+    { key: 'E', label: 'Emprendedor', color: '#d97706', bgColor: '#fffbeb' },
+    { key: 'C', label: 'Convencional', color: '#64748b', bgColor: '#f8fafc' }
   ]
 
   // Calculate points for the polygon
@@ -58,8 +58,8 @@ export function RiasecRadarChart({ scores, size = 300 }: RiasecRadarChartProps) 
       cy={center}
       r={(percentage / 100) * radius}
       fill="none"
-      stroke="#374151"
-      strokeWidth="1"
+      stroke="#d1d5db"
+      strokeWidth="1.5"
       strokeDasharray={percentage === 100 ? "none" : "4,4"}
     />
   ))
@@ -73,8 +73,8 @@ export function RiasecRadarChart({ scores, size = 300 }: RiasecRadarChartProps) 
         y1={center}
         x2={center + Math.cos((index * 2 * Math.PI) / 6 - Math.PI / 2) * radius}
         y2={center + Math.sin((index * 2 * Math.PI) / 6 - Math.PI / 2) * radius}
-        stroke="#374151"
-        strokeWidth="1"
+        stroke="#d1d5db"
+        strokeWidth="1.5"
       />
     )
   })
@@ -91,9 +91,9 @@ export function RiasecRadarChart({ scores, size = 300 }: RiasecRadarChartProps) 
         {/* Main polygon */}
         <polygon
           points={polygonPoints}
-          fill="rgba(59, 130, 246, 0.15)"
-          stroke="#3b82f6"
-          strokeWidth="2"
+          fill="rgba(59, 130, 246, 0.2)"
+          stroke="#2563eb"
+          strokeWidth="3"
           strokeLinejoin="round"
         />
         
@@ -105,10 +105,10 @@ export function RiasecRadarChart({ scores, size = 300 }: RiasecRadarChartProps) 
               key={label.key}
               cx={point.x}
               cy={point.y}
-              r="4"
+              r="5"
               fill={label.color}
               stroke="white"
-              strokeWidth="2"
+              strokeWidth="3"
             />
           )
         })}
@@ -117,23 +117,23 @@ export function RiasecRadarChart({ scores, size = 300 }: RiasecRadarChartProps) 
         {labels.map((label, index) => {
           const labelPos = getLabelPosition(index)
           const score = scores[label.key as keyof typeof scores]
-          
+
           return (
             <g key={label.key}>
               <circle
                 cx={labelPos.x}
                 cy={labelPos.y - 8}
-                r="12"
-                fill={label.color}
-                fillOpacity="0.1"
+                r="14"
+                fill={label.bgColor}
                 stroke={label.color}
-                strokeWidth="1"
+                strokeWidth="2"
               />
               <text
                 x={labelPos.x}
                 y={labelPos.y - 4}
                 textAnchor="middle"
-                className="text-xs font-semibold fill-white"
+                className="text-xs font-bold"
+                fill={label.color}
               >
                 {label.key}
               </text>
@@ -141,7 +141,7 @@ export function RiasecRadarChart({ scores, size = 300 }: RiasecRadarChartProps) 
                 x={labelPos.x}
                 y={labelPos.y + 20}
                 textAnchor="middle"
-                className="text-xs font-medium fill-neutral-300"
+                className="text-xs font-bold fill-gray-700"
               >
                 {label.label}
               </text>
@@ -149,7 +149,7 @@ export function RiasecRadarChart({ scores, size = 300 }: RiasecRadarChartProps) 
                 x={labelPos.x}
                 y={labelPos.y + 32}
                 textAnchor="middle"
-                className="text-xs font-bold"
+                className="text-sm font-bold"
                 fill={label.color}
               >
                 {score}%
@@ -162,8 +162,8 @@ export function RiasecRadarChart({ scores, size = 300 }: RiasecRadarChartProps) 
         <circle
           cx={center}
           cy={center}
-          r="3"
-          fill="#1f2937"
+          r="4"
+          fill="#4b5563"
         />
       </svg>
       
@@ -171,11 +171,11 @@ export function RiasecRadarChart({ scores, size = 300 }: RiasecRadarChartProps) 
       <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
         {labels.map((label) => (
           <div key={label.key} className="flex items-center gap-2">
-            <div 
-              className="w-3 h-3 rounded-full"
-              style={{ backgroundColor: label.color }}
+            <div
+              className="w-3 h-3 rounded-full border-2"
+              style={{ backgroundColor: label.color, borderColor: label.color }}
             />
-            <span className="text-neutral-300 font-medium">
+            <span className="text-gray-700 font-bold">
               {label.key} - {label.label}
             </span>
           </div>

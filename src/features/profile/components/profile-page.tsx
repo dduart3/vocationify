@@ -99,26 +99,12 @@ export function ProfilePage() {
         
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Perfil</h1>
-          <p className="text-neutral-400">Tu información y configuración</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Perfil</h1>
+          <p className="text-gray-600">Tu información y configuración</p>
         </div>
-        
+
         {/* Profile Section */}
-        <div 
-          className="backdrop-blur-xl rounded-3xl p-6 mb-6 shadow-2xl relative overflow-hidden"
-          style={{
-            background: `
-              linear-gradient(135deg, 
-                rgba(255, 255, 255, 0.08) 0%, 
-                rgba(255, 255, 255, 0.04) 100%
-              )
-            `,
-            boxShadow: `
-              0 8px 32px 0 rgba(31, 38, 135, 0.37),
-              inset 0 1px 0 rgba(255, 255, 255, 0.1)
-            `
-          }}
-        >
+        <div className="bg-white rounded-3xl p-6 mb-6 shadow-sm border border-gray-200 relative overflow-hidden">
           <ProfileHeader 
             isEditing={isEditing}
             isLoading={isLoading}
@@ -128,23 +114,12 @@ export function ProfilePage() {
           />
           
           {error && (
-            <div 
-              className="mb-4 p-3 rounded-2xl backdrop-blur-sm text-red-300 text-sm border"
-              style={{
-                background: `
-                  linear-gradient(135deg, 
-                    rgba(239, 68, 68, 0.1) 0%, 
-                    rgba(220, 38, 38, 0.1) 100%
-                  )
-                `,
-                borderColor: 'rgba(239, 68, 68, 0.3)'
-              }}
-            >
+            <div className="mb-4 p-3 rounded-2xl bg-red-50 text-red-700 text-sm border border-red-200">
               {error}
             </div>
           )}
-          
-          <div className="mt-6 pt-6 border-t border-white/10">
+
+          <div className="mt-6 pt-6 border-t border-gray-200">
             <ProfileForm 
               isEditing={isEditing}
               editData={editData}

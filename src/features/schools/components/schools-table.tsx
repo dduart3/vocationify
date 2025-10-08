@@ -42,7 +42,7 @@ export function SchoolsTable({ searchTerm, typeFilter }: SchoolsTableProps) {
   }
 
   const getTypeColor = (type: string) => {
-    return type === 'public' ? 'text-blue-600' : 'text-green-600'
+    return type === 'public' ? 'text-blue-700' : 'text-green-700'
   }
 
   const getTypeDisplayName = (type: string) => {
@@ -58,8 +58,8 @@ export function SchoolsTable({ searchTerm, typeFilter }: SchoolsTableProps) {
           params={{ schoolId: row.original.id }}
           className="flex items-center gap-3 group"
         >
-          <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden p-1">
-            <img 
+          <div className="w-8 h-8 bg-gradient-to-br from-blue-100 to-purple-100 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden p-1 border border-blue-200">
+            <img
               src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/schools/${row.original.id}/logo.webp`}
               alt={`Logo de ${row.original.name}`}
               className="w-full h-full object-contain"
@@ -72,10 +72,10 @@ export function SchoolsTable({ searchTerm, typeFilter }: SchoolsTableProps) {
                 }
               }}
             />
-            <IconBuilding className="w-4 h-4 text-blue-400 hidden" />
+            <IconBuilding className="w-4 h-4 text-blue-600 hidden" />
           </div>
           <div className="min-w-0">
-            <div className="font-semibold text-white group-hover:text-blue-400 transition-colors truncate">
+            <div className="font-bold text-gray-900 group-hover:text-blue-600 transition-colors truncate">
               {row.original.name}
             </div>
           </div>
@@ -88,8 +88,8 @@ export function SchoolsTable({ searchTerm, typeFilter }: SchoolsTableProps) {
       header: 'Tipo',
       cell: ({ getValue }) => (
         <div className="flex items-center gap-2">
-          <IconUsers className="w-4 h-4 text-neutral-400" />
-          <span className={`font-medium ${getTypeColor(getValue() as string)}`}>
+          <IconUsers className="w-4 h-4 text-gray-600" />
+          <span className={`font-bold ${getTypeColor(getValue() as string)}`}>
             {getTypeDisplayName(getValue() as string)}
           </span>
         </div>
@@ -105,18 +105,18 @@ export function SchoolsTable({ searchTerm, typeFilter }: SchoolsTableProps) {
         <div className="flex items-center gap-2">
           <button
             onClick={() => toggleFavorite(row.original.id)}
-            className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors duration-200"
+            className="p-2 rounded-lg bg-gray-100 border border-gray-300 hover:border-pink-400 hover:bg-pink-50 transition-all duration-200"
           >
             {favorites.has(row.original.id) ? (
-              <IconBookmarkFilled className="w-4 h-4 text-pink-400" />
+              <IconBookmarkFilled className="w-4 h-4 text-pink-600" />
             ) : (
-              <IconBookmark className="w-4 h-4 text-neutral-400" />
+              <IconBookmark className="w-4 h-4 text-gray-600" />
             )}
           </button>
           <Link
             to="/schools/$schoolId"
             params={{ schoolId: row.original.id }}
-            className="p-2 rounded-lg bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 hover:text-blue-300 transition-all duration-200"
+            className="p-2 rounded-lg bg-blue-100 border border-blue-300 hover:border-blue-500 hover:bg-blue-200 text-blue-700 hover:text-blue-900 transition-all duration-200"
           >
             <IconEye className="w-4 h-4" />
           </Link>
@@ -141,7 +141,7 @@ export function SchoolsTable({ searchTerm, typeFilter }: SchoolsTableProps) {
   })
 
   return (
-    <div className="bg-white/10 backdrop-blur-md rounded-lg overflow-hidden overflow-x-auto">
+    <div className="bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden border border-gray-300/50 shadow-lg shadow-gray-200/50 overflow-x-auto">
       <table className="w-full">
           <thead>
             {table.getHeaderGroups().map(headerGroup => (
@@ -149,14 +149,14 @@ export function SchoolsTable({ searchTerm, typeFilter }: SchoolsTableProps) {
                 {headerGroup.headers.map(header => (
                   <th
                     key={header.id}
-                    className="px-6 py-4 text-left text-sm font-semibold text-white/80 bg-white/5"
+                    className="px-6 py-4 text-left text-sm font-bold text-gray-700 bg-gradient-to-r from-gray-50 to-gray-100 border-b-2 border-gray-300"
                     style={{ width: header.getSize() }}
                   >
                     {header.isPlaceholder ? null : (
                       <div
                         className={`flex items-center gap-2 ${
                           header.column.getCanSort()
-                            ? 'cursor-pointer select-none hover:text-gray-900'
+                            ? 'cursor-pointer select-none hover:text-blue-600'
                             : ''
                         }`}
                         onClick={header.column.getToggleSortingHandler()}
@@ -170,15 +170,15 @@ export function SchoolsTable({ searchTerm, typeFilter }: SchoolsTableProps) {
                             <IconChevronUp
                               className={`w-3 h-3 ${
                                 header.column.getIsSorted() === 'asc'
-                                  ? 'text-blue-400'
-                                  : 'text-neutral-400'
+                                  ? 'text-blue-600'
+                                  : 'text-gray-400'
                               }`}
                             />
                             <IconChevronDown
                               className={`w-3 h-3 -mt-1 ${
                                 header.column.getIsSorted() === 'desc'
-                                  ? 'text-blue-400'
-                                  : 'text-neutral-400'
+                                  ? 'text-blue-600'
+                                  : 'text-gray-400'
                               }`}
                             />
                           </div>
@@ -195,19 +195,19 @@ export function SchoolsTable({ searchTerm, typeFilter }: SchoolsTableProps) {
               Array(10).fill(0).map((_, i) => (
                 <tr key={i}>
                   <td colSpan={3} className="px-6 py-4">
-                    <div className="animate-pulse bg-white/20 h-12 rounded" />
+                    <div className="animate-pulse bg-gray-200 h-12 rounded" />
                   </td>
                 </tr>
               ))
             ) : table.getRowModel().rows.length === 0 ? (
               <tr>
-                <td colSpan={3} className="px-6 py-12 text-center text-neutral-400">
+                <td colSpan={3} className="px-6 py-12 text-center text-gray-500 font-medium">
                   No se encontraron instituciones
                 </td>
               </tr>
             ) : (
               table.getRowModel().rows.map((row) => (
-                <tr key={row.id} className="hover:bg-white/5 transition-colors duration-200">
+                <tr key={row.id} className="hover:bg-blue-50/50 transition-colors duration-200 border-b border-gray-200 last:border-0">
                   {row.getVisibleCells().map(cell => (
                     <td
                       key={cell.id}
@@ -224,8 +224,8 @@ export function SchoolsTable({ searchTerm, typeFilter }: SchoolsTableProps) {
         </table>
 
         {/* Pagination */}
-        <div className="px-6 py-4 flex items-center justify-between">
-          <div className="text-sm text-neutral-300">
+        <div className="px-6 py-4 flex items-center justify-between bg-gradient-to-r from-gray-50 to-gray-100 border-t-2 border-gray-300">
+          <div className="text-sm text-gray-700 font-medium">
             Mostrando {table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1} a{' '}
             {Math.min((table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize, table.getFilteredRowModel().rows.length)} de{' '}
             {table.getFilteredRowModel().rows.length} resultados
@@ -235,21 +235,21 @@ export function SchoolsTable({ searchTerm, typeFilter }: SchoolsTableProps) {
             <button
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
-              className="p-2 rounded-lg bg-white/10 hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+              className="p-2 rounded-lg bg-white border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm"
             >
-              <IconChevronLeft className="w-4 h-4 text-neutral-300" />
+              <IconChevronLeft className="w-4 h-4 text-gray-700" />
             </button>
 
-            <span className="px-3 py-1 text-sm text-neutral-300">
+            <span className="px-3 py-1 text-sm text-gray-700 font-bold">
               {table.getState().pagination.pageIndex + 1} de {table.getPageCount()}
             </span>
 
             <button
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
-              className="p-2 rounded-lg bg-white/10 hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+              className="p-2 rounded-lg bg-white border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm"
             >
-              <IconChevronRight className="w-4 h-4 text-neutral-300" />
+              <IconChevronRight className="w-4 h-4 text-gray-700" />
             </button>
           </div>
         </div>

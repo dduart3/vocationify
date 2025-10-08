@@ -121,18 +121,18 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
           </div>
         )}
 
-        {/* Background - exact copy from original */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(120,119,198,0.3),transparent_50%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,255,255,0.1),transparent_50%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_40%,rgba(59,130,246,0.15),transparent_50%)]" />
+        {/* Background - light theme */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-50">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(59,130,246,0.15),transparent_50%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(147,51,234,0.12),transparent_50%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_40%,rgba(99,102,241,0.1),transparent_50%)]" />
         </div>
 
-        {/* Floating Elements - exact copy from landing page */}
+        {/* Floating Elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-          <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
+          <div className="absolute top-20 left-10 w-72 h-72 bg-blue-200/30 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-200/25 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+          <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-indigo-200/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
         </div>
 
         <div className="relative z-10 container mx-auto px-6 py-8">
@@ -144,11 +144,11 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-96 h-16 bg-gradient-to-r from-blue-500/8 via-purple-500/10 to-indigo-500/8 blur-3xl rounded-full animate-pulse" />
                 
                 <h1 className="relative text-6xl md:text-7xl font-black mb-4 leading-tight">
-                  <span className="bg-gradient-to-r from-white via-blue-50 to-purple-50 bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">
                     Test Vocacional
                   </span>
                   <br />
-                  <span className="bg-gradient-to-r from-blue-300 via-purple-300 to-indigo-300 bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
                     con IA
                   </span>
                 </h1>
@@ -165,10 +165,10 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
                 
                 <div className="space-y-6 relative z-10">
                   <div className="space-y-2">
-                    <h2 className="text-4xl font-bold bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent leading-tight">
+                    <h2 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 bg-clip-text text-transparent leading-tight">
                       Conversa con ARIA
                     </h2>
-                    <p className="text-slate-300 text-lg max-w-xl mx-auto leading-relaxed">
+                    <p className="text-gray-700 text-lg max-w-xl mx-auto leading-relaxed">
                       Descubre tu perfil vocacional en una charla natural
                     </p>
                   </div>
@@ -250,41 +250,26 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
                         
                         {/* Main card */}
                         <div
-                          className="relative p-8 rounded-3xl backdrop-blur-xl transition-all duration-500 group-hover:scale-105 group-hover:-translate-y-2"
-                          style={{
-                            background: `
-                              linear-gradient(135deg, 
-                                rgba(255, 255, 255, 0.08) 0%, 
-                                rgba(255, 255, 255, 0.02) 100%
-                              )
-                            `,
-                            boxShadow: `
-                              0 8px 32px 0 rgba(31, 38, 135, 0.37),
-                              inset 0 1px 0 rgba(255, 255, 255, 0.1),
-                              0 1px 0 rgba(255, 255, 255, 0.05)
-                            `
-                          }}
+                          className="relative p-8 rounded-3xl backdrop-blur-xl transition-all duration-500 group-hover:scale-105 group-hover:-translate-y-2 bg-white/80 border border-gray-200 shadow-lg shadow-gray-200/50"
                         >
                           {/* Icon with gradient background */}
                           <div className="relative mb-6">
-                            <div className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${feature.color} p-1 mx-auto group-hover:rotate-12 transition-transform duration-300`}>
-                              <div className="w-full h-full bg-black/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
-                                <IconComponent className="w-8 h-8 text-white" />
-                              </div>
+                            <div className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${feature.color} mx-auto group-hover:rotate-12 transition-transform duration-300 flex items-center justify-center`}>
+                              <IconComponent className="w-8 h-8 text-white" />
                             </div>
                           </div>
-                          
+
                           {/* Content */}
-                          <h3 className="text-white font-bold text-lg mb-3 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-blue-100 group-hover:bg-clip-text transition-all duration-300">
+                          <h3 className="text-gray-900 font-bold text-lg mb-3 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-purple-600 group-hover:bg-clip-text transition-all duration-300">
                             {feature.title}
                           </h3>
-                          <p className="text-slate-300 text-sm leading-relaxed group-hover:text-slate-200 transition-colors duration-300">
+                          <p className="text-gray-600 text-sm leading-relaxed group-hover:text-gray-700 transition-colors duration-300">
                             {feature.desc}
                           </p>
-                          
+
                           {/* Decorative elements */}
-                          <div className="absolute top-4 right-4 w-2 h-2 bg-white/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                          <div className="absolute bottom-4 left-4 w-1 h-1 bg-white/30 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ animationDelay: '0.1s' }} />
+                          <div className="absolute top-4 right-4 w-2 h-2 bg-blue-400/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                          <div className="absolute bottom-4 left-4 w-1 h-1 bg-purple-400/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ animationDelay: '0.1s' }} />
                         </div>
                       </div>
                     )
@@ -292,61 +277,34 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
                 </div>
 
                 {/* Additional visual elements */}
-                <div className="flex justify-center items-center gap-8 pt-8 opacity-80">
-                  <div className="flex items-center gap-3 text-slate-300 text-sm group hover:text-white transition-colors duration-300">
-                    <div 
-                      className="w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md group-hover:scale-110 transition-transform duration-300"
-                      style={{
-                        background: `
-                          linear-gradient(135deg, 
-                            rgba(59, 130, 246, 0.2) 0%, 
-                            rgba(147, 51, 234, 0.2) 100%
-                          )
-                        `,
-                        boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.1)'
-                      }}
+                <div className="flex justify-center items-center gap-8 pt-8 opacity-90">
+                  <div className="flex items-center gap-3 text-gray-600 text-sm group hover:text-gray-900 transition-colors duration-300">
+                    <div
+                      className="w-10 h-10 rounded-full flex items-center justify-center bg-blue-100 group-hover:scale-110 group-hover:bg-blue-200 transition-all duration-300"
                     >
-                      <Target className="w-4 h-4 text-blue-400" />
+                      <Target className="w-4 h-4 text-blue-600" />
                     </div>
                     <span>Análisis personalizado</span>
                   </div>
-                  
-                  <div className="w-2 h-2 bg-gradient-to-r from-blue-400/30 to-purple-400/30 rounded-full blur-sm" />
-                  
-                  <div className="flex items-center gap-3 text-slate-300 text-sm group hover:text-white transition-colors duration-300">
-                    <div 
-                      className="w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md group-hover:scale-110 transition-transform duration-300"
-                      style={{
-                        background: `
-                          linear-gradient(135deg, 
-                            rgba(34, 197, 94, 0.2) 0%, 
-                            rgba(16, 185, 129, 0.2) 100%
-                          )
-                        `,
-                        boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.1)'
-                      }}
+
+                  <div className="w-2 h-2 bg-gradient-to-r from-blue-400/50 to-purple-400/50 rounded-full" />
+
+                  <div className="flex items-center gap-3 text-gray-600 text-sm group hover:text-gray-900 transition-colors duration-300">
+                    <div
+                      className="w-10 h-10 rounded-full flex items-center justify-center bg-green-100 group-hover:scale-110 group-hover:bg-green-200 transition-all duration-300"
                     >
-                      <Volume2 className="w-4 h-4 text-green-400" />
+                      <Volume2 className="w-4 h-4 text-green-600" />
                     </div>
                     <span>100% conversacional</span>
                   </div>
-                  
-                  <div className="w-2 h-2 bg-gradient-to-r from-green-400/30 to-purple-400/30 rounded-full blur-sm" />
-                  
-                  <div className="flex items-center gap-3 text-slate-300 text-sm group hover:text-white transition-colors duration-300">
-                    <div 
-                      className="w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md group-hover:scale-110 transition-transform duration-300"
-                      style={{
-                        background: `
-                          linear-gradient(135deg, 
-                            rgba(147, 51, 234, 0.2) 0%, 
-                            rgba(236, 72, 153, 0.2) 100%
-                          )
-                        `,
-                        boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.1)'
-                      }}
+
+                  <div className="w-2 h-2 bg-gradient-to-r from-green-400/50 to-purple-400/50 rounded-full" />
+
+                  <div className="flex items-center gap-3 text-gray-600 text-sm group hover:text-gray-900 transition-colors duration-300">
+                    <div
+                      className="w-10 h-10 rounded-full flex items-center justify-center bg-purple-100 group-hover:scale-110 group-hover:bg-purple-200 transition-all duration-300"
                     >
-                      <Trophy className="w-4 h-4 text-purple-400" />
+                      <Trophy className="w-4 h-4 text-purple-600" />
                     </div>
                     <span>Resultados precisos</span>
                   </div>
@@ -362,9 +320,9 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
   // Loading state
   if (isStarting) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900">
-        <div className="text-white text-center">
-          <div className="animate-spin w-8 h-8 border-2 border-white border-t-transparent rounded-full mx-auto mb-4"></div>
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-50">
+        <div className="text-gray-900 text-center">
+          <div className="animate-spin w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"></div>
           <p>Iniciando tu sesión vocacional...</p>
         </div>
       </div>
@@ -375,17 +333,13 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
 
   // Main test interface
   return (
-    <div className="h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex flex-col">
+    <div className="h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-50 flex flex-col">
       {/* Enhanced Header with ARIA branding */}
       <div className="flex-shrink-0 relative z-20">
         {/* Header gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/8 via-purple-500/12 to-purple-600/8" />
-        <div 
-          className="relative backdrop-blur-xl bg-black/20"
-          style={{
-            borderBottom: '1px solid rgba(255, 255, 255, 0.02)',
-            boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.03)'
-          }}
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-100/30 via-purple-50/40 to-purple-100/30" />
+        <div
+          className="relative backdrop-blur-xl bg-white/80 border-b border-gray-200/50 shadow-sm"
         >
           <div className="max-w-4xl mx-auto px-6 py-6">
             <div className="flex items-center justify-between">
@@ -402,34 +356,22 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
                 </div>
                 
                 <div>
-                  <h1 className="text-2xl font-bold text-white flex items-center gap-3">
-                    <span className="bg-gradient-to-r from-white via-blue-100 to-purple-100 bg-clip-text text-transparent">
+                  <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
+                    <span className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">
                       Test Vocacional con
                     </span>
-                    <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent font-black tracking-wide">
+                    <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent font-black tracking-wide">
                       ARIA
                     </span>
                   </h1>
-                  <div className="flex items-center gap-3 text-white/70 text-sm mt-1">
+                  <div className="flex items-center gap-3 text-gray-600 text-sm mt-1">
                     <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" />
-                      <span>Fase: <span className="text-white font-medium">{getPhaseText(currentPhase)}</span></span>
+                      <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse" />
+                      <span>Fase: <span className="text-gray-900 font-medium">{getPhaseText(currentPhase)}</span></span>
                     </div>
                     <span>•</span>
-                    <span 
-                      className="text-green-300 px-3 py-1 rounded-full text-xs font-medium"
-                      style={{
-                        background: `
-                          linear-gradient(135deg, 
-                            rgba(34, 197, 94, 0.15) 0%, 
-                            rgba(16, 185, 129, 0.15) 100%
-                          )
-                        `,
-                        boxShadow: `
-                          0 2px 8px 0 rgba(34, 197, 94, 0.2),
-                          inset 0 1px 0 rgba(255, 255, 255, 0.05)
-                        `
-                      }}
+                    <span
+                      className="text-green-700 bg-green-100 border border-green-300 px-3 py-1 rounded-full text-xs font-medium"
                     >
                       IA Conversacional
                     </span>
@@ -440,27 +382,27 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
               {/* Optional: Phase progress indicator with hover tooltips */}
               <div className="hidden md:flex items-center gap-2">
                 <div className="text-right">
-                  <div className="text-xs text-white/50 mb-1">Progreso</div>
+                  <div className="text-xs text-gray-600 mb-1">Progreso</div>
                   <div className="flex gap-1">
                     {['exploration', 'career_matching', 'reality_check', 'complete'].map((phase, index) => {
                       const phaseIndex = ['exploration', 'career_matching', 'reality_check', 'complete'].indexOf(currentPhase)
                       const isActive = phase === currentPhase
                       const isCompleted = index < phaseIndex
-                      
+
                       return (
                         <div
                           key={phase}
                           className={`w-3 h-1 rounded-full transition-all duration-300 relative group ${
                             isActive
-                              ? 'bg-gradient-to-r from-blue-400 to-purple-400' 
+                              ? 'bg-gradient-to-r from-blue-600 to-purple-600'
                               : isCompleted
-                                ? 'bg-white/30'
-                                : 'bg-white/10'
+                                ? 'bg-gray-400'
+                                : 'bg-gray-200'
                           }`}
                           title={phaseTranslations[phase]}
                         >
                           {/* Tooltip on hover */}
-                          <div className="absolute bottom-3 right-0 bg-black/80 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-10">
+                          <div className="absolute bottom-3 right-0 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-10 shadow-lg">
                             {phaseTranslations[phase]}
                           </div>
                         </div>
@@ -476,37 +418,37 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
 
       {/* Background overlays with glassmorphism effect */}
       <div className="absolute inset-0 pointer-events-none">
-        <div 
-          className="absolute inset-0 backdrop-blur-3xl"
+        <div
+          className="absolute inset-0"
           style={{
             background: `
-              radial-gradient(circle at 20% 80%, 
-                rgba(147, 51, 234, 0.15) 0%, 
-                rgba(147, 51, 234, 0.08) 30%,
+              radial-gradient(circle at 20% 80%,
+                rgba(147, 51, 234, 0.08) 0%,
+                rgba(147, 51, 234, 0.04) 30%,
                 transparent 60%
               )
             `
           }}
         />
-        <div 
-          className="absolute inset-0 backdrop-blur-2xl"
+        <div
+          className="absolute inset-0"
           style={{
             background: `
-              radial-gradient(circle at 80% 20%, 
-                rgba(168, 85, 247, 0.12) 0%, 
-                rgba(168, 85, 247, 0.06) 35%,
+              radial-gradient(circle at 80% 20%,
+                rgba(59, 130, 246, 0.08) 0%,
+                rgba(59, 130, 246, 0.04) 35%,
                 transparent 65%
               )
             `
           }}
         />
-        <div 
-          className="absolute inset-0 backdrop-blur-xl"
+        <div
+          className="absolute inset-0"
           style={{
             background: `
-              radial-gradient(circle at 40% 40%, 
-                rgba(139, 92, 246, 0.10) 0%, 
-                rgba(139, 92, 246, 0.04) 40%,
+              radial-gradient(circle at 40% 40%,
+                rgba(99, 102, 241, 0.06) 0%,
+                rgba(99, 102, 241, 0.03) 40%,
                 transparent 70%
               )
             `
@@ -516,9 +458,9 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
 
       {/* Floating Elements for atmosphere */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-32 left-16 w-64 h-64 bg-purple-500/6 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-32 right-16 w-80 h-80 bg-violet-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-        <div className="absolute top-2/3 left-1/3 w-48 h-48 bg-indigo-500/4 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-32 left-16 w-64 h-64 bg-purple-200/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-32 right-16 w-80 h-80 bg-blue-200/15 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="absolute top-2/3 left-1/3 w-48 h-48 bg-indigo-200/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
       </div>
 
       {/* Main content area - single scrollable container */}
@@ -526,7 +468,7 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
         
         {/* Career Recommendations Overlay (when needed) */}
         {uiBehavior.showCareers && recommendations && recommendations.length > 0 && (
-          <div className="absolute inset-0 z-10 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex flex-col">
+          <div className="absolute inset-0 z-10 bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-50 flex flex-col">
             {/* Career recommendations content - no duplicate header, uses main header */}
             <div className="flex-1 overflow-y-auto p-6 pt-24">
               <div className="max-w-4xl mx-auto">
@@ -567,16 +509,16 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
               width: 8px;
             }
             .custom-scrollbar::-webkit-scrollbar-track {
-              background: rgba(255, 255, 255, 0.05);
+              background: rgba(229, 231, 235, 0.5);
               border-radius: 4px;
             }
             .custom-scrollbar::-webkit-scrollbar-thumb {
-              background: linear-gradient(135deg, rgba(59, 130, 246, 0.4), rgba(147, 51, 234, 0.4));
+              background: linear-gradient(135deg, rgba(59, 130, 246, 0.6), rgba(147, 51, 234, 0.6));
               border-radius: 4px;
               transition: all 0.2s ease;
             }
             .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-              background: linear-gradient(135deg, rgba(59, 130, 246, 0.6), rgba(147, 51, 234, 0.6));
+              background: linear-gradient(135deg, rgba(59, 130, 246, 0.8), rgba(147, 51, 234, 0.8));
             }
           `}</style>
           

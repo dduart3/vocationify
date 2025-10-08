@@ -12,8 +12,8 @@ export function CareersPage() {
         
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Carreras</h1>
-          <p className="text-neutral-400">Explora las diferentes carreras profesionales</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Carreras</h1>
+          <p className="text-gray-600">Explora las diferentes carreras profesionales</p>
         </div>
 
         {/* Filters */}

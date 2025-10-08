@@ -11,8 +11,8 @@ export function ResultsPage() {
         
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Mis Resultados</h1>
-          <p className="text-neutral-400">Historial de tus tests vocacionales y recomendaciones</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Mis Resultados</h1>
+          <p className="text-gray-600">Historial de tus tests vocacionales y recomendaciones</p>
         </div>
 
         {/* Filters */}

@@ -23,14 +23,14 @@ export function ResultDetail() {
 
   const getRiasecColor = (type: string) => {
     const colors: Record<string, string> = {
-      'R': 'bg-green-500/20 text-green-400',
-      'I': 'bg-blue-500/20 text-blue-400',
-      'A': 'bg-purple-500/20 text-purple-400',
-      'S': 'bg-orange-500/20 text-orange-400',
-      'E': 'bg-yellow-500/20 text-yellow-400',
-      'C': 'bg-cyan-500/20 text-cyan-400'
+      'R': 'bg-green-100 text-green-700 border border-green-300',
+      'I': 'bg-blue-100 text-blue-700 border border-blue-300',
+      'A': 'bg-purple-100 text-purple-700 border border-purple-300',
+      'S': 'bg-orange-100 text-orange-700 border border-orange-300',
+      'E': 'bg-yellow-100 text-yellow-700 border border-yellow-300',
+      'C': 'bg-cyan-100 text-cyan-700 border border-cyan-300'
     }
-    return colors[type] || 'bg-cyan-500/20 text-cyan-400'
+    return colors[type] || 'bg-cyan-100 text-cyan-700 border border-cyan-300'
   }
 
   const getTopRiasecTypes = (scores: any) => {
@@ -141,26 +141,26 @@ export function ResultDetail() {
         <div className="flex items-center gap-4">
           <Link
             to="/results"
-            className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors duration-200"
+            className="p-2 rounded-lg bg-white border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-100 transition-all duration-200 shadow-sm"
           >
-            <IconArrowLeft className="w-5 h-5 text-white" />
+            <IconArrowLeft className="w-5 h-5 text-gray-700" />
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-white">Resultado del Test Vocacional</h1>
-            <p className="text-neutral-400 text-sm">Completado el {formatDate(result.created_at)}</p>
+            <h1 className="text-2xl font-bold text-gray-900">Resultado del Test Vocacional</h1>
+            <p className="text-gray-600 text-sm font-medium">Completado el {formatDate(result.created_at)}</p>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-3">
           {/* PDF Export Button */}
-          <PDFExport 
+          <PDFExport
             contentId="result-detail-content"
             fileName="resultado-test-vocacional"
             title="Mi Resultado del Test Vocacional - Vocationify"
           />
-          
+
           {/* Status Badge */}
-          <div className="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm font-medium">
+          <div className="px-3 py-1 bg-green-100 text-green-700 border border-green-300 rounded-full text-sm font-bold">
             {getStatusDisplayName(result.status)}
           </div>
         </div>
@@ -169,53 +169,53 @@ export function ResultDetail() {
       {/* Top Row - Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         {/* Top RIASEC Type */}
-        <div className="bg-white/10 backdrop-blur-md rounded-lg p-4">
+        <div className="bg-white/80 backdrop-blur-sm border border-gray-300/50 shadow-lg shadow-gray-200/50 rounded-2xl p-4">
           <div className="flex items-center gap-2 mb-2">
-            <IconUser className="w-4 h-4 text-neutral-400" />
-            <span className="text-sm text-neutral-400">Tipo Principal</span>
+            <IconUser className="w-4 h-4 text-gray-600" />
+            <span className="text-sm text-gray-600 font-semibold">Tipo Principal</span>
           </div>
-          <div className={`inline-flex items-center px-3 py-2 rounded-full text-sm font-semibold ${getRiasecColor(topTypes[0]?.type || '')}`}>
+          <div className={`inline-flex items-center px-3 py-2 rounded-full text-sm font-bold ${getRiasecColor(topTypes[0]?.type || '')}`}>
             {topTypes[0]?.name || 'N/A'}
           </div>
-          <div className="text-sm text-neutral-300 mt-2">{topTypes[0]?.score || 0}% de compatibilidad</div>
+          <div className="text-sm text-gray-700 font-medium mt-2">{topTypes[0]?.score || 0}% de compatibilidad</div>
         </div>
 
         {/* Secondary Type */}
-        <div className="bg-white/10 backdrop-blur-md rounded-lg p-4">
+        <div className="bg-white/80 backdrop-blur-sm border border-gray-300/50 shadow-lg shadow-gray-200/50 rounded-2xl p-4">
           <div className="flex items-center gap-2 mb-2">
-            <IconTarget className="w-4 h-4 text-neutral-400" />
-            <span className="text-sm text-neutral-400">Tipo Secundario</span>
+            <IconTarget className="w-4 h-4 text-gray-600" />
+            <span className="text-sm text-gray-600 font-semibold">Tipo Secundario</span>
           </div>
-          <div className={`inline-flex items-center px-3 py-2 rounded-full text-sm font-semibold ${getRiasecColor(topTypes[1]?.type || '')}`}>
+          <div className={`inline-flex items-center px-3 py-2 rounded-full text-sm font-bold ${getRiasecColor(topTypes[1]?.type || '')}`}>
             {topTypes[1]?.name || 'N/A'}
           </div>
-          <div className="text-sm text-neutral-300 mt-2">{topTypes[1]?.score || 0}% de compatibilidad</div>
+          <div className="text-sm text-gray-700 font-medium mt-2">{topTypes[1]?.score || 0}% de compatibilidad</div>
         </div>
 
         {/* Test Type */}
-        <div className="bg-white/10 backdrop-blur-md rounded-lg p-4">
+        <div className="bg-white/80 backdrop-blur-sm border border-gray-300/50 shadow-lg shadow-gray-200/50 rounded-2xl p-4">
           <div className="flex items-center gap-2 mb-2">
-            <IconBrain className="w-4 h-4 text-neutral-400" />
-            <span className="text-sm text-neutral-400">Tipo de Test</span>
+            <IconBrain className="w-4 h-4 text-gray-600" />
+            <span className="text-sm text-gray-600 font-semibold">Tipo de Test</span>
           </div>
-          <div className="text-lg font-bold text-white capitalize">
+          <div className="text-lg font-bold text-gray-900 capitalize">
             {result.session_type || 'Conversacional'}
           </div>
-          <div className="text-sm text-neutral-300">Metodología RIASEC</div>
+          <div className="text-sm text-gray-700 font-medium">Metodología RIASEC</div>
         </div>
 
         {/* Confidence Level */}
-        <div className="bg-white/10 backdrop-blur-md rounded-lg p-4">
+        <div className="bg-white/80 backdrop-blur-sm border border-gray-300/50 shadow-lg shadow-gray-200/50 rounded-2xl p-4">
           <div className="flex items-center gap-2 mb-2">
-            <IconTrophy className="w-4 h-4 text-neutral-400" />
-            <span className="text-sm text-neutral-400">Confianza</span>
+            <IconTrophy className="w-4 h-4 text-gray-600" />
+            <span className="text-sm text-gray-600 font-semibold">Confianza</span>
           </div>
-          <div className="text-lg font-bold text-white">
+          <div className="text-lg font-bold text-gray-900">
             {result.confidence_level || 95}%
           </div>
-          <div className="w-full h-1 bg-white/20 rounded-full mt-2">
-            <div 
-              className="h-full bg-green-400 rounded-full"
+          <div className="w-full h-2 bg-gray-200 rounded-full mt-2 border border-gray-300 shadow-inner">
+            <div
+              className="h-full bg-gradient-to-r from-green-500 to-green-600 rounded-full shadow-sm"
               style={{ width: `${result.confidence_level || 95}%` }}
             />
           </div>
@@ -227,30 +227,29 @@ export function ResultDetail() {
         {/* Left Column - RIASEC Analysis */}
         <div className="space-y-6">
           {/* RIASEC Radar Chart */}
-          <div className="bg-white/10 backdrop-blur-md rounded-lg p-6">
-            <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-              <IconBrain className="w-5 h-5 text-neutral-400" />
+          <div className="bg-white/80 backdrop-blur-sm border border-gray-300/50 shadow-lg shadow-gray-200/50 rounded-2xl p-6">
+            <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <IconBrain className="w-5 h-5 text-blue-600" />
               Visualización del Perfil RIASEC
             </h2>
             <div className="flex justify-center">
-
               <RiasecRadarChart scores={result.riasec_scores} size={280} />
             </div>
           </div>
 
           {/* Detailed Scores - Horizontal Layout */}
-          <div className="bg-white/10 backdrop-blur-md rounded-lg p-6">
-            <h2 className="text-lg font-bold text-white mb-4">Puntuaciones Detalladas</h2>
+          <div className="bg-white/80 backdrop-blur-sm border border-gray-300/50 shadow-lg shadow-gray-200/50 rounded-2xl p-6">
+            <h2 className="text-lg font-bold text-gray-900 mb-4">Puntuaciones Detalladas</h2>
             <div className="grid grid-cols-2 gap-4">
               {Object.entries(result.riasec_scores).map(([type, score]) => (
                 <div key={type} className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-neutral-300">{getRiasecDisplayName(type)}</span>
-                    <span className="text-sm font-bold text-white">{score}%</span>
+                    <span className="text-sm font-bold text-gray-700">{getRiasecDisplayName(type)}</span>
+                    <span className="text-sm font-bold text-gray-900">{score}%</span>
                   </div>
-                  <div className="w-full h-2 bg-white/20 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-blue-400 rounded-full transition-all duration-300"
+                  <div className="w-full h-2.5 bg-gray-200 rounded-full overflow-hidden border border-gray-300 shadow-inner">
+                    <div
+                      className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full shadow-sm transition-all duration-300"
                       style={{ width: `${score}%` }}
                     />
                   </div>
@@ -264,9 +263,9 @@ export function ResultDetail() {
         <div className="space-y-6">
           {/* Career Recommendations */}
           {result.career_recommendations && result.career_recommendations.length > 0 && (
-            <div className="bg-white/10 backdrop-blur-md rounded-lg p-6">
-              <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                <IconTrophy className="w-5 h-5 text-neutral-400" />
+            <div className="bg-white/80 backdrop-blur-sm border border-gray-300/50 shadow-lg shadow-gray-200/50 rounded-2xl p-6">
+              <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <IconTrophy className="w-5 h-5 text-amber-600" />
                 Carreras Recomendadas
               </h2>
               <div className="space-y-3">
@@ -275,23 +274,23 @@ export function ResultDetail() {
                     <>
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-3">
-                          <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-sm font-bold ${
-                            index === 0 ? 'bg-blue-500' : index === 1 ? 'bg-green-500' : 'bg-neutral-500'
+                          <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-md ${
+                            index === 0 ? 'bg-gradient-to-br from-blue-500 to-blue-600' : index === 1 ? 'bg-gradient-to-br from-green-500 to-green-600' : 'bg-gradient-to-br from-gray-500 to-gray-600'
                           }`}>
                             {index + 1}
                           </div>
-                          <h3 className={`font-semibold text-white ${career.career_id ? 'group-hover:text-blue-400' : ''}`}>
+                          <h3 className={`font-bold text-gray-900 ${career.career_id ? 'group-hover:text-blue-600' : ''}`}>
                             {career.career_name}
                           </h3>
                         </div>
                         <div className="flex items-center gap-2">
-                          <div className="text-sm text-blue-400 font-medium">{career.confidence}%</div>
+                          <div className="text-sm text-blue-700 font-bold">{career.confidence}%</div>
                           {career.career_id && (
-                            <IconExternalLink className="w-4 h-4 text-blue-400 opacity-75" />
+                            <IconExternalLink className="w-4 h-4 text-blue-600" />
                           )}
                         </div>
                       </div>
-                      <p className="text-neutral-300 text-sm leading-relaxed">{career.reasoning}</p>
+                      <p className="text-gray-700 text-sm leading-relaxed font-medium">{career.reasoning}</p>
                     </>
                   )
 
@@ -300,14 +299,14 @@ export function ResultDetail() {
                       key={index}
                       to="/careers/$careerId"
                       params={{ careerId: String(career.career_id) }}
-                      className="bg-white/5 rounded-lg p-4 block hover:bg-white/10 cursor-pointer transition-colors duration-200"
+                      className="bg-gradient-to-br from-gray-50 to-white border-2 border-gray-200 rounded-xl p-4 block hover:border-blue-400 hover:shadow-lg hover:shadow-blue-100/50 cursor-pointer transition-all duration-200 group"
                     >
                       {careerContent}
                     </Link>
                   ) : (
                     <div
                       key={index}
-                      className="bg-white/5 rounded-lg p-4 block"
+                      className="bg-gradient-to-br from-gray-50 to-white border-2 border-gray-200 rounded-xl p-4 block"
                     >
                       {careerContent}
                     </div>
@@ -319,12 +318,12 @@ export function ResultDetail() {
 
           {/* Personality Description */}
           {result.personality_description && (
-            <div className="bg-white/10 backdrop-blur-md rounded-lg p-6">
-              <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                <IconUser className="w-5 h-5 text-neutral-400" />
+            <div className="bg-white/80 backdrop-blur-sm border border-gray-300/50 shadow-lg shadow-gray-200/50 rounded-2xl p-6">
+              <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <IconUser className="w-5 h-5 text-purple-600" />
                 Descripción de Personalidad
               </h2>
-              <p className="text-neutral-300 leading-relaxed text-sm">{result.personality_description}</p>
+              <p className="text-gray-700 leading-relaxed text-sm font-medium">{result.personality_description}</p>
             </div>
           )}
         </div>

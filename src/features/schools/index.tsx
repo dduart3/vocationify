@@ -11,8 +11,8 @@ export function SchoolsPage() {
         
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Instituciones Educativas</h1>
-          <p className="text-neutral-400">Explora universidades e instituciones en Venezuela</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Instituciones Educativas</h1>
+          <p className="text-gray-600">Explora universidades e instituciones en Venezuela</p>
         </div>
 
         {/* Filters */}

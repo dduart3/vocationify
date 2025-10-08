@@ -136,30 +136,17 @@ export function PDFExport({
     <button
       onClick={generatePDF}
       disabled={disabled || isGenerating}
-      className="inline-flex items-center gap-3 px-6 py-3 rounded-xl backdrop-blur-xl transition-all duration-300 hover:scale-[1.01] hover:bg-white/15 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold"
-      style={{
-        background: `
-          linear-gradient(135deg, 
-            rgba(59, 130, 246, 0.1) 0%, 
-            rgba(37, 99, 235, 0.1) 100%
-          )
-        `,
-        boxShadow: `
-          0 2px 8px 0 rgba(0, 0, 0, 0.1),
-          inset 0 1px 0 rgba(255, 255, 255, 0.05),
-          0 0 0 1px rgba(255, 255, 255, 0.1)
-        `
-      }}
+      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white border-2 border-gray-300 hover:border-blue-400 hover:bg-blue-50 transition-all duration-200 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed text-gray-900 font-semibold"
     >
       {isGenerating ? (
         <>
-          <Loader2 className="w-5 h-5 animate-spin" />
-          <span>Generando PDF...</span>
+          <Loader2 className="w-4 h-4 animate-spin text-blue-600" />
+          <span className="text-sm">Generando PDF...</span>
         </>
       ) : (
         <>
-          <Download className="w-5 h-5" />
-          <span>Descargar PDF</span>
+          <Download className="w-4 h-4 text-blue-600" />
+          <span className="text-sm">Descargar PDF</span>
         </>
       )}
     </button>

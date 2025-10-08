@@ -107,16 +107,11 @@ export function AppSidebar() {
       <div
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        className={`flex flex-col py-6 px-3 relative transition-all duration-500 ease-out ${
+        className={`flex flex-col py-6 px-3 relative transition-all duration-500 ease-out bg-white border-r border-gray-200 ${
           isHovered ? 'w-60' : 'w-[50px]'
         }`}
         style={{
-          background: `linear-gradient(90deg,
-            transparent 50%,                   
-            transparent 100%
-          )`,
-          backdropFilter: "blur(12px)",
-          boxShadow: "0 0 50px rgba(0, 0, 0, 0.3)",
+          boxShadow: "4px 0 24px rgba(0, 0, 0, 0.04)",
         }}
       >
         {/* Collapsed Logo - Only visible when sidebar is closed */}
@@ -142,9 +137,9 @@ export function AppSidebar() {
                 key={item.url}
                 to={item.url}
                 className={`p-2 rounded-lg transition-all duration-300 group flex items-center justify-center ${
-                  isActive 
-                    ? "bg-gradient-to-r from-blue-500/30 to-purple-500/30 text-white shadow-lg" 
-                    : "text-neutral-300 hover:text-white hover:bg-white/10"
+                  isActive
+                    ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-md"
+                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                 }`}
                 title={item.title}
               >
@@ -161,7 +156,7 @@ export function AppSidebar() {
         <div className={`absolute bottom-16 left-1/2 -translate-x-1/2 transition-all duration-300 ${
           isHovered ? 'opacity-0 scale-75' : 'opacity-100 scale-100 delay-300'
         }`}>
-          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform duration-300 cursor-pointer">
+          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-transform duration-300 cursor-pointer">
             <span className="text-white text-xs font-semibold">
               {(profile?.first_name || user?.email || "U")[0]?.toUpperCase()}
             </span>
@@ -174,12 +169,12 @@ export function AppSidebar() {
         }`}>
           <button
             onClick={handleSignOut}
-            className="p-2 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-500/20 transition-all duration-300 group flex items-center justify-center"
+            className="p-2 rounded-lg text-red-600 hover:text-red-700 hover:bg-red-50 transition-all duration-300 group flex items-center justify-center"
             title="Cerrar Sesión"
           >
-            <IconLogout 
-              size={18} 
-              className="group-hover:scale-110 transition-transform duration-300" 
+            <IconLogout
+              size={18}
+              className="group-hover:scale-110 transition-transform duration-300"
             />
           </button>
         </div>
@@ -196,7 +191,7 @@ export function AppSidebar() {
               size={32}
               className="group-hover:scale-110 transition-transform duration-300"
             />
-            <span className="font-bold text-lg text-white">Vocationify</span>
+            <span className="font-bold text-lg text-gray-900">Vocationify</span>
           </Link>
 
           {/* Navigation */}
@@ -216,9 +211,9 @@ export function AppSidebar() {
           </nav>
 
           {/* User Profile - Moved to bottom */}
-          <Link 
+          <Link
             to="/profile"
-            className="flex items-center space-x-3 mb-3 p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-all duration-300 group"
+            className="flex items-center space-x-3 mb-3 p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-all duration-300 group"
           >
             <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
               <span className="text-white text-xs font-semibold">
@@ -226,10 +221,10 @@ export function AppSidebar() {
               </span>
             </div>
             <div className="flex flex-col">
-              <span className="text-xs font-medium text-white group-hover:text-blue-300 transition-colors duration-300">
+              <span className="text-xs font-medium text-gray-900 group-hover:text-blue-600 transition-colors duration-300">
                 {profile?.first_name || user?.email?.split("@")[0]}
               </span>
-              <span className="text-xs text-neutral-400 group-hover:text-neutral-300 transition-colors duration-300">Estudiante</span>
+              <span className="text-xs text-gray-500 group-hover:text-gray-600 transition-colors duration-300">Estudiante</span>
             </div>
           </Link>
 
@@ -237,7 +232,7 @@ export function AppSidebar() {
           <div className="pt-2">
             <button
               onClick={handleSignOut}
-              className="flex items-center w-full p-2 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all duration-300 group"
+              className="flex items-center w-full p-2 rounded-lg text-red-600 hover:text-red-700 hover:bg-red-50 transition-all duration-300 group"
             >
               <IconLogout
                 size={16}
@@ -259,7 +254,7 @@ export function AppSidebar() {
         <div className="p-1">
           <IconChevronRight
             size={22}
-            className={`text-neutral-300 hover:text-white transition-all duration-400 ease-out ${
+            className={`text-gray-400 hover:text-gray-600 transition-all duration-400 ease-out ${
               isHovered ? 'rotate-180' : 'rotate-0'
             }`}
           />
@@ -281,8 +276,10 @@ function SidebarLink({ to, icon, label, isActive, badge }: SidebarLinkProps) {
   return (
     <Link
       to={to}
-      className={`flex items-center justify-between p-2 rounded-lg text-neutral-300 hover:text-white hover:bg-white/5 transition-all duration-300 group ${
-        isActive ? "bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white" : ""
+      className={`flex items-center justify-between p-2 rounded-lg transition-all duration-300 group ${
+        isActive
+          ? "bg-gradient-to-r from-blue-500/10 to-purple-500/10 text-blue-600"
+          : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
       }`}
     >
       <div className="flex items-center">
@@ -292,7 +289,7 @@ function SidebarLink({ to, icon, label, isActive, badge }: SidebarLinkProps) {
         <span className="text-sm font-normal">{label}</span>
       </div>
       {badge && (
-        <span className="px-2 py-1 text-xs font-semibold bg-green-500/20 text-green-300 rounded-full border border-green-500/30">
+        <span className="px-2 py-1 text-xs font-semibold bg-green-100 text-green-700 rounded-full border border-green-200">
           {badge}
         </span>
       )}

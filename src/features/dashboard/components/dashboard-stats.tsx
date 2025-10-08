@@ -10,26 +10,14 @@ export function DashboardStats() {
         {Array.from({ length: 4 }).map((_, i) => (
           <div
             key={i}
-            className="p-6 rounded-3xl backdrop-blur-xl"
-            style={{
-              background: `
-                linear-gradient(135deg, 
-                  rgba(255, 255, 255, 0.08) 0%, 
-                  rgba(255, 255, 255, 0.04) 100%
-                )
-              `,
-              boxShadow: `
-                0 8px 32px 0 rgba(31, 38, 135, 0.37),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1)
-              `
-            }}
+            className="p-6 rounded-3xl bg-white border border-gray-200 shadow-sm"
           >
             <div className="flex items-center justify-between mb-4">
-              <div className="h-4 bg-white/20 rounded animate-pulse w-24"></div>
-              <div className="w-8 h-8 bg-white/20 rounded-xl animate-pulse"></div>
+              <div className="h-4 bg-gray-200 rounded animate-pulse w-24"></div>
+              <div className="w-8 h-8 bg-gray-200 rounded-xl animate-pulse"></div>
             </div>
-            <div className="h-8 bg-white/20 rounded animate-pulse w-16 mb-2"></div>
-            <div className="h-4 bg-white/10 rounded animate-pulse w-32"></div>
+            <div className="h-8 bg-gray-200 rounded animate-pulse w-16 mb-2"></div>
+            <div className="h-4 bg-gray-100 rounded animate-pulse w-32"></div>
           </div>
         ))}
       </div>
@@ -42,22 +30,10 @@ export function DashboardStats() {
         {Array.from({ length: 4 }).map((_, i) => (
           <div
             key={i}
-            className="p-6 rounded-3xl backdrop-blur-xl"
-            style={{
-              background: `
-                linear-gradient(135deg, 
-                  rgba(255, 255, 255, 0.08) 0%, 
-                  rgba(255, 255, 255, 0.04) 100%
-                )
-              `,
-              boxShadow: `
-                0 8px 32px 0 rgba(31, 38, 135, 0.37),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1)
-              `
-            }}
+            className="p-6 rounded-3xl bg-white border border-gray-200 shadow-sm"
           >
             <div className="flex items-center justify-center py-8">
-              <p className="text-slate-400 text-sm">Sin datos</p>
+              <p className="text-gray-500 text-sm">Sin datos</p>
             </div>
           </div>
         ))}
@@ -119,34 +95,22 @@ export function DashboardStats() {
         return (
           <div
             key={stat.title}
-            className="p-6 rounded-3xl backdrop-blur-xl hover:scale-105 transition-all duration-300 group"
-            style={{
-              background: `
-                linear-gradient(135deg, 
-                  rgba(255, 255, 255, 0.08) 0%, 
-                  rgba(255, 255, 255, 0.04) 100%
-                )
-              `,
-              boxShadow: `
-                0 8px 32px 0 rgba(31, 38, 135, 0.37),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1)
-              `
-            }}
+            className="p-6 rounded-3xl bg-white/80 backdrop-blur-sm border border-gray-300/50 shadow-lg shadow-gray-200/50 hover:shadow-xl hover:shadow-gray-300/50 hover:scale-105 hover:border-gray-400/50 transition-all duration-300 group"
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-medium text-white/80">
+              <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
                 {stat.title}
               </h3>
               <div
-                className={`p-2 rounded-xl bg-gradient-to-r ${stat.color} group-hover:rotate-12 transition-transform duration-300`}
+                className={`p-2.5 rounded-xl bg-gradient-to-br ${stat.color} shadow-md group-hover:rotate-12 transition-transform duration-300`}
               >
-                <IconComponent className="w-4 h-4 text-white" />
+                <IconComponent className="w-5 h-5 text-white" />
               </div>
             </div>
-            <div className="text-3xl font-bold text-white mb-2">
+            <div className="text-3xl font-bold bg-gradient-to-br from-gray-900 to-gray-700 bg-clip-text text-transparent mb-2">
               {stat.value}
             </div>
-            <p className="text-sm text-white/60">
+            <p className="text-sm text-gray-600 font-medium">
               {stat.description}
             </p>
           </div>

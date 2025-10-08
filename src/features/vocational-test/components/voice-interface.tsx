@@ -341,9 +341,9 @@ export function VoiceInterface({
     return (
       <div className="flex-1 flex items-center justify-center">
         <div className="text-center">
-          <AlertCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
-          <p className="text-white/70 mb-4">Tu navegador no soporta reconocimiento de voz</p>
-          <p className="text-white/50 text-sm">Usa el modo chat en su lugar</p>
+          <AlertCircle className="w-16 h-16 text-red-600 mx-auto mb-4" />
+          <p className="text-gray-700 mb-4">Tu navegador no soporta reconocimiento de voz</p>
+          <p className="text-gray-600 text-sm">Usa el modo chat en su lugar</p>
         </div>
       </div>
     )
@@ -354,23 +354,9 @@ export function VoiceInterface({
       {/* Current Question Display */}
       {currentQuestion && (
         <div className="mb-12 text-center max-w-2xl">
-          <div 
-            className="p-6 rounded-3xl backdrop-blur-xl"
-            style={{
-              background: `
-                linear-gradient(135deg, 
-                  rgba(255, 255, 255, 0.08) 0%, 
-                  rgba(255, 255, 255, 0.04) 100%
-                )
-              `,
-              boxShadow: `
-                0 8px 32px 0 rgba(31, 38, 135, 0.37),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1)
-              `
-            }}
-          >
-            <h3 className="text-white text-lg font-semibold mb-2">ARIA pregunta:</h3>
-            <p className="text-white/80 leading-relaxed">{currentQuestion}</p>
+          <div className="p-6 rounded-3xl bg-white/80 backdrop-blur-xl border border-gray-200 shadow-lg shadow-gray-200/50">
+            <h3 className="text-gray-900 text-lg font-semibold mb-2">ARIA pregunta:</h3>
+            <p className="text-gray-700 leading-relaxed">{currentQuestion}</p>
           </div>
         </div>
       )}
@@ -387,23 +373,11 @@ export function VoiceInterface({
         <button
           onClick={handleVoiceToggle}
           disabled={disabled || voiceState === 'processing' || voiceState === 'speaking'}
-          className="relative w-48 h-48 rounded-full backdrop-blur-xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed group"
-          style={{
-            background: `
-              linear-gradient(135deg, 
-                rgba(255, 255, 255, 0.1) 0%, 
-                rgba(255, 255, 255, 0.05) 100%
-              )
-            `,
-            boxShadow: `
-              0 8px 32px 0 rgba(0, 0, 0, 0.3),
-              inset 0 1px 0 rgba(255, 255, 255, 0.2)
-            `
-          }}
+          className="relative w-48 h-48 rounded-full bg-white border-2 border-gray-300 backdrop-blur-xl transition-all duration-300 hover:scale-105 hover:border-blue-400 disabled:opacity-50 disabled:cursor-not-allowed group shadow-xl shadow-gray-300/50"
         >
           {/* Inner gradient overlay */}
-          <div className={`absolute inset-0 rounded-full bg-gradient-to-r ${stateInfo.color} opacity-50 group-hover:opacity-70 transition-opacity duration-300`} />
-          
+          <div className={`absolute inset-0 rounded-full bg-gradient-to-r ${stateInfo.color} opacity-30 group-hover:opacity-50 transition-opacity duration-300`} />
+
           {/* Icon */}
           <div className="relative z-10 flex items-center justify-center h-full">
             {stateInfo.icon}
@@ -432,29 +406,18 @@ export function VoiceInterface({
 
       {/* Voice State Display */}
       <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-white mb-2">{stateInfo.title}</h2>
-        <p className="text-white/70">{stateInfo.description}</p>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">{stateInfo.title}</h2>
+        <p className="text-gray-600">{stateInfo.description}</p>
       </div>
 
       {/* Transcript Display */}
       {transcript && (
         <div className="w-full max-w-md">
-          <div 
-            className="p-4 rounded-2xl backdrop-blur-sm text-center"
-            style={{
-              background: `
-                linear-gradient(135deg, 
-                  rgba(34, 197, 94, 0.1) 0%, 
-                  rgba(22, 163, 74, 0.1) 100%
-                )
-              `,
-              boxShadow: 'inset 0 1px 0 rgba(34, 197, 94, 0.1)'
-            }}
-          >
-            <p className="text-green-300 text-sm mb-1">Transcripción:</p>
-            <p className="text-white">{transcript}</p>
+          <div className="p-4 rounded-2xl bg-green-50 border border-green-300 text-center shadow-sm">
+            <p className="text-green-700 text-sm mb-1 font-semibold">Transcripción:</p>
+            <p className="text-gray-900">{transcript}</p>
             {silenceTimer && (
-              <p className="text-green-200 text-xs mt-2">Auto-enviando en silencio...</p>
+              <p className="text-green-600 text-xs mt-2">Auto-enviando en silencio...</p>
             )}
           </div>
         </div>
@@ -473,20 +436,9 @@ export function VoiceInterface({
       {/* Error Display */}
       {ttsError && (
         <div className="w-full max-w-md mt-4">
-          <div 
-            className="p-4 rounded-2xl backdrop-blur-sm text-center border"
-            style={{
-              background: `
-                linear-gradient(135deg, 
-                  rgba(239, 68, 68, 0.1) 0%, 
-                  rgba(220, 38, 38, 0.1) 100%
-                )
-              `,
-              borderColor: 'rgba(239, 68, 68, 0.3)'
-            }}
-          >
-            <p className="text-red-300 text-sm mb-1">Error TTS:</p>
-            <p className="text-white text-xs">{ttsError}</p>
+          <div className="p-4 rounded-2xl bg-red-50 border border-red-300 text-center shadow-sm">
+            <p className="text-red-700 text-sm mb-1 font-semibold">Error TTS:</p>
+            <p className="text-gray-900 text-xs">{ttsError}</p>
           </div>
         </div>
       )}

@@ -130,8 +130,8 @@ export function ConversationHistory({
   if (messages.length === 0) {
     return (
       <div className="flex-1 flex items-center justify-center">
-        <div className="text-center text-white/60">
-          <Bot className="w-12 h-12 mx-auto mb-4 text-blue-400" />
+        <div className="text-center text-gray-600">
+          <Bot className="w-12 h-12 mx-auto mb-4 text-blue-600" />
           <p>ARIA está lista para comenzar tu evaluación vocacional...</p>
           <p className="text-sm mt-2">Fase actual: {currentPhase}</p>
         </div>
@@ -179,34 +179,15 @@ export function ConversationHistory({
               <div
                 className={`p-4 rounded-2xl ${
                   message.role === 'user'
-                    ? 'bg-blue-600 text-white ml-auto'
-                    : 'backdrop-blur-sm text-white'
+                    ? 'bg-blue-600 text-white ml-auto shadow-lg shadow-blue-200/50'
+                    : 'bg-white/80 backdrop-blur-sm text-gray-900 border border-gray-200 shadow-lg shadow-gray-200/50'
                 }`}
-                style={{
-                  background: message.role === 'user' 
-                    ? 'linear-gradient(135deg, rgb(37, 99, 235) 0%, rgb(29, 78, 216) 100%)'
-                    : `
-                      linear-gradient(135deg, 
-                        rgba(255, 255, 255, 0.10) 0%, 
-                        rgba(255, 255, 255, 0.06) 100%
-                      )
-                    `,
-                  boxShadow: message.role === 'user'
-                    ? `
-                      0 4px 16px 0 rgba(37, 99, 235, 0.3),
-                      inset 0 1px 0 rgba(255, 255, 255, 0.1)
-                    `
-                    : `
-                      0 4px 16px 0 rgba(0, 0, 0, 0.2),
-                      inset 0 1px 0 rgba(255, 255, 255, 0.08)
-                    `
-                }}
               >
                 <p className="text-sm leading-relaxed whitespace-pre-wrap">
                   {message.content}
                 </p>
                 <div className={`flex items-center justify-between mt-2 ${
-                  message.role === 'user' ? 'text-blue-100' : 'text-white/50'
+                  message.role === 'user' ? 'text-blue-100' : 'text-gray-500'
                 }`}>
                   <div className="text-xs">
                     {new Date(message.timestamp).toLocaleTimeString('es-ES', {
@@ -214,23 +195,23 @@ export function ConversationHistory({
                       minute: '2-digit'
                     })}
                   </div>
-                  
+
                   {/* Voice control button for AI messages */}
                   {message.role === 'assistant' && enableVoice && isSpeechSupported && (
                     <button
                       onClick={() => handleSpeakMessage(index, message.content)}
-                      className="flex items-center gap-1 px-2 py-1 rounded-lg bg-white/5 hover:bg-white/10 transition-colors duration-200 group"
+                      className="flex items-center gap-1 px-2 py-1 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors duration-200 group"
                       title={currentlyPlayingMessage === index && isSpeaking ? "Detener audio" : "Reproducir audio"}
                     >
                       {currentlyPlayingMessage === index && isSpeaking ? (
                         <>
-                          <Pause className="w-3 h-3 text-white/70 group-hover:text-white" />
-                          <span className="text-xs text-white/70 group-hover:text-white">Pausar</span>
+                          <Pause className="w-3 h-3 text-gray-600 group-hover:text-gray-900" />
+                          <span className="text-xs text-gray-600 group-hover:text-gray-900">Pausar</span>
                         </>
                       ) : (
                         <>
-                          <Volume2 className="w-3 h-3 text-white/70 group-hover:text-white" />
-                          <span className="text-xs text-white/70 group-hover:text-white">Reproducir</span>
+                          <Volume2 className="w-3 h-3 text-gray-600 group-hover:text-gray-900" />
+                          <span className="text-xs text-gray-600 group-hover:text-gray-900">Reproducir</span>
                         </>
                       )}
                     </button>

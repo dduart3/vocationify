@@ -23,23 +23,9 @@ export function ActivitySummary() {
   ]
 
   return (
-    <div 
-      className="backdrop-blur-xl rounded-3xl p-6 h-fit shadow-2xl relative overflow-hidden"
-      style={{
-        background: `
-          linear-gradient(135deg, 
-            rgba(255, 255, 255, 0.08) 0%, 
-            rgba(255, 255, 255, 0.04) 100%
-          )
-        `,
-        boxShadow: `
-          0 8px 32px 0 rgba(31, 38, 135, 0.37),
-          inset 0 1px 0 rgba(255, 255, 255, 0.1)
-        `
-      }}
-    >
-      <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
-        <BarChart3 className="w-6 h-6 text-purple-400" />
+    <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-6 h-fit shadow-lg shadow-gray-200/50 border border-gray-300/50 relative overflow-hidden">
+      <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+        <BarChart3 className="w-6 h-6 text-purple-600" />
         Resumen de Actividad
       </h3>
 
@@ -47,41 +33,23 @@ export function ActivitySummary() {
         {activities.map((activity, index) => {
           const Icon = activity.icon
           return (
-            <div 
-              key={index} 
-              className="flex justify-between items-center p-4 rounded-2xl backdrop-blur-sm"
-              style={{
-                background: `
-                  linear-gradient(135deg, 
-                    rgba(255, 255, 255, 0.1) 0%, 
-                    rgba(255, 255, 255, 0.05) 100%
-                  )
-                `
-              }}
+            <div
+              key={index}
+              className="flex justify-between items-center p-4 rounded-2xl bg-gray-50 border border-gray-200"
             >
               <div className="flex items-center gap-3">
-                <Icon className={`w-5 h-5 ${activity.color}`} />
-                <span className="text-white/80">{activity.label}</span>
+                <Icon className={`w-5 h-5 ${activity.color.replace('text-', 'text-').replace('-400', '-600')}`} />
+                <span className="text-gray-700">{activity.label}</span>
               </div>
-              <span className="text-white font-bold text-lg">{activity.value}</span>
+              <span className="text-gray-900 font-bold text-lg">{activity.value}</span>
             </div>
           )
         })}
 
         {/* Last Test Date */}
-        <div 
-          className="mt-6 p-4 rounded-2xl backdrop-blur-sm"
-          style={{
-            background: `
-              linear-gradient(135deg, 
-                rgba(255, 255, 255, 0.1) 0%, 
-                rgba(255, 255, 255, 0.05) 100%
-              )
-            `
-          }}
-        >
-          <div className="text-sm text-white/60 mb-1">Último test completado</div>
-          <div className="text-white font-semibold">
+        <div className="mt-6 p-4 rounded-2xl bg-gray-50 border border-gray-200">
+          <div className="text-sm text-gray-600 mb-1">Último test completado</div>
+          <div className="text-gray-900 font-semibold">
             {isLoading ? 'Cargando...' : formatDate(stats?.last_test_date)}
           </div>
         </div>
