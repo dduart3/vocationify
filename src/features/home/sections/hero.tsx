@@ -77,7 +77,7 @@ export function HeroSection() {
     const statElements = [
       { element: stats.querySelector('[data-stat="students"]'), value: 15, suffix: '+' },
       { element: stats.querySelector('[data-stat="precision"]'), value: 98, suffix: '%' },
-      { element: stats.querySelector('[data-stat="careers"]'), value: 73, suffix: '+' }
+      { element: stats.querySelector('[data-stat="careers"]'), value: 126, suffix: '+' }
     ]
 
     statElements.forEach(({ element, value, suffix }, index) => {
