@@ -9,8 +9,7 @@ import {
   IconEyeOff,
   IconLoader2,
   IconArrowRight,
-  IconAlertCircle,
-  IconBrandGoogle
+  IconAlertCircle
 } from '@tabler/icons-react'
 
 // Zod Schema
@@ -35,7 +34,7 @@ interface LoginFormProps {
   error?: string | null
 }
 
-export function LoginForm({ onSubmit, onSocialLogin, onOtpLogin, loading = false, error }: LoginFormProps) {
+export function LoginForm({ onSubmit, onOtpLogin, loading = false, error }: LoginFormProps) {
   const [showPassword, setShowPassword] = useState(false)
 
   // TanStack Form with Zod validation

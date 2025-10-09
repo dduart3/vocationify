@@ -10,7 +10,6 @@ import {
   IconLoader2,
   IconArrowRight,
   IconAlertCircle,
-  IconBrandGoogle,
   IconUser,
   IconPhone,
   IconMapPin
@@ -66,7 +65,7 @@ interface RegisterFormProps {
   error?: string | null
 }
 
-export function RegisterForm({ onSubmit, onSocialLogin, loading = false, error }: RegisterFormProps) {
+export function RegisterForm({ onSubmit, loading = false, error }: RegisterFormProps) {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
