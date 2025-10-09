@@ -39,9 +39,7 @@ export function Header() {
           <nav className="hidden md:flex items-center space-x-1">
             {!isAuthenticated ? (
               <>
-                <NavLink to="/como-funciona">Proceso</NavLink>
-                <NavLink to="/carreras">Carreras</NavLink>
-                <NavLink to="/precios">Precios</NavLink>
+                
               </>
             ) : (
               <>

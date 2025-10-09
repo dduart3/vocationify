@@ -1,5 +1,4 @@
 import { useRef, useEffect } from 'react'
-import { Link } from '@tanstack/react-router'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { 
@@ -11,7 +10,6 @@ import {
   IconPhone,
   IconMapPin,
   IconHeart,
-  IconBolt
 } from '@tabler/icons-react'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -193,56 +191,6 @@ export function Footer() {
           {/* Links Section */}
           <div ref={linksRef} className="grid grid-cols-1 md:grid-cols-2 gap-8 md:col-span-2">
             {/* Quick Links */}
-            <div>
-              <h3 className="font-semibold text-white mb-6 text-lg flex items-center gap-2">
-                <IconBolt size={18} className="text-yellow-400" />
-                Plataforma
-              </h3>
-              <ul className="space-y-3">
-                {[
-                  { to: "/como-funciona", label: "Cómo Funciona" },
-                  { to: "/carreras", label: "Explorar Carreras" },
-                  { to: "/precios", label: "Precios" },
-                  { to: "/testimonios", label: "Casos de Éxito" },
-                  { to: "/blog", label: "Recursos" }
-                ].map((link) => (
-                  <li key={link.to}>
-                    <Link 
-                      to={link.to} 
-                      className="text-neutral-400 hover:text-white transition-all duration-300 hover:translate-x-1 inline-block text-sm"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Support */}
-            <div>
-              <h3 className="font-semibold text-white mb-6 text-lg flex items-center gap-2">
-                <IconHeart size={18} className="text-red-400" />
-                Soporte
-              </h3>
-              <ul className="space-y-3">
-                {[
-                  { to: "/ayuda", label: "Centro de Ayuda" },
-                  { to: "/contacto", label: "Contacto" },
-                  { to: "/privacidad", label: "Privacidad" },
-                  { to: "/terminos", label: "Términos" },
-                  { to: "/api", label: "API" }
-                ].map((link) => (
-                  <li key={link.to}>
-                    <Link 
-                      to={link.to} 
-                      className="text-neutral-400 hover:text-white transition-all duration-300 hover:translate-x-1 inline-block text-sm"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
           </div>
         </div>
 
