@@ -2,7 +2,7 @@
 // Responsibility: Orchestrate sub-components and manage overall flow
 
 import { useState } from 'react'
-import { Trophy, Clock, Play, X, Mic, Volume2, Target, Sparkles, Brain } from 'lucide-react'
+import { Trophy, Clock, Play, Mic, Volume2, Target, Sparkles, Brain } from 'lucide-react'
 import { useVocationalTest } from '../hooks/use-vocational-test'
 import { ConversationHistory } from './conversation-history'
 import { CareerRecommendations } from './career-recommendations'
