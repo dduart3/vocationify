@@ -100,12 +100,6 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
                   </div>
                 </div>
 
-                <button
-                  onClick={() => {/* Hide banner - will implement dismiss logic */}}
-                  className="text-white/60 hover:text-white transition-colors duration-200 ml-2"
-                >
-                  <X className="w-4 h-4" />
-                </button>
               </div>
 
               <div className="flex gap-2 mt-4">
