@@ -42,11 +42,11 @@ export function CareerRecommendations({
     <div className={`space-y-6 ${className}`} id="career-recommendations-content">
       {showTitle && (
         <div className="text-center">
-          <h3 className="text-xl font-semibold text-white mb-2 flex items-center justify-center gap-2">
-            <Target className="w-6 h-6 text-blue-400" />
+          <h3 className="text-xl font-semibold text-gray-900 mb-2 flex items-center justify-center gap-2">
+            <Target className="w-6 h-6 text-blue-600" />
             Tus Carreras Recomendadas
           </h3>
-          <p className="text-white/70 text-sm mb-4">
+          <p className="text-gray-600 text-sm mb-4">
             Basado en tus intereses y respuestas
           </p>
           
@@ -65,7 +65,7 @@ export function CareerRecommendations({
         {recommendations.map((career, index) => (
           <div
             key={career.careerId}
-            className="bg-white/10 backdrop-blur-sm rounded-xl p-5 hover:bg-white/15 transition-all duration-200"
+            className="bg-white/80 backdrop-blur-sm rounded-xl p-5 hover:bg-white transition-all duration-200 border border-gray-200 shadow-lg shadow-gray-200/50"
           >
             <div className="flex items-start gap-4">
               {/* Ranking Number */}
@@ -74,14 +74,14 @@ export function CareerRecommendations({
                   {index + 1}
                 </div>
               </div>
-              
+
               {/* Career Content */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between gap-3 mb-3">
-                  <h4 className="font-semibold text-white text-lg leading-tight">
+                  <h4 className="font-semibold text-gray-900 text-lg leading-tight">
                     {career.name}
                   </h4>
-                  
+
                   {/* Confidence Badge */}
                   <div className={`
                     flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium
@@ -91,15 +91,15 @@ export function CareerRecommendations({
                     {career.confidence}%
                   </div>
                 </div>
-                
+
                 {/* Reasoning */}
-                <p className="text-white/80 text-sm leading-relaxed">
+                <p className="text-gray-700 text-sm leading-relaxed">
                   {career.reasoning}
                 </p>
-                
+
                 {/* Career ID for debugging (only in dev) */}
                 {process.env.NODE_ENV === 'development' && (
-                  <div className="mt-2 text-xs text-white/30 font-mono">
+                  <div className="mt-2 text-xs text-gray-400 font-mono">
                     ID: {career.careerId}
                   </div>
                 )}
@@ -110,17 +110,17 @@ export function CareerRecommendations({
       </div>
       
       {/* Summary Stats */}
-      <div className="mt-6 p-4 bg-white/5 rounded-lg">
-        <div className="flex items-center justify-center gap-6 text-sm text-white/70">
+      <div className="mt-6 p-4 bg-white/60 rounded-lg border border-gray-200">
+        <div className="flex items-center justify-center gap-6 text-sm text-gray-700">
           <div className="flex items-center gap-2">
-            <Star className="w-4 h-4 text-yellow-400" />
+            <Star className="w-4 h-4 text-yellow-600" />
             <span>{recommendations.length} recomendaciones</span>
           </div>
           <div className="flex items-center gap-2">
-            <TrendingUp className="w-4 h-4 text-green-400" />
+            <TrendingUp className="w-4 h-4 text-green-600" />
             <span>
               {Math.round(
-                recommendations.reduce((sum, r) => sum + r.confidence, 0) / 
+                recommendations.reduce((sum, r) => sum + r.confidence, 0) /
                 recommendations.length
               )}% promedio
             </span>

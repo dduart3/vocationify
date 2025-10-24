@@ -40,22 +40,22 @@ export function PhaseSeparator({ fromPhase, toPhase, timestamp }: PhaseSeparator
         }}
       >
         <div className="flex items-center gap-4 text-sm">
-          <div className="flex items-center gap-2 text-white/70">
+          <div className="flex items-center gap-2 text-gray-600">
             <FromIcon className="w-4 h-4" />
             <span className="font-medium">{fromInfo.label}</span>
           </div>
-          
-          <ArrowRight className="w-4 h-4 text-white/40" />
-          
-          <div className="flex items-center gap-2 text-white">
+
+          <ArrowRight className="w-4 h-4 text-gray-400" />
+
+          <div className="flex items-center gap-2 text-gray-900">
             <ToIcon className="w-4 h-4" />
             <span className="font-semibold">{toInfo.label}</span>
           </div>
-          
+
           {timestamp && (
             <>
-              <div className="w-px h-4 bg-white/20 mx-2" />
-              <span className="text-white/40 text-xs">
+              <div className="w-px h-4 bg-gray-300 mx-2" />
+              <span className="text-gray-500 text-xs">
                 {new Date(timestamp).toLocaleTimeString('es-ES', {
                   hour: '2-digit',
                   minute: '2-digit'
