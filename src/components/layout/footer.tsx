@@ -1,14 +1,7 @@
 import { useRef, useEffect } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { 
-  IconBrandTwitter, 
-  IconBrandLinkedin, 
-  IconBrandInstagram, 
-  IconBrandGithub,
-  IconMail,
-  IconPhone,
-  IconMapPin,
+import {
   IconHeart,
 } from '@tabler/icons-react'
 
@@ -18,20 +11,18 @@ export function Footer() {
   const footerRef = useRef<HTMLDivElement>(null)
   const brandRef = useRef<HTMLDivElement>(null)
   const linksRef = useRef<HTMLDivElement>(null)
-  const socialRef = useRef<HTMLDivElement>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const footer = footerRef.current
     const brand = brandRef.current
     const links = linksRef.current
-    const social = socialRef.current
     const bottom = bottomRef.current
 
-    if (!footer || !brand || !links || !social || !bottom) return
+    if (!footer || !brand || !links || !bottom) return
 
     // Initial states
-    gsap.set([brand, links, social, bottom], { opacity: 0, y: 30 })
+    gsap.set([brand, links, bottom], { opacity: 0, y: 30 })
 
     // Animation timeline
     const tl = gsap.timeline({
@@ -54,41 +45,12 @@ export function Footer() {
       duration: 0.8,
       ease: "power3.out"
     }, "-=0.6")
-    .to(social, {
-      opacity: 1,
-      y: 0,
-      duration: 0.8,
-      ease: "power3.out"
-    }, "-=0.4")
     .to(bottom, {
       opacity: 1,
       y: 0,
       duration: 0.8,
       ease: "power3.out"
     }, "-=0.2")
-
-    // Social icons hover animation
-    const socialIcons = social.querySelectorAll('.social-icon')
-    socialIcons.forEach((icon) => {
-      const handleMouseEnter = () => {
-        gsap.to(icon, {
-          scale: 1.1,
-          duration: 0.3,
-          ease: "back.out(1.7)"
-        })
-      }
-      
-      const handleMouseLeave = () => {
-        gsap.to(icon, {
-          scale: 1,
-          duration: 0.3,
-          ease: "power2.out"
-        })
-      }
-
-      icon.addEventListener('mouseenter', handleMouseEnter)
-      icon.addEventListener('mouseleave', handleMouseLeave)
-    })
 
   }, [])
 
@@ -123,69 +85,6 @@ export function Footer() {
               Tecnología de vanguardia para decisiones profesionales inteligentes.
             </p>
 
-            {/* Contact Info */}
-            <div className="space-y-3 mb-8">
-              <div className="flex items-center gap-3 text-neutral-400">
-                <IconMail size={16} className="text-blue-400" />
-                <span className="text-sm">contacto@vocationify.com</span>
-              </div>
-              <div className="flex items-center gap-3 text-neutral-400">
-                <IconPhone size={16} className="text-green-400" />
-                <span className="text-sm">+58 424 123 4567</span>
-              </div>
-              <div className="flex items-center gap-3 text-neutral-400">
-                <IconMapPin size={16} className="text-red-400" />
-                <span className="text-sm">Maracaibo, Venezuela</span>
-              </div>
-            </div>
-
-            {/* Social Links */}
-            <div ref={socialRef} className="flex space-x-4">
-              <a 
-                href="#" 
-                className="social-icon w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 hover:bg-white/5"
-                style={{
-                  background: 'transparent',
-                  backdropFilter: 'blur(12px)',
-                  boxShadow: '0 0 30px rgba(0, 0, 0, 0.2)'
-                }}
-              >
-                <IconBrandTwitter size={18} className="text-blue-400" />
-              </a>
-              <a 
-                href="#" 
-                className="social-icon w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 hover:bg-white/5"
-                style={{
-                  background: 'transparent',
-                  backdropFilter: 'blur(12px)',
-                  boxShadow: '0 0 30px rgba(0, 0, 0, 0.2)'
-                }}
-              >
-                <IconBrandLinkedin size={18} className="text-blue-600" />
-              </a>
-              <a 
-                href="#" 
-                className="social-icon w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 hover:bg-white/5"
-                style={{
-                  background: 'transparent',
-                  backdropFilter: 'blur(12px)',
-                  boxShadow: '0 0 30px rgba(0, 0, 0, 0.2)'
-                }}
-              >
-                <IconBrandInstagram size={18} className="text-pink-400" />
-              </a>
-              <a 
-                href="#" 
-                className="social-icon w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 hover:bg-white/5"
-                style={{
-                  background: 'transparent',
-                  backdropFilter: 'blur(12px)',
-                  boxShadow: '0 0 30px rgba(0, 0, 0, 0.2)'
-                }}
-              >
-                <IconBrandGithub size={18} className="text-neutral-300" />
-              </a>
-            </div>
           </div>
 
           {/* Links Section */}

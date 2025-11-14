@@ -99,8 +99,7 @@ export function useVocationalTest({ userId, sessionId }: UseVocationalTestProps)
     queryKey: ['find-active-session-v2', userId],
     queryFn: () => api.findUserSession(userId),
     enabled: !sessionId && !!userId, // Only run if no sessionId provided
-    refetchOnWindowFocus: false,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    // No query-specific overrides - use global defaults
   })
 
   // Function to resume existing session
@@ -122,7 +121,7 @@ export function useVocationalTest({ userId, sessionId }: UseVocationalTestProps)
     queryKey: ['vocational-session-v2', sessionIdRef.current],
     queryFn: () => sessionIdRef.current ? api.getSession(sessionIdRef.current) : null,
     enabled: !!sessionIdRef.current && userDecisionMade,
-    refetchOnWindowFocus: false
+    // No query-specific overrides - use global defaults
   })
 
   // Start new session mutation

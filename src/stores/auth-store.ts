@@ -222,10 +222,11 @@ export const useAuthStore = create<AuthStore>()(
 
             if (error) throw error;
 
-            console.log("✅ Supabase signOut successful - waiting for SIGNED_OUT event...");
-            // Don't call reset() here - let the auth state listener handle it
-            // This prevents double reset and race conditions
-            
+            console.log("✅ Supabase signOut successful - resetting auth store...");
+            // Reset immediately after successful signOut
+            // The auth state listener will also fire, but reset() is idempotent
+            get().reset();
+
             toast.success("Sesión cerrada", {
               description: "Has cerrado sesión exitosamente.",
             });
@@ -237,7 +238,6 @@ export const useAuthStore = create<AuthStore>()(
             });
             throw error;
           }
-          // Don't set isLoading: false here - let the reset() handle it
         },
 
         resetPassword: async (email: string) => {
@@ -291,22 +291,19 @@ export const useAuthStore = create<AuthStore>()(
         initialize: async () => {
           try {
             const currentState = get();
-            
-            // If we're already authenticated and not loading, don't re-initialize
-            if (currentState.isAuthenticated && currentState.session && !currentState.isLoading) {
-              console.log("Auth already initialized, skipping");
-              return;
-            }
-            
+
             console.log("Initializing auth...");
             set({ isLoading: true });
 
-            // Get initial session
+            // Always get fresh session from Supabase
             const {
               data: { session },
               error,
             } = await supabase.auth.getSession();
-            if (error) throw error;
+            if (error) {
+              console.error("Failed to get session:", error);
+              throw error;
+            }
 
             if (session?.user) {
               // Fetch user profile
@@ -384,7 +381,8 @@ export const useAuthStore = create<AuthStore>()(
           }
         },
 
-        reset: () =>
+        reset: () => {
+          const currentState = get();
           set(
             {
               user: null,
@@ -393,11 +391,13 @@ export const useAuthStore = create<AuthStore>()(
               isAuthenticated: false,
               isLoading: false,
               error: null,
-              authListenerSet: false, // Reset listener flag too
+              // Keep authListenerSet as true to prevent duplicate listeners
+              authListenerSet: currentState.authListenerSet,
             },
             false,
             "reset"
-          ),
+          )
+        },
       }),
       {
         name: "career-compass-auth",

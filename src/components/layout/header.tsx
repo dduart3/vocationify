@@ -39,13 +39,12 @@ export function Header() {
           <nav className="hidden md:flex items-center space-x-1">
             {!isAuthenticated ? (
               <>
-                
+
               </>
             ) : (
               <>
                 <NavLink to="/dashboard">Dashboard</NavLink>
-                <NavLink to="/evaluaciones">Evaluaciones</NavLink>
-                <NavLink to="/resultados">Resultados</NavLink>
+                <NavLink to="/results">Resultados</NavLink>
               </>
             )}
           </nav>
@@ -151,26 +150,7 @@ export function Header() {
             <nav className="flex flex-col space-y-1">
               {!isAuthenticated ? (
                 <>
-                  <MobileNavLink
-                    to="/como-funciona"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Proceso
-                  </MobileNavLink>
-                  <MobileNavLink
-                    to="/carreras"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Carreras
-                  </MobileNavLink>
-                  <MobileNavLink
-                    to="/precios"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Precios
-                  </MobileNavLink>
-
-                  <div className="pt-4 space-y-1 border-t border-white/10 mt-4">
+                  <div className="pt-4 space-y-1 mt-4">
                     <Link
                       to="/login"
                       className="flex items-center p-2 rounded-lg text-neutral-300 hover:text-white hover:bg-white/5 transition-all duration-300 group"
@@ -199,13 +179,7 @@ export function Header() {
                     Dashboard
                   </MobileNavLink>
                   <MobileNavLink
-                    to="/evaluaciones"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Evaluaciones
-                  </MobileNavLink>
-                  <MobileNavLink
-                    to="/resultados"
+                    to="/results"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Resultados

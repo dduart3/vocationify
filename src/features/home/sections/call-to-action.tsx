@@ -1,18 +1,20 @@
 import { useRef, useEffect } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { Clock, Shield, Star } from 'lucide-react'
+import { Clock, Database, Brain, ArrowRight, Sparkles } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
+import { useAuthStore } from '@/stores/auth-store'
 
 gsap.registerPlugin(ScrollTrigger)
 
 export function CTASection() {
+  const { isAuthenticated } = useAuthStore()
   const sectionRef = useRef<HTMLDivElement>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
   const subtitleRef = useRef<HTMLParagraphElement>(null)
   const buttonRef = useRef<HTMLAnchorElement>(null)
   const benefitsRef = useRef<HTMLDivElement>(null)
   const cardRef = useRef<HTMLDivElement>(null)
-  const testimonialRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const section = sectionRef.current
@@ -21,14 +23,12 @@ export function CTASection() {
     const button = buttonRef.current
     const benefits = benefitsRef.current
     const card = cardRef.current
-    const testimonial = testimonialRef.current
 
     if (!section || !title || !subtitle || !button || !benefits || !card) return
 
     // Initial states
     gsap.set([title, subtitle, button, benefits], { opacity: 0, y: 30 })
     gsap.set(card, { opacity: 0, scale: 0.9, y: 50 })
-    if (testimonial) gsap.set(testimonial, { opacity: 0, x: -30 })
 
     // Animation timeline
     const tl = gsap.timeline({
@@ -70,15 +70,6 @@ export function CTASection() {
       duration: 0.6,
       ease: "back.out(1.7)"
     }, "-=0.3")
-
-    if (testimonial) {
-      tl.to(testimonial, {
-        opacity: 1,
-        x: 0,
-        duration: 0.6,
-        ease: "power2.out"
-      }, "-=0.2")
-    }
 
     // Button hover animation
     const handleButtonHover = () => {
@@ -131,8 +122,8 @@ export function CTASection() {
               </h2>
               
               <p ref={subtitleRef} className="text-lg text-neutral-300 mb-8 font-light leading-relaxed">
-                No pierdas más tiempo en una carrera que no te apasiona. 
-                Descubre tu camino profesional ideal en menos de 20 minutos.
+                Toma decisiones informadas sobre tu futuro profesional. Explora carreras
+                que se alinean con tu personalidad y habilidades.
               </p>
 
               {/* Benefits List */}
@@ -141,26 +132,42 @@ export function CTASection() {
                   <div className="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center">
                     <Clock size={16} className="text-green-400" />
                   </div>
-                  <span className="text-neutral-300">Evaluación completa en 15-20 minutos</span>
+                  <span className="text-neutral-300">Test conversacional con IA</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
-                    <Shield size={16} className="text-blue-400" />
+                    <Brain size={16} className="text-blue-400" />
                   </div>
-                  <span className="text-neutral-300">100% gratuito, sin compromisos</span>
+                  <span className="text-neutral-300">Evaluación basada en modelo RIASEC</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center">
-                    <Star size={16} className="text-purple-400" />
+                    <Database size={16} className="text-purple-400" />
                   </div>
-                  <span className="text-neutral-300">Resultados instantáneos y detallados</span>
+                  <span className="text-neutral-300">126+ carreras e instituciones</span>
                 </div>
               </div>
-              
+
+              {/* CTA Button */}
+              <Link
+                ref={buttonRef}
+                to={isAuthenticated ? "/vocational-test" : "/register"}
+                className="group inline-flex items-center gap-3 px-8 py-4 rounded-xl font-semibold text-lg text-white transition-all duration-300"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.8) 0%, rgba(147, 51, 234, 0.8) 100%)',
+                  boxShadow: '0 10px 30px rgba(59, 130, 246, 0.3)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)'
+                }}
+              >
+                <Sparkles size={20} />
+                {isAuthenticated ? "Comenzar Test" : "Registrarse Gratis"}
+                <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform duration-300" />
+              </Link>
+
             </div>
 
-            {/* Right Side - Testimonial Card */}
-            <div 
+            {/* Right Side - Info Card */}
+            <div
               ref={cardRef}
               className="relative p-8 rounded-2xl"
               style={{
@@ -172,31 +179,39 @@ export function CTASection() {
             >
               {/* Gradient overlay */}
               <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/5 to-transparent opacity-50"></div>
-              
-              <div className="relative z-10">
-                {/* Quote */}
-                <div className="text-6xl text-blue-400/30 font-serif mb-4">"</div>
-                <blockquote className="text-lg text-neutral-300 mb-6 font-light italic leading-relaxed">
-                  Gracias a Vocationify descubrí que mi verdadera pasión estaba en la 
-                  ingeniería de datos. Ahora trabajo en mi empresa soñada y amo lo que hago.
-                </blockquote>
-                
-                {/* Author */}
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
-                    <span className="text-white font-semibold">MR</span>
-                  </div>
-                  <div>
-                    <div className="text-white font-semibold">María Rodríguez</div>
-                    <div className="text-neutral-400 text-sm">Data Engineer en Google</div>
-                  </div>
-                </div>
 
-                {/* Stars */}
-                <div className="flex gap-1 mt-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} size={16} className="text-yellow-400 fill-current" />
-                  ))}
+              <div className="relative z-10">
+                <h3 className="text-2xl font-bold text-white mb-4">
+                  ¿Cómo Funciona?
+                </h3>
+                <div className="space-y-4 text-neutral-300">
+                  <div className="flex gap-3">
+                    <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0 mt-1">
+                      <span className="text-blue-400 text-sm font-bold">1</span>
+                    </div>
+                    <p className="leading-relaxed">
+                      <strong className="text-white">Conversa con la IA:</strong> Responde preguntas sobre
+                      tus intereses, habilidades y preferencias de forma natural.
+                    </p>
+                  </div>
+                  <div className="flex gap-3">
+                    <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0 mt-1">
+                      <span className="text-purple-400 text-sm font-bold">2</span>
+                    </div>
+                    <p className="leading-relaxed">
+                      <strong className="text-white">Obtén tu perfil:</strong> La IA analiza tus respuestas
+                      y calcula tu perfil RIASEC personalizado.
+                    </p>
+                  </div>
+                  <div className="flex gap-3">
+                    <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0 mt-1">
+                      <span className="text-green-400 text-sm font-bold">3</span>
+                    </div>
+                    <p className="leading-relaxed">
+                      <strong className="text-white">Explora carreras:</strong> Descubre carreras compatibles
+                      y las universidades que las ofrecen.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>

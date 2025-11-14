@@ -6,9 +6,7 @@ export function useCareers(filters?: Partial<CareerFilters>, sortOptions?: Caree
   return useQuery({
     queryKey: ['careers', filters, sortOptions],
     queryFn: async (): Promise<Career[]> => {
-      let query = supabase
-        .from('careers')
-        .select('*')
+      let query = supabase.from('careers').select('*')
 
       // Apply filters
       if (filters?.search) {
@@ -24,9 +22,11 @@ export function useCareers(filters?: Partial<CareerFilters>, sortOptions?: Caree
       }
 
       // Apply sorting
-      if (sortOptions?.field) {
-        const ascending = sortOptions.direction === 'asc'
-        switch (sortOptions.field) {
+      if (sortOptions) {
+        const { field, direction } = sortOptions
+        const ascending = direction === 'asc'
+
+        switch (field) {
           case 'name':
             query = query.order('name', { ascending })
             break
@@ -43,7 +43,7 @@ export function useCareers(filters?: Partial<CareerFilters>, sortOptions?: Caree
       const { data, error } = await query
 
       if (error) {
-        throw new Error(`Error fetching careers: ${error.message}`)
+        throw error
       }
 
       return data || []
@@ -55,6 +55,10 @@ export function useCareerWithSchools(careerId: string) {
   return useQuery({
     queryKey: ['career', careerId, 'schools'],
     queryFn: async (): Promise<CareerWithSchools | null> => {
+      if (!careerId) {
+        throw new Error('Career ID is required')
+      }
+
       const { data: career, error: careerError } = await supabase
         .from('careers')
         .select('*')
@@ -88,6 +92,7 @@ export function useCareerWithSchools(careerId: string) {
       }
     },
     enabled: !!careerId,
+    // No query-specific overrides - use global defaults
   })
 }
 

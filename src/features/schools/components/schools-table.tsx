@@ -1,5 +1,3 @@
-import { useState, useMemo } from 'react'
-import { Link } from '@tanstack/react-router'
 import {
   useReactTable,
   getCoreRowModel,
@@ -7,127 +5,20 @@ import {
   getSortedRowModel,
   getPaginationRowModel,
   flexRender,
-  createColumnHelper,
   type ColumnDef,
 } from '@tanstack/react-table'
-import { IconBuilding, IconUsers, IconBookmark, IconBookmarkFilled, IconEye, IconChevronUp, IconChevronDown, IconChevronLeft, IconChevronRight } from '@tabler/icons-react'
-import { useSchools } from '../hooks/use-schools'
+import { IconChevronUp, IconChevronDown, IconChevronLeft, IconChevronRight } from '@tabler/icons-react'
 import type { School } from '../types'
 
 interface SchoolsTableProps {
-  searchTerm: string
-  typeFilter: string
+  columns: ColumnDef<School>[]
+  data: School[]
+  isLoading?: boolean
 }
 
-const columnHelper = createColumnHelper<School>()
-
-export function SchoolsTable({ searchTerm, typeFilter }: SchoolsTableProps) {
-  const [favorites, setFavorites] = useState<Set<string>>(new Set())
-
-  const { data: schools = [], isLoading } = useSchools({
-    search: searchTerm,
-    type: typeFilter as any,
-  })
-
-  const toggleFavorite = (schoolId: string) => {
-    setFavorites(prev => {
-      const newFavorites = new Set(prev)
-      if (newFavorites.has(schoolId)) {
-        newFavorites.delete(schoolId)
-      } else {
-        newFavorites.add(schoolId)
-      }
-      return newFavorites
-    })
-  }
-
-  const getTypeColor = (type: string) => {
-    return type === 'public' ? 'text-blue-700' : 'text-green-700'
-  }
-
-  const getTypeDisplayName = (type: string) => {
-    return type === 'public' ? 'Pública' : 'Privada'
-  }
-
-  const columns = useMemo<ColumnDef<School>[]>(() => [
-    columnHelper.accessor('name' as any, {
-      header: 'Institución',
-      cell: ({ row }) => (
-        <Link
-          to="/schools/$schoolId"
-          params={{ schoolId: row.original.id }}
-          className="flex items-center gap-3 group"
-        >
-          <div className="w-8 h-8 bg-gradient-to-br from-blue-100 to-purple-100 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden p-1 border border-blue-200">
-            <img
-              src={`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/schools/${row.original.id}/logo.webp`}
-              alt={`Logo de ${row.original.name}`}
-              className="w-full h-full object-contain"
-              onError={(e) => {
-                // Fallback to icon if image fails to load
-                e.currentTarget.style.display = 'none'
-                const nextElement = e.currentTarget.nextElementSibling as HTMLElement
-                if (nextElement) {
-                  nextElement.style.display = 'block'
-                }
-              }}
-            />
-            <IconBuilding className="w-4 h-4 text-blue-600 hidden" />
-          </div>
-          <div className="min-w-0">
-            <div className="font-bold text-gray-900 group-hover:text-blue-600 transition-colors truncate">
-              {row.original.name}
-            </div>
-          </div>
-        </Link>
-      ),
-      size: 300,
-    }),
-    
-    columnHelper.accessor('type' as any, {
-      header: 'Tipo',
-      cell: ({ getValue }) => (
-        <div className="flex items-center gap-2">
-          <IconUsers className="w-4 h-4 text-gray-600" />
-          <span className={`font-bold ${getTypeColor(getValue() as string)}`}>
-            {getTypeDisplayName(getValue() as string)}
-          </span>
-        </div>
-      ),
-      size: 100,
-    }),
-    
-
-    columnHelper.display({
-      id: 'actions',
-      header: '',
-      cell: ({ row }) => (
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => toggleFavorite(row.original.id)}
-            className="p-2 rounded-lg bg-gray-100 border border-gray-300 hover:border-pink-400 hover:bg-pink-50 transition-all duration-200"
-          >
-            {favorites.has(row.original.id) ? (
-              <IconBookmarkFilled className="w-4 h-4 text-pink-600" />
-            ) : (
-              <IconBookmark className="w-4 h-4 text-gray-600" />
-            )}
-          </button>
-          <Link
-            to="/schools/$schoolId"
-            params={{ schoolId: row.original.id }}
-            className="p-2 rounded-lg bg-blue-100 border border-blue-300 hover:border-blue-500 hover:bg-blue-200 text-blue-700 hover:text-blue-900 transition-all duration-200"
-          >
-            <IconEye className="w-4 h-4" />
-          </Link>
-        </div>
-      ),
-      size: 100,
-    }),
-  ], [favorites])
-
+export function SchoolsTable({ columns, data, isLoading = false }: SchoolsTableProps) {
   const table = useReactTable({
-    data: schools,
+    data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),

@@ -73,10 +73,10 @@ export function HeroSection() {
       })
     }
 
-    // Stats counter animation - FIXED
+    // Stats counter animation
     const statElements = [
-      { element: stats.querySelector('[data-stat="students"]'), value: 15, suffix: '+' },
-      { element: stats.querySelector('[data-stat="precision"]'), value: 98, suffix: '%' },
+      { element: stats.querySelector('[data-stat="riasec"]'), value: 6, suffix: '' },
+      { element: stats.querySelector('[data-stat="conversation"]'), value: 100, suffix: '%' },
       { element: stats.querySelector('[data-stat="careers"]'), value: 126, suffix: '+' }
     ]
 
@@ -130,8 +130,8 @@ export function HeroSection() {
 
             {/* Subtitle */}
             <p ref={subtitleRef} className="text-lg md:text-xl text-neutral-300 mb-12 max-w-3xl mx-auto leading-relaxed font-light">
-              Plataforma de orientación vocacional impulsada por IA. Análisis
-              científico, resultados precisos, futuro profesional claro.
+              Orientación vocacional conversacional con IA. Test RIASEC interactivo,
+              recomendaciones personalizadas, encuentra tu carrera ideal.
             </p>
 
             {/* CTA Button */}
@@ -166,13 +166,13 @@ export function HeroSection() {
               <div className="w-12 h-12 mx-auto mb-4 rounded-xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
                 <Users size={24} className="text-blue-400" />
               </div>
-              <div data-stat="students" className="text-3xl font-bold text-white mb-2">0K+</div>
+              <div data-stat="riasec" className="text-3xl font-bold text-white mb-2">0</div>
               <div className="text-sm text-neutral-300 uppercase tracking-wide">
-                Estudiantes Activos
+                Dimensiones RIASEC
               </div>
             </div>
-            
-            <div 
+
+            <div
               className="p-6 rounded-xl text-center group hover:scale-105 transition-all duration-300"
               style={{
                 background: 'transparent',
@@ -184,13 +184,13 @@ export function HeroSection() {
               <div className="w-12 h-12 mx-auto mb-4 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center">
                 <TrendingUp size={24} className="text-purple-400" />
               </div>
-              <div data-stat="precision" className="text-3xl font-bold text-white mb-2">0%</div>
+              <div data-stat="conversation" className="text-3xl font-bold text-white mb-2">0%</div>
               <div className="text-sm text-neutral-300 uppercase tracking-wide">
-                Precisión IA
+                Interfaz Conversacional
               </div>
             </div>
-            
-            <div 
+
+            <div
               className="p-6 rounded-xl text-center group hover:scale-105 transition-all duration-300"
               style={{
                 background: 'transparent',
@@ -204,7 +204,7 @@ export function HeroSection() {
               </div>
               <div data-stat="careers" className="text-3xl font-bold text-white mb-2">0+</div>
               <div className="text-sm text-neutral-300 uppercase tracking-wide">
-                Carreras Analizadas
+                Carreras en Base de Datos
               </div>
             </div>
           </div>

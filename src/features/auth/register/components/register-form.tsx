@@ -16,39 +16,88 @@ import {
 } from '@tabler/icons-react'
 import { LocationPicker } from './location-picker'
 
-// Zod Schema
+// Zod Schema with robust validation
 const registerSchema = z.object({
   firstName: z
     .string()
+    .trim()
     .min(1, 'El nombre es requerido')
-    .min(2, 'El nombre debe tener al menos 2 caracteres'),
+    .min(2, 'El nombre debe tener al menos 2 caracteres')
+    .max(50, 'El nombre no puede exceder 50 caracteres')
+    .regex(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/, 'El nombre solo puede contener letras')
+    .refine((val) => val.split(/\s+/).every(word => word.length > 0), 'El nombre no puede contener espacios extras'),
   lastName: z
     .string()
+    .trim()
     .min(1, 'El apellido es requerido')
-    .min(2, 'El apellido debe tener al menos 2 caracteres'),
+    .min(2, 'El apellido debe tener al menos 2 caracteres')
+    .max(50, 'El apellido no puede exceder 50 caracteres')
+    .regex(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/, 'El apellido solo puede contener letras')
+    .refine((val) => val.split(/\s+/).every(word => word.length > 0), 'El apellido no puede contener espacios extras'),
   email: z
     .string()
+    .trim()
+    .toLowerCase()
     .min(1, 'El correo es requerido')
-    .email('Ingresa un correo válido'),
+    .email('Ingresa un correo válido')
+    .max(100, 'El correo no puede exceder 100 caracteres')
+    .refine((val) => {
+      // Basic email format validation
+      const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+      return emailRegex.test(val)
+    }, 'Formato de correo inválido')
+    .refine((val) => {
+      // Reject disposable email domains
+      const disposableDomains = ['tempmail', 'throwaway', '10minutemail', 'guerrillamail']
+      return !disposableDomains.some(domain => val.includes(domain))
+    }, 'No se permiten correos temporales'),
   password: z
     .string()
     .min(1, 'La contraseña es requerida')
     .min(8, 'La contraseña debe tener al menos 8 caracteres')
-    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, 'La contraseña debe contener al menos una mayúscula, una minúscula y un número'),
+    .max(100, 'La contraseña no puede exceder 100 caracteres')
+    .regex(/[a-z]/, 'Debe contener al menos una letra minúscula')
+    .regex(/[A-Z]/, 'Debe contener al menos una letra mayúscula')
+    .regex(/[0-9]/, 'Debe contener al menos un número')
+    .regex(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/, 'Debe contener al menos un carácter especial')
+    .refine((val) => {
+      // No more than 3 consecutive identical characters
+      return !/(.)\1{2,}/.test(val)
+    }, 'No puede tener más de 2 caracteres idénticos consecutivos'),
   confirmPassword: z
     .string()
     .min(1, 'Confirmar contraseña es requerido'),
   phone: z
     .string()
     .optional()
-    .refine((val) => !val || val.length >= 10, 'El teléfono debe tener al menos 10 dígitos'),
+    .refine((val) => {
+      if (!val) return true
+      // Only allow digits, spaces, parentheses, and hyphens
+      if (!/^[\d\s()-]+$/.test(val)) return false
+      // Remove all non-digit characters
+      const cleaned = val.replace(/\D/g, '')
+      // Venezuelan phone numbers are 10 digits (format: 0414 123 45 67)
+      return cleaned.length === 10
+    }, 'Ingresa un número de teléfono válido en formato (0414 123 45 67)')
+    .refine((val) => {
+      if (!val) return true
+      const cleaned = val.replace(/\D/g, '')
+      // Venezuelan mobile operators: second to fourth digits (e.g., 0414 -> 414)
+      if (cleaned.length === 10) {
+        const areaCode = cleaned.substring(1, 4)
+        return ['412', '414', '424', '416', '426'].includes(areaCode)
+      }
+      return true
+    }, 'Ingresa un número de teléfono móvil venezolano válido'),
   address: z
     .string()
+    .trim()
+    .max(200, 'La dirección no puede exceder 200 caracteres')
     .optional(),
   location: z
     .object({
-      latitude: z.number(),
-      longitude: z.number()
+      latitude: z.number().min(-90).max(90),
+      longitude: z.number().min(-180).max(180)
     })
     .optional()
 }).refine((data) => data.password === data.confirmPassword, {
@@ -156,7 +205,7 @@ export function RegisterForm({ onSubmit, loading = false, error }: RegisterFormP
             name="firstName"
             validators={{
               onChange: ({ value }) => {
-                const result = z.string().min(1, 'El nombre es requerido').min(2, 'Mínimo 2 caracteres').safeParse(value)
+                const result = registerSchema.shape.firstName.safeParse(value)
                 return result.success ? undefined : result.error.issues[0]?.message
               }
             }}
@@ -209,7 +258,7 @@ export function RegisterForm({ onSubmit, loading = false, error }: RegisterFormP
             name="lastName"
             validators={{
               onChange: ({ value }) => {
-                const result = z.string().min(1, 'El apellido es requerido').min(2, 'Mínimo 2 caracteres').safeParse(value)
+                const result = registerSchema.shape.lastName.safeParse(value)
                 return result.success ? undefined : result.error.issues[0]?.message
               }
             }}
@@ -263,7 +312,7 @@ export function RegisterForm({ onSubmit, loading = false, error }: RegisterFormP
           name="email"
           validators={{
             onChange: ({ value }) => {
-              const result = z.string().min(1, 'El correo es requerido').email('Ingresa un correo válido').safeParse(value)
+              const result = registerSchema.shape.email.safeParse(value)
               return result.success ? undefined : result.error.issues[0]?.message
             }
           }}
@@ -318,7 +367,7 @@ export function RegisterForm({ onSubmit, loading = false, error }: RegisterFormP
             name="password"
             validators={{
               onChange: ({ value }) => {
-                const result = registerSchema._def.schema.shape.password.safeParse(value)
+                const result = registerSchema.shape.password.safeParse(value)
                 return result.success ? undefined : result.error.issues[0]?.message
               }
             }}
@@ -442,8 +491,7 @@ export function RegisterForm({ onSubmit, loading = false, error }: RegisterFormP
           name="phone"
           validators={{
             onChange: ({ value }) => {
-              if (!value) return undefined
-              const result = z.string().min(10, 'Mínimo 10 dígitos').safeParse(value)
+              const result = registerSchema.shape.phone.safeParse(value)
               return result.success ? undefined : result.error.issues[0]?.message
             }
           }}

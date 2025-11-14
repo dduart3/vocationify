@@ -22,24 +22,24 @@ export function ProcessSection () {
             <div className="grid md:grid-cols-3 gap-8 md:gap-4 relative">
               <ProcessStep
                 number={1}
-                title="Evaluación"
-                description="Completa nuestro test psicométrico avanzado en 15 minutos. Preguntas inteligentes que se adaptan a tus respuestas."
+                title="Conversación Guiada"
+                description="Responde preguntas interactivas con nuestro asistente de IA que explora tus intereses, habilidades y preferencias vocacionales."
                 icon={ClipboardList}
                 delay={0}
               />
 
               <ProcessStep
                 number={2}
-                title="Análisis"
-                description="Nuestra IA procesa tus datos contra nuestra base de conocimiento de carreras y perfiles profesionales exitosos."
+                title="Análisis RIASEC"
+                description="La IA evalúa tus respuestas y calcula tu perfil según el modelo RIASEC de Holland para identificar áreas vocacionales afines."
                 icon={Cpu}
                 delay={1}
               />
 
               <ProcessStep
                 number={3}
-                title="Resultados"
-                description="Recibe tu informe detallado con recomendaciones específicas, plan de estudios y oportunidades laborales."
+                title="Recomendaciones"
+                description="Obtén una lista de carreras compatibles con tu perfil y explora universidades que las ofrecen en Venezuela."
                 icon={FileText}
                 delay={2}
               />

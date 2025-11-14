@@ -17,7 +17,22 @@ function RootComponent() {
   const initialize = useAuthStore((state) => state.initialize)
 
   useEffect(() => {
+    // Initialize auth on mount
     initialize()
+
+    // Re-initialize when tab becomes visible after being hidden
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        console.log('Tab became visible, re-initializing auth...')
+        initialize()
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
   }, [initialize])
 
   return (
