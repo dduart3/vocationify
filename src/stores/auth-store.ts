@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { persist, devtools } from "zustand/middleware";
+import { devtools } from "zustand/middleware";
 import { supabase } from "@/lib/supabase";
 import type { User, Session } from "@supabase/supabase-js";
 import { toast } from "sonner";
@@ -54,10 +54,9 @@ interface AuthStore {
 
 export const useAuthStore = create<AuthStore>()(
   devtools(
-    persist(
-      (set, get) => ({
-        // Initial state
-        user: null,
+    (set, get) => ({
+      // Initial state
+      user: null,
         profile: null,
         session: null,
         isLoading: true,
@@ -399,23 +398,6 @@ export const useAuthStore = create<AuthStore>()(
           )
         },
       }),
-      {
-        name: "career-compass-auth",
-        partialize: (state) => ({
-          user: state.user,
-          profile: state.profile,
-          session: state.session,
-          isAuthenticated: state.isAuthenticated,
-        }),
-        onRehydrateStorage: () => (state) => {
-          // Don't call initialize here - let __root.tsx handle it
-          // This prevents race conditions between rehydration and manual init
-          if (state) {
-            console.log("Auth store rehydrated, auth will be initialized by root component");
-          }
-        },
-      }
-    ),
     { name: "auth-store" }
   )
 );

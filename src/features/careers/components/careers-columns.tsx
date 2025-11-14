@@ -5,7 +5,8 @@ import type { Career } from '../types'
 
 const columnHelper = createColumnHelper<Career>()
 
-const getRiasecColor = (type: string) => {
+const getRiasecColor = (type: string | null | undefined) => {
+  if (!type) return 'text-gray-700'
   const colors: Record<string, string> = {
     'realistic': 'text-green-700',
     'investigative': 'text-blue-700',
@@ -17,7 +18,8 @@ const getRiasecColor = (type: string) => {
   return colors[type.toLowerCase()] || 'text-cyan-700'
 }
 
-const getRiasecDisplayName = (type: string) => {
+const getRiasecDisplayName = (type: string | null | undefined) => {
+  if (!type) return 'N/A'
   const names: Record<string, string> = {
     'realistic': 'Realista',
     'investigative': 'Investigativo',
