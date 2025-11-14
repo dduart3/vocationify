@@ -1,5 +1,5 @@
 import { IconUser, IconMail, IconEdit, IconCheck, IconX, IconShield } from '@tabler/icons-react'
-import { useAuthStore } from '@/stores/auth-store'
+import { useAuth } from '@/context/auth-context'
 
 interface ProfileHeaderProps {
   isEditing: boolean
@@ -10,7 +10,7 @@ interface ProfileHeaderProps {
 }
 
 export function ProfileHeader({ isEditing, isLoading, onEdit, onSave, onCancel }: ProfileHeaderProps) {
-  const { user, profile } = useAuthStore()
+  const { user, profile } = useAuth()
 
   return (
     <div className="flex items-center justify-between mb-8">

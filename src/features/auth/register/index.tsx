@@ -1,11 +1,11 @@
 import { useNavigate } from '@tanstack/react-router'
-import { useAuthStore } from '@/stores/auth-store'
+import { useAuth } from '@/context/auth-context'
 import { AuthLayout } from '../components/auth-layout'
 import { RegisterForm, type RegisterFormData } from './components/register-form'
 
 export function Register() {
   const navigate = useNavigate()
-  const { signUp, signInWithProvider, isLoading, error } = useAuthStore()
+  const { signUp, signInWithProvider, isLoading } = useAuth()
 
   const handleFormSubmit = async (data: RegisterFormData) => {
     try {
@@ -30,11 +30,10 @@ export function Register() {
       title="Crear cuenta"
       subtitle="Completa tus datos para crear tu cuenta en Vocationify"
     >
-      <RegisterForm 
+      <RegisterForm
         onSubmit={handleFormSubmit}
         onSocialLogin={handleSocialLogin}
         loading={isLoading}
-        error={error}
       />
     </AuthLayout>
   )

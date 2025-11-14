@@ -1,5 +1,5 @@
 import { Header } from "@/components/layout/header";
-import { useAuthStore } from "@/stores/auth-store";
+import { useAuth } from "@/context/auth-context";
 import { Footer } from "@/components/layout/footer";
 import { Background } from "./components/background";
 import { CTASection } from "./sections/call-to-action";
@@ -9,7 +9,7 @@ import { ProcessSection } from "./sections/process";
 import { AppSidebar } from "@/components/layout/app-sidebar";
 
 export function Home() {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated } = useAuth();
 
   return (
     <div className="min-h-screen bg-neutral-950 dark:bg-neutral-950 text-white dark:text-white">

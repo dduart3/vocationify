@@ -2,10 +2,10 @@ import { useRef, useEffect } from 'react'
 import gsap from 'gsap'
 import { Link } from "@tanstack/react-router"
 import { ArrowRight, Sparkles, TrendingUp, Users } from 'lucide-react'
-import { useAuthStore } from '@/stores/auth-store'
+import { useAuth } from '@/context/auth-context'
 
 export function HeroSection() {
-  const { isAuthenticated } = useAuthStore()
+  const { isAuthenticated } = useAuth()
   const sectionRef = useRef<HTMLDivElement>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
   const subtitleRef = useRef<HTMLParagraphElement>(null)

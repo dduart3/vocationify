@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Download, Loader2 } from 'lucide-react'
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas-pro'
-import { useAuthStore } from '@/stores/auth-store'
+import { useAuth } from '@/context/auth-context'
 
 interface PDFExportProps {
   contentId: string
@@ -11,14 +11,14 @@ interface PDFExportProps {
   disabled?: boolean
 }
 
-export function PDFExport({ 
-  contentId, 
-  fileName = 'resultados-vocacionales', 
+export function PDFExport({
+  contentId,
+  fileName = 'resultados-vocacionales',
   title = 'Resultados del Test Vocacional',
-  disabled = false 
+  disabled = false
 }: PDFExportProps) {
   const [isGenerating, setIsGenerating] = useState(false)
-  const { profile } = useAuthStore()
+  const { profile } = useAuth()
 
   const generatePDF = async () => {
     setIsGenerating(true)

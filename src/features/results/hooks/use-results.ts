@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
-import { useAuthStore } from '@/stores/auth-store'
+import { useAuth } from '@/context/auth-context'
 import type { TestResult, ResultFilters, ResultSortOptions } from '../types'
 
 export function useResults(filters?: Partial<ResultFilters>, sortOptions?: ResultSortOptions) {
-  const { user } = useAuthStore()
+  const { user } = useAuth()
 
   return useQuery({
     queryKey: ['results', user?.id, filters, sortOptions],

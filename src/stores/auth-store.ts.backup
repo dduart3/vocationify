@@ -28,6 +28,7 @@ interface AuthStore {
   isAuthenticated: boolean;
   error: string | null;
   authListenerSet: boolean; // Track if auth state listener is set
+  isInitializing: boolean; // Track if initialization is in progress
 
   // Computed
   isAdmin: boolean;
@@ -63,6 +64,7 @@ export const useAuthStore = create<AuthStore>()(
         isAuthenticated: false,
         error: null,
         authListenerSet: false,
+        isInitializing: false,
 
         // Computed
         get isAdmin() {
@@ -291,8 +293,20 @@ export const useAuthStore = create<AuthStore>()(
           try {
             const currentState = get();
 
+            // Prevent concurrent initializations
+            if (currentState.isInitializing) {
+              console.log("Auth initialization already in progress, skipping...");
+              return;
+            }
+
+            // If already initialized with a session, skip
+            if (currentState.authListenerSet && currentState.session) {
+              console.log("Auth already initialized with session, skipping...");
+              return;
+            }
+
             console.log("Initializing auth...");
-            set({ isLoading: true });
+            set({ isLoading: true, isInitializing: true });
 
             // Always get fresh session from Supabase
             const {
@@ -318,7 +332,8 @@ export const useAuthStore = create<AuthStore>()(
                   session,
                   profile: profileData as UserProfile,
                   isAuthenticated: true,
-                  isLoading: false, // Set loading to false when we have valid session
+                  isLoading: false,
+                  isInitializing: false,
                 });
                 console.log("Auth initialized with profile");
               } else {
@@ -329,6 +344,7 @@ export const useAuthStore = create<AuthStore>()(
                   profile: null,
                   isAuthenticated: true,
                   isLoading: false,
+                  isInitializing: false,
                 });
                 console.log("Auth initialized without profile");
               }
@@ -340,6 +356,7 @@ export const useAuthStore = create<AuthStore>()(
                 profile: null,
                 isAuthenticated: false,
                 isLoading: false,
+                isInitializing: false,
               });
               console.log("Auth initialized - no session");
             }
@@ -376,7 +393,7 @@ export const useAuthStore = create<AuthStore>()(
             }
           } catch (error) {
             console.error("Auth initialization error:", error);
-            set({ isLoading: false });
+            set({ isLoading: false, isInitializing: false });
           }
         },
 

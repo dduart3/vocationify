@@ -3,7 +3,7 @@ import { Link } from '@tanstack/react-router'
 import { IconArrowLeft, IconBuilding, IconPhone, IconMail, IconWorld, IconUsers, IconBookmark, IconBookmarkFilled, IconSchool, IconClock, IconMapPin, IconTarget } from '@tabler/icons-react'
 import { SchoolMap } from './school-map'
 import { useSchoolWithCareers } from '../hooks/use-schools'
-import { useAuthStore } from '@/stores/auth-store'
+import { useAuth } from '@/context/auth-context'
 import { calculateDistance, formatDistance } from '@/utils/distance'
 
 interface SchoolDetailProps {
@@ -12,7 +12,7 @@ interface SchoolDetailProps {
 
 export function SchoolDetail({ schoolId }: SchoolDetailProps) {
   const { data: school, isLoading, error } = useSchoolWithCareers(schoolId)
-  const { profile } = useAuthStore()
+  const { profile } = useAuth()
   const [isFavorite, setIsFavorite] = useState(false)
   
   // Calculate distance from user location

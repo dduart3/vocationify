@@ -3,12 +3,12 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { Clock, Database, Brain, ArrowRight, Sparkles } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
-import { useAuthStore } from '@/stores/auth-store'
+import { useAuth } from '@/context/auth-context'
 
 gsap.registerPlugin(ScrollTrigger)
 
 export function CTASection() {
-  const { isAuthenticated } = useAuthStore()
+  const { isAuthenticated } = useAuth()
   const sectionRef = useRef<HTMLDivElement>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
   const subtitleRef = useRef<HTMLParagraphElement>(null)

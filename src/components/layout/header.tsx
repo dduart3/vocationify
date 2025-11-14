@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { useAuthStore } from "@/stores/auth-store";
+import { useAuth } from "@/context/auth-context";
 import { useState } from "react";
 import {
   IconMenu2,
@@ -11,7 +11,7 @@ import {
 import { Logo } from "../logo";
 
 export function Header() {
-  const { user, profile, isAuthenticated, signOut } = useAuthStore();
+  const { user, profile, isAuthenticated, signOut } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 

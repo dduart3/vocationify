@@ -1,8 +1,8 @@
 import { Shield, Calendar, Mail } from 'lucide-react'
-import { useAuthStore } from '@/stores/auth-store'
+import { useAuth } from '@/context/auth-context'
 
 export function AccountInfo() {
-  const { user, profile } = useAuthStore()
+  const { user, profile } = useAuth()
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('es-ES', {

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
-import { useAuthStore } from '@/stores/auth-store'
+import { useAuth } from '@/context/auth-context'
 import type { RiasecScores } from '@/features/vocational-test/types'
 
 interface DashboardStats {
@@ -25,7 +25,7 @@ interface UserTestHistory {
 }
 
 export function useDashboardStats() {
-  const { user } = useAuthStore()
+  const { user } = useAuth()
 
   return useQuery({
     queryKey: ['dashboard-stats', user?.id],
@@ -81,7 +81,7 @@ export function useDashboardStats() {
 }
 
 export function useUserTestHistory(limit: number = 5) {
-  const { user } = useAuthStore()
+  const { user } = useAuth()
 
   return useQuery({
     queryKey: ['user-test-history', user?.id, limit],
@@ -139,7 +139,7 @@ export function useUserTestHistory(limit: number = 5) {
 }
 
 export function useLatestRiasecProfile() {
-  const { user } = useAuthStore()
+  const { user } = useAuth()
 
   return useQuery({
     queryKey: ['latest-riasec-profile', user?.id],

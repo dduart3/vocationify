@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react'
 import { Link } from '@tanstack/react-router'
 import { IconArrowLeft, IconSchool, IconTarget, IconClock, IconBookmark, IconBookmarkFilled, IconMapPin, IconBuilding } from '@tabler/icons-react'
 import { useCareerWithSchools } from '../hooks/use-careers'
-import { useAuthStore } from '@/stores/auth-store'
+import { useAuth } from '@/context/auth-context'
 import { calculateDistance, formatDistance } from '@/utils/distance'
 
 interface CareerDetailProps {
@@ -11,7 +11,7 @@ interface CareerDetailProps {
 
 export function CareerDetail({ careerId }: CareerDetailProps) {
   const { data: career, isLoading, error } = useCareerWithSchools(careerId)
-  const { profile } = useAuthStore()
+  const { profile } = useAuth()
   const [isFavorite, setIsFavorite] = useState(false)
   
   // Sort schools by distance if user has location

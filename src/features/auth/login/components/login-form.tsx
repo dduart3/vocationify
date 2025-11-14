@@ -31,10 +31,9 @@ interface LoginFormProps {
   onSocialLogin: (provider: 'google') => Promise<void>
   onOtpLogin: () => void
   loading?: boolean
-  error?: string | null
 }
 
-export function LoginForm({ onSubmit, onOtpLogin, loading = false, error }: LoginFormProps) {
+export function LoginForm({ onSubmit, onOtpLogin, loading = false }: LoginFormProps) {
   const [showPassword, setShowPassword] = useState(false)
 
   // TanStack Form with Zod validation
@@ -63,22 +62,6 @@ export function LoginForm({ onSubmit, onOtpLogin, loading = false, error }: Logi
 
   return (
     <div className="space-y-4">
-      {/* Error Message */}
-      {error && (
-        <div 
-          className="p-3 rounded-xl flex items-center gap-2 animate-fade-in"
-          style={{
-            background: 'rgba(239, 68, 68, 0.1)',
-            backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(239, 68, 68, 0.2)',
-            boxShadow: '0 8px 32px rgba(239, 68, 68, 0.1)'
-          }}
-        >
-          <IconAlertCircle size={16} className="text-red-400 flex-shrink-0" />
-          <p className="text-red-300 text-sm">{error}</p>
-        </div>
-      )}
-
       {/* Form */}
       <form 
         onSubmit={(e) => {

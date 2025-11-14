@@ -1,11 +1,11 @@
 import { useNavigate } from '@tanstack/react-router'
-import { useAuthStore } from '@/stores/auth-store'
+import { useAuth } from '@/context/auth-context'
 import { AuthLayout } from '../components/auth-layout'
 import { LoginForm, type LoginFormData } from './components/login-form'
 
 export function Login() {
   const navigate = useNavigate()
-  const { signIn, signInWithProvider, isLoading, error } = useAuthStore()
+  const { signIn, signInWithProvider, isLoading } = useAuth()
 
   const handleFormSubmit = async (data: LoginFormData) => {
     try {
@@ -34,12 +34,11 @@ export function Login() {
       title="Iniciar sesión"
       subtitle="Introduce tu correo electrónico y contraseña para acceder a tu cuenta"
     >
-      <LoginForm 
+      <LoginForm
         onSubmit={handleFormSubmit}
         onSocialLogin={handleSocialLogin}
         onOtpLogin={handleOtpLogin}
         loading={isLoading}
-        error={error}
       />
     </AuthLayout>
   )

@@ -3,11 +3,11 @@ import { ProfileHeader } from './profile-header'
 import { ProfileForm } from './profile-form'
 import { ActivitySummary } from './activity-summary'
 import { AccountInfo } from './account-info'
-import { useAuthStore } from '@/stores/auth-store'
+import { useAuth } from '@/context/auth-context'
 import type { ProfileUpdateData } from '../types'
 
 export function ProfilePage() {
-  const { profile, updateProfile } = useAuthStore()
+  const { profile, updateProfile } = useAuth()
   const [isEditing, setIsEditing] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)

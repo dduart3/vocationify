@@ -1,11 +1,11 @@
 import { useNavigate } from '@tanstack/react-router'
-import { useAuthStore } from '@/stores/auth-store'
+import { useAuth } from '@/context/auth-context'
 import { AuthLayout } from '../components/auth-layout'
 import { ForgotPasswordForm } from './components/forgot-password-form'
 
 export function ForgotPassword() {
   const navigate = useNavigate()
-  const { resetPassword, isLoading, error } = useAuthStore()
+  const { resetPassword, isLoading, error } = useAuth()
 
   const handleSubmit = async (data: { email: string }) => {
     try {

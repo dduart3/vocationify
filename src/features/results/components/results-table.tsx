@@ -101,16 +101,30 @@ export function ResultsTable({ columns, data, isLoading = false }: ResultsTableP
               </tr>
             ) : (
               table.getRowModel().rows.map((row) => (
-                <tr key={row.id} className="hover:bg-blue-50/50 transition-colors duration-200 border-b border-gray-200 last:border-0">
-                  {row.getVisibleCells().map(cell => (
-                    <td
-                      key={cell.id}
-                      className="px-6 py-4"
-                      style={{ width: cell.column.getSize() }}
+                <tr key={row.id} className="hover:bg-blue-50/50 transition-colors duration-200 border-b border-gray-200 last:border-0 cursor-pointer">
+                  <td colSpan={columns.length} className="p-0">
+                    <Link
+                      to="/results/$sessionId"
+                      params={{ sessionId: row.original.id }}
+                      className="block cursor-pointer"
                     >
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
-                  ))}
+                      <table className="w-full">
+                        <tbody>
+                          <tr>
+                            {row.getVisibleCells().map(cell => (
+                              <td
+                                key={cell.id}
+                                className="px-6 py-4"
+                                style={{ width: cell.column.getSize() }}
+                              >
+                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                              </td>
+                            ))}
+                          </tr>
+                        </tbody>
+                      </table>
+                    </Link>
+                  </td>
                 </tr>
               ))
             )}

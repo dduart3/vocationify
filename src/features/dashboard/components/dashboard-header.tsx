@@ -1,8 +1,8 @@
-import { useAuthStore } from '@/stores/auth-store'
+import { useAuth } from '@/context/auth-context'
 import { Sparkles } from 'lucide-react'
 
 export function DashboardHeader() {
-  const { profile } = useAuthStore()
+  const { profile } = useAuth()
   
   const getGreeting = () => {
     const hour = new Date().getHours()

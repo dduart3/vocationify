@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet, useNavigate } from '@tanstack/react-router'
 import { AppSidebar } from '@/components/layout/app-sidebar'
-import { useAuthStore } from '@/stores/auth-store'
+import { useAuth } from '@/context/auth-context'
 import { GlassmorphismLoader } from '@/components/ui/glassmorphism-loader'
 import { useEffect } from 'react'
 
@@ -9,7 +9,7 @@ export const Route = createFileRoute('/_authenticated')({
 })
 
 function AuthenticatedLayout() {
-  const { session, isAuthenticated, isLoading } = useAuthStore()
+  const { session, isAuthenticated, isLoading } = useAuth()
   const navigate = useNavigate()
 
   useEffect(() => {

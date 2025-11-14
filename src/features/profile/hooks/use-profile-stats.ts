@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
-import { useAuthStore } from '@/stores/auth-store'
+import { useAuth } from '@/context/auth-context'
 import type { UserActivity } from '../types'
 
 export function useProfileStats() {
-  const { user } = useAuthStore()
+  const { user } = useAuth()
 
   return useQuery({
     queryKey: ['profile-stats', user?.id],

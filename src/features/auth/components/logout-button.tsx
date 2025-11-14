@@ -1,4 +1,4 @@
-import { useAuthStore } from '@/stores/auth-store'
+import { useAuth } from '@/context/auth-context'
 import { IconLogout, IconLoader2 } from '@tabler/icons-react'
 import { useState } from 'react'
 
@@ -8,7 +8,7 @@ interface LogoutButtonProps {
 }
 
 export function LogoutButton({ variant = 'default', className = '' }: LogoutButtonProps) {
-  const { signOut } = useAuthStore()
+  const { signOut } = useAuth()
   const [isLoggingOut, setIsLoggingOut] = useState(false)
 
   const handleLogout = async () => {

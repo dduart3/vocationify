@@ -1,6 +1,6 @@
 import {  useNavigate } from '@tanstack/react-router'
 import { useEffect, useRef } from 'react'
-import { useAuthStore, type UserProfile } from '@/stores/auth-store'
+import { useAuth, type UserProfile } from '@/context/auth-context'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 import { IconLoader2, IconSparkles } from '@tabler/icons-react'
@@ -9,7 +9,7 @@ import gsap from 'gsap'
 
 export function AuthCallback() {
   const navigate = useNavigate()
-  const { setUser, setSession, setProfile, setLoading, setError } = useAuthStore()
+  const { setUser, setSession, setProfile, setLoading, setError } = useAuth()
   const containerRef = useRef<HTMLDivElement>(null)
   const cardRef = useRef<HTMLDivElement>(null)
 

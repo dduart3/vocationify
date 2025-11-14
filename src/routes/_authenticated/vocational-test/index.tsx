@@ -1,6 +1,6 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { VocationalTest } from '@/features/vocational-test'
-import { useAuthStore } from '@/stores/auth-store'
+import { useAuth } from '@/context/auth-context'
 import { z } from 'zod'
 
 const searchSchema = z.object({
@@ -14,7 +14,7 @@ export const Route = createFileRoute('/_authenticated/vocational-test/')({
 
 function VocationalTestPage() {
   const search = Route.useSearch()
-  const { session } = useAuthStore()
+  const { session } = useAuth()
   const router = useRouter()
   
   // Get user ID from auth

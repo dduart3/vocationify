@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { useAuthStore } from "@/stores/auth-store";
+import { useAuth } from "@/context/auth-context";
 import { useSidebarStore } from "@/stores/sidebar-store";
 import { useRef, useCallback, useEffect } from "react";
 import {
@@ -48,7 +48,7 @@ const menuItems = [
 ];
 
 export function AppSidebar() {
-  const { user, profile, signOut } = useAuthStore();
+  const { user, profile, signOut } = useAuth();
   const { isHovered, setHovered } = useSidebarStore();
   const location = useLocation();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);

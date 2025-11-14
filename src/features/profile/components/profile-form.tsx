@@ -1,5 +1,5 @@
 import { User, Mail, Phone, MapPin } from 'lucide-react'
-import { useAuthStore } from '@/stores/auth-store'
+import { useAuth } from '@/context/auth-context'
 import { LocationPicker } from './location-picker'
 import type { ProfileUpdateData } from '../types'
 
@@ -10,7 +10,7 @@ interface ProfileFormProps {
 }
 
 export function ProfileForm({ isEditing, editData, onDataChange }: ProfileFormProps) {
-  const { profile } = useAuthStore()
+  const { profile } = useAuth()
 
   return (
     <div className="space-y-6">
