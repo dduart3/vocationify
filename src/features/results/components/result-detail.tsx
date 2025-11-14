@@ -154,7 +154,7 @@ export function ResultDetail() {
         <div className="flex items-center gap-3">
           {/* PDF Export Button */}
           <PDFExport
-            contentId="result-detail-content"
+            testResult={result}
             fileName="resultado-test-vocacional"
             title="Mi Resultado del Test Vocacional - Vocationify"
           />

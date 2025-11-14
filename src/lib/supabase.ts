@@ -15,11 +15,11 @@ export async function handleSupabaseError<T>(
   
   if (error) {
     console.error('Supabase error:', error)
-    throw new Error(error.message || 'An error occurred with the database operation')
+    throw new Error(error.message || 'Ha ocurrido un error con la base de datos')
   }
   
   if (!data) {
-    throw new Error('No data returned from the database')
+    throw new Error('No se encontraron datos')
   }
   
   return data
