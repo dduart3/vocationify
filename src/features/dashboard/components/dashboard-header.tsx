@@ -12,7 +12,7 @@ export function DashboardHeader() {
   }
 
   return (
-    <div className="relative text-center space-y-4 mb-8">
+    <div id="welcome-section" className="relative text-center space-y-4 mb-8">
       <div className="relative z-10">
         <div className="flex items-center justify-center gap-3 mb-3">
           <h1 className="text-4xl md:text-5xl font-black bg-gradient-to-r from-gray-900 via-blue-700 to-purple-700 bg-clip-text text-transparent">

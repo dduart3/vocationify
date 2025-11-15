@@ -10,6 +10,7 @@ import { PhaseTransitionButton } from './phase-transition-button'
 import { MessageInput } from './message-input'
 import { UIModeSwitcher, type UIMode } from './ui-mode-switcher'
 import { VoiceInterface } from './voice-interface'
+import { OnboardingProvider, vocationalTestLandingSteps, vocationalTestActiveSteps } from '@/features/onboarding'
 
 interface VocationalTestProps {
   userId: string
@@ -79,7 +80,8 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
   // No session - show start screen
   if (!hasSession && !isStarting) {
     return (
-      <div className="flex-1 min-h-screen relative overflow-hidden">
+      <OnboardingProvider section="vocational-test" steps={vocationalTestLandingSteps}>
+        <div className="flex-1 min-h-screen relative overflow-hidden">
         {/* Resume Session Banner - exactly like original */}
         {hasExistingSession && (
           <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-md px-4">
@@ -132,11 +134,11 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
         <div className="relative z-10 container mx-auto px-6 py-8">
           <div className="max-w-6xl mx-auto">
             {/* Header Section */}
-            <div className="text-center mb-8">
+            <div id="test-landing-header" className="text-center mb-8">
               <div className="relative">
                 {/* Subtle animated background */}
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-96 h-16 bg-gradient-to-r from-blue-500/8 via-purple-500/10 to-indigo-500/8 blur-3xl rounded-full animate-pulse" />
-                
+
                 <h1 className="relative text-6xl md:text-7xl font-black mb-4 leading-tight">
                   <span className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">
                     Test Vocacional
@@ -169,10 +171,10 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
                 </div>
 
                 {/* Enhanced CTA Button */}
-                <div className="relative inline-block">
+                <div id="start-test-button" className="relative inline-block">
                   <div className={`absolute -inset-2 rounded-2xl blur-lg opacity-75 ${
-                    hasExistingSession 
-                      ? 'bg-gradient-to-r from-amber-500/30 to-orange-500/30' 
+                    hasExistingSession
+                      ? 'bg-gradient-to-r from-amber-500/30 to-orange-500/30'
                       : 'bg-gradient-to-r from-blue-500/30 to-purple-500/30 animate-pulse'
                   }`}></div>
                   <button
@@ -205,7 +207,7 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
                 )}
 
                 {/* Enhanced Feature Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto pt-12">
+                <div id="test-features" className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto pt-12">
                   {[
                     { 
                       icon: Mic, 
@@ -307,7 +309,8 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
             </div>
           </div>
         </div>
-      </div>
+        </div>
+      </OnboardingProvider>
     )
   }
 
@@ -327,9 +330,10 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
 
   // Main test interface
   return (
-    <div className="h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-50 flex flex-col">
+    <OnboardingProvider section="vocational-test-active" steps={vocationalTestActiveSteps}>
+      <div className="h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-50 flex flex-col">
       {/* Enhanced Header with ARIA branding */}
-      <div className="flex-shrink-0 relative z-20">
+      <div id="test-header" className="flex-shrink-0 relative z-20">
         {/* Header gradient background */}
         <div className="absolute inset-0 bg-gradient-to-r from-purple-100/30 via-purple-50/40 to-purple-100/30" />
         <div
@@ -517,22 +521,24 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
           `}</style>
           
           {/* UI Mode Switcher */}
-          <div className="relative z-20 pt-6">
-            <UIModeSwitcher 
+          <div id="ui-mode-toggle" className="relative z-20 pt-6">
+            <UIModeSwitcher
               currentMode={uiMode}
               onModeChange={setUIMode}
               disabled={isSending || isTransitioning}
             />
           </div>
-          
+
           {/* Content based on UI mode */}
           {uiMode === 'chat' ? (
-            <ConversationHistory 
-              messages={session?.conversation_history || []}
-              currentPhase={currentPhase}
-              enableVoice={true}
-              autoSpeakNewMessages={false}
-            />
+            <div id="conversation-display">
+              <ConversationHistory
+                messages={session?.conversation_history || []}
+                currentPhase={currentPhase}
+                enableVoice={true}
+                autoSpeakNewMessages={false}
+              />
+            </div>
           ) : (
             <VoiceInterface
               onSendMessage={sendMessage}
@@ -562,17 +568,20 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
                 isRealityCheckReady={isRealityCheckReady}
               />
             ) : (
-              <MessageInput
-                onSendMessage={sendMessage}
-                disabled={isSending || isTransitioning}
-                isLoading={isSending}
-                enableVoice={true}
-                placeholder="Responde a ARIA..."
-              />
+              <div id="message-input">
+                <MessageInput
+                  onSendMessage={sendMessage}
+                  disabled={isSending || isTransitioning}
+                  isLoading={isSending}
+                  enableVoice={true}
+                  placeholder="Responde a ARIA..."
+                />
+              </div>
             )}
           </>
         )}
       </div>
-    </div>
+      </div>
+    </OnboardingProvider>
   )
 }

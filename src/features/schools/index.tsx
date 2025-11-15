@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { SchoolsTable, SchoolFilters } from './components'
 import { schoolsColumns } from './components/schools-columns'
 import { useSchools } from './hooks/use-schools'
+import { OnboardingProvider, schoolsSteps } from '@/features/onboarding'
 
 export function SchoolsPage() {
   const [searchTerm, setSearchTerm] = useState('')
@@ -24,34 +25,36 @@ export function SchoolsPage() {
   })
 
   return (
-    <div className="min-h-screen p-4 sm:p-6">
-      <div className="max-w-6xl mx-auto">
+    <OnboardingProvider section="schools" steps={schoolsSteps}>
+      <div className="min-h-screen p-4 sm:p-6">
+        <div className="max-w-6xl mx-auto">
 
-        {/* Header */}
-        <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Instituciones Educativas</h1>
-          <p className="text-sm sm:text-base text-gray-600">Explora universidades e instituciones en Venezuela</p>
-        </div>
+          {/* Header */}
+          <div id="schools-header" className="mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Instituciones Educativas</h1>
+            <p className="text-sm sm:text-base text-gray-600">Explora universidades e instituciones en Venezuela</p>
+          </div>
 
-        {/* Filters */}
-        <div className="mb-4 sm:mb-6">
-          <SchoolFilters
-            searchTerm={searchTerm}
-            onSearchChange={setSearchTerm}
-            typeFilter={typeFilter}
-            onTypeChange={setTypeFilter}
-          />
-        </div>
+          {/* Filters */}
+          <div id="schools-filters" className="mb-4 sm:mb-6">
+            <SchoolFilters
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+              typeFilter={typeFilter}
+              onTypeChange={setTypeFilter}
+            />
+          </div>
 
-        {/* Table */}
-        <div>
-          <SchoolsTable
-            columns={schoolsColumns}
-            data={schools}
-            isLoading={isLoading}
-          />
+          {/* Table */}
+          <div id="schools-list">
+            <SchoolsTable
+              columns={schoolsColumns}
+              data={schools}
+              isLoading={isLoading}
+            />
+          </div>
         </div>
       </div>
-    </div>
+    </OnboardingProvider>
   )
 }

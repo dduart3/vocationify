@@ -16,7 +16,7 @@ function VocationalTestPage() {
   const search = Route.useSearch()
   const { session } = useAuth()
   const router = useRouter()
-  
+
   // Get user ID from auth
   const userId = session?.user?.id || 'anonymous'
 
@@ -27,7 +27,7 @@ function VocationalTestPage() {
       onComplete={(sessionId) => {
         console.log('✅ Vocational test completed:', sessionId)
         // Navigate to results page
-        router.navigate({ 
+        router.navigate({
           to: '/results/$sessionId',
           params: { sessionId }
         })

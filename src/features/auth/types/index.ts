@@ -11,4 +11,5 @@ export interface UserProfile {
   role_id: number | null
   role?: string | null
   location: { latitude: number; longitude: number } | null
+  onboarding_completed: boolean | null
 }

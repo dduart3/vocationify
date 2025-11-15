@@ -5,6 +5,7 @@ import { SchoolMap } from './school-map'
 import { useSchoolWithCareers } from '../hooks/use-schools'
 import { useAuth } from '@/context/auth-context'
 import { calculateDistance, formatDistance } from '@/utils/distance'
+import { OnboardingProvider, schoolDetailSteps } from '@/features/onboarding'
 
 interface SchoolDetailProps {
   schoolId: string
@@ -67,9 +68,10 @@ export function SchoolDetail({ schoolId }: SchoolDetailProps) {
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
-      {/* Header */}
-      <div className="flex items-center gap-4 mb-8">
+    <OnboardingProvider section="school-detail" steps={schoolDetailSteps}>
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div id="school-detail-header" className="flex items-center gap-4 mb-8">
         <Link
           to="/schools"
           className="p-3 rounded-lg bg-white border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-100 transition-all duration-200 shadow-sm"
@@ -130,7 +132,7 @@ export function SchoolDetail({ schoolId }: SchoolDetailProps) {
 
           {/* Location */}
           {school.location && (
-            <div className="bg-white/80 backdrop-blur-sm border border-gray-300/50 shadow-lg shadow-gray-200/50 rounded-2xl p-6">
+            <div id="school-location-map" className="bg-white/80 backdrop-blur-sm border border-gray-300/50 shadow-lg shadow-gray-200/50 rounded-2xl p-6">
               <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
                 <IconMapPin className="w-5 h-5 text-gray-600" />
                 Ubicación
@@ -208,7 +210,7 @@ export function SchoolDetail({ schoolId }: SchoolDetailProps) {
 
       {/* Careers Section */}
       {school.careers && school.careers.length > 0 && (
-        <div className="bg-white/80 backdrop-blur-sm border border-gray-300/50 shadow-lg shadow-gray-200/50 rounded-2xl p-6">
+        <div id="school-careers-offered" className="bg-white/80 backdrop-blur-sm border border-gray-300/50 shadow-lg shadow-gray-200/50 rounded-2xl p-6">
           <h2 className="text-xl font-bold text-gray-900 mb-6">Carreras Disponibles</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {school.careers.map((schoolCareer, index) => (
@@ -260,6 +262,7 @@ export function SchoolDetail({ schoolId }: SchoolDetailProps) {
           </div>
         </div>
       )}
-    </div>
+      </div>
+    </OnboardingProvider>
   )
 }

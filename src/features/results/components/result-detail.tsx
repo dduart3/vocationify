@@ -4,6 +4,7 @@ import { useResultDetail } from '../hooks/use-results'
 import { GlassmorphismSkeleton } from '@/components/ui/glassmorphism-loader'
 import { PDFExport } from '../components/pdf-export'
 import { RiasecRadarChart } from '../components/riasec-radar-chart'
+import { OnboardingProvider, resultDetailSteps } from '@/features/onboarding'
 
 export function ResultDetail() {
   const { sessionId } = useParams({ from: '/_authenticated/results/$sessionId' })
@@ -135,7 +136,8 @@ export function ResultDetail() {
   const topTypes = getTopRiasecTypes(result.riasec_scores)
 
   return (
-    <div className="max-w-7xl mx-auto p-4 sm:p-6 pt-4 sm:pt-8" id="result-detail-content">
+    <OnboardingProvider section="result-detail" steps={resultDetailSteps}>
+      <div className="max-w-7xl mx-auto p-4 sm:p-6 pt-4 sm:pt-8" id="result-detail-content">
       {/* Compact Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div className="flex items-center gap-3 sm:gap-4">
@@ -153,11 +155,13 @@ export function ResultDetail() {
 
         <div className="flex items-center gap-3 ml-auto sm:ml-0">
           {/* PDF Export Button */}
-          <PDFExport
-            testResult={result}
-            fileName="resultado-test-vocacional"
-            title="Mi Resultado del Test Vocacional - Vocationify"
-          />
+          <div id="export-pdf-button">
+            <PDFExport
+              testResult={result}
+              fileName="resultado-test-vocacional"
+              title="Mi Resultado del Test Vocacional - Vocationify"
+            />
+          </div>
 
           {/* Status Badge */}
           <div className="px-3 py-1 bg-green-100 text-green-700 border border-green-300 rounded-full text-xs sm:text-sm font-bold whitespace-nowrap">
@@ -227,7 +231,7 @@ export function ResultDetail() {
         {/* Left Column - RIASEC Analysis */}
         <div className="space-y-6">
           {/* RIASEC Radar Chart */}
-          <div className="bg-white/80 backdrop-blur-sm border border-gray-300/50 shadow-lg shadow-gray-200/50 rounded-2xl p-6">
+          <div id="riasec-chart" className="bg-white/80 backdrop-blur-sm border border-gray-300/50 shadow-lg shadow-gray-200/50 rounded-2xl p-6">
             <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
               <IconBrain className="w-5 h-5 text-blue-600" />
               Visualización del Perfil RIASEC
@@ -238,7 +242,7 @@ export function ResultDetail() {
           </div>
 
           {/* Detailed Scores - Horizontal Layout */}
-          <div className="bg-white/80 backdrop-blur-sm border border-gray-300/50 shadow-lg shadow-gray-200/50 rounded-2xl p-6">
+          <div id="riasec-scores-breakdown" className="bg-white/80 backdrop-blur-sm border border-gray-300/50 shadow-lg shadow-gray-200/50 rounded-2xl p-6">
             <h2 className="text-lg font-bold text-gray-900 mb-4">Puntuaciones Detalladas</h2>
             <div className="grid grid-cols-2 gap-4">
               {Object.entries(result.riasec_scores).map(([type, score]) => (
@@ -263,7 +267,7 @@ export function ResultDetail() {
         <div className="space-y-6">
           {/* Career Recommendations */}
           {result.career_recommendations && result.career_recommendations.length > 0 && (
-            <div className="bg-white/80 backdrop-blur-sm border border-gray-300/50 shadow-lg shadow-gray-200/50 rounded-2xl p-6">
+            <div id="career-recommendations" className="bg-white/80 backdrop-blur-sm border border-gray-300/50 shadow-lg shadow-gray-200/50 rounded-2xl p-6">
               <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                 <IconTrophy className="w-5 h-5 text-amber-600" />
                 Carreras Recomendadas
@@ -328,6 +332,7 @@ export function ResultDetail() {
           )}
         </div>
       </div>
-    </div>
+      </div>
+    </OnboardingProvider>
   )
 }

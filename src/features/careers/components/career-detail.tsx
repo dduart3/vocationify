@@ -4,6 +4,7 @@ import { IconArrowLeft, IconSchool, IconTarget, IconClock, IconBookmark, IconBoo
 import { useCareerWithSchools } from '../hooks/use-careers'
 import { useAuth } from '@/context/auth-context'
 import { calculateDistance, formatDistance } from '@/utils/distance'
+import { OnboardingProvider, careerDetailSteps } from '@/features/onboarding'
 
 interface CareerDetailProps {
   careerId: string
@@ -97,9 +98,10 @@ export function CareerDetail({ careerId }: CareerDetailProps) {
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
-      {/* Header */}
-      <div className="flex items-center gap-4 mb-8">
+    <OnboardingProvider section="career-detail" steps={careerDetailSteps}>
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div id="career-detail-header" className="flex items-center gap-4 mb-8">
         <Link
           to="/careers"
           className="p-3 rounded-lg bg-white border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-100 transition-all duration-200 shadow-sm"
@@ -204,7 +206,7 @@ export function CareerDetail({ careerId }: CareerDetailProps) {
           </div>
 
           {/* RIASEC Profile */}
-          <div className="bg-white/80 backdrop-blur-sm border border-gray-300/50 shadow-lg shadow-gray-200/50 rounded-2xl p-6">
+          <div id="career-riasec-match" className="bg-white/80 backdrop-blur-sm border border-gray-300/50 shadow-lg shadow-gray-200/50 rounded-2xl p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Perfil RIASEC</h2>
             <div className="space-y-3">
               <div className={`px-3 py-2 rounded-lg ${getRiasecColor(career.primary_riasec_type)}`}>
@@ -257,7 +259,7 @@ export function CareerDetail({ careerId }: CareerDetailProps) {
 
       {/* Schools Section */}
       {sortedSchools && sortedSchools.length > 0 && (
-        <div className="bg-white/80 backdrop-blur-sm border border-gray-300/50 shadow-lg shadow-gray-200/50 rounded-2xl p-6">
+        <div id="career-schools-list" className="bg-white/80 backdrop-blur-sm border border-gray-300/50 shadow-lg shadow-gray-200/50 rounded-2xl p-6">
           <h2 className="text-xl font-bold text-gray-900 mb-2">Dónde Estudiar</h2>
           {profile?.location && (
             <p className="text-sm text-green-700 mb-4 flex items-center gap-1">
@@ -326,6 +328,7 @@ export function CareerDetail({ careerId }: CareerDetailProps) {
           </div>
         </div>
       )}
-    </div>
+      </div>
+    </OnboardingProvider>
   )
 }

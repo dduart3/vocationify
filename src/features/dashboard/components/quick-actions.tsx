@@ -3,6 +3,7 @@ import { Brain, GraduationCap, User } from 'lucide-react'
 
 const actions = [
   {
+    id: 'start-test-button',
     title: 'Nuevo Test Vocacional',
     description: 'Descubre tus aptitudes',
     icon: Brain,
@@ -10,6 +11,7 @@ const actions = [
     color: 'from-blue-500 to-blue-600',
   },
   {
+    id: 'explore-schools-button',
     title: 'Explorar Universidades',
     description: 'Encuentra tu institución',
     icon: GraduationCap,
@@ -17,6 +19,7 @@ const actions = [
     color: 'from-green-500 to-green-600',
   },
   {
+    id: 'update-profile-button',
     title: 'Actualizar Perfil',
     description: 'Mantén tu información',
     icon: User,
@@ -37,6 +40,7 @@ export function QuickActions() {
           return (
             <Link key={action.title} to={action.href}>
               <div
+                id={action.id}
                 className={`w-full p-5 rounded-2xl bg-gradient-to-br from-white to-gray-50/50 border-2 border-gray-200 hover:border-gray-400 hover:shadow-lg hover:shadow-gray-300/30 hover:scale-[1.02] transition-all duration-300 group ${index < actions.length - 1 ? 'mb-4' : ''}`}
               >
                 <div className="flex items-center gap-4">
