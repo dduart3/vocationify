@@ -38,6 +38,10 @@ export function ProfilePage() {
   }
 
   const handleSave = async () => {
+    // Log the current editData to see what we're working with
+    console.log('📝 Current editData before save:', editData)
+    console.log('📍 Location value:', editData.location)
+
     // Robust validation using Zod schema
     const validation = validateProfileData({
       first_name: editData.first_name?.trim() || '',
@@ -49,25 +53,31 @@ export function ProfilePage() {
     })
 
     if (!validation.isValid) {
+      console.error('❌ Validation errors:', validation.errors)
       setError(validation.errors[0] || 'Error de validación')
       return
     }
+
+    const updateData = {
+      first_name: editData.first_name!.trim(),
+      last_name: editData.last_name!.trim(),
+      email: editData.email?.trim() || null,
+      phone: editData.phone?.trim() || null,
+      address: editData.address?.trim() || null,
+      location: editData.location
+    }
+
+    console.log('🚀 Sending update to backend:', updateData)
 
     setIsLoading(true)
     setError(null)
 
     try {
-      await updateProfile({
-        first_name: editData.first_name!.trim(),
-        last_name: editData.last_name!.trim(),
-        email: editData.email?.trim() || null,
-        phone: editData.phone?.trim() || null,
-        address: editData.address?.trim() || null,
-        location: editData.location
-      })
+      await updateProfile(updateData)
+      console.log('✅ Profile updated successfully')
       setIsEditing(false)
     } catch (error: any) {
-      console.error('Error updating profile:', error)
+      console.error('❌ Error updating profile:', error)
       setError(error.message || 'Error al actualizar el perfil')
     } finally {
       setIsLoading(false)

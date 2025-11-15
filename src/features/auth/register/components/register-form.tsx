@@ -607,8 +607,17 @@ export function RegisterForm({ onSubmit, loading = false, error }: RegisterFormP
               </p>
               <LocationPicker
                 value={field.state.value}
-                onChange={(location) => field.handleChange(location || undefined)}
+                onChange={(location) => {
+                  console.log('📍 Register - LocationPicker onChange:', location)
+                  field.handleChange(location || undefined)
+                  console.log('📍 Register - Field value after change:', field.state.value)
+                }}
               />
+              {field.state.value && (
+                <p className="text-green-400 text-xs mt-2">
+                  ✓ Ubicación seleccionada: {field.state.value.latitude.toFixed(6)}, {field.state.value.longitude.toFixed(6)}
+                </p>
+              )}
             </div>
           )}
         />

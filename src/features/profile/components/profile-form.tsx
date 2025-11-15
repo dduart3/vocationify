@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { User, Mail, Phone, MapPin, AlertCircle } from 'lucide-react'
 import { useAuth } from '@/context/auth-context'
 import { LocationPicker } from './location-picker'
@@ -116,7 +117,7 @@ export function ProfileForm({ isEditing, editData, onDataChange }: ProfileFormPr
       email: editData.email || '',
       phone: editData.phone || '',
       address: editData.address || '',
-      location: editData.location || undefined
+      location: editData.location || null
     } as ProfileFormData,
     validators: {
       onChange: ({ value }) => {
@@ -129,16 +130,33 @@ export function ProfileForm({ isEditing, editData, onDataChange }: ProfileFormPr
     }
   })
 
-  // Sync form values with editData when editing
-  if (isEditing) {
-    const values = form.state.values
-    if (JSON.stringify(values) !== JSON.stringify(editData)) {
-      onDataChange(values as ProfileUpdateData)
+  // Update form when editData changes (when edit mode is toggled)
+  useEffect(() => {
+    if (isEditing) {
+      // Reset form fields to current editData values when entering edit mode
+      form.setFieldValue('first_name', editData.first_name || '')
+      form.setFieldValue('last_name', editData.last_name || '')
+      form.setFieldValue('email', editData.email || '')
+      form.setFieldValue('phone', editData.phone || '')
+      form.setFieldValue('address', editData.address || '')
+      form.setFieldValue('location', editData.location || null)
     }
-  }
+  }, [isEditing])
 
   return (
     <div className="space-y-6">
+      {/* Subscribe to form state changes and sync to parent */}
+      <form.Subscribe
+        selector={(state) => state.values}
+        children={(values) => {
+          if (isEditing && JSON.stringify(values) !== JSON.stringify(editData)) {
+            console.log('🔄 Form values changed, syncing to parent:', values)
+            onDataChange(values as ProfileUpdateData)
+          }
+          return null
+        }}
+      />
+
       <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-3">
         <User className="w-6 h-6 text-blue-600" />
         Información Personal
@@ -386,8 +404,17 @@ export function ProfileForm({ isEditing, editData, onDataChange }: ProfileFormPr
                   </p>
                   <LocationPicker
                     value={field.state.value || undefined}
-                    onChange={(location) => field.handleChange(location || null)}
+                    onChange={(location) => {
+                      console.log('📍 LocationPicker onChange called with:', location)
+                      field.handleChange(location || null)
+                      console.log('📍 Field value after change:', field.state.value)
+                    }}
                   />
+                  {field.state.value && (
+                    <p className="text-xs text-green-600">
+                      ✓ Ubicación seleccionada: {field.state.value.latitude.toFixed(6)}, {field.state.value.longitude.toFixed(6)}
+                    </p>
+                  )}
                 </div>
               ) : (
                 <div className="space-y-2">
