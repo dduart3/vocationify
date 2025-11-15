@@ -95,12 +95,15 @@ const queryClient = new QueryClient({
         const errorMessage = error.message.toLowerCase();
 
         // Check for common Supabase auth errors
-        if (
+        // Exclude "active session" and "find session" errors as those are valid states, not auth failures
+        const isAuthError = (
           errorMessage.includes("jwt") ||
           errorMessage.includes("token") ||
-          errorMessage.includes("session") ||
-          errorMessage.includes("refresh")
-        ) {
+          errorMessage.includes("refresh") ||
+          (errorMessage.includes("session") && !errorMessage.includes("active") && !errorMessage.includes("find"))
+        );
+
+        if (isAuthError) {
           console.error("Supabase auth error:", error);
           toast.error("Sesión expirada o inválida", {
             description: "Por favor, inicia sesión nuevamente.",
