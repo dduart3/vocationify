@@ -129,52 +129,28 @@ export function LocationPicker({ value, onChange, readOnly = false }: LocationPi
       
       {!readOnly && (
         <div className="flex gap-3">
-          <button 
-            type="button" 
+          <button
+            type="button"
             onClick={getUserLocation}
             disabled={userLocationLoading}
-            className="flex-1 py-3 px-4 rounded-2xl text-white font-medium transition-all duration-300 flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed backdrop-blur-sm"
-            style={{
-              background: `
-                linear-gradient(135deg, 
-                  rgba(34, 197, 94, 0.2) 0%, 
-                  rgba(22, 163, 74, 0.2) 100%
-                )
-              `,
-              boxShadow: `
-                0 4px 16px 0 rgba(34, 197, 94, 0.2),
-                inset 0 1px 0 rgba(34, 197, 94, 0.1)
-              `
-            }}
+            className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-medium transition-all duration-200 flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
           >
             {userLocationLoading ? (
               <Loader2 size={16} className="animate-spin" />
             ) : (
               <MapPin size={16} />
             )}
-            <span>Mi ubicación</span>
+            <span className="text-sm">Mi ubicación</span>
           </button>
-          
-          <button 
-            type="button" 
+
+          <button
+            type="button"
             onClick={clearLocation}
             disabled={!position}
-            className="flex-1 py-3 px-4 rounded-2xl text-white font-medium transition-all duration-300 flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed backdrop-blur-sm"
-            style={{
-              background: `
-                linear-gradient(135deg, 
-                  rgba(239, 68, 68, 0.2) 0%, 
-                  rgba(220, 38, 38, 0.2) 100%
-                )
-              `,
-              boxShadow: `
-                0 4px 16px 0 rgba(239, 68, 68, 0.2),
-                inset 0 1px 0 rgba(239, 68, 68, 0.1)
-              `
-            }}
+            className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-medium transition-all duration-200 flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
           >
             <X size={16} />
-            <span>Limpiar</span>
+            <span className="text-sm">Limpiar</span>
           </button>
         </div>
       )}
