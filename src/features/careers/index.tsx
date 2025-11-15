@@ -28,17 +28,17 @@ export function CareersPage() {
   })
 
   return (
-    <div className="min-h-screen p-6">
+    <div className="min-h-screen p-4 sm:p-6">
       <div className="max-w-6xl mx-auto">
 
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Carreras</h1>
-          <p className="text-gray-600">Explora las diferentes carreras profesionales</p>
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Carreras</h1>
+          <p className="text-sm sm:text-base text-gray-600">Explora las diferentes carreras profesionales</p>
         </div>
 
         {/* Filters */}
-        <div className="mb-6">
+        <div className="mb-4 sm:mb-6">
           <CareerFilters
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}

@@ -2,6 +2,7 @@ import { createFileRoute, Outlet, useNavigate } from '@tanstack/react-router'
 import { AppSidebar } from '@/components/layout/app-sidebar'
 import { useAuth } from '@/context/auth-context'
 import { GlassmorphismLoader } from '@/components/ui/glassmorphism-loader'
+import { useSidebarStore } from '@/stores/sidebar-store'
 import { useEffect } from 'react'
 
 export const Route = createFileRoute('/_authenticated')({
@@ -11,6 +12,7 @@ export const Route = createFileRoute('/_authenticated')({
 function AuthenticatedLayout() {
   const { session, isAuthenticated, isLoading } = useAuth()
   const navigate = useNavigate()
+  const { isMobile } = useSidebarStore()
 
   useEffect(() => {
     // Only check auth after loading is complete
@@ -55,8 +57,8 @@ function AuthenticatedLayout() {
           <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-purple-200/30 via-pink-100/20 to-transparent rounded-full blur-3xl"></div>
         </div>
 
-        {/* Content area with fixed left padding */}
-        <div className="relative z-10 flex-1 overflow-auto pl-[50px]">
+        {/* Content area with responsive padding */}
+        <div className={`relative z-10 flex-1 overflow-auto ${isMobile ? 'pl-0 pt-20' : 'pl-[50px]'}`}>
           <Outlet />
         </div>
       </div>

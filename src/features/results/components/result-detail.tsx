@@ -135,23 +135,23 @@ export function ResultDetail() {
   const topTypes = getTopRiasecTypes(result.riasec_scores)
 
   return (
-    <div className="max-w-7xl mx-auto p-6 pt-8" id="result-detail-content">
+    <div className="max-w-7xl mx-auto p-4 sm:p-6 pt-4 sm:pt-8" id="result-detail-content">
       {/* Compact Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div className="flex items-center gap-3 sm:gap-4">
           <Link
             to="/results"
-            className="p-2 rounded-lg bg-white border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-100 transition-all duration-200 shadow-sm"
+            className="p-2 rounded-lg bg-white border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-100 transition-all duration-200 shadow-sm flex-shrink-0"
           >
             <IconArrowLeft className="w-5 h-5 text-gray-700" />
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Resultado del Test Vocacional</h1>
-            <p className="text-gray-600 text-sm font-medium">Completado el {formatDate(result.created_at)}</p>
+            <h1 className="text-lg sm:text-2xl font-bold text-gray-900">Resultado del Test Vocacional</h1>
+            <p className="text-gray-600 text-xs sm:text-sm font-medium">Completado el {formatDate(result.created_at)}</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 ml-auto sm:ml-0">
           {/* PDF Export Button */}
           <PDFExport
             testResult={result}
@@ -160,7 +160,7 @@ export function ResultDetail() {
           />
 
           {/* Status Badge */}
-          <div className="px-3 py-1 bg-green-100 text-green-700 border border-green-300 rounded-full text-sm font-bold">
+          <div className="px-3 py-1 bg-green-100 text-green-700 border border-green-300 rounded-full text-xs sm:text-sm font-bold whitespace-nowrap">
             {getStatusDisplayName(result.status)}
           </div>
         </div>

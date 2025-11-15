@@ -43,7 +43,7 @@ export function ResultsTable({ columns, data, isLoading = false }: ResultsTableP
                 {headerGroup.headers.map(header => (
                   <th
                     key={header.id}
-                    className="px-6 py-4 text-left text-sm font-bold text-gray-700 bg-gradient-to-r from-gray-50 to-gray-100 border-b-2 border-gray-300"
+                    className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-bold text-gray-700 bg-gradient-to-r from-gray-50 to-gray-100 border-b-2 border-gray-300"
                     style={{ width: header.getSize() }}
                   >
                     {header.isPlaceholder ? null : (
@@ -114,7 +114,7 @@ export function ResultsTable({ columns, data, isLoading = false }: ResultsTableP
                             {row.getVisibleCells().map(cell => (
                               <td
                                 key={cell.id}
-                                className="px-6 py-4"
+                                className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm"
                                 style={{ width: cell.column.getSize() }}
                               >
                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -133,8 +133,8 @@ export function ResultsTable({ columns, data, isLoading = false }: ResultsTableP
       </div>
 
       {/* Pagination */}
-      <div className="px-6 py-4 flex items-center justify-between bg-gradient-to-r from-gray-50 to-gray-100 border-t-2 border-gray-300">
-        <div className="text-sm text-gray-700 font-medium">
+      <div className="px-4 sm:px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-0 bg-gradient-to-r from-gray-50 to-gray-100 border-t-2 border-gray-300">
+        <div className="text-xs sm:text-sm text-gray-700 font-medium text-center sm:text-left">
           Mostrando {table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1} a{' '}
           {Math.min((table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize, table.getFilteredRowModel().rows.length)} de{' '}
           {table.getFilteredRowModel().rows.length} resultados
@@ -149,7 +149,7 @@ export function ResultsTable({ columns, data, isLoading = false }: ResultsTableP
             <IconChevronLeft className="w-4 h-4 text-gray-700" />
           </button>
 
-          <span className="px-3 py-1 text-sm text-gray-700 font-bold">
+          <span className="px-3 py-1 text-xs sm:text-sm text-gray-700 font-bold whitespace-nowrap">
             {table.getState().pagination.pageIndex + 1} de {table.getPageCount()}
           </span>
 

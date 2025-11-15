@@ -1,7 +1,7 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { useAuth } from "@/context/auth-context";
 import { useSidebarStore } from "@/stores/sidebar-store";
-import { useRef, useCallback, useEffect } from "react";
+import { useRef, useCallback, useEffect, useState } from "react";
 import {
   IconDashboard,
   IconFileText,
@@ -11,6 +11,8 @@ import {
   IconUser,
   IconLogout,
   IconChevronRight,
+  IconMenu2,
+  IconX,
 } from "@tabler/icons-react";
 import { Logo } from "@/components/logo";
 
@@ -49,9 +51,10 @@ const menuItems = [
 
 export function AppSidebar() {
   const { user, profile, signOut } = useAuth();
-  const { isHovered, setHovered } = useSidebarStore();
+  const { isHovered, setHovered, isMobile, setMobile, isOpen, setOpen } = useSidebarStore();
   const location = useLocation();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [mounted, setMounted] = useState(false);
 
   // Helper function to check if current route matches parent route
   const isRouteActive = (itemUrl: string) => {
@@ -86,12 +89,27 @@ export function AppSidebar() {
     }, 100); // Reduced delay
   }, [setHovered, clearHoverTimeout]);
 
-  // Cleanup on unmount
+  // Detect mobile on mount and window resize
   useEffect(() => {
+    setMounted(true);
+
+    const checkMobile = () => {
+      const isMobileView = window.innerWidth < 768; // md breakpoint
+      setMobile(isMobileView);
+      // Close drawer when switching to desktop
+      if (!isMobileView && isOpen) {
+        setOpen(false);
+      }
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
     return () => {
+      window.removeEventListener('resize', checkMobile);
       clearHoverTimeout();
     };
-  }, [clearHoverTimeout]);
+  }, [clearHoverTimeout, setMobile, isOpen, setOpen]);
 
   const handleSignOut = async () => {
     try {
@@ -101,6 +119,112 @@ export function AppSidebar() {
     }
   };
 
+  const handleLinkClick = () => {
+    // Close mobile drawer when clicking a link
+    if (isMobile && isOpen) {
+      setOpen(false);
+    }
+  };
+
+  // Mobile Hamburger Button
+  if (!mounted) return null;
+
+  if (isMobile) {
+    return (
+      <>
+        {/* Mobile Hamburger Button */}
+        <button
+          onClick={() => setOpen(!isOpen)}
+          className="fixed top-4 left-4 z-50 p-3 rounded-xl bg-white border-2 border-gray-200 hover:border-blue-500 hover:bg-blue-50 transition-all duration-200 shadow-lg"
+        >
+          {isOpen ? (
+            <IconX size={24} className="text-gray-700" />
+          ) : (
+            <IconMenu2 size={24} className="text-gray-700" />
+          )}
+        </button>
+
+        {/* Mobile Overlay */}
+        {isOpen && (
+          <div
+            className="fixed inset-0 bg-black/50 z-40 backdrop-blur-sm"
+            onClick={() => setOpen(false)}
+          />
+        )}
+
+        {/* Mobile Drawer */}
+        <div
+          className={`fixed left-0 top-0 h-full w-72 bg-white z-50 shadow-2xl transition-transform duration-300 ease-out ${
+            isOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
+        >
+          <div className="flex flex-col h-full py-6 px-4">
+            {/* Logo */}
+            <Link
+              to="/"
+              className="flex items-center space-x-3 mb-8"
+              onClick={handleLinkClick}
+            >
+              <Logo size={32} />
+              <span className="font-bold text-lg text-gray-900">Vocationify</span>
+            </Link>
+
+            {/* Navigation */}
+            <nav className="flex-1 space-y-2">
+              {menuItems.map((item) => {
+                const isActive = isRouteActive(item.url);
+                return (
+                  <Link
+                    key={item.url}
+                    to={item.url}
+                    onClick={handleLinkClick}
+                    className={`flex items-center p-3 rounded-lg transition-all duration-200 ${
+                      isActive
+                        ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-md"
+                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                    }`}
+                  >
+                    <item.icon size={20} className="mr-3" />
+                    <span className="text-sm font-medium">{item.title}</span>
+                  </Link>
+                );
+              })}
+            </nav>
+
+            {/* User Profile */}
+            <Link
+              to="/profile"
+              onClick={handleLinkClick}
+              className="flex items-center space-x-3 mb-3 p-3 rounded-lg bg-gray-100 hover:bg-gray-200 transition-all duration-200"
+            >
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                <span className="text-white text-sm font-semibold">
+                  {(profile?.first_name || user?.email || "U")[0]?.toUpperCase()}
+                </span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-sm font-medium text-gray-900">
+                  {profile?.first_name || user?.email?.split("@")[0]}
+                </span>
+                <span className="text-xs text-gray-500">Estudiante</span>
+              </div>
+            </Link>
+
+            {/* Sign Out */}
+            <button
+              onClick={handleSignOut}
+              className="flex items-center w-full p-3 rounded-lg text-red-600 hover:text-red-700 hover:bg-red-50 transition-all duration-200"
+            >
+              <IconLogout size={20} className="mr-3" />
+              <span className="text-sm font-medium">Cerrar Sesión</span>
+            </button>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  // Desktop Sidebar (hover-expand)
   return (
     <div className="fixed left-0 top-0 h-full z-50 flex">
       {/* Main Sidebar */}
