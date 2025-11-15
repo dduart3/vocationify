@@ -5,7 +5,7 @@ import { ForgotPasswordForm } from './components/forgot-password-form'
 
 export function ForgotPassword() {
   const navigate = useNavigate()
-  const { resetPassword, isLoading, error } = useAuth()
+  const { resetPassword, isLoading } = useAuth()
 
   const handleSubmit = async (data: { email: string }) => {
     try {
@@ -26,10 +26,9 @@ export function ForgotPassword() {
       showBackButton
       backTo="/login"
     >
-      <ForgotPasswordForm 
+      <ForgotPasswordForm
         onSubmit={handleSubmit}
         loading={isLoading}
-        error={error}
       />
     </AuthLayout>
   )

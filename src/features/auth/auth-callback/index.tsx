@@ -1,15 +1,14 @@
-import {  useNavigate } from '@tanstack/react-router'
+import { useNavigate } from '@tanstack/react-router'
 import { useEffect, useRef } from 'react'
-import { useAuth, type UserProfile } from '@/context/auth-context'
+import { useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 import { IconLoader2, IconSparkles } from '@tabler/icons-react'
 import gsap from 'gsap'
 
-
 export function AuthCallback() {
   const navigate = useNavigate()
-  const { setUser, setSession, setProfile, setLoading, setError } = useAuth()
+  const queryClient = useQueryClient()
   const containerRef = useRef<HTMLDivElement>(null)
   const cardRef = useRef<HTMLDivElement>(null)
 
@@ -40,9 +39,6 @@ export function AuthCallback() {
 
     const handleAuthCallback = async () => {
       try {
-        setLoading(true)
-        setError(null)
-
         const { data, error } = await supabase.auth.getSession()
         
         if (error) throw error
@@ -121,7 +117,7 @@ export function AuthCallback() {
             
             console.log('✅ Profile created successfully in database!')
             console.log('✅ Created profile data:', createdProfile)
-            
+
             // Verify the names were actually saved
             if (createdProfile?.first_name && createdProfile?.last_name) {
               console.log(`✅ Names saved correctly: ${createdProfile.first_name} ${createdProfile.last_name}`)
@@ -131,7 +127,7 @@ export function AuthCallback() {
                 last_name: createdProfile?.last_name
               })
             }
-            setProfile(createdProfile as UserProfile)
+            // Profile will be loaded by the auth context queries
           } else {
             // Profile exists, check if names are missing and update them
             console.log('Found existing profile:', profileData)
@@ -175,19 +171,17 @@ export function AuthCallback() {
                 } else {
                   console.log('✅ Profile updated successfully with names!')
                   console.log('✅ Updated profile:', updatedProfile)
-                  setProfile(updatedProfile as UserProfile)
-                  // Don't return here - continue with auth flow
+                  // Profile will be reloaded by queries
                 }
               } else {
                 console.warn('⚠️ No name found in Google user metadata to update profile')
               }
             }
-            
-            setProfile(profileData)
           }
 
-          setUser(data.session.user)
-          setSession(data.session)
+          // Invalidate queries to trigger refetch with new session
+          queryClient.invalidateQueries({ queryKey: ['session'] })
+          queryClient.invalidateQueries({ queryKey: ['profile'] })
 
           // Set a flag to indicate OAuth login completion
           sessionStorage.setItem('oauth-login-completed', 'true')
@@ -215,19 +209,16 @@ export function AuthCallback() {
         }
       } catch (error: any) {
         console.error('Auth callback error:', error)
-        setError(error.message)
         toast.error('Error de autenticación', {
           description: error.message || 'Por favor, intenta iniciar sesión nuevamente.',
         })
-        
+
         navigate({ to: '/login' })
-      } finally {
-        setLoading(false)
       }
     }
 
     handleAuthCallback()
-  }, [navigate, setUser, setSession, setProfile, setLoading, setError])
+  }, [navigate, queryClient])
 
   return (
     <div 

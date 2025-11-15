@@ -14,7 +14,6 @@ interface PDFExportProps {
 export function PDFExport({
   testResult,
   fileName = 'resultados-vocacionales',
-  title = 'Resultados del Test Vocacional',
   disabled = false
 }: PDFExportProps) {
   const [isGenerating, setIsGenerating] = useState(false)

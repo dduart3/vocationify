@@ -17,17 +17,30 @@ export function useGuidedOnboarding({ autoStart = false }: UseGuidedOnboardingOp
   const { profile, updateProfile } = useAuth()
   const driverInstance = useRef<Driver | null>(null)
 
-  const {
-    isActive,
-    currentPageIndex,
-    completedPages,
-    setCurrentPageIndex,
-    markPageCompleted,
-    startOnboarding,
-    completeOnboarding,
-    resetOnboarding,
-    isPageCompleted
-  } = useOnboardingStore()
+  // TODO: Fix onboarding store to support page-based flow
+  // const {
+  //   isActive,
+  //   currentPageIndex,
+  //   completedPages,
+  //   setCurrentPageIndex,
+  //   markPageCompleted,
+  //   startOnboarding,
+  //   completeOnboarding,
+  //   resetOnboarding,
+  //   isPageCompleted
+  // } = useOnboardingStore()
+
+  const { resetOnboarding } = useOnboardingStore()
+
+  // Temporary placeholders until store is updated
+  const isActive = false
+  const currentPageIndex = 0
+  const completedPages: string[] = []
+  const setCurrentPageIndex = (_index: number) => {}
+  const markPageCompleted = (_page: string) => {}
+  const startOnboarding = () => {}
+  const completeOnboarding = () => {}
+  const isPageCompleted = (_page: string) => false
 
   // Get current page config
   const currentPage = onboardingFlow[currentPageIndex]

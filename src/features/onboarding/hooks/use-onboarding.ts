@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { driver } from 'driver.js'
 import type { Driver } from 'driver.js'
-import type { OnboardingStep, OnboardingConfig } from '../types'
+import type { OnboardingStep } from '../types'
 import 'driver.js/dist/driver.css'
 
 interface UseOnboardingOptions {

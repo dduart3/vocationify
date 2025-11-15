@@ -32,13 +32,14 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
     isComplete,
     recommendations,
     isRealityCheckReady,
-    
+
     // Actions
     startSession,
     resumeSession,
     sendMessage,
     transitionToPhase,
-    
+    completeRealityCheck,
+
     // Loading states
     isStarting,
     isSending,
@@ -547,6 +548,7 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
               currentQuestion={session?.conversation_history?.slice(-1)[0]?.role === 'assistant' ? session.conversation_history.slice(-1)[0].content : undefined}
               messages={session?.conversation_history || []}
               isComplete={isComplete}
+              uiBehavior={uiBehavior}
             />
           )}
         </div>
@@ -554,12 +556,14 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
         {/* Input Area - Only show for chat mode when no overlay */}
         {uiMode === 'chat' && !(uiBehavior.showCareers && recommendations && recommendations.length > 0) && (
           <>
-            {(currentPhase === 'career_matching' || currentPhase === 'complete') ? (
+            {(currentPhase === 'career_matching' || currentPhase === 'complete' || (currentPhase === 'reality_check' && isRealityCheckReady)) ? (
               <PhaseTransitionButton
                 currentPhase={currentPhase}
                 onTransition={() => {
                   if (currentPhase === 'career_matching') {
                     transitionToPhase('reality_check')
+                  } else if (currentPhase === 'reality_check') {
+                    completeRealityCheck()
                   } else if (currentPhase === 'complete') {
                     onComplete?.(currentSessionId!)
                   }

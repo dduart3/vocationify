@@ -7,6 +7,7 @@ import { useSpeechRecognition } from '@/features/vocational-test/hooks/use-speec
 import { useOpenAITTS } from '../hooks/use-openai-tts'
 import { useVoiceSettings } from '../hooks/use-voice-settings'
 import { VoiceSettingsToggle } from './voice-settings-toggle'
+import type { UIBehavior } from '../types'
 
 export type VoiceState = 'idle' | 'listening' | 'processing' | 'speaking' | 'error'
 
@@ -23,15 +24,17 @@ interface VoiceInterfaceProps {
   currentQuestion?: string
   messages: Message[]
   isComplete?: boolean
+  uiBehavior?: UIBehavior
 }
 
-export function VoiceInterface({ 
-  onSendMessage, 
-  disabled = false, 
+export function VoiceInterface({
+  onSendMessage,
+  disabled = false,
   isLoading = false,
   currentQuestion,
   messages,
-  isComplete = false
+  isComplete = false,
+  uiBehavior = { autoListen: true, showCareers: false }
 }: VoiceInterfaceProps) {
   const [voiceState, setVoiceState] = useState<VoiceState>('idle')
   const [silenceTimer, setSilenceTimer] = useState<NodeJS.Timeout | null>(null)
@@ -154,26 +157,36 @@ export function VoiceInterface({
           
           // Speak the original message (either it's still valid or we're not at threshold)
           speak(newAIMessage.content, () => {
-            
+
             // Auto-start listening after AI finishes speaking (only in auto mode and if test is not complete)
+            // Check the UI behavior based on current phase instead of just isComplete
+            // This ensures we don't auto-listen during completion or career_matching phases
+            const shouldAutoListen = settings.listeningMode === 'auto' &&
+                                    !disabled &&
+                                    !isLoading &&
+                                    !isComplete &&
+                                    uiBehavior.autoListen !== false
+
             console.log('🎯 Checking auto-listen conditions:', {
               listeningMode: settings.listeningMode,
               disabled,
               isLoading,
               isComplete,
+              uiBehaviorAutoListen: uiBehavior.autoListen,
+              shouldAutoListen,
               isListening,
               isSpeaking,
               isTTSLoading
             })
-            
-            if (settings.listeningMode === 'auto' && !disabled && !isLoading && !isComplete) {
+
+            if (shouldAutoListen) {
               setTimeout(() => {
                 console.log('🎯 In timeout, re-checking conditions:', {
                   isListening,
                   isSpeaking,
                   isTTSLoading
                 })
-                
+
                 // Double-check that we're not still speaking before starting to listen
                 if (!isListening && !isSpeaking && !isTTSLoading) {
                   console.log('🎙️ Starting auto-listening after speech completion')

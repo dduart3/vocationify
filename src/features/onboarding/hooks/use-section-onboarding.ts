@@ -91,7 +91,7 @@ export function useSectionOnboarding({
         // Skip button clicked
         skipSection()
       },
-      onNextClick: (element, step, options) => {
+      onNextClick: () => {
         // Check if this is the last step before moving
         const currentDriver = driverInstance.current
         if (currentDriver && currentDriver.isLastStep()) {

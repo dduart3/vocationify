@@ -1,6 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
-import type { User, Session } from '@supabase/supabase-js'
 import type { UserProfile } from '@/features/auth/types'
 import type { AuthContextType } from '@/context/auth-context'
 import { toast } from 'sonner'
@@ -14,7 +13,6 @@ export function useAuthImplementation(): AuthContextType {
   const {
     data: session,
     isLoading: sessionLoading,
-    error: sessionError,
   } = useQuery({
     queryKey: ['session'],
     queryFn: async () => {
@@ -33,7 +31,6 @@ export function useAuthImplementation(): AuthContextType {
   const {
     data: profile,
     isLoading: profileLoading,
-    error: profileError,
   } = useQuery({
     queryKey: ['profile', session?.user?.id],
     queryFn: async () => {

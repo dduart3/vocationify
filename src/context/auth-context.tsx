@@ -4,6 +4,9 @@ import type { UserProfile } from '@/features/auth/types'
 import { useAuthImplementation } from '@/features/auth/hooks/use-auth'
 import { useAuthListener } from '@/features/auth/hooks/use-auth-listener'
 
+// Re-export UserProfile for convenience
+export type { UserProfile } from '@/features/auth/types'
+
 export interface AuthContextType {
   // State from queries
   user: User | null
@@ -42,3 +45,4 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>
 }
+

@@ -13,11 +13,12 @@ interface PhaseTransitionButtonProps {
   isRealityCheckReady?: boolean
 }
 
-export function PhaseTransitionButton({ 
-  currentPhase, 
-  onTransition, 
+export function PhaseTransitionButton({
+  currentPhase,
+  onTransition,
   isLoading = false,
   disabled = false,
+  isRealityCheckReady = false,
 }: PhaseTransitionButtonProps) {
   const getButtonConfig = (phase: Phase) => {
     switch (phase) {
@@ -28,15 +29,15 @@ export function PhaseTransitionButton({
           bgColor: 'bg-orange-600 hover:bg-orange-700',
           description: 'Evalúa qué tan preparado estás para estas carreras'
         }
-      
+
       case 'reality_check':
         return {
-          text: 'Ver Resultados Finales',
+          text: 'Completar Reality Check',
           icon: <CheckCircle className="w-5 h-5" />,
           bgColor: 'bg-green-600 hover:bg-green-700',
-          description: 'Obtén tu evaluación completa'
+          description: 'Finaliza el reality check y obtén tus recomendaciones finales'
         }
-      
+
       case 'complete':
         return {
           text: 'Ver Resultados Finales',
@@ -44,7 +45,7 @@ export function PhaseTransitionButton({
           bgColor: 'bg-blue-600 hover:bg-blue-700',
           description: 'Revisa tu evaluación completa'
         }
-      
+
       default:
         return {
           text: 'Continuar',
@@ -55,8 +56,12 @@ export function PhaseTransitionButton({
     }
   }
 
-  // Only show button for career_matching and complete phases
-  if (currentPhase !== 'career_matching' && currentPhase !== 'complete') {
+  // Show button for career_matching, complete, and reality_check (when ready)
+  const shouldShow = currentPhase === 'career_matching' ||
+                    currentPhase === 'complete' ||
+                    (currentPhase === 'reality_check' && isRealityCheckReady)
+
+  if (!shouldShow) {
     return null
   }
 
