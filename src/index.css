@@ -11,6 +11,20 @@
 @import "./styles/sidebar.css";
 @import "tw-animate-css";
 
+@font-face {
+  font-family: 'GatterSans';
+  src: url('/fonts/GatterSans-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'GatterSans';
+  src: url('/fonts/GatterSans-RegularItalic.otf') format('opentype');
+  font-weight: 400;
+  font-style: italic;
+}
+
 /* Olympic Medal Colors */
 :root {
   /* True Gold Medal Colors */
@@ -81,13 +95,7 @@ body {
   color: var(--color-dark-foreground);
 }
 
-* {
-  border-color: var(--color-border);
-}
 
-.dark * {
-  border-color: var(--color-dark-border);
-}
 
 :root {
   --sidebar: hsl(0 0% 98%);
@@ -123,9 +131,6 @@ body {
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
   body {
     @apply bg-background text-foreground;
   }

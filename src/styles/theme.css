@@ -86,7 +86,7 @@
 
   /* Design System */
   --radius: 0.75rem;
-  --font-family-sans: 'Inter', system-ui, sans-serif;
+  --font-family-sans: 'GatterSans', 'Inter', system-ui, sans-serif;
   --font-family-mono: 'JetBrains Mono', monospace;
 
   /* Enhanced Shadows */
