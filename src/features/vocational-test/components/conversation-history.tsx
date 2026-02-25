@@ -204,33 +204,26 @@ export function ConversationHistory({
                   : 'bg-gray-100 text-slate-700 max-w-3xl rounded-[24px] rounded-bl-[4px] px-6 py-4 shadow-sm'
               }
             >
-              <div className="text-[15px] leading-relaxed whitespace-pre-wrap font-medium">
-                <MessageResponse>{message.content}</MessageResponse>
-              </div>
-              
-              {/* Voice control button for AI messages */}
-              {message.role === 'assistant' && enableVoice && isSpeechSupported && (
-                <div className="flex items-center justify-start mt-4">
+              <div className="flex flex-row gap-4 items-end">
+                <div className="text-[15px] leading-relaxed whitespace-pre-wrap font-medium">
+                  <MessageResponse>{message.content}</MessageResponse>
+                </div>
+                
+                {/* Voice control button for AI messages (Compact 3D Circle) */}
+                {message.role === 'assistant' && enableVoice && isSpeechSupported && (
                   <button
                     onClick={() => handleSpeakMessage(index, message.content)}
-                    className="flex items-center gap-3 pr-5 pl-1.5 py-1.5 rounded-full bg-gray-200/80 hover:bg-gray-300/80 border border-gray-300 shadow-sm transition-all duration-300 group active:scale-95 cursor-pointer"
-                    title={currentlyPlayingMessage === index && isSpeaking ? "Detener audio" : "Reproducir audio"}
+                    className="flex-shrink-0 group relative flex items-center justify-center w-[34px] h-[34px] rounded-full bg-gradient-to-b from-white to-gray-50 shadow-[0_2px_5px_rgba(0,0,0,0.06),inset_0_-2px_4px_rgba(0,0,0,0.04),inset_0_2px_4px_rgba(255,255,255,1)] border border-gray-200/80 hover:shadow-[0_4px_8px_rgba(0,0,0,0.1),inset_0_-2px_4px_rgba(0,0,0,0.04),inset_0_2px_4px_rgba(255,255,255,1)] hover:to-gray-100 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.06)] active:translate-y-[1px] transition-all duration-200 cursor-pointer text-slate-500 hover:text-slate-700"
+                    title={currentlyPlayingMessage === index && isSpeaking ? "Pausar" : "Escuchar"}
                   >
-                    {/* Inner circle for icon */}
-                    <div className="group/icon flex items-center justify-center w-[34px] h-[34px] rounded-full bg-white shadow-sm border border-gray-200 hover:bg-gray-50 transition-all duration-300">
-                      {currentlyPlayingMessage === index && isSpeaking ? (
-                        <Pause className="w-[15px] h-[15px] text-slate-600 group-hover/icon:text-slate-800" />
-                      ) : (
-                        <Volume2 className="w-[15px] h-[15px] text-slate-600 group-hover/icon:text-slate-800" />
-                      )}
-                    </div>
-                    {/* Floating Text */}
-                    <span className="text-[13px] font-medium tracking-wide text-slate-500 group-hover:text-slate-700 transition-colors duration-300">
-                      {currentlyPlayingMessage === index && isSpeaking ? "Pausar" : "Escuchar"}
-                    </span>
+                    {currentlyPlayingMessage === index && isSpeaking ? (
+                      <Pause className="w-[15px] h-[15px] drop-shadow-sm transition-colors" />
+                    ) : (
+                      <Volume2 className="w-[15px] h-[15px] drop-shadow-sm transition-colors" />
+                    )}
                   </button>
-                </div>
-              )}
+                )}
+              </div>
             </MessageContent>
           </Message>
         </div>
