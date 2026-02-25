@@ -434,7 +434,7 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
         <div className="absolute inset-0 bg-[#f8fafc] pointer-events-none z-0" />
         
         {/* Exact Sandra AI Background Match: Blue Gradient + Light Ellipse from Top */}
-        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden bg-[#f8fafc]">
+        <div className="absolute inset-0 pointer-events-none z-0 bg-[#f8fafc]">
             {/* 1. The Multi-Color Pastel Gradient Background */}
             <div 
               className="absolute inset-x-0 bottom-0 h-full opacity-100" 
@@ -455,8 +455,7 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
               }}
             />
 
-            {/* 2. The Ellipse from Top to Bottom (creating the U-shape downward arch)
-                 Made taller and less wide to push the arch deeper down */}
+            {/* 2. The Ellipse from Top to Bottom (creating the U-shape downward arch) */}
             <div className="absolute -top-[10%] left-1/2 -translate-x-1/2 w-[90vw] h-[95vh] bg-[#f8fafc] rounded-[50%] blur-[70px]" />
             <div className="absolute -top-[5%] left-1/2 -translate-x-1/2 w-[70vw] h-[90vh] bg-[#f8fafc] rounded-[50%] blur-[40px]" />
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[55vw] h-[85vh] bg-[#f8fafc] rounded-[50%] blur-[20px]" />
@@ -466,9 +465,9 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
             <div className="absolute bottom-0 inset-x-0 h-[8px] bg-gradient-to-r from-orange-300 via-pink-300 to-sky-300 blur-[4px] opacity-40" />
         </div>
 
-      {/* Floating Pill Navbar (Sandra AI Style) */}
+      {/* Floating Navbar Content */}
       <div id="test-header" className="flex-shrink-0 relative z-20 pt-8 w-full flex justify-center px-4">
-        <div className="backdrop-blur-xl bg-slate-200/80 border border-slate-300 shadow-sm rounded-[32px] px-8 py-3 w-full max-w-4xl flex flex-col lg:flex-row items-center justify-between gap-6 transition-all duration-300">
+        <div className="w-full max-w-4xl flex flex-col lg:flex-row items-center justify-between gap-6 transition-all duration-300">
             
             {/* Left side: Minimalist Logo */}
             <div className="flex items-center justify-start lg:w-[220px]">
@@ -554,7 +553,7 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
 
 
       {/* Main content area - single scrollable container */}
-      <div className="flex-1 overflow-hidden flex flex-col relative z-10">
+      <div className={`flex-1 flex flex-col relative z-10 ${uiMode === 'chat' ? 'overflow-hidden' : 'overflow-visible'}`}>
         
         {/* Career Recommendations Overlay (when needed) */}
         {uiBehavior.showCareers && recommendations && recommendations.length > 0 && (
@@ -634,7 +633,7 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
             </div>
           </div>
         ) : (
-          <div className="flex-1 flex flex-col relative z-0 w-full h-full">
+          <div className="flex-1 flex flex-col relative z-0 w-full h-full overflow-visible">
             <VoiceInterface
               onSendMessage={sendMessage}
               disabled={isSending || isTransitioning || (uiBehavior.showCareers && recommendations && recommendations.length > 0)}

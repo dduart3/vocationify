@@ -200,8 +200,8 @@ export function ConversationHistory({
             <MessageContent 
               className={
                 message.role === 'user'
-                  ? 'bg-[#2a2a2a] text-white ml-auto rounded-[24px] rounded-br-[4px] max-w-2xl px-6 py-4 shadow-sm'
-                  : 'bg-transparent text-[#334155] max-w-3xl pr-6 py-2'
+                  ? 'bg-blue-50 text-blue-600 ml-auto rounded-[24px] rounded-br-[4px] max-w-2xl px-6 py-4 shadow-sm'
+                  : 'bg-gray-100 text-slate-700 max-w-3xl rounded-[24px] rounded-bl-[4px] px-6 py-4 shadow-sm'
               }
             >
               <div className="text-[15px] leading-relaxed whitespace-pre-wrap font-medium">
@@ -213,19 +213,19 @@ export function ConversationHistory({
                 <div className="flex items-center justify-start mt-4">
                   <button
                     onClick={() => handleSpeakMessage(index, message.content)}
-                    className="flex items-center gap-3 pr-5 pl-1.5 py-1.5 rounded-full bg-[#030818]/60 shadow-[inset_0_4px_10px_rgba(0,0,0,0.8),inset_0_-1px_2px_rgba(255,255,255,0.05)] border border-black/80 hover:bg-[#0a1128]/80 transition-all duration-300 group active:scale-95"
+                    className="flex items-center gap-3 pr-5 pl-1.5 py-1.5 rounded-full bg-gray-200/80 hover:bg-gray-300/80 border border-gray-300 shadow-sm transition-all duration-300 group active:scale-95 cursor-pointer"
                     title={currentlyPlayingMessage === index && isSpeaking ? "Detener audio" : "Reproducir audio"}
                   >
-                    {/* Inner glowing 3D circle for icon */}
-                    <div className="group/icon flex items-center justify-center w-[34px] h-[34px] rounded-full bg-white/[0.03] backdrop-blur-md shadow-[inset_0_1px_3px_rgba(255,255,255,0.2),0_4px_10px_rgba(0,0,0,0.6)] border border-white/10 hover:bg-white/10 hover:shadow-[inset_0_1px_5px_rgba(255,255,255,0.4),0_4px_12px_rgba(0,0,0,0.8)] transition-all duration-300">
+                    {/* Inner circle for icon */}
+                    <div className="group/icon flex items-center justify-center w-[34px] h-[34px] rounded-full bg-white shadow-sm border border-gray-200 hover:bg-gray-50 transition-all duration-300">
                       {currentlyPlayingMessage === index && isSpeaking ? (
-                        <Pause className="w-[15px] h-[15px] text-white/90 group-hover/icon:text-white drop-shadow-[0_0_6px_rgba(255,255,255,0.6)]" />
+                        <Pause className="w-[15px] h-[15px] text-slate-600 group-hover/icon:text-slate-800" />
                       ) : (
-                        <Volume2 className="w-[15px] h-[15px] text-white/90 group-hover/icon:text-white drop-shadow-[0_0_6px_rgba(255,255,255,0.6)]" />
+                        <Volume2 className="w-[15px] h-[15px] text-slate-600 group-hover/icon:text-slate-800" />
                       )}
                     </div>
                     {/* Floating Text */}
-                    <span className="text-[13px] font-medium tracking-wide text-white/40 group-hover:text-white/80 transition-colors duration-300">
+                    <span className="text-[13px] font-medium tracking-wide text-slate-500 group-hover:text-slate-700 transition-colors duration-300">
                       {currentlyPlayingMessage === index && isSpeaking ? "Pausar" : "Escuchar"}
                     </span>
                   </button>

@@ -117,8 +117,8 @@ export function MessageInput({
               )}
             </div>
 
-            {/* Redesigned Dark Mode Input Container */}
-            <div className="bg-[#1a1f2e] rounded-3xl p-3 flex flex-col gap-2 shadow-[0_4px_24px_rgba(0,0,0,0.5)] border border-white/5 w-full relative">
+            {/* Light Mode Input Container */}
+            <div className="bg-gray-100 rounded-3xl p-3 flex flex-col gap-2 shadow-sm border border-gray-200 w-full relative">
               
               {/* Top Row: Textarea */}
               <div className="px-2 pt-2 pb-1">
@@ -131,7 +131,7 @@ export function MessageInput({
                   rows={2}
                   className="
                     w-full bg-transparent border-0 px-1 py-1
-                    text-white text-[15px] placeholder-white/30 resize-none
+                    text-gray-700 text-[15px] placeholder-gray-400 resize-none
                     focus:outline-none focus:ring-0 leading-relaxed
                     disabled:opacity-50 disabled:cursor-not-allowed
                     scrollbar-none
@@ -162,12 +162,12 @@ export function MessageInput({
                       className={`
                         w-9 h-9 flex items-center justify-center rounded-full transition-all duration-300
                         ${disabled || isLoading
-                          ? 'text-white/20 cursor-not-allowed'
+                          ? 'text-slate-300 cursor-not-allowed'
                           : isListening
                             ? 'bg-red-500 hover:bg-red-600 text-white shadow-lg animate-pulse'
                             : isVoiceMode && transcript
-                              ? 'bg-white/10 hover:bg-white/20 text-green-400'
-                              : 'bg-white/5 hover:bg-white/10 text-white/70 hover:text-white'
+                              ? 'bg-green-50 hover:bg-green-100 text-green-600'
+                              : 'bg-gray-100 hover:bg-gray-200 text-slate-500 hover:text-slate-700'
                         }
                       `}
                     >
@@ -179,20 +179,20 @@ export function MessageInput({
                     </button>
                   )}
 
-                  {/* Elegant Send Button (Solid ArrowUp) */}
+                  {/* Send Button */}
                   <button
                     type="submit"
                     disabled={isDisabled}
                     className={`
                       w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300
                       ${isDisabled
-                        ? 'bg-white/10 text-white/30 cursor-not-allowed'
-                        : 'bg-white text-black hover:bg-gray-200 shadow-md transform hover:scale-105 active:scale-95'
+                        ? 'bg-gray-100 text-slate-300 cursor-not-allowed'
+                        : 'bg-slate-800 text-white hover:bg-slate-700 shadow-md transform hover:scale-105 active:scale-95'
                       }
                     `}
                   >
                     {isLoading ? (
-                      <Loader className="w-[18px] h-[18px] text-gray-400 animate-spin" />
+                      <Loader className="w-[18px] h-[18px] text-slate-400 animate-spin" />
                     ) : (
                       <ArrowUp className="w-[18px] h-[18px]" strokeWidth={2.5} />
                     )}
