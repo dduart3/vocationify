@@ -4,6 +4,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Bot, Volume2, Pause } from 'lucide-react'
 import { PhaseSeparator } from './phase-separator'
+import { Shimmer } from '@/components/ai-elements/shimmer'
 import { useTextToSpeech } from '@/features/vocational-test/hooks/use-text-to-speech'
 import { 
   Conversation, 
@@ -27,6 +28,7 @@ interface ConversationHistoryProps {
   currentPhase: string
   enableVoice?: boolean
   autoSpeakNewMessages?: boolean
+  isLoading?: boolean
 }
 
 // Function to detect phase transitions based on message patterns
@@ -86,10 +88,17 @@ export function ConversationHistory({
   messages, 
   currentPhase, 
   enableVoice = true,
-  autoSpeakNewMessages = false 
+  autoSpeakNewMessages = false,
+  isLoading = false
 }: ConversationHistoryProps) {
   const [currentlyPlayingMessage, setCurrentlyPlayingMessage] = useState<number | null>(null)
   const previousMessageCountRef = useRef(messages.length)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  // Auto-scroll effect
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages, isLoading])
 
   // Text-to-speech hook
   const {
@@ -192,10 +201,10 @@ export function ConversationHistory({
               className={
                 message.role === 'user'
                   ? 'bg-[#2a2a2a] text-white ml-auto rounded-[24px] rounded-br-[4px] max-w-2xl px-6 py-4 shadow-sm'
-                  : 'bg-transparent text-white max-w-3xl pr-6 py-2'
+                  : 'bg-transparent text-[#334155] max-w-3xl pr-6 py-2'
               }
             >
-              <div className="text-[15px] leading-relaxed whitespace-pre-wrap">
+              <div className="text-[15px] leading-relaxed whitespace-pre-wrap font-medium">
                 <MessageResponse>{message.content}</MessageResponse>
               </div>
               
@@ -226,6 +235,45 @@ export function ConversationHistory({
           </Message>
         </div>
       ))}
+      
+      {/* Loading Bubble mimicking an AI response */}
+      {isLoading && (
+        <div className="relative mb-6">
+          <Message from="assistant" className="relative">
+            {/* 3D Metallic AI Avatar (Replica of Voice Persona) */}
+            <div 
+              className="absolute -left-[52px] top-1 hidden md:flex items-center justify-center w-10 h-10 rounded-full z-10 shadow-[0_4px_12px_rgba(0,0,0,0.6)] border border-black/80 ring-1 ring-white/10"
+              style={{
+                background: 'radial-gradient(circle at 35% 35%, #ffffff 0%, #b5b5ba 30%, #52525b 70%, #18181b 100%)'
+              }}
+            >
+              {/* Premium Fine Noise Overlay */}
+              <div 
+                className="absolute inset-0 opacity-[0.3] mix-blend-overlay rounded-full pointer-events-none"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+                  backgroundRepeat: 'repeat',
+                  backgroundSize: '40px 40px',
+                }}
+              />
+              
+              {/* Edge Rim Lighting */}
+              <div className="absolute inset-0 rounded-full shadow-[inset_0_0_12px_rgba(0,0,0,0.9),inset_0_1px_3px_rgba(255,255,255,0.6)] pointer-events-none" />
+            </div>
+
+            <MessageContent className="bg-transparent text-[#334155] max-w-3xl pr-6 py-2">
+              <div className="text-[15px] leading-relaxed whitespace-pre-wrap mt-2 tracking-wide font-medium">
+                <Shimmer className="[--color-background:#334155] [--color-muted-foreground:rgba(51,65,85,0.4)] text-[15px]">
+                  ARIA está pensando...
+                </Shimmer>
+              </div>
+            </MessageContent>
+          </Message>
+        </div>
+      )}
+      
+      {/* Invisible anchor for auto-scrolling */}
+      <div ref={messagesEndRef} className="h-4" />
       </ConversationContent>
       <ConversationScrollButton />
     </Conversation>

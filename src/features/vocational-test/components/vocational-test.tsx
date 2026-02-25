@@ -427,19 +427,21 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
   // Main test interface
   return (
     <OnboardingProvider section="vocational-test-active" steps={vocationalTestActiveSteps}>
-      <div className="h-screen bg-[#020617] flex flex-col relative overflow-hidden animate-in fade-in duration-1000">
-        {/* Shared dark base so transitions are smooth */}
-        <div className="absolute inset-0 bg-[#020617] -z-20" />
-        {/* Subtle Dark Background Glow */}
-        <div className="absolute inset-0 bg-[#020617] pointer-events-none z-0" />
+      <div className="h-screen bg-[#f8fafc] flex flex-col relative overflow-hidden animate-in fade-in duration-1000">
+        {/* Shared base so transitions are smooth */}
+        <div className="absolute inset-0 bg-[#f8fafc] -z-20" />
+        {/* Subtle Background Glow */}
+        <div className="absolute inset-0 bg-[#f8fafc] pointer-events-none z-0" />
         
-        {/* Exact Sandra AI Background Match: Blue Gradient + Dark Ellipse from Top */}
-        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden bg-[#020617]">
-            {/* 1. The Brighter, Deep Blending 3-Color Gradient Background */}
+        {/* Exact Sandra AI Background Match: Blue Gradient + Light Ellipse from Top */}
+        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden bg-[#f8fafc]">
+            {/* 1. The Multi-Color Pastel Gradient Background */}
             <div 
               className="absolute inset-x-0 bottom-0 h-full opacity-100" 
               style={{
-                background: 'linear-gradient(to top, #38bdf8 0%, #1d4ed8 25%, #0f172a 60%, transparent 100%)'
+                background: 'linear-gradient(120deg, #fed7aa 0%, #fbcfe8 45%, #bae6fd 100%)',
+                maskImage: 'linear-gradient(to top, black 10%, transparent 65%)',
+                WebkitMaskImage: 'linear-gradient(to top, black 10%, transparent 65%)'
               }}
             />
 
@@ -453,25 +455,25 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
               }}
             />
 
-            {/* 2. The Dark Blue Ellipse from Top to Bottom (creating the U-shape downward arch)
+            {/* 2. The Ellipse from Top to Bottom (creating the U-shape downward arch)
                  Made taller and less wide to push the arch deeper down */}
-            <div className="absolute -top-[10%] left-1/2 -translate-x-1/2 w-[90vw] h-[95vh] bg-[#020617] rounded-[50%] blur-[70px]" />
-            <div className="absolute -top-[5%] left-1/2 -translate-x-1/2 w-[70vw] h-[90vh] bg-[#020617] rounded-[50%] blur-[40px]" />
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[55vw] h-[85vh] bg-[#020617] rounded-[50%] blur-[20px]" />
+            <div className="absolute -top-[10%] left-1/2 -translate-x-1/2 w-[90vw] h-[95vh] bg-[#f8fafc] rounded-[50%] blur-[70px]" />
+            <div className="absolute -top-[5%] left-1/2 -translate-x-1/2 w-[70vw] h-[90vh] bg-[#f8fafc] rounded-[50%] blur-[40px]" />
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[55vw] h-[85vh] bg-[#f8fafc] rounded-[50%] blur-[20px]" />
 
-            {/* Sharp cyan reflection edge */}
-            <div className="absolute bottom-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-[#38bdf8] to-transparent opacity-90" />
-            <div className="absolute bottom-0 inset-x-0 h-[8px] bg-gradient-to-r from-transparent via-[#38bdf8] to-transparent blur-[4px] opacity-70" />
+            {/* Warm reflection edge */}
+            <div className="absolute bottom-0 inset-x-0 h-[2px] bg-gradient-to-r from-orange-300 via-pink-300 to-sky-300 opacity-60" />
+            <div className="absolute bottom-0 inset-x-0 h-[8px] bg-gradient-to-r from-orange-300 via-pink-300 to-sky-300 blur-[4px] opacity-40" />
         </div>
 
       {/* Floating Pill Navbar (Sandra AI Style) */}
       <div id="test-header" className="flex-shrink-0 relative z-20 pt-8 w-full flex justify-center px-4">
-        <div className="backdrop-blur-md bg-[#0a1128]/40 border border-white/5 shadow-2xl rounded-[32px] px-8 py-3 w-full max-w-4xl flex flex-col lg:flex-row items-center justify-between gap-6 transition-all duration-300">
+        <div className="backdrop-blur-xl bg-slate-200/80 border border-slate-300 shadow-sm rounded-[32px] px-8 py-3 w-full max-w-4xl flex flex-col lg:flex-row items-center justify-between gap-6 transition-all duration-300">
             
             {/* Left side: Minimalist Logo */}
             <div className="flex items-center justify-start lg:w-[220px]">
-              <h1 className="text-xl font-medium tracking-tight text-white flex gap-1.5 items-center">
-                ARIA <span className="text-white/50 font-normal">AI</span>
+              <h1 className="text-xl font-medium tracking-tight text-slate-800 flex gap-1.5 items-center">
+                ARIA <span className="text-slate-500 font-normal">AI</span>
               </h1>
             </div>
 
@@ -491,11 +493,11 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
                   return (
                     <>
                       {/* Background Connecting Line */}
-                      <div className="absolute top-[8px] left-[8%] right-[8%] h-[2px] bg-white/10 z-0 rounded-full" />
+                      <div className="absolute top-[8px] left-[8%] right-[8%] h-[2px] bg-slate-300 z-0 rounded-full" />
                       
                       {/* Animated Glowing Connecting Line */}
                       <div 
-                        className="absolute top-[8px] left-[8%] h-[2px] bg-sky-400 z-0 rounded-full shadow-[0_0_12px_#38bdf8] transition-all duration-[1.5s] ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+                        className="absolute top-[8px] left-[8%] h-[2px] bg-blue-500 z-0 rounded-full shadow-[0_0_10px_#3b82f6] transition-all duration-[1.5s] ease-[cubic-bezier(0.34,1.56,0.64,1)]"
                         style={{ width: `${(currentIdx / (steps.length - 1)) * 84}%` }}
                       />
 
@@ -507,21 +509,21 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
                         return (
                           <div key={step.label} className="relative z-10 flex flex-col items-center">
                             {/* Glowing Dot Ring */}
-                            <div className={`w-4 h-4 rounded-full border-[2px] flex items-center justify-center transition-all duration-700 ease-in-out bg-[#020617] ${
-                              isActive ? 'border-sky-400 shadow-[0_0_15px_#38bdf8]' : 'border-white/20'
+                            <div className={`w-4 h-4 rounded-full border-[2px] flex items-center justify-center transition-all duration-700 ease-in-out bg-[#f8fafc] ${
+                              isActive ? 'border-blue-500 shadow-[0_0_12px_#3b82f6]' : 'border-slate-300'
                             }`}>
                               {/* Inner Glow Core */}
-                              <div className={`w-1.5 h-1.5 rounded-full bg-sky-300 transition-all duration-500 ease-in-out ${
+                              <div className={`w-1.5 h-1.5 rounded-full bg-blue-500 transition-all duration-500 ease-in-out ${
                                 isCurrent ? 'opacity-100 animate-pulse' : 
-                                isPast ? 'opacity-100' : 'opacity-0 scale-50'
+                                isPast ? 'opacity-0' : 'opacity-0 scale-50'
                               }`} />
                             </div>
                             
                             {/* Label floating below */}
                             <div className={`absolute top-[22px] whitespace-nowrap text-[10px] font-medium tracking-wide transition-all duration-700 ${
-                              isCurrent ? 'text-sky-300 drop-shadow-[0_0_5px_#38bdf8]' : 
-                              isPast ? 'text-white/80' : 
-                              'text-white/30'
+                              isCurrent ? 'text-blue-600 drop-shadow-[0_0_2px_rgba(59,130,246,0.3)]' : 
+                              isPast ? 'text-slate-600' : 
+                              'text-slate-400'
                             }`}>
                               {step.label}
                             </div>
@@ -537,10 +539,10 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
             {/* Right column: Current Phase Text Label */}
             <div className="hidden lg:flex justify-end items-center lg:w-[220px]">
               <div className="flex flex-col items-end text-right leading-tight">
-                <span className="text-[10px] uppercase font-bold tracking-widest text-white/50">
+                <span className="text-[10px] uppercase font-bold tracking-widest text-slate-500">
                   Fase Actual
                 </span>
-                <span className="text-sm font-medium text-white tracking-wide">
+                <span className="text-sm font-medium text-slate-800 tracking-wide">
                   {getPhaseText(currentPhase)}
                 </span>
               </div>
@@ -597,7 +599,7 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
         {/* Content based on UI mode */}
         {uiMode === 'chat' ? (
           <div 
-            className="flex-1 overflow-y-auto custom-scrollbar"
+            className="flex-1 overflow-y-auto custom-scrollbar relative z-0"
             style={{
               scrollbarWidth: 'thin',
               scrollbarColor: 'rgba(147, 51, 234, 0.3) rgba(255, 255, 255, 0.05)'
@@ -627,11 +629,12 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
                 currentPhase={currentPhase}
                 enableVoice={true}
                 autoSpeakNewMessages={false}
+                isLoading={isSending}
               />
             </div>
           </div>
         ) : (
-          <div className="flex-1 flex flex-col relative w-full h-full">
+          <div className="flex-1 flex flex-col relative z-0 w-full h-full">
             <VoiceInterface
               onSendMessage={sendMessage}
               disabled={isSending || isTransitioning || (uiBehavior.showCareers && recommendations && recommendations.length > 0)}

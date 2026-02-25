@@ -152,13 +152,35 @@ export function useVocationalTest({ userId, sessionId }: UseVocationalTestProps)
       if (!sessionIdRef.current) throw new Error('No active session')
       return api.sendMessage(sessionIdRef.current, message)
     },
+    onMutate: async ({ message }) => {
+      await queryClient.cancelQueries({ queryKey: ['vocational-session-v2', sessionIdRef.current] })
+      
+      const previousSession = queryClient.getQueryData<SessionState>(['vocational-session-v2', sessionIdRef.current])
+      
+      // Optimistically update the conversation history with the user's message
+      if (previousSession) {
+        queryClient.setQueryData<SessionState>(['vocational-session-v2', sessionIdRef.current], {
+          ...previousSession,
+          conversation_history: [
+            ...(previousSession.conversation_history || []),
+            { role: 'user', content: message, timestamp: new Date().toISOString() }
+          ]
+        })
+      }
+      
+      return { previousSession }
+    },
     onSuccess: (data) => {
-      // Update session data in cache
+      // Update session data in cache with the real response from the backend
       queryClient.setQueryData(['vocational-session-v2', sessionIdRef.current], data.session)
       setCurrentAIResponse(data.aiResponse)
       console.log(`✅ V2 message processed, new phase: ${data.session.current_phase}`)
     },
-    onError: (error) => {
+    onError: (error, _, context) => {
+      // Rollback to previous state if mutation fails
+      if (context?.previousSession) {
+        queryClient.setQueryData(['vocational-session-v2', sessionIdRef.current], context.previousSession)
+      }
       console.error('❌ Failed to send V2 message:', error)
     }
   })

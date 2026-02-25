@@ -435,7 +435,7 @@ export function VoiceInterface({
         {voiceState === 'listening' ? (
           <div>
             <h2 className="text-2xl md:text-3xl font-medium tracking-wide drop-shadow-lg mb-2">
-              <Shimmer className="[--color-background:#ffffff] [--color-muted-foreground:rgba(255,255,255,0.3)]">
+              <Shimmer className="[--color-background:#334155] [--color-muted-foreground:rgba(51,65,85,0.4)]">
                 Escuchando...
               </Shimmer>
             </h2>
@@ -443,21 +443,21 @@ export function VoiceInterface({
         ) : voiceState === 'processing' ? (
           <div>
             <h2 className="text-2xl md:text-3xl font-medium tracking-wide drop-shadow-lg mb-2">
-              <Shimmer className="[--color-background:#ffffff] [--color-muted-foreground:rgba(255,255,255,0.3)]">
+              <Shimmer className="[--color-background:#334155] [--color-muted-foreground:rgba(51,65,85,0.4)]">
                 Pensando...
               </Shimmer>
             </h2>
           </div>
         ) : currentQuestion ? (
           <div key={currentQuestion} className="animate-in fade-in slide-in-from-bottom-6 duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)]">
-            <h2 className="text-xl md:text-2xl font-medium tracking-wide leading-relaxed drop-shadow-lg pointer-events-none">
+            <h2 className="text-xl md:text-2xl font-medium tracking-wide leading-relaxed drop-shadow-lg pointer-events-none text-slate-700">
               {currentQuestion.split(' ').map((word, i, arr) => {
               // Smooth karaoke highlight logic: triggers word transition cleanly as progress sweeps
               const isActive = voiceState === 'speaking' ? (i / arr.length) <= (progress + 0.05) : true;
               return (
                 <span 
                   key={i} 
-                  className={`transition-colors duration-500 ease-out ${isActive ? 'text-white' : 'text-white/30'}`}
+                  className={`transition-colors duration-500 ease-out ${isActive ? 'text-slate-700' : 'text-slate-700/30'}`}
                 >
                   {word}{' '}
                 </span>
@@ -467,7 +467,7 @@ export function VoiceInterface({
           </div>
         ) : (
           <div>
-            <h2 className="text-2xl md:text-3xl font-medium text-white tracking-wide drop-shadow-lg mb-2">
+            <h2 className="text-2xl md:text-3xl font-medium text-slate-700 tracking-wide drop-shadow-lg mb-2">
               {stateInfo.title}
             </h2>
           </div>
