@@ -58,7 +58,7 @@ function AuthenticatedLayout() {
         </div>
 
         {/* Content area with responsive padding */}
-        <div className={`relative z-10 flex-1 overflow-auto ${isMobile ? 'pl-0 pt-20' : 'pl-[50px]'}`}>
+        <div className={`relative z-10 flex-1 overflow-auto ${isMobile ? 'pl-0 pt-20' : 'pl-0'}`}>
           <Outlet />
         </div>
       </div>

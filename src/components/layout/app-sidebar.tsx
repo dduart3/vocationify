@@ -10,7 +10,6 @@ import {
   IconBuilding,
   IconUser,
   IconLogout,
-  IconChevronRight,
   IconMenu2,
   IconX,
 } from "@tabler/icons-react";
@@ -226,197 +225,143 @@ export function AppSidebar() {
 
   // Desktop Sidebar (hover-expand)
   return (
-    <div className="fixed left-0 top-0 h-full z-50 flex">
-      {/* Main Sidebar */}
+    <>
+      <style>{`
+        @keyframes glare-sweep-sidebar {
+          0% { transform: translateX(-150%) skewX(-20deg); }
+          100% { transform: translateX(300%) skewX(-20deg); }
+        }
+      `}</style>
+      <div className="fixed left-0 top-0 h-full z-50 flex items-center pl-6">
+        {/* Main Sidebar */}
       <div
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        className={`flex flex-col py-6 px-3 relative transition-all duration-500 ease-out bg-white border-r border-gray-200 ${
-          isHovered ? 'w-60' : 'w-[50px]'
-        }`}
-        style={{
-          boxShadow: "4px 0 24px rgba(0, 0, 0, 0.04)",
-        }}
+        className={`flex flex-col py-6 relative transition-all duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] bg-slate-50/40 backdrop-blur-2xl border border-white/50 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_8px_32px_rgba(0,0,0,0.08)] rounded-[2.5rem] ${
+          isHovered ? 'w-[240px]' : 'w-[64px]'
+        } h-[calc(100vh-3rem)]`}
       >
-        {/* Collapsed Logo - Only visible when sidebar is closed */}
-        <div className={`absolute top-6 left-1/2 -translate-x-1/2 transition-all duration-300 ${
-          isHovered ? 'opacity-0 scale-75' : 'opacity-100 scale-100 delay-300'
-        }`}>
-          <Link to="/" className="block group">
-            <Logo
-              size={28}
-              className="group-hover:scale-110 transition-transform duration-300 drop-shadow-lg"
-            />
+        {/* Top Logo */}
+        <div className="flex items-center mb-6 w-full flex-shrink-0 overflow-hidden px-2 mt-2">
+          <Link to="/" className="flex items-center w-full group rounded-full transition-all duration-300" style={{ padding: '6px' }}>
+            <div className="flex items-center justify-center flex-shrink-0" style={{ width: '36px', height: '36px' }}>
+              <Logo size={26} className="drop-shadow-sm group-hover:scale-105 transition-transform duration-300" />
+            </div>
+            <div 
+              className="flex flex-col justify-center whitespace-nowrap transition-opacity duration-300 ml-3"
+              style={{ opacity: isHovered ? 1 : 0 }}
+            >
+               <span className="font-semibold text-[16px] text-gray-900 tracking-tight">
+                Vocationify
+              </span>
+            </div>
           </Link>
         </div>
 
-        {/* Collapsed Navigation Icons - Only visible when sidebar is closed */}
-        <div className={`absolute top-20 left-1/2 -translate-x-1/2 flex flex-col space-y-3 transition-all duration-300 ${
-          isHovered ? 'opacity-0 -translate-y-3' : 'opacity-100 translate-y-0 delay-300'
-        }`}>
+        {/* Navigation Items */}
+        <nav className="flex flex-col gap-1 flex-shrink-0 items-center px-2 w-full">
           {menuItems.map((item) => {
             const isActive = isRouteActive(item.url);
             return (
               <Link
                 key={item.url}
                 to={item.url}
-                className={`p-2 rounded-lg transition-all duration-300 group flex items-center justify-center ${
+                className={`flex items-center w-full rounded-full relative transition-all duration-300 overflow-hidden group ${
                   isActive
-                    ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-md"
-                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                    ? 'bg-gradient-to-b from-blue-50/80 to-blue-100/50 shadow-[0_4px_12px_rgba(59,130,246,0.12),inset_0_-2px_4px_rgba(59,130,246,0.05),inset_0_2px_4px_rgba(255,255,255,1)] border border-blue-200/60 text-blue-900'
+                    : 'bg-transparent text-gray-500 hover:text-gray-900 hover:bg-black/[0.04] border border-transparent'
                 }`}
-                title={item.title}
+                title={!isHovered ? item.title : undefined}
+                style={{
+                  padding: '6px', 
+                }}
               >
-                <item.icon 
-                  size={18} 
-                  className="group-hover:scale-110 transition-transform duration-300" 
-                />
+                {isActive && (
+                  <div className="absolute inset-0 -translate-x-[150%] animate-[glare-sweep-sidebar_4s_ease-in-out_infinite] bg-gradient-to-r from-transparent via-white/50 to-transparent pointer-events-none" />
+                )}
+                <div 
+                  className={`flex items-center justify-center flex-shrink-0 transition-transform duration-300`}
+                  style={{ width: '36px', height: '36px' }}
+                >
+                  <item.icon
+                    size={20}
+                    className={`transition-transform duration-300 group-hover:scale-110 ${isActive ? 'text-blue-600' : ''}`}
+                    stroke={isActive ? 2 : 1.5}
+                  />
+                </div>
+                <div 
+                  className="flex flex-col justify-center whitespace-nowrap transition-opacity duration-300 ml-3"
+                  style={{ opacity: isHovered ? 1 : 0 }}
+                >
+                  <span className={`font-medium text-[13px] ${isActive ? 'text-blue-900' : ''}`}>
+                    {item.title}
+                  </span>
+                </div>
               </Link>
             );
           })}
-        </div>
+        </nav>
 
-        {/* Collapsed Avatar - Only visible when sidebar is closed */}
-        <div className={`absolute bottom-16 left-1/2 -translate-x-1/2 transition-all duration-300 ${
-          isHovered ? 'opacity-0 scale-75' : 'opacity-100 scale-100 delay-300'
-        }`}>
-          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-transform duration-300 cursor-pointer">
-            <span className="text-white text-xs font-semibold">
-              {(profile?.first_name || user?.email || "U")[0]?.toUpperCase()}
-            </span>
-          </div>
-        </div>
+        {/* Spacer */}
+        <div className="flex-1 py-4"></div>
 
-        {/* Collapsed Sign Out - Only visible when sidebar is closed */}
-        <div className={`absolute bottom-6 left-1/2 -translate-x-1/2 transition-all duration-300 ${
-          isHovered ? 'opacity-0 -translate-y-3' : 'opacity-100 translate-y-0 delay-300'
-        }`}>
-          <button
-            onClick={handleSignOut}
-            className="p-2 rounded-lg text-red-600 hover:text-red-700 hover:bg-red-50 transition-all duration-300 group flex items-center justify-center"
-            title="Cerrar Sesión"
-          >
-            <IconLogout
-              size={18}
-              className="group-hover:scale-110 transition-transform duration-300"
-            />
-          </button>
-        </div>
-
-        <div className={`flex flex-col flex-1 transition-all duration-300 ${
-          isHovered ? 'opacity-100 translate-x-0 delay-200' : 'opacity-0 -translate-x-5'
-        }`}>
-          {/* Logo */}
-          <Link
-            to="/"
-            className="flex items-center space-x-3 mb-8 group"
-          >
-            <Logo
-              size={32}
-              className="group-hover:scale-110 transition-transform duration-300"
-            />
-            <span className="font-bold text-lg text-gray-900">Vocationify</span>
-          </Link>
-
-          {/* Navigation */}
-          <nav className="flex-1 space-y-3">
-            {menuItems.map((item) => {
-              const isActive = isRouteActive(item.url);
-              return (
-                <SidebarLink
-                  key={item.url}
-                  to={item.url}
-                  icon={<item.icon size={16} />}
-                  label={item.title}
-                  isActive={isActive}
-                />
-              );
-            })}
-          </nav>
-
-          {/* User Profile - Moved to bottom */}
+        {/* Bottom Actions */}
+        <div className="flex flex-col gap-1 w-full px-2 pb-2 flex-shrink-0 items-center">
+          {/* User Profile */}
           <Link
             to="/profile"
-            className="flex items-center space-x-3 mb-3 p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-all duration-300 group"
+            className={`flex items-center w-full rounded-full transition-all duration-300 overflow-hidden group text-gray-500 hover:text-gray-900 bg-transparent`}
+            style={{
+              padding: '6px',
+            }}
           >
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-              <span className="text-white text-xs font-semibold">
-                {(profile?.first_name || user?.email || "U")[0]?.toUpperCase()}
-              </span>
+            <div className={`flex items-center justify-center flex-shrink-0 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 shadow-[0_4px_10px_rgba(37,99,235,0.2),inset_0_2px_4px_rgba(255,255,255,0.4)] border border-blue-400/50 text-white font-semibold transition-transform duration-300 group-hover:scale-110`}
+                 style={{ width: '36px', height: '36px', fontSize: '13px' }}>
+              {(profile?.first_name || user?.email || "U")[0]?.toUpperCase()}
             </div>
-            <div className="flex flex-col">
-              <span className="text-xs font-medium text-gray-900 group-hover:text-blue-600 transition-colors duration-300">
+            
+            <div
+              className="flex flex-col justify-center whitespace-nowrap transition-opacity duration-300 ml-3"
+              style={{ opacity: isHovered ? 1 : 0 }}
+            >
+              <span className="text-[13px] font-medium text-gray-900">
                 {profile?.first_name || user?.email?.split("@")[0]}
               </span>
-              <span className="text-xs text-gray-500 group-hover:text-gray-600 transition-colors duration-300">Estudiante</span>
+              <span className="text-[10px] leading-none text-gray-500 mt-1 font-medium">Estudiante</span>
             </div>
           </Link>
 
           {/* Sign Out */}
-          <div className="pt-2">
-            <button
-              onClick={handleSignOut}
-              className="flex items-center w-full p-2 rounded-lg text-red-600 hover:text-red-700 hover:bg-red-50 transition-all duration-300 group"
+          <button
+            onClick={handleSignOut}
+            className={`flex items-center w-full rounded-full transition-all duration-300 overflow-hidden group text-gray-500 hover:text-red-600 hover:bg-red-50/50`}
+            title={!isHovered ? "Cerrar Sesión" : undefined}
+            style={{
+              padding: '6px',
+            }}
+          >
+            <div 
+              className="flex items-center justify-center flex-shrink-0 transition-transform duration-300"
+              style={{ width: '36px', height: '36px' }}
             >
               <IconLogout
-                size={16}
-                className="mr-3 group-hover:scale-110 transition-transform duration-300"
+                size={20}
+                className="transition-transform duration-300 group-hover:scale-110"
+                stroke={1.5}
               />
-              <span className="text-xs font-medium">Cerrar Sesión</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Chevron Arrow - Follows the sidebar edge dynamically */}
-      <div
-        className={`flex items-center justify-center absolute top-1/2 -translate-y-1/2 cursor-pointer bg-none transition-all duration-500 ease-out ${
-          isHovered ? 'left-[232px]' : 'left-[42px]'
-        }`}
-        onMouseEnter={handleMouseEnter}
-      >
-        <div className="p-1">
-          <IconChevronRight
-            size={22}
-            className={`text-gray-400 hover:text-gray-600 transition-all duration-400 ease-out ${
-              isHovered ? 'rotate-180' : 'rotate-0'
-            }`}
-          />
+            </div>
+            <div
+              className="flex flex-col justify-center whitespace-nowrap transition-opacity duration-300 ml-3"
+              style={{ opacity: isHovered ? 1 : 0 }}
+            >
+              <span className="font-medium text-[13px]">
+                Cerrar Sesión
+              </span>
+            </div>
+          </button>
         </div>
       </div>
     </div>
-  );
-}
-
-interface SidebarLinkProps {
-  to: string;
-  icon: React.ReactNode;
-  label: string;
-  isActive?: boolean;
-  badge?: string;
-}
-
-function SidebarLink({ to, icon, label, isActive, badge }: SidebarLinkProps) {
-  return (
-    <Link
-      to={to}
-      className={`flex items-center justify-between p-2 rounded-lg transition-all duration-300 group ${
-        isActive
-          ? "bg-gradient-to-r from-blue-500/10 to-purple-500/10 text-blue-600"
-          : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-      }`}
-    >
-      <div className="flex items-center">
-        <span className="mr-3 group-hover:scale-110 transition-transform duration-300">
-          {icon}
-        </span>
-        <span className="text-sm font-normal">{label}</span>
-      </div>
-      {badge && (
-        <span className="px-2 py-1 text-xs font-semibold bg-green-100 text-green-700 rounded-full border border-green-200">
-          {badge}
-        </span>
-      )}
-    </Link>
+    </>
   );
 }

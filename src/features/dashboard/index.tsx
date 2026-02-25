@@ -9,7 +9,7 @@ import { dashboardSteps } from '@/features/onboarding/config/onboarding-pages'
 export function Dashboard() {
   return (
     <OnboardingProvider section="dashboard" steps={dashboardSteps}>
-      <div className="flex-1 min-h-screen p-4 sm:p-6 max-w-7xl mx-auto">
+      <div className="flex-1 min-h-screen p-4 sm:p-6 md:pl-[104px] max-w-7xl mx-auto">
         <DashboardHeader />
 
         {/* Stats Section */}
