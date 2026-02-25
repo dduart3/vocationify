@@ -14,36 +14,48 @@ interface UIModeSwitcherProps {
 export function UIModeSwitcher({ currentMode, onModeChange, disabled = false }: UIModeSwitcherProps) {
   return (
     <div className="flex items-center justify-center mb-6">
-      <div className="flex bg-white/80 border border-gray-200 rounded-2xl p-1 backdrop-blur-sm shadow-sm">
+      {/* 3D Deep Embedded Pill Track */}
+      <div className="relative flex items-center p-1.5 bg-[#020617]/60 border border-white/5 rounded-full backdrop-blur-xl shadow-[inset_0_4px_10px_rgba(0,0,0,0.8),inset_0_-1px_2px_rgba(255,255,255,0.05)]">
+        
+        {/* Animated 3D Sliding Blue Thumb */}
+        <div 
+          className={`
+            absolute left-1.5 top-1.5 bottom-1.5 w-[88px] bg-gradient-to-r from-blue-600 to-indigo-600 border border-white/10 shadow-[inset_0_2px_4px_rgba(255,255,255,0.3),0_4px_12px_rgba(59,130,246,0.3)] rounded-full transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]
+            ${currentMode === 'chat' ? 'translate-x-[88px]' : 'translate-x-0'}
+          `}
+        />
+
+        {/* Voice Mode Button */}
         <button
           onClick={() => onModeChange('voice')}
           disabled={disabled}
           className={`
-            flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 text-sm font-medium
-            ${currentMode === 'voice'
-              ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg'
-              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+            relative z-10 flex items-center justify-center gap-2 w-[88px] h-8 rounded-full transition-colors duration-300 text-xs font-semibold tracking-wide outline-none
+            ${currentMode === 'voice' 
+              ? 'text-white drop-shadow-md' 
+              : 'text-white/40 hover:text-white/70'
             }
             ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
           `}
         >
-          <Mic className="w-4 h-4" />
+          <Mic className="w-3.5 h-3.5" />
           Voz
         </button>
 
+        {/* Chat Mode Button */}
         <button
           onClick={() => onModeChange('chat')}
           disabled={disabled}
           className={`
-            flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 text-sm font-medium
-            ${currentMode === 'chat'
-              ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg'
-              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+            relative z-10 flex items-center justify-center gap-2 w-[88px] h-8 rounded-full transition-colors duration-300 text-xs font-semibold tracking-wide outline-none
+            ${currentMode === 'chat' 
+              ? 'text-white drop-shadow-md' 
+              : 'text-white/40 hover:text-white/70'
             }
             ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
           `}
         >
-          <MessageCircle className="w-4 h-4" />
+          <MessageCircle className="w-3.5 h-3.5" />
           Chat
         </button>
       </div>

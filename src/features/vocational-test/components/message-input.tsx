@@ -81,17 +81,13 @@ export function MessageInput({
 
   return (
     <div className="flex-shrink-0 relative">
-      {/* Subtle gradient overlay */}
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-t from-gray-100/30 via-gray-50/20 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-50/30 via-purple-50/30 to-indigo-50/30" />
-      </div>
+      {/* Subtle background blur only, no solid color overlay */}
 
       <div className="relative">
         <form onSubmit={handleSubmit} className="p-6">
           <div className="max-w-4xl mx-auto">
-            {/* Sleek modern input design */}
-            <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-lg shadow-gray-200/50 relative overflow-hidden border border-gray-200">
+            {/* Sleek modern dark glassmorphic input design */}
+            <div className="bg-[#020617]/60 backdrop-blur-xl rounded-3xl shadow-[inset_0_2px_4px_rgba(255,255,255,0.05),0_8px_32px_rgba(0,0,0,0.5)] relative overflow-hidden border border-white/10">
               <div className="p-6">
                 <div className="flex gap-4 items-center">
                   
@@ -106,7 +102,7 @@ export function MessageInput({
                       rows={1}
                       className="
                         w-full bg-transparent border-0 px-0 py-2
-                        text-gray-900 text-lg placeholder-gray-400 resize-none
+                        text-white text-lg placeholder-white/40 resize-none
                         focus:outline-none focus:ring-0
                         disabled:opacity-50 disabled:cursor-not-allowed
                         min-h-[40px] max-h-32 overflow-y-hidden
@@ -125,7 +121,7 @@ export function MessageInput({
 
                     {/* Subtle underline */}
                     <div className={`h-px mt-2 transition-all duration-300 ${
-                      input.trim() ? 'bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-500' : 'bg-gray-200'
+                      input.trim() ? 'bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-500' : 'bg-white/10'
                     }`} />
 
                     {/* Character counter for longer messages */}

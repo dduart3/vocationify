@@ -2,7 +2,7 @@
 // Responsibility: Orchestrate sub-components and manage overall flow
 
 import { useState, useRef, useEffect } from 'react'
-import { Trophy, Clock, Play, Mic, Volume2, Target, Sparkles, Brain } from 'lucide-react'
+import { Trophy, Clock, Play, Mic, Volume2, Target } from 'lucide-react'
 import gsap from 'gsap'
 import { useVocationalTest } from '../hooks/use-vocational-test'
 import { ConversationHistory } from './conversation-history'
@@ -22,32 +22,44 @@ interface VocationalTestProps {
 export function VocationalTest({ userId, sessionId, onComplete }: VocationalTestProps) {
   const [uiMode, setUIMode] = useState<UIMode>('voice')
   const glowLineRef = useRef<HTMLDivElement>(null)
-  const bottomGlowRef = useRef<HTMLDivElement>(null)
+  const glowLeftRef = useRef<HTMLDivElement>(null)
+  const glowRightRef = useRef<HTMLDivElement>(null)
+  const glowCenterRef = useRef<HTMLDivElement>(null)
+  const glowEdgeRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (glowLineRef.current) {
       gsap.fromTo(
         glowLineRef.current,
         { width: "2rem", opacity: 0.5 },
-        { 
-          width: "12rem", 
-          opacity: 1, 
-          duration: 1.5, 
-          repeat: -1, 
-          yoyo: true, 
-          ease: "power2.inOut" 
-        }
+        { width: "12rem", opacity: 1, duration: 1.5, repeat: -1, yoyo: true, ease: "power2.inOut" }
       )
     }
 
-    if (bottomGlowRef.current) {
-      gsap.to(bottomGlowRef.current, {
-        opacity: 0.5,
-        duration: 4,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut"
-      })
+    // Animated breathing on each glow layer
+    if (glowLeftRef.current) {
+      gsap.fromTo(glowLeftRef.current,
+        { opacity: 0.55, scale: 1 },
+        { opacity: 0.85, scale: 1.08, duration: 4, repeat: -1, yoyo: true, ease: "sine.inOut" }
+      )
+    }
+    if (glowRightRef.current) {
+      gsap.fromTo(glowRightRef.current,
+        { opacity: 0.55, scale: 1 },
+        { opacity: 0.85, scale: 1.08, duration: 5, repeat: -1, yoyo: true, ease: "sine.inOut", delay: 0.5 }
+      )
+    }
+    if (glowCenterRef.current) {
+      gsap.fromTo(glowCenterRef.current,
+        { opacity: 0.4, scale: 1 },
+        { opacity: 0.7, scale: 1.05, duration: 3.5, repeat: -1, yoyo: true, ease: "sine.inOut", delay: 1 }
+      )
+    }
+    if (glowEdgeRef.current) {
+      gsap.fromTo(glowEdgeRef.current,
+        { opacity: 0.6 },
+        { opacity: 1, duration: 2.5, repeat: -1, yoyo: true, ease: "sine.inOut" }
+      )
     }
   }, [])
   
@@ -112,7 +124,9 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
   if (!hasSession && !isStarting) {
     return (
       <OnboardingProvider section="vocational-test" steps={vocationalTestLandingSteps}>
-        <div className="flex-1 min-h-screen relative overflow-hidden">
+        <div className="flex-1 min-h-screen relative overflow-hidden animate-in fade-in duration-1000">
+          {/* Shared dark base so transitions are smooth */}
+          <div className="absolute inset-0 bg-[#020617] -z-20" />
         {/* Resume Session Banner - exactly like original */}
         {hasExistingSession && (
           <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-md px-4">
@@ -150,26 +164,14 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
 
         {/* Background - Dark theme */}
         <div className="absolute inset-0 z-0 bg-[#020617] overflow-hidden">
-          {/* Base dark gradient */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#020617] via-[#020617] to-transparent" />
+          <div className="absolute inset-0 bg-[#020617]" />
           
-          {/* Enhanced Bottom Light Source (Physical Light Effect) */}
-          <div ref={bottomGlowRef} className="absolute bottom-0 left-0 right-0 h-[70vh] flex flex-col justify-end pointer-events-none origin-bottom">
-            {/* Huge atmospheric wash */}
-            <div className="absolute bottom-0 left-0 right-0 h-full bg-gradient-to-t from-blue-800/80 via-blue-900/20 to-transparent" />
-            
-            {/* Intense radial bloom from the ground */}
-            <div className="absolute -bottom-[30%] left-1/2 -translate-x-1/2 w-[180%] h-[120%] bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-blue-500/80 via-blue-600/30 to-transparent blur-[70px]" />
-            
-            {/* Core light coming straight up from the floor */}
-            <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-blue-400/70 via-blue-500/30 to-transparent blur-2xl" />
-            
-            {/* Hot blinding edge right at the intersection */}
-            <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-cyan-300/50 to-transparent blur-md" />
-            
-            {/* The absolute bright bottom physical line */}
-            <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-blue-400 to-transparent blur-[1px]" />
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[70%] h-[1px] bg-gradient-to-r from-transparent via-cyan-100 to-transparent" />
+          {/* Clean Dark Background with simple glow */}
+          <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+            {/* Subtle bottom glow to anchor the page */}
+            <div className="absolute inset-x-0 bottom-0 h-[30vh] bg-gradient-to-t from-blue-900/10 to-transparent" />
+            {/* Very thin bright line at the bottom */}
+            <div ref={glowEdgeRef} className="absolute bottom-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-[#38bdf8] to-transparent opacity-40" />
           </div>
         </div>
 
@@ -317,9 +319,19 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
                         </div>
                         
                         {/* Main inner card - Glassmorphism. Masks the center so only border is animated */}
-                        <div className="relative m-[1px] h-[calc(100%-2px)] w-[calc(100%-2px)] p-6 rounded-[29px] backdrop-blur-2xl flex flex-col items-center text-center z-10 box-border">
+                        <div className="relative m-[1px] h-[calc(100%-2px)] w-[calc(100%-2px)] p-6 rounded-[29px] backdrop-blur-2xl flex flex-col items-center text-center z-10 box-border overflow-hidden bg-[#020617]/40">
+                          {/* Subtle Noise/Grain Texture */}
+                          <div 
+                            className="absolute inset-0 z-0 opacity-20 mix-blend-screen pointer-events-none" 
+                            style={{ 
+                              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+                              maskImage: 'linear-gradient(to bottom right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%)',
+                              WebkitMaskImage: 'linear-gradient(to bottom right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%)'
+                            }} 
+                          />
+                          
                           {/* Top rim light so it doesn't look totally dark without hover */}
-                          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40%] h-[1px] bg-gradient-to-r from-transparent via-blue-500/30 to-transparent" />
+                          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40%] h-[1px] bg-gradient-to-r from-transparent via-blue-500/30 to-transparent z-10" />
                           
                           {/* 3D Metallic Icon Container (Matching Reference & Blue Aesthetic) */}
                           <div className={`relative mb-6 w-[60px] h-[60px] rounded-full p-[1.5px] bg-gradient-to-b from-blue-300/60 via-slate-700/30 to-black/80 shadow-[0_15px_30px_rgba(0,0,0,0.8),_0_0_25px_rgba(59,130,246,0.2)] group-hover:scale-110 transition-transform duration-500`}>
@@ -389,10 +401,22 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
   // Loading state
   if (isStarting) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-50">
-        <div className="text-gray-900 text-center">
-          <div className="animate-spin w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"></div>
-          <p>Iniciando tu sesión vocacional...</p>
+      <div className="flex-1 min-h-screen relative overflow-hidden bg-[#020617] flex items-center justify-center animate-in fade-in duration-700">
+        {/* Transitional background matches the landing page theme */}
+        <div className="absolute inset-0 bg-[#020617] z-0" />
+        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+            <div className="absolute inset-x-0 bottom-0 h-[30vh] bg-gradient-to-t from-blue-900/10 to-transparent" />
+            <div className="absolute bottom-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-[#38bdf8] to-transparent opacity-40" />
+        </div>
+        
+        <div className="relative z-10 flex flex-col items-center gap-6">
+          <div className="w-16 h-16 relative">
+            <div className="absolute inset-0 border-4 border-blue-500/20 rounded-full" />
+            <div className="absolute inset-0 border-4 border-blue-500 rounded-full border-t-transparent animate-spin" />
+          </div>
+          <div className="text-blue-400 font-light tracking-widest uppercase text-sm animate-pulse">
+            Iniciando sistema ARIA...
+          </div>
         </div>
       </div>
     )
@@ -403,141 +427,129 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
   // Main test interface
   return (
     <OnboardingProvider section="vocational-test-active" steps={vocationalTestActiveSteps}>
-      <div className="h-screen bg-[#020617] flex flex-col relative overflow-hidden">
+      <div className="h-screen bg-[#020617] flex flex-col relative overflow-hidden animate-in fade-in duration-1000">
+        {/* Shared dark base so transitions are smooth */}
+        <div className="absolute inset-0 bg-[#020617] -z-20" />
         {/* Subtle Dark Background Glow */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#020617] via-[#020617] to-transparent pointer-events-none z-0" />
-        <div className="absolute bottom-0 left-0 right-0 h-[60vh] flex flex-col justify-end pointer-events-none z-0 opacity-40">
-            <div className="absolute -bottom-[20%] left-1/2 -translate-x-1/2 w-[100%] h-[80%] bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-blue-500/30 via-blue-900/10 to-transparent blur-3xl" />
+        <div className="absolute inset-0 bg-[#020617] pointer-events-none z-0" />
+        
+        {/* Exact Sandra AI Background Match: Blue Gradient + Dark Ellipse from Top */}
+        <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden bg-[#020617]">
+            {/* 1. The Brighter, Deep Blending 3-Color Gradient Background */}
+            <div 
+              className="absolute inset-x-0 bottom-0 h-full opacity-100" 
+              style={{
+                background: 'linear-gradient(to top, #38bdf8 0%, #1d4ed8 25%, #0f172a 60%, transparent 100%)'
+              }}
+            />
+
+            {/* Premium Fine Grain Texture Overlay */}
+            <div 
+              className="absolute inset-0 opacity-[0.25] mix-blend-overlay pointer-events-none"
+              style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+                backgroundRepeat: 'repeat',
+                backgroundSize: '120px 120px',
+              }}
+            />
+
+            {/* 2. The Dark Blue Ellipse from Top to Bottom (creating the U-shape downward arch)
+                 Made taller and less wide to push the arch deeper down */}
+            <div className="absolute -top-[10%] left-1/2 -translate-x-1/2 w-[90vw] h-[95vh] bg-[#020617] rounded-[50%] blur-[70px]" />
+            <div className="absolute -top-[5%] left-1/2 -translate-x-1/2 w-[70vw] h-[90vh] bg-[#020617] rounded-[50%] blur-[40px]" />
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[55vw] h-[85vh] bg-[#020617] rounded-[50%] blur-[20px]" />
+
+            {/* Sharp cyan reflection edge */}
+            <div className="absolute bottom-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-[#38bdf8] to-transparent opacity-90" />
+            <div className="absolute bottom-0 inset-x-0 h-[8px] bg-gradient-to-r from-transparent via-[#38bdf8] to-transparent blur-[4px] opacity-70" />
         </div>
 
-      {/* Enhanced Header with ARIA branding */}
-      <div id="test-header" className="flex-shrink-0 relative z-20">
-        {/* Header gradient line separator instead of full background */}
-        <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent shadow-[0_0_15px_rgba(59,130,246,0.3)]" />
-        <div
-          className="relative backdrop-blur-2xl bg-[#0a1128]/60 shadow-lg"
-        >
-          <div className="max-w-4xl mx-auto px-6 py-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                {/* ARIA Logo/Icon */}
-                <div className="relative">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-400/30 to-purple-400/30 blur-xl" />
-                    <Brain className="w-7 h-7 text-white relative z-10" />
-                  </div>
-                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full flex items-center justify-center">
-                    <Sparkles className="w-2.5 h-2.5 text-white" />
-                  </div>
-                </div>
-                
-                <div>
-                  <h1 className="text-2xl font-bold flex items-center gap-3">
-                    <span className="text-white drop-shadow-sm font-medium">
-                      Test Vocacional con
-                    </span>
-                    <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent font-black tracking-wide">
-                      ARIA
-                    </span>
-                  </h1>
-                  <div className="flex items-center gap-3 text-slate-400 text-sm mt-1">
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(59,130,246,0.8)]" />
-                      <span>Fase: <span className="text-white font-medium">{getPhaseText(currentPhase)}</span></span>
-                    </div>
-                    <span className="text-slate-600">•</span>
-                    <span
-                      className="text-cyan-400 bg-cyan-950/50 border border-cyan-800/50 px-3 py-1 rounded-full text-xs font-medium backdrop-blur-sm"
-                    >
-                      IA Conversacional
-                    </span>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Optional: Phase progress indicator with hover tooltips */}
-              <div className="hidden md:flex items-center gap-2">
-                <div className="text-right">
-                  <div className="text-xs text-slate-500 mb-1 font-medium tracking-wide uppercase">Progreso</div>
-                  <div className="flex gap-1">
-                    {['exploration', 'career_matching', 'reality_check', 'complete'].map((phase, index) => {
-                      const phaseIndex = ['exploration', 'career_matching', 'reality_check', 'complete'].indexOf(currentPhase)
-                      const isActive = phase === currentPhase
-                      const isCompleted = index < phaseIndex
+      {/* Floating Pill Navbar (Sandra AI Style) */}
+      <div id="test-header" className="flex-shrink-0 relative z-20 pt-8 w-full flex justify-center px-4">
+        <div className="backdrop-blur-md bg-[#0a1128]/40 border border-white/5 shadow-2xl rounded-[32px] px-8 py-3 w-full max-w-4xl flex flex-col lg:flex-row items-center justify-between gap-6 transition-all duration-300">
+            
+            {/* Left side: Minimalist Logo */}
+            <div className="flex items-center justify-start lg:w-[220px]">
+              <h1 className="text-xl font-medium tracking-tight text-white flex gap-1.5 items-center">
+                ARIA <span className="text-white/50 font-normal">AI</span>
+              </h1>
+            </div>
 
-                      return (
-                        <div
-                          key={phase}
-                          className={`w-3 h-1 rounded-full transition-all duration-300 relative group ${
-                            isActive
-                              ? 'bg-gradient-to-r from-blue-400 to-indigo-400 shadow-[0_0_8px_rgba(96,165,250,0.5)]'
-                              : isCompleted
-                                ? 'bg-slate-600'
-                                : 'bg-slate-800'
-                          }`}
-                          title={phaseTranslations[phase]}
-                        >
-                          {/* Tooltip on hover */}
-                          <div className="absolute bottom-3 right-0 bg-[#0f172a] text-slate-200 border border-slate-700 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-10 shadow-xl">
-                            {phaseTranslations[phase]}
+            {/* Center: Glowing Dot HUD Wizard */}
+            <div className="hidden lg:flex items-center justify-center flex-1">
+              <div className="hidden lg:flex items-center justify-between w-[380px] relative px-4 mt-[-10px]">
+                {(() => {
+                  const steps = [
+                    { label: 'Inicio', matches: ['greeting', 'initial'] },
+                    { label: 'Exploración', matches: ['exploration'] },
+                    { label: 'Análisis', matches: ['career_matching'] },
+                    { label: 'Viabilidad', matches: ['reality_check'] },
+                    { label: 'Resultados', matches: ['complete', 'final_results'] }
+                  ];
+                  const currentIdx = Math.max(0, steps.findIndex(s => s.matches.includes(currentPhase)));
+
+                  return (
+                    <>
+                      {/* Background Connecting Line */}
+                      <div className="absolute top-[8px] left-[8%] right-[8%] h-[2px] bg-white/10 z-0 rounded-full" />
+                      
+                      {/* Animated Glowing Connecting Line */}
+                      <div 
+                        className="absolute top-[8px] left-[8%] h-[2px] bg-sky-400 z-0 rounded-full shadow-[0_0_12px_#38bdf8] transition-all duration-[1.5s] ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+                        style={{ width: `${(currentIdx / (steps.length - 1)) * 84}%` }}
+                      />
+
+                      {steps.map((step, idx) => {
+                        const isPast = idx < currentIdx;
+                        const isCurrent = idx === currentIdx;
+                        const isActive = isPast || isCurrent;
+
+                        return (
+                          <div key={step.label} className="relative z-10 flex flex-col items-center">
+                            {/* Glowing Dot Ring */}
+                            <div className={`w-4 h-4 rounded-full border-[2px] flex items-center justify-center transition-all duration-700 ease-in-out bg-[#020617] ${
+                              isActive ? 'border-sky-400 shadow-[0_0_15px_#38bdf8]' : 'border-white/20'
+                            }`}>
+                              {/* Inner Glow Core */}
+                              <div className={`w-1.5 h-1.5 rounded-full bg-sky-300 transition-all duration-500 ease-in-out ${
+                                isCurrent ? 'opacity-100 animate-pulse' : 
+                                isPast ? 'opacity-100' : 'opacity-0 scale-50'
+                              }`} />
+                            </div>
+                            
+                            {/* Label floating below */}
+                            <div className={`absolute top-[22px] whitespace-nowrap text-[10px] font-medium tracking-wide transition-all duration-700 ${
+                              isCurrent ? 'text-sky-300 drop-shadow-[0_0_5px_#38bdf8]' : 
+                              isPast ? 'text-white/80' : 
+                              'text-white/30'
+                            }`}>
+                              {step.label}
+                            </div>
                           </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                </div>
+                        )
+                      })}
+                    </>
+                  )
+                })()}
               </div>
             </div>
-          </div>
+
+            {/* Right column: Current Phase Text Label */}
+            <div className="hidden lg:flex justify-end items-center lg:w-[220px]">
+              <div className="flex flex-col items-end text-right leading-tight">
+                <span className="text-[10px] uppercase font-bold tracking-widest text-white/50">
+                  Fase Actual
+                </span>
+                <span className="text-sm font-medium text-white tracking-wide">
+                  {getPhaseText(currentPhase)}
+                </span>
+              </div>
+            </div>
+
         </div>
       </div>
 
-      {/* Background overlays with glassmorphism effect */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `
-              radial-gradient(circle at 20% 80%,
-                rgba(147, 51, 234, 0.08) 0%,
-                rgba(147, 51, 234, 0.04) 30%,
-                transparent 60%
-              )
-            `
-          }}
-        />
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `
-              radial-gradient(circle at 80% 20%,
-                rgba(59, 130, 246, 0.08) 0%,
-                rgba(59, 130, 246, 0.04) 35%,
-                transparent 65%
-              )
-            `
-          }}
-        />
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `
-              radial-gradient(circle at 40% 40%,
-                rgba(99, 102, 241, 0.06) 0%,
-                rgba(99, 102, 241, 0.03) 40%,
-                transparent 70%
-              )
-            `
-          }}
-        />
-      </div>
 
-      {/* Floating Elements for atmosphere */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-32 left-16 w-64 h-64 bg-purple-200/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-32 right-16 w-80 h-80 bg-blue-200/15 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-        <div className="absolute top-2/3 left-1/3 w-48 h-48 bg-indigo-200/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
-      </div>
 
       {/* Main content area - single scrollable container */}
       <div className="flex-1 overflow-hidden flex flex-col relative z-10">
@@ -572,43 +584,43 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
           </div>
         )}
         
-        {/* Chat Interface with custom scrollbar */}
-        <div 
-          className="flex-1 overflow-y-auto custom-scrollbar"
-          style={{
-            scrollbarWidth: 'thin',
-            scrollbarColor: 'rgba(147, 51, 234, 0.3) rgba(255, 255, 255, 0.05)'
-          }}
-        >
-          <style>{`
-            .custom-scrollbar::-webkit-scrollbar {
-              width: 8px;
-            }
-            .custom-scrollbar::-webkit-scrollbar-track {
-              background: rgba(229, 231, 235, 0.5);
-              border-radius: 4px;
-            }
-            .custom-scrollbar::-webkit-scrollbar-thumb {
-              background: linear-gradient(135deg, rgba(59, 130, 246, 0.6), rgba(147, 51, 234, 0.6));
-              border-radius: 4px;
-              transition: all 0.2s ease;
-            }
-            .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-              background: linear-gradient(135deg, rgba(59, 130, 246, 0.8), rgba(147, 51, 234, 0.8));
-            }
-          `}</style>
-          
-          {/* UI Mode Switcher */}
-          <div id="ui-mode-toggle" className="relative z-20 pt-6">
-            <UIModeSwitcher
-              currentMode={uiMode}
-              onModeChange={setUIMode}
-              disabled={isSending || isTransitioning}
-            />
-          </div>
+        {/* Stable Fixed UI Mode Switcher (Always visible, never scrolled away) */}
+        <div id="ui-mode-toggle" className="relative z-20 mt-8 mb-2 flex-shrink-0">
+          <UIModeSwitcher
+            currentMode={uiMode}
+            onModeChange={setUIMode}
+            disabled={isSending || isTransitioning}
+          />
+        </div>
 
-          {/* Content based on UI mode */}
-          {uiMode === 'chat' ? (
+        {/* Chat Interface with custom scrollbar */}
+        {/* Content based on UI mode */}
+        {uiMode === 'chat' ? (
+          <div 
+            className="flex-1 overflow-y-auto custom-scrollbar"
+            style={{
+              scrollbarWidth: 'thin',
+              scrollbarColor: 'rgba(147, 51, 234, 0.3) rgba(255, 255, 255, 0.05)'
+            }}
+          >
+            <style>{`
+              .custom-scrollbar::-webkit-scrollbar {
+                width: 8px;
+              }
+              .custom-scrollbar::-webkit-scrollbar-track {
+                background: rgba(229, 231, 235, 0.5);
+                border-radius: 4px;
+              }
+              .custom-scrollbar::-webkit-scrollbar-thumb {
+                background: linear-gradient(135deg, rgba(59, 130, 246, 0.6), rgba(147, 51, 234, 0.6));
+                border-radius: 4px;
+                transition: all 0.2s ease;
+              }
+              .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                background: linear-gradient(135deg, rgba(59, 130, 246, 0.8), rgba(147, 51, 234, 0.8));
+              }
+            `}</style>
+            
             <div id="conversation-display">
               <ConversationHistory
                 messages={session?.conversation_history || []}
@@ -617,7 +629,9 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
                 autoSpeakNewMessages={false}
               />
             </div>
-          ) : (
+          </div>
+        ) : (
+          <div className="flex-1 flex flex-col relative w-full h-full">
             <VoiceInterface
               onSendMessage={sendMessage}
               disabled={isSending || isTransitioning || (uiBehavior.showCareers && recommendations && recommendations.length > 0)}
@@ -627,8 +641,8 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
               isComplete={isComplete}
               uiBehavior={uiBehavior}
             />
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Input Area - Only show for chat mode when no overlay */}
         {uiMode === 'chat' && !(uiBehavior.showCareers && recommendations && recommendations.length > 0) && (

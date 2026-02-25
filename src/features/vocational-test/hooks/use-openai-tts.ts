@@ -14,6 +14,7 @@ export interface UseOpenAITTSReturn {
   isLoading: boolean
   isSupported: boolean
   error: string | null
+  progress: number
 }
 
 export function useOpenAITTS(options: OpenAITTSOptions = {}): UseOpenAITTSReturn {
@@ -27,8 +28,11 @@ export function useOpenAITTS(options: OpenAITTSOptions = {}): UseOpenAITTSReturn
   const [isSpeaking, setIsSpeaking] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [progress, setProgress] = useState(0)
   
   const audioRef = useRef<HTMLAudioElement | null>(null)
+  const lastProgressRef = useRef<number>(0)
+  const lastUpdateRef = useRef<number>(0)
   const onCompleteRef = useRef<(() => void) | null>(null)
   const audioCache = useRef<Map<string, string>>(new Map())
   const currentRequestRef = useRef<AbortController | null>(null)
@@ -139,6 +143,7 @@ export function useOpenAITTS(options: OpenAITTSOptions = {}): UseOpenAITTSReturn
       audio.onplay = () => {
         setIsSpeaking(true)
         setIsLoading(false) // Only end loading when audio actually starts playing
+        setProgress(0)
         console.log('🎤 OpenAI TTS started speaking')
         console.log('🎯 TTS setIsLoading(false) on play')
       }
@@ -148,11 +153,24 @@ export function useOpenAITTS(options: OpenAITTSOptions = {}): UseOpenAITTSReturn
       }
 
       audio.ontimeupdate = () => {
-        // Track progress for debugging
+        // Track progress for debugging and UI syncing (throttled for performance)
         if (audio.duration && audio.currentTime) {
-          const progress = (audio.currentTime / audio.duration) * 100
-          if (progress > 95) { // Near end
-            console.log(`🔊 Audio near end: ${progress.toFixed(1)}%`)
+          const now = performance.now()
+          const currentProgress = audio.currentTime / audio.duration
+          
+          // Throttle updates: Ensure we only trigger a React re-render max once every ~60ms
+          // AND only if the progress changed meaningfully (>0.5% threshold) to avoid micro-stutters
+          if (
+            now - lastUpdateRef.current > 60 && 
+            Math.abs(currentProgress - lastProgressRef.current) > 0.005
+          ) {
+            setProgress(currentProgress)
+            lastProgressRef.current = currentProgress
+            lastUpdateRef.current = now
+            
+            if (currentProgress * 100 > 95) { // Near end
+              console.log(`🔊 Audio near end: ${(currentProgress * 100).toFixed(1)}%`)
+            }
           }
         }
       }
@@ -160,6 +178,8 @@ export function useOpenAITTS(options: OpenAITTSOptions = {}): UseOpenAITTSReturn
       audio.onended = () => {
         setIsSpeaking(false)
         isPlayingRef.current = false
+        setProgress(0)
+        lastProgressRef.current = 0
         console.log('✅ OpenAI TTS finished speaking')
         console.log('🎯 TTS onended - checking completion callback:', !!onCompleteRef.current)
         if (onCompleteRef.current) {
@@ -238,6 +258,8 @@ export function useOpenAITTS(options: OpenAITTSOptions = {}): UseOpenAITTSReturn
     }
     
     setIsSpeaking(false)
+    setProgress(0)
+    lastProgressRef.current = 0
     // Don't reset isLoading when suppressing callback (we're about to start new audio)
     if (!suppressCallback) {
       setIsLoading(false)
@@ -279,6 +301,7 @@ export function useOpenAITTS(options: OpenAITTSOptions = {}): UseOpenAITTSReturn
     isSpeaking,
     isLoading,
     isSupported,
-    error
+    error,
+    progress
   }
 }

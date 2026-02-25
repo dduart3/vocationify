@@ -2,9 +2,19 @@
 // Responsibility: Display conversation messages in chat bubble format
 
 import { useEffect, useRef, useState } from 'react'
-import { User, Bot, Volume2, Pause } from 'lucide-react'
+import { Bot, Volume2, Pause } from 'lucide-react'
 import { PhaseSeparator } from './phase-separator'
 import { useTextToSpeech } from '@/features/vocational-test/hooks/use-text-to-speech'
+import { 
+  Conversation, 
+  ConversationContent, 
+  ConversationScrollButton 
+} from '@/components/ai-elements/conversation'
+import {
+  Message,
+  MessageContent,
+  MessageResponse
+} from '@/components/ai-elements/message'
 
 interface Message {
   role: 'user' | 'assistant'
@@ -78,7 +88,6 @@ export function ConversationHistory({
   enableVoice = true,
   autoSpeakNewMessages = false 
 }: ConversationHistoryProps) {
-  const messagesEndRef = useRef<HTMLDivElement>(null)
   const [currentlyPlayingMessage, setCurrentlyPlayingMessage] = useState<number | null>(null)
   const previousMessageCountRef = useRef(messages.length)
 
@@ -103,16 +112,6 @@ export function ConversationHistory({
     }
     previousMessageCountRef.current = messages.length
   }, [messages, autoSpeakNewMessages, enableVoice, isSpeechSupported])
-
-  // Auto-scroll to bottom when new messages arrive
-  useEffect(() => {
-    if (messagesEndRef.current && messages.length > 0) {
-      messagesEndRef.current.scrollIntoView({ 
-        behavior: 'smooth',
-        block: 'end'
-      })
-    }
-  }, [messages])
 
   const handleSpeakMessage = (messageIndex: number, content: string) => {
     if (!enableVoice || !isSpeechSupported) return
@@ -142,8 +141,9 @@ export function ConversationHistory({
   const transitions = detectPhaseTransitions(messages)
 
   return (
-    <div className="flex-1 overflow-y-auto p-6 space-y-6">
-      {messages.map((message, index) => (
+    <Conversation className="flex-1 w-full relative">
+      <ConversationContent className="px-6 py-6 md:px-20 lg:px-24 space-y-6 max-w-5xl mx-auto">
+        {messages.map((message, index) => (
         <div key={index}>
           {/* Show phase separator if there's a transition at this index */}
           {transitions.some(t => t.index === index) && (
@@ -161,78 +161,73 @@ export function ConversationHistory({
             </>
           )}
           
-          {/* Message bubble */}
-          <div
-            className={`flex gap-4 ${
-              message.role === 'user' ? 'justify-end' : 'justify-start'
-            }`}
-          >
+          {/* Minimalist Flat Bubble via ai-elements */}
+          <Message from={message.role} className="relative mb-6">
+            
+            {/* 3D Metallic AI Avatar (Replica of Voice Persona) */}
             {message.role === 'assistant' && (
-              <div className="flex-shrink-0">
-                <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
-                  <Bot className="w-6 h-6 text-white" />
-                </div>
-              </div>
-            )}
-            
-            <div className={`max-w-2xl ${message.role === 'user' ? 'order-1' : ''}`}>
-              <div
-                className={`p-4 rounded-2xl ${
-                  message.role === 'user'
-                    ? 'bg-blue-600 text-white ml-auto shadow-lg shadow-blue-200/50'
-                    : 'bg-white/80 backdrop-blur-sm text-gray-900 border border-gray-200 shadow-lg shadow-gray-200/50'
-                }`}
+              <div 
+                className="absolute -left-[52px] top-1 hidden md:flex items-center justify-center w-10 h-10 rounded-full z-10 shadow-[0_4px_12px_rgba(0,0,0,0.6)] border border-black/80 ring-1 ring-white/10"
+                style={{
+                  background: 'radial-gradient(circle at 35% 35%, #ffffff 0%, #b5b5ba 30%, #52525b 70%, #18181b 100%)'
+                }}
               >
-                <p className="text-sm leading-relaxed whitespace-pre-wrap">
-                  {message.content}
-                </p>
-                <div className={`flex items-center justify-between mt-2 ${
-                  message.role === 'user' ? 'text-blue-100' : 'text-gray-500'
-                }`}>
-                  <div className="text-xs">
-                    {new Date(message.timestamp).toLocaleTimeString('es-ES', {
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })}
-                  </div>
+                {/* Premium Fine Noise Overlay */}
+                <div 
+                  className="absolute inset-0 opacity-[0.3] mix-blend-overlay rounded-full pointer-events-none"
+                  style={{
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+                    backgroundRepeat: 'repeat',
+                    backgroundSize: '40px 40px',
+                  }}
+                />
+                
+                {/* Edge Rim Lighting */}
+                <div className="absolute inset-0 rounded-full shadow-[inset_0_0_12px_rgba(0,0,0,0.9),inset_0_1px_3px_rgba(255,255,255,0.6)] pointer-events-none" />
 
-                  {/* Voice control button for AI messages */}
-                  {message.role === 'assistant' && enableVoice && isSpeechSupported && (
-                    <button
-                      onClick={() => handleSpeakMessage(index, message.content)}
-                      className="flex items-center gap-1 px-2 py-1 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors duration-200 group"
-                      title={currentlyPlayingMessage === index && isSpeaking ? "Detener audio" : "Reproducir audio"}
-                    >
-                      {currentlyPlayingMessage === index && isSpeaking ? (
-                        <>
-                          <Pause className="w-3 h-3 text-gray-600 group-hover:text-gray-900" />
-                          <span className="text-xs text-gray-600 group-hover:text-gray-900">Pausar</span>
-                        </>
-                      ) : (
-                        <>
-                          <Volume2 className="w-3 h-3 text-gray-600 group-hover:text-gray-900" />
-                          <span className="text-xs text-gray-600 group-hover:text-gray-900">Reproducir</span>
-                        </>
-                      )}
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-            
-            {message.role === 'user' && (
-              <div className="flex-shrink-0">
-                <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
-                  <User className="w-6 h-6 text-white" />
-                </div>
               </div>
             )}
-          </div>
+
+            <MessageContent 
+              className={
+                message.role === 'user'
+                  ? 'bg-[#2a2a2a] text-white ml-auto rounded-[24px] rounded-br-[4px] max-w-2xl px-6 py-4 shadow-sm'
+                  : 'bg-transparent text-white max-w-3xl pr-6 py-2'
+              }
+            >
+              <div className="text-[15px] leading-relaxed whitespace-pre-wrap">
+                <MessageResponse>{message.content}</MessageResponse>
+              </div>
+              
+              {/* Voice control button for AI messages */}
+              {message.role === 'assistant' && enableVoice && isSpeechSupported && (
+                <div className="flex items-center justify-start mt-4">
+                  <button
+                    onClick={() => handleSpeakMessage(index, message.content)}
+                    className="flex items-center gap-3 pr-5 pl-1.5 py-1.5 rounded-full bg-[#030818]/60 shadow-[inset_0_4px_10px_rgba(0,0,0,0.8),inset_0_-1px_2px_rgba(255,255,255,0.05)] border border-black/80 hover:bg-[#0a1128]/80 transition-all duration-300 group active:scale-95"
+                    title={currentlyPlayingMessage === index && isSpeaking ? "Detener audio" : "Reproducir audio"}
+                  >
+                    {/* Inner glowing 3D circle for icon */}
+                    <div className="group/icon flex items-center justify-center w-[34px] h-[34px] rounded-full bg-white/[0.03] backdrop-blur-md shadow-[inset_0_1px_3px_rgba(255,255,255,0.2),0_4px_10px_rgba(0,0,0,0.6)] border border-white/10 hover:bg-white/10 hover:shadow-[inset_0_1px_5px_rgba(255,255,255,0.4),0_4px_12px_rgba(0,0,0,0.8)] transition-all duration-300">
+                      {currentlyPlayingMessage === index && isSpeaking ? (
+                        <Pause className="w-[15px] h-[15px] text-white/90 group-hover/icon:text-white drop-shadow-[0_0_6px_rgba(255,255,255,0.6)]" />
+                      ) : (
+                        <Volume2 className="w-[15px] h-[15px] text-white/90 group-hover/icon:text-white drop-shadow-[0_0_6px_rgba(255,255,255,0.6)]" />
+                      )}
+                    </div>
+                    {/* Floating Text */}
+                    <span className="text-[13px] font-medium tracking-wide text-white/40 group-hover:text-white/80 transition-colors duration-300">
+                      {currentlyPlayingMessage === index && isSpeaking ? "Pausar" : "Escuchar"}
+                    </span>
+                  </button>
+                </div>
+              )}
+            </MessageContent>
+          </Message>
         </div>
       ))}
-      
-      {/* Invisible element for auto-scrolling */}
-      <div ref={messagesEndRef} className="h-1" />
-    </div>
+      </ConversationContent>
+      <ConversationScrollButton />
+    </Conversation>
   )
 }

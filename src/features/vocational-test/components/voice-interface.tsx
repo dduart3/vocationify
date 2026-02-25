@@ -2,11 +2,13 @@
 // Responsibility: Handle voice-driven conversational flow with modern voice bubble
 
 import { useState, useEffect, useRef } from 'react'
-import { Mic, Volume2, Brain, Loader, AlertCircle } from 'lucide-react'
+import { Mic, Volume2, Brain, Loader, AlertCircle, X } from 'lucide-react'
 import { useSpeechRecognition } from '@/features/vocational-test/hooks/use-speech-recognition'
 import { useOpenAITTS } from '../hooks/use-openai-tts'
 import { useVoiceSettings } from '../hooks/use-voice-settings'
 import { VoiceSettingsToggle } from './voice-settings-toggle'
+import { Persona } from '@/components/ai-elements/persona'
+import { Shimmer } from '@/components/ai-elements/shimmer'
 import type { UIBehavior } from '../types'
 
 export type VoiceState = 'idle' | 'listening' | 'processing' | 'speaking' | 'error'
@@ -63,7 +65,8 @@ export function VoiceInterface({
     isSpeaking,
     isLoading: isTTSLoading,
     isSupported: isTTSSupported,
-    error: ttsError
+    error: ttsError,
+    progress
   } = useOpenAITTS({
     voice: 'shimmer', // Warm feminine voice, perfect for career guidance
     model: 'gpt-4o-mini-tts', // Cheapest OpenAI TTS model for maximum cost savings
@@ -364,100 +367,169 @@ export function VoiceInterface({
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center p-6">
-      {/* Current Question Display */}
-      {currentQuestion && (
-        <div className="mb-12 text-center max-w-2xl">
-          <div className="p-6 rounded-3xl bg-white/80 backdrop-blur-xl border border-gray-200 shadow-lg shadow-gray-200/50">
-            <h3 className="text-gray-900 text-lg font-semibold mb-2">ARIA pregunta:</h3>
-            <p className="text-gray-700 leading-relaxed">{currentQuestion}</p>
-          </div>
-        </div>
-      )}
+      {/* Top spacing to account for removed question div */}
+      <div className="h-12" />
 
-      {/* Main Voice Bubble */}
-      <div className="relative mb-8">
-        {/* Outer glow rings */}
-        <div className={`absolute inset-0 rounded-full bg-gradient-to-r ${stateInfo.color} blur-3xl ${stateInfo.pulse ? 'animate-pulse' : ''}`} 
-             style={{ transform: 'scale(1.5)' }} />
-        <div className={`absolute inset-0 rounded-full bg-gradient-to-r ${stateInfo.color} blur-2xl ${stateInfo.pulse ? 'animate-pulse' : ''}`} 
-             style={{ transform: 'scale(1.3)' }} />
+      {/* Main Voice Bubble - Animated Persona Component */}
+      <div className="relative mb-8 flex justify-center items-center">
+        {/* Outer subtle glow to match the background */}
+        <div className={`absolute inset-0 rounded-full bg-gradient-to-r ${stateInfo.color} blur-3xl opacity-50 ${stateInfo.pulse ? 'animate-pulse' : ''}`} 
+             style={{ transform: 'scale(2)' }} />
         
-        {/* Main voice bubble */}
         <button
           onClick={handleVoiceToggle}
           disabled={disabled || voiceState === 'processing' || voiceState === 'speaking'}
-          className="relative w-48 h-48 rounded-full bg-white border-2 border-gray-300 backdrop-blur-xl transition-all duration-300 hover:scale-105 hover:border-blue-400 disabled:opacity-50 disabled:cursor-not-allowed group shadow-xl shadow-gray-300/50"
+          className="relative z-10 flex items-center justify-center transition-transform duration-300 hover:scale-[1.02] active:scale-95 disabled:opacity-80 disabled:hover:scale-100 disabled:cursor-not-allowed outline-none"
         >
-          {/* Inner gradient overlay */}
-          <div className={`absolute inset-0 rounded-full bg-gradient-to-r ${stateInfo.color} opacity-30 group-hover:opacity-50 transition-opacity duration-300`} />
+          <Persona 
+            variant="obsidian" 
+            state={
+              voiceState === 'processing' ? 'thinking' : 
+              voiceState === 'speaking' ? 'speaking' : 
+              voiceState === 'listening' ? 'listening' : 
+              'idle'
+            } 
+            className="w-64 h-64 sm:w-80 sm:h-80 drop-shadow-2xl" 
+          />
 
-          {/* Icon */}
-          <div className="relative z-10 flex items-center justify-center h-full">
-            {stateInfo.icon}
+          {/* Central 3D Deep State Icon */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
+            <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md border border-white/40 shadow-[inset_0_3px_6px_rgba(255,255,255,0.6),0_8px_16px_rgba(0,0,0,0.6)] flex items-center justify-center transition-all duration-300">
+              
+              {/* Idle: Time to talk */}
+              {(voiceState === 'idle' || voiceState === 'error') && (
+                <Mic className="w-5 h-5 text-gray-800 drop-shadow-md transition-opacity duration-300 opacity-100" />
+              )}
+              
+              {/* Listening: Listening to the user speaking */}
+              {voiceState === 'listening' && (
+                <div className="flex items-center justify-center gap-[3px] h-5">
+                  <div className="w-1 bg-gray-800 rounded-full animate-[pulse_0.8s_ease-in-out_infinite] shadow-sm" style={{ height: '50%', animationDelay: '0ms' }} />
+                  <div className="w-1 bg-gray-800 rounded-full animate-[pulse_0.8s_ease-in-out_infinite] shadow-sm" style={{ height: '100%', animationDelay: '200ms' }} />
+                  <div className="w-1 bg-gray-800 rounded-full animate-[pulse_0.8s_ease-in-out_infinite] shadow-sm" style={{ height: '70%', animationDelay: '400ms' }} />
+                  <div className="w-1 bg-gray-800 rounded-full animate-[pulse_0.8s_ease-in-out_infinite] shadow-sm" style={{ height: '40%', animationDelay: '600ms' }} />
+                </div>
+              )}
+              
+              {/* Processing/Thinking: 3 Animated Dots */}
+              {voiceState === 'processing' && (
+                <div className="flex gap-1 justify-center items-center">
+                  <div className="w-1.5 h-1.5 bg-gray-800 rounded-full animate-bounce shadow-sm" style={{ animationDelay: '0ms' }} />
+                  <div className="w-1.5 h-1.5 bg-gray-800 rounded-full animate-bounce shadow-sm" style={{ animationDelay: '150ms' }} />
+                  <div className="w-1.5 h-1.5 bg-gray-800 rounded-full animate-bounce shadow-sm" style={{ animationDelay: '300ms' }} />
+                </div>
+              )}
+
+              {/* Speaking: AI talking */}
+              {voiceState === 'speaking' && (
+                <Volume2 className="w-5 h-5 text-gray-800 drop-shadow-md animate-pulse" />
+              )}
+
+            </div>
           </div>
         </button>
+      </div>
 
-        {/* Waveform visualization for listening state */}
-        {voiceState === 'listening' && (
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="flex items-center gap-1">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="w-1 bg-red-400 rounded-full animate-pulse"
-                  style={{ 
-                    height: `${Math.random() * 20 + 10}px`,
-                    animationDelay: `${i * 0.1}s`,
-                    animationDuration: '0.6s'
-                  }}
-                />
-              ))}
-            </div>
+      {/* AI Dialog & Voice State Display */}
+      <div className="text-center mb-6 min-h-[100px] flex flex-col items-center justify-start max-w-2xl px-4 animate-in fade-in zoom-in-95 duration-500">
+        {voiceState === 'listening' ? (
+          <div>
+            <h2 className="text-2xl md:text-3xl font-medium tracking-wide drop-shadow-lg mb-2">
+              <Shimmer className="[--color-background:#ffffff] [--color-muted-foreground:rgba(255,255,255,0.3)]">
+                Escuchando...
+              </Shimmer>
+            </h2>
+          </div>
+        ) : voiceState === 'processing' ? (
+          <div>
+            <h2 className="text-2xl md:text-3xl font-medium tracking-wide drop-shadow-lg mb-2">
+              <Shimmer className="[--color-background:#ffffff] [--color-muted-foreground:rgba(255,255,255,0.3)]">
+                Pensando...
+              </Shimmer>
+            </h2>
+          </div>
+        ) : currentQuestion ? (
+          <div key={currentQuestion} className="animate-in fade-in slide-in-from-bottom-6 duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)]">
+            <h2 className="text-xl md:text-2xl font-medium tracking-wide leading-relaxed drop-shadow-lg pointer-events-none">
+              {currentQuestion.split(' ').map((word, i, arr) => {
+              // Smooth karaoke highlight logic: triggers word transition cleanly as progress sweeps
+              const isActive = voiceState === 'speaking' ? (i / arr.length) <= (progress + 0.05) : true;
+              return (
+                <span 
+                  key={i} 
+                  className={`transition-colors duration-500 ease-out ${isActive ? 'text-white' : 'text-white/30'}`}
+                >
+                  {word}{' '}
+                </span>
+              )
+            })}
+          </h2>
+          </div>
+        ) : (
+          <div>
+            <h2 className="text-2xl md:text-3xl font-medium text-white tracking-wide drop-shadow-lg mb-2">
+              {stateInfo.title}
+            </h2>
           </div>
         )}
       </div>
 
-      {/* Voice State Display */}
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">{stateInfo.title}</h2>
-        <p className="text-gray-600">{stateInfo.description}</p>
-      </div>
-
-      {/* Transcript Display */}
-      {transcript && (
-        <div className="w-full max-w-md">
-          <div className="p-4 rounded-2xl bg-green-50 border border-green-300 text-center shadow-sm">
-            <p className="text-green-700 text-sm mb-1 font-semibold">Transcripción:</p>
-            <p className="text-gray-900">{transcript}</p>
-            {silenceTimer && (
-              <p className="text-green-600 text-xs mt-2">Auto-enviando en silencio...</p>
-            )}
+      {/* Bottom Controls Area: Transcript & Settings */}
+      <div className="flex flex-col items-center gap-4 mt-8 w-full max-w-sm">
+        
+        {/* Error Display */}
+        {ttsError && (
+          <div className="px-4 py-2 bg-red-500/10 backdrop-blur-md border border-red-500/20 rounded-full text-center">
+            <p className="text-red-400 text-xs font-medium">{ttsError}</p>
           </div>
+        )}
+
+        {/* Reserved space to stop UI jumping, holding the Transcript Box */}
+        <div className="h-10 relative flex justify-center items-end w-full">
+          {/* Transcript Box */}
+          {(voiceState === 'listening' || transcript) && (
+            <div className="absolute bottom-0 flex items-start px-4 py-2.5 bg-[#171717]/95 backdrop-blur-xl border border-white/5 rounded-2xl text-xs text-white/90 w-fit max-w-[320px] sm:max-w-[400px] shadow-[0_8px_30px_rgba(0,0,0,0.4)] transition-all duration-300 transform translate-y-[-10px]">
+              
+              {/* Red Recording Block */}
+              <div className="flex-shrink-0 mt-[2px] mr-3 w-3 h-3 rounded-[3px] bg-[#ff5a5a] shadow-[0_0_8px_rgba(255,90,90,0.4)]" />
+
+              {/* Transcript Text */}
+              <div className="flex-1 mr-3 font-medium tracking-wide break-words leading-relaxed overflow-hidden">
+                {transcript ? (
+                  <span>{transcript}</span>
+                ) : (
+                  <Shimmer className="[--color-background:#ffffff] [--color-muted-foreground:rgba(255,255,255,0.4)]">
+                    Transcribiendo...
+                  </Shimmer>
+                )}
+              </div>
+              
+              {/* Clear Window Button (X) */}
+              <button
+                onClick={() => {
+                  setTranscript('')
+                  transcriptRef.current = ''
+                }}
+                className="flex-shrink-0 mt-[1px] hover:bg-white/10 p-0.5 rounded-full transition-colors flex items-center justify-center outline-none"
+                title="Descartar"
+              >
+                <X className="w-4 h-4 text-white/40 hover:text-white/80 transition-colors" />
+              </button>
+            </div>
+          )}
         </div>
-      )}
 
-      {/* Manual Send Button (if there's transcript) */}
-      {transcript && !silenceTimer && (
-        <button
-          onClick={handleAutoSend}
-          className="mt-4 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-semibold rounded-xl transition-all duration-300 hover:scale-105 shadow-lg"
-        >
-          Enviar respuesta
-        </button>
-      )}
+        {/* Manual Send Button (Only shows in manual mode when ready) */}
+        {transcript && !silenceTimer && (
+          <button
+            onClick={handleAutoSend}
+            className="px-6 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white text-xs font-medium rounded-full transition-all duration-300 hover:scale-105 border border-white/20 shadow-lg"
+          >
+            Enviar respuesta
+          </button>
+        )}
 
-      {/* Error Display */}
-      {ttsError && (
-        <div className="w-full max-w-md mt-4">
-          <div className="p-4 rounded-2xl bg-red-50 border border-red-300 text-center shadow-sm">
-            <p className="text-red-700 text-sm mb-1 font-semibold">Error TTS:</p>
-            <p className="text-gray-900 text-xs">{ttsError}</p>
-          </div>
-        </div>
-      )}
-
-      {/* Voice Settings Toggle */}
-      <div className="mt-8">
+        {/* Voice Settings Toggle */}
         <VoiceSettingsToggle disabled={disabled || isLoading} />
       </div>
     </div>
