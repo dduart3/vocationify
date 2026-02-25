@@ -176,9 +176,9 @@ export function ConversationHistory({
             {/* 3D Metallic AI Avatar (Replica of Voice Persona) */}
             {message.role === 'assistant' && (
               <div 
-                className="absolute -left-[52px] top-1 hidden md:flex items-center justify-center w-10 h-10 rounded-full z-10 shadow-[0_4px_12px_rgba(0,0,0,0.6)] border border-black/80 ring-1 ring-white/10"
+                className="absolute -left-[52px] top-1 hidden md:flex items-center justify-center w-10 h-10 rounded-full z-10 shadow-[0_4px_10px_rgba(0,0,0,0.15)] border border-gray-300 ring-1 ring-white/50"
                 style={{
-                  background: 'radial-gradient(circle at 35% 35%, #ffffff 0%, #b5b5ba 30%, #52525b 70%, #18181b 100%)'
+                  background: 'radial-gradient(circle at 35% 35%, #ffffff 0%, #e5e7eb 30%, #9ca3af 70%, #4b5563 100%)'
                 }}
               >
                 {/* Premium Fine Noise Overlay */}
@@ -192,7 +192,7 @@ export function ConversationHistory({
                 />
                 
                 {/* Edge Rim Lighting */}
-                <div className="absolute inset-0 rounded-full shadow-[inset_0_0_12px_rgba(0,0,0,0.9),inset_0_1px_3px_rgba(255,255,255,0.6)] pointer-events-none" />
+                <div className="absolute inset-0 rounded-full shadow-[inset_0_0_10px_rgba(255,255,255,0.8),inset_0_1px_3px_rgba(255,255,255,0.9)] pointer-events-none" />
 
               </div>
             )}
@@ -242,9 +242,9 @@ export function ConversationHistory({
           <Message from="assistant" className="relative">
             {/* 3D Metallic AI Avatar (Replica of Voice Persona) */}
             <div 
-              className="absolute -left-[52px] top-1 hidden md:flex items-center justify-center w-10 h-10 rounded-full z-10 shadow-[0_4px_12px_rgba(0,0,0,0.6)] border border-black/80 ring-1 ring-white/10"
+              className="absolute -left-[52px] top-1 hidden md:flex items-center justify-center w-10 h-10 rounded-full z-10 shadow-[0_4px_10px_rgba(0,0,0,0.15)] border border-gray-300 ring-1 ring-white/50"
               style={{
-                background: 'radial-gradient(circle at 35% 35%, #ffffff 0%, #b5b5ba 30%, #52525b 70%, #18181b 100%)'
+                background: 'radial-gradient(circle at 35% 35%, #ffffff 0%, #e5e7eb 30%, #9ca3af 70%, #4b5563 100%)'
               }}
             >
               {/* Premium Fine Noise Overlay */}
@@ -258,7 +258,7 @@ export function ConversationHistory({
               />
               
               {/* Edge Rim Lighting */}
-              <div className="absolute inset-0 rounded-full shadow-[inset_0_0_12px_rgba(0,0,0,0.9),inset_0_1px_3px_rgba(255,255,255,0.6)] pointer-events-none" />
+              <div className="absolute inset-0 rounded-full shadow-[inset_0_0_10px_rgba(255,255,255,0.8),inset_0_1px_3px_rgba(255,255,255,0.9)] pointer-events-none" />
             </div>
 
             <MessageContent className="bg-transparent text-[#334155] max-w-3xl pr-6 py-2">

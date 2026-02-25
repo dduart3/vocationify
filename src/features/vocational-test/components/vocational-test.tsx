@@ -541,7 +541,7 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
                 <span className="text-[10px] uppercase font-bold tracking-widest text-slate-500">
                   Fase Actual
                 </span>
-                <span className="text-sm font-medium text-slate-800 tracking-wide">
+                <span className="text-sm font-semibold text-blue-600 tracking-wide">
                   {getPhaseText(currentPhase)}
                 </span>
               </div>
@@ -601,7 +601,9 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
             className="flex-1 overflow-y-auto custom-scrollbar relative z-0"
             style={{
               scrollbarWidth: 'thin',
-              scrollbarColor: 'rgba(147, 51, 234, 0.3) rgba(255, 255, 255, 0.05)'
+              scrollbarColor: 'rgba(147, 51, 234, 0.3) rgba(255, 255, 255, 0.05)',
+              maskImage: 'linear-gradient(to bottom, transparent 0%, black 60px, black calc(100% - 60px), transparent 100%)',
+              WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 60px, black calc(100% - 60px), transparent 100%)'
             }}
           >
             <style>{`
