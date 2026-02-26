@@ -162,11 +162,10 @@ export function CareerDetail({ careerId }: CareerDetailProps) {
         </div>
 
         {/* Inner Structure */}
-        <div className="relative z-10 w-full min-h-screen flex flex-col pt-6 sm:pt-6 lg:h-screen lg:max-h-screen lg:overflow-hidden md:pl-[104px]">
-          <div className="flex-1 flex flex-col min-h-0 pt-6 sm:pt-8 lg:pt-10">
+        <div className="relative z-10 w-full min-h-screen flex flex-col pt-6 sm:pt-8 lg:pt-10 pb-24">
 
             {/* Header */}
-            <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 shrink-0" id="career-detail-header">
+            <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 shrink-0" id="career-detail-header">
               <div className="flex items-center gap-5 sm:gap-6">
                 <Link
                   to="/careers"
@@ -202,26 +201,12 @@ export function CareerDetail({ careerId }: CareerDetailProps) {
               </div>
             </div>
 
-            {/* Scrollable Content Area */}
-            <div 
-              className="relative flex-1 min-h-0 w-full flex flex-col overflow-hidden"
-              style={{
-                maskImage: 'linear-gradient(to bottom, transparent, black 24px, black calc(100% - 24px), transparent)',
-                WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 24px, black calc(100% - 24px), transparent)'
-              }}
-            >
-              <div className="flex-1 overflow-y-auto custom-scrollbar">
-                <style>{`
-                  .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-                  .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-                  .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.3); border-radius: 10px; }
-                  .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.5); }
-                `}</style>
-                <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24">
-                  {/* Main Info */}
-                  <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 sm:gap-6 mb-8">
-                    {/* Career Details */}
-                    <div className="xl:col-span-8 space-y-5 sm:space-y-6">
+            {/* Main Content Area */}
+            <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+              {/* Main Info */}
+              <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 sm:gap-6 mb-8">
+                {/* Career Details */}
+                <div className="xl:col-span-8 flex flex-col gap-5 sm:gap-6 xl:[&>div:last-child]:flex-1">
           {/* Description */}
           <div className="bg-white/50 backdrop-blur-xl border border-white/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_4px_20px_rgba(0,0,0,0.03)] rounded-[24px] p-6 lg:p-8 shrink-0">
             <h2 className="text-[18px] font-bold text-slate-800 mb-4 flex items-center gap-2">Descripción</h2>
@@ -283,7 +268,7 @@ export function CareerDetail({ careerId }: CareerDetailProps) {
         </div>
 
         {/* Sidebar */}
-        <div className="xl:col-span-4 space-y-5 sm:space-y-6">
+        <div className="xl:col-span-4 flex flex-col gap-5 sm:gap-6 xl:[&>div:last-child]:flex-1">
           {/* Quick Stats */}
           <div className="bg-white/50 backdrop-blur-xl border border-white/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_4px_20px_rgba(0,0,0,0.03)] rounded-[24px] p-6 lg:p-8 shrink-0">
             <h2 className="text-[18px] font-bold text-slate-800 mb-6 flex items-center gap-2">
@@ -314,28 +299,28 @@ export function CareerDetail({ careerId }: CareerDetailProps) {
               Perfil RIASEC
             </h2>
             
-            <div className="space-y-4 mb-6">
-              <div className="flex flex-col justify-between h-full bg-white/40 p-3 rounded-2xl shadow-sm border border-white/50">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-b from-slate-50 to-slate-100 shadow-[0_2px_5px_rgba(148,163,184,0.15),inset_0_1px_2px_rgba(255,255,255,1)] border border-slate-200/80 flex items-center justify-center shrink-0">
-                    <IconTarget className="w-3.5 h-3.5 text-slate-500 drop-shadow-sm" />
+            <div className={`flex items-center justify-center gap-4 sm:gap-8 mb-6`}>
+              <div className="flex flex-col items-center justify-center">
+                <div className="flex items-center justify-center gap-1.5 mb-2">
+                  <div className="w-5 h-5 rounded-full bg-gradient-to-b from-slate-50 to-slate-100 shadow-[0_2px_5px_rgba(148,163,184,0.15),inset_0_1px_2px_rgba(255,255,255,1)] border border-slate-200/80 flex items-center justify-center shrink-0">
+                    <IconTarget className="w-3 h-3 text-slate-500 drop-shadow-sm" />
                   </div>
-                  <span className="text-[12px] text-slate-500 font-bold uppercase tracking-wider">Principal</span>
+                  <span className="text-[10.5px] text-slate-500 font-bold uppercase tracking-wider">Principal</span>
                 </div>
-                <div className={`inline-flex self-start items-center px-3.5 py-1.5 rounded-full text-[13px] font-bold shadow-[inset_0_1px_1px_rgba(255,255,255,0.8)] ${getRiasecColor(career.primary_riasec_type)}`}>
+                <div className={`inline-flex items-center justify-center min-w-[105px] px-3 py-1 rounded-full text-[11.5px] font-bold shadow-[inset_0_1px_1px_rgba(255,255,255,0.8)] ${getRiasecColor(career.primary_riasec_type)}`}>
                   {getRiasecDisplayName(career.primary_riasec_type)}
                 </div>
               </div>
 
               {career.secondary_riasec_type && (
-                <div className="flex flex-col justify-between h-full bg-white/40 p-3 rounded-2xl shadow-sm border border-white/50">
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="w-6 h-6 rounded-full bg-gradient-to-b from-slate-50 to-slate-100 shadow-[0_2px_5px_rgba(148,163,184,0.15),inset_0_1px_2px_rgba(255,255,255,1)] border border-slate-200/80 flex items-center justify-center shrink-0">
-                      <IconTarget className="w-3.5 h-3.5 text-slate-500 drop-shadow-sm" />
+                <div className="flex flex-col items-center justify-center">
+                  <div className="flex items-center justify-center gap-1.5 mb-2">
+                    <div className="w-5 h-5 rounded-full bg-gradient-to-b from-slate-50 to-slate-100 shadow-[0_2px_5px_rgba(148,163,184,0.15),inset_0_1px_2px_rgba(255,255,255,1)] border border-slate-200/80 flex items-center justify-center shrink-0">
+                      <IconTarget className="w-3 h-3 text-slate-500 drop-shadow-sm" />
                     </div>
-                    <span className="text-[12px] text-slate-500 font-bold uppercase tracking-wider">Secundario</span>
+                    <span className="text-[10.5px] text-slate-500 font-bold uppercase tracking-wider">Secundario</span>
                   </div>
-                  <div className={`inline-flex self-start items-center px-3.5 py-1.5 rounded-full text-[13px] font-bold shadow-[inset_0_1px_1px_rgba(255,255,255,0.8)] ${getRiasecColor(career.secondary_riasec_type)}`}>
+                  <div className={`inline-flex items-center justify-center min-w-[105px] px-3 py-1 rounded-full text-[11.5px] font-bold shadow-[inset_0_1px_1px_rgba(255,255,255,0.8)] ${getRiasecColor(career.secondary_riasec_type)}`}>
                     {getRiasecDisplayName(career.secondary_riasec_type)}
                   </div>
                 </div>
@@ -343,9 +328,9 @@ export function CareerDetail({ careerId }: CareerDetailProps) {
             </div>
 
             {/* RIASEC Scores */}
-            <div className="mt-2 space-y-4">
-              <h3 className="text-[14.5px] font-bold text-slate-800 mb-2">Puntuaciones detalladas:</h3>
-              <div className="flex flex-col gap-4">
+            <div className="space-y-3">
+              <h3 className="text-[13.5px] font-bold text-slate-800 mb-1">Puntuaciones detalladas:</h3>
+              <div className="flex flex-col gap-2.5">
               {[
                 { key: 'realistic', label: 'Realista', score: career.realistic_score },
                 { key: 'investigative', label: 'Investigativo', score: career.investigative_score },
@@ -354,21 +339,21 @@ export function CareerDetail({ careerId }: CareerDetailProps) {
                 { key: 'enterprising', label: 'Emprendedor', score: career.enterprising_score },
                 { key: 'conventional', label: 'Convencional', score: career.conventional_score },
               ].map((item) => (
-                <div key={item.key} className="flex flex-col gap-1.5">
-                  <div className="flex items-end justify-between mb-1">
-                    <span className="text-[13.5px] font-bold text-slate-600 mb-0.5">{item.label}</span>
-                    <span className={`text-[18px] font-black bg-gradient-to-r ${getRiasecTextGradient(item.key)} bg-clip-text text-transparent leading-tight drop-shadow-sm pb-1 pr-0.5`}>
+                <div key={item.key} className="flex flex-col gap-1">
+                  <div className="flex items-end justify-between">
+                    <span className="text-[13px] font-bold text-slate-600">{item.label}</span>
+                    <span className={`text-[15px] font-black bg-gradient-to-r ${getRiasecTextGradient(item.key)} bg-clip-text text-transparent leading-none drop-shadow-sm`}>
                       {item.score}%
                     </span>
                   </div>
-                  <div className="w-full flex gap-[3px] h-[12px] items-end opacity-90">
+                  <div className="w-full flex gap-[2px] h-[8px] items-end opacity-90">
                     {Array.from({ length: 30 }).map((_, i) => {
                       const threshold = (i / 30) * 100
                       const isFilled = threshold < item.score
                       return (
                         <div 
                           key={i} 
-                          className={`flex-[1_1_0%] rounded-full transition-all duration-300 ${isFilled ? 'h-full ' + getRiasecBarClasses(item.key, true) : 'h-[35%] ' + getRiasecBarClasses(item.key, false)}`} 
+                          className={`flex-[1_1_0%] rounded-full transition-all duration-300 ${isFilled ? 'h-full ' + getRiasecBarClasses(item.key, true) : 'h-[40%] ' + getRiasecBarClasses(item.key, false)}`} 
                         />
                       )
                     })}
@@ -457,10 +442,7 @@ export function CareerDetail({ careerId }: CareerDetailProps) {
           </div>
         </div>
       )}
-                </div>
-              </div>
             </div>
-          </div>
         </div>
       </div>
     </OnboardingProvider>
