@@ -21,12 +21,13 @@ export function PhaseTransitionButton({
   isRealityCheckReady = false,
 }: PhaseTransitionButtonProps) {
   const getButtonConfig = (phase: Phase) => {
+    const defaultBgColor = 'bg-gradient-to-b from-blue-500 to-blue-600 border border-blue-400/50 shadow-[inset_0_2px_4px_rgba(255,255,255,0.4),0_4px_8px_rgba(37,99,235,0.4)]'
     switch (phase) {
       case 'career_matching':
         return {
           text: 'Continuar a Reality Check',
           icon: <Target className="w-5 h-5 flex-shrink-0" />,
-          bgColor: 'bg-blue-600 shadow-[inset_0_-2px_4px_rgba(0,0,0,0.2),0_4px_8px_rgba(37,99,235,0.4)]',
+          bgColor: defaultBgColor,
           description: 'Evalúa qué tan preparado estás para estas carreras',
           isPill: true
         }
@@ -35,25 +36,27 @@ export function PhaseTransitionButton({
         return {
           text: 'Completar Reality Check',
           icon: <CheckCircle className="w-5 h-5 flex-shrink-0" />,
-             bgColor: 'bg-blue-600 shadow-[inset_0_-2px_4px_rgba(0,0,0,0.2),0_4px_8px_rgba(37,99,235,0.4)]',
-          description: 'Finaliza el reality check y obtén tus recomendaciones finales'
+          bgColor: defaultBgColor,
+          description: 'Finaliza el reality check y obtén tus recomendaciones finales',
+          isPill: true
         }
 
       case 'complete':
         return {
           text: 'Ver Resultados Finales',
-          icon: <ArrowRight className="w-5 h-5" />,
-            bgColor: 'bg-blue-600 shadow-[inset_0_-2px_4px_rgba(0,0,0,0.2),0_4px_8px_rgba(37,99,235,0.4)]',
-          description: 'Revisa tu evaluación completa'
+          icon: <ArrowRight className="w-5 h-5 flex-shrink-0" />,
+          bgColor: defaultBgColor,
+          description: 'Revisa tu evaluación completa',
+          isPill: true
         }
 
       default:
         return {
           text: 'Continuar',
           icon: <ArrowRight className="w-5 h-5 flex-shrink-0" />,
-            bgColor: 'bg-blue-600 shadow-[inset_0_-2px_4px_rgba(0,0,0,0.2),0_4px_8px_rgba(37,99,235,0.4)]',
+          bgColor: defaultBgColor,
           description: 'Siguiente paso',
-          isPill: false
+          isPill: true
         }
     }
   }
