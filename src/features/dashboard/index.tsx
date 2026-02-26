@@ -34,21 +34,21 @@ export function Dashboard() {
         </div>
 
         {/* Dashboard Content Container */}
-        <div className="relative z-10 min-h-screen p-4 md:pl-[104px] md:pr-4 md:py-4 max-w-[1500px] w-full mx-auto flex flex-col pt-8 sm:pt-4">
-          <div className="flex-1 bg-white/30 backdrop-blur-2xl border border-white/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_8px_32px_rgba(0,0,0,0.04)] rounded-[2.5rem] p-4 sm:p-6 flex flex-col">
+        <div className="relative z-10 min-h-screen p-3 md:pl-[104px] md:pr-4 md:py-3 max-w-[1500px] w-full mx-auto flex flex-col pt-4 sm:pt-3 lg:h-screen lg:max-h-screen lg:overflow-hidden">
+          <div className="flex-1 bg-white/30 backdrop-blur-2xl border border-white/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_8px_32px_rgba(0,0,0,0.04)] rounded-[2.5rem] p-4 sm:p-5 flex flex-col min-h-0">
             <DashboardHeader />
 
           {/* Stats Section */}
-          <div className="mb-4">
+          <div className="mb-3">
             <DashboardStats />
           </div>
 
           {/* Main Content Group */}
-          <div className="flex flex-col gap-4 flex-1">
+          <div className="flex flex-col gap-3 flex-1 min-h-0">
             <QuickActions />
             
             {/* Two Column Layout for Profile and Activity */}
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 flex-1">
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-3 flex-1 min-h-0 pb-1">
               <div className="xl:col-span-2 flex flex-col h-full">
                 <VocationalProgress />
               </div>

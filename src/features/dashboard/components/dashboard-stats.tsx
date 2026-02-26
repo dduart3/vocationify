@@ -89,7 +89,7 @@ export function DashboardStats() {
   ]
 
   return (
-    <div id="dashboard-stats" className="flex flex-col md:flex-row items-center justify-between py-4 px-6 md:px-8 rounded-[2rem] bg-white/50 backdrop-blur-2xl border border-white/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_4px_20px_rgba(0,0,0,0.03)] mx-auto w-full gap-4 md:divide-x divide-gray-200/50">
+    <div id="dashboard-stats" className="flex flex-col md:flex-row items-center justify-between py-3 px-4 md:px-6 rounded-[2rem] bg-white/50 backdrop-blur-2xl border border-white/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_4px_20px_rgba(0,0,0,0.03)] mx-auto w-full gap-4 md:divide-x divide-gray-200/50">
       {stats.map((stat, index) => {
         const IconComponent = stat.icon
         return (

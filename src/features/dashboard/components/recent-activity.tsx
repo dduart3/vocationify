@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { Brain, Eye } from 'lucide-react'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useUserTestHistory } from '../hooks/use-dashboard-data'
 
 function formatDistanceToNow(dateString: string): string {
@@ -97,48 +98,34 @@ export function RecentActivity() {
   }
 
   return (
-    <div className="relative overflow-hidden p-6 rounded-[2rem] bg-white/50 backdrop-blur-2xl border border-white/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_4px_20px_rgba(0,0,0,0.03)] h-full flex flex-col">
-      {/* Blue light background gradient from bottom right */}
-      <div 
-        className="absolute inset-0 pointer-events-none opacity-80" 
-        style={{
-          background: 'radial-gradient(circle at bottom right, rgba(147, 197, 253, 0.45) 0%, rgba(219, 234, 254, 0.15) 50%, transparent 80%)',
-        }}
-      />
-      {/* Grain texture */}
-      <div 
-        className="absolute inset-0 opacity-[0.25] mix-blend-overlay pointer-events-none"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-          backgroundRepeat: 'repeat',
-          backgroundSize: '120px 120px',
-        }}
-      />
+    <div className="relative overflow-hidden p-5 md:p-6 pb-4 sm:pb-5 rounded-[2rem] bg-white/50 backdrop-blur-2xl border border-white/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_4px_20px_rgba(0,0,0,0.03)] h-full flex flex-col min-h-0">
 
-      <div className="relative z-10 flex items-center justify-between mb-5">
+
+      <div className="relative z-10 flex items-center justify-between mb-3 md:mb-5 shrink-0">
         <h2 className="text-xl font-bold bg-gradient-to-br from-gray-900 to-gray-700 bg-clip-text text-transparent">Tests Recientes</h2>
       </div>
 
-      <div className="relative z-10 space-y-3 flex-1 flex flex-col justify-start">
-        {testHistory.map((test) => {
+      <div className="relative z-10 space-y-3 flex-1 flex flex-col justify-start overflow-y-auto custom-scrollbar pr-1 min-h-0">
+        <div className="space-y-3">
+          {testHistory.map((test) => {
           const topCareer = test.careerRecommendations?.[0]
           const dominantType = getRiasecTypeSpanish(test.riasecScores)
 
           return (
             <div
               key={test.sessionId}
-              className="flex items-center justify-between p-3 rounded-2xl bg-white/40 border border-white/60 hover:bg-white/70 shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.04)] transition-all duration-300 group"
+              className="flex items-center justify-between p-3 rounded-[1.25rem] bg-slate-100 hover:bg-slate-200/80 border border-slate-300/60 shadow-[inset_0_2px_4px_rgba(255,255,255,0.7),0_2px_6px_rgba(0,0,0,0.04)] hover:shadow-[inset_0_2px_4px_rgba(255,255,255,0.8),0_4px_10px_rgba(0,0,0,0.06)] transition-all duration-300 group"
             >
               <div className="flex items-center gap-3 min-w-0">
-                <div className="p-2 rounded-full bg-gradient-to-b from-white to-blue-50/50 shadow-[0_2px_4px_rgba(0,0,0,0.05),inset_0_-1px_2px_rgba(0,0,0,0.02),inset_0_1px_2px_rgba(255,255,255,1)] border border-blue-100 group-hover:scale-110 transition-transform duration-300 shrink-0">
-                  <Brain className="w-4 h-4 text-blue-500 drop-shadow-sm" />
+                <div className="p-2 rounded-full bg-slate-50 shadow-[0_2px_5px_rgba(0,0,0,0.08),inset_0_-1px_2px_rgba(0,0,0,0.03),inset_0_1px_2px_rgba(255,255,255,1)] border border-slate-200 group-hover:scale-110 transition-transform duration-300 shrink-0">
+                  <Brain className="w-4 h-4 text-slate-500 drop-shadow-sm" />
                 </div>
                 <div className="min-w-0 flex flex-col">
-                  <p className="text-[13px] font-bold text-gray-800 truncate">
+                  <p className="text-[13px] font-bold text-slate-700 truncate">
                     Test Completado
                   </p>
-                  <p className="text-[11px] text-gray-500 font-medium truncate">
-                    {dominantType} {topCareer?.career?.name && <span className="text-purple-600/80">• {topCareer.career.name}</span>}
+                  <p className="text-[11px] text-slate-500 font-medium truncate">
+                    {dominantType} {topCareer?.career?.name && <span className="text-blue-500">• {topCareer.career.name}</span>}
                   </p>
                 </div>
               </div>
@@ -148,15 +135,24 @@ export function RecentActivity() {
                   {formatDistanceToNow(test.completedAt)}
                 </span>
                 <Link to="/results/$sessionId" params={{ sessionId: test.sessionId }}>
-                  <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 text-[11px] text-blue-600 hover:text-blue-700 font-bold bg-white/50 px-2.5 py-0.5 rounded-full border border-blue-100/50">
-                    <Eye className="w-3 h-3" />
-                    <span>Ver</span>
-                  </div>
+                  <TooltipProvider>
+                    <Tooltip delayDuration={0}>
+                      <TooltipTrigger asChild>
+                        <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center w-7 h-7 rounded-full bg-slate-50 shadow-[0_2px_5px_rgba(0,0,0,0.08),inset_0_-1px_2px_rgba(0,0,0,0.03),inset_0_1px_2px_rgba(255,255,255,1)] border border-slate-200 hover:scale-110 active:scale-95 hover:bg-white text-slate-500 hover:text-slate-700 cursor-pointer">
+                          <Eye className="w-3.5 h-3.5 drop-shadow-sm" />
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent side="top" className="bg-slate-800 text-white font-medium text-xs px-2 py-1 rounded shadow-lg border-none">
+                        Ver resultado
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </Link>
               </div>
             </div>
           )
         })}
+      </div>
       </div>
     </div>
   )
