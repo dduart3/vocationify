@@ -17,6 +17,45 @@ import {
   MessageResponse
 } from '@/components/ai-elements/message'
 
+function TypingMessageResponse({ text, animate }: { text: string, animate: boolean }) {
+  const [displayedText, setDisplayedText] = useState(animate ? '' : text)
+
+  useEffect(() => {
+    if (!animate) {
+      setDisplayedText(text)
+      return
+    }
+
+    const words = text.split(' ')
+    let i = 0
+
+    const interval = setInterval(() => {
+      if (i < words.length) {
+        setDisplayedText(words.slice(0, i + 1).join(' '))
+        i++
+        
+        // Auto scroll container
+        const scroller = document.querySelector('.custom-scrollbar')
+        if (scroller) {
+          scroller.scrollTop = scroller.scrollHeight
+        }
+      } else {
+        clearInterval(interval)
+      }
+    }, 70)
+
+    return () => clearInterval(interval)
+  }, [text, animate])
+
+  const isTyping = animate && displayedText.length < text.length;
+
+  return (
+    <MessageResponse>
+      {displayedText + (isTyping ? " ▋" : "")}
+    </MessageResponse>
+  )
+}
+
 interface Message {
   role: 'user' | 'assistant'
   content: string
@@ -93,6 +132,7 @@ export function ConversationHistory({
 }: ConversationHistoryProps) {
   const [currentlyPlayingMessage, setCurrentlyPlayingMessage] = useState<number | null>(null)
   const previousMessageCountRef = useRef(messages.length)
+  const initialMessageCountRef = useRef(messages.length)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // Auto-scroll effect
@@ -206,7 +246,14 @@ export function ConversationHistory({
             >
               <div className="flex flex-row gap-4 items-end">
                 <div className="text-[15px] leading-relaxed whitespace-pre-wrap font-medium">
-                  <MessageResponse>{message.content}</MessageResponse>
+                  {message.role === 'assistant' ? (
+                    <TypingMessageResponse 
+                      text={message.content} 
+                      animate={index >= initialMessageCountRef.current} 
+                    />
+                  ) : (
+                    <MessageResponse>{message.content}</MessageResponse>
+                  )}
                 </div>
                 
                 {/* Voice control button for AI messages (Compact 3D Circle) */}

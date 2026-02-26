@@ -117,8 +117,10 @@ export function MessageInput({
               )}
             </div>
 
-            {/* Light Mode Input Container */}
-            <div className="bg-gray-100 rounded-3xl p-3 flex flex-col gap-2 shadow-sm border border-gray-200 w-full relative">
+            {/* Light Mode Input Container with Static Gradient Border */}
+            <div className="relative p-[1px] rounded-3xl shadow-[0_2px_20px_-5px_rgba(0,0,0,0.05)] bg-gradient-to-r from-orange-300/70 via-fuchsia-300/70 to-blue-400/70 transition-all duration-300 hover:shadow-[0_4px_25px_-5px_rgba(0,0,0,0.08)]">
+              {/* Inner container that holds the actual input */}
+              <div className="relative bg-white/95 backdrop-blur-xl rounded-[calc(1.5rem-1px)] p-3 flex flex-col gap-2 w-full h-full">
               
               {/* Top Row: Textarea */}
               <div className="px-2 pt-2 pb-1">
@@ -200,6 +202,7 @@ export function MessageInput({
                 </div>
               </div>
             </div>
+          </div>
           </div>
         </form>
       </div>

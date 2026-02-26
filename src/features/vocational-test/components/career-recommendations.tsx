@@ -101,7 +101,7 @@ export function CareerRecommendations({
 
         <div className="flex items-center gap-6 mt-5 pt-5 border-t border-blue-50/50">
            <div className="flex flex-col">
-              <span className="text-lg font-bold bg-gradient-to-br from-blue-600 to-sky-400 bg-clip-text text-transparent mb-1 leading-none">
+              <span className="text-xl font-bold bg-gradient-to-br from-blue-600 to-sky-400 bg-clip-text text-transparent mb-1 pb-0.5 leading-snug">
                 {recommendations.length}
               </span>
               <span className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">
@@ -110,7 +110,7 @@ export function CareerRecommendations({
            </div>
            
            <div className="flex flex-col">
-              <span className="text-lg font-bold bg-gradient-to-br from-sky-500 to-blue-400 bg-clip-text text-transparent mb-1 leading-none">
+              <span className="text-xl font-bold bg-gradient-to-br from-sky-500 to-blue-400 bg-clip-text text-transparent mb-1 pb-0.5 leading-snug">
                 {recommendations[0]?.name || 'N/A'}
               </span>
               <span className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">
