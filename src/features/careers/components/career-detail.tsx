@@ -397,40 +397,89 @@ export function CareerDetail({ careerId }: CareerDetailProps) {
 
               return (
                 <Link key={index} to="/schools/$schoolId" params={{ schoolId: schoolCareer.school.id }}>
-                  <div className="h-full bg-white/60 backdrop-blur-md border border-white/80 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_4px_15px_rgba(0,0,0,0.02)] rounded-[20px] p-5 hover:bg-white/80 hover:shadow-[0_8px_25px_rgba(59,130,246,0.08)] hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
-                    <div className="flex items-start gap-4">
-                      <div className="w-11 h-11 bg-gradient-to-b from-green-50 to-green-100 shadow-[0_2px_5px_rgba(34,197,94,0.15),inset_0_-1px_2px_rgba(34,197,94,0.1),inset_0_1px_2px_rgba(255,255,255,1)] border border-green-200/80 rounded-full flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
-                        <IconBuilding className="w-5 h-5 text-green-700 drop-shadow-sm" />
-                      </div>
-                      <div className="min-w-0 flex-1 pt-0.5">
-                        <h3 className="font-bold text-slate-800 text-[15px] leading-tight group-hover:text-blue-600 transition-colors">
+                  <div className="relative h-full bg-gradient-to-br from-blue-50/80 via-sky-50/70 to-blue-50/80 backdrop-blur-md border border-blue-200/60 shadow-[0_4px_15px_rgba(59,130,246,0.12),inset_0_1px_1px_rgba(255,255,255,0.9),inset_0_-1px_2px_rgba(59,130,246,0.05)] rounded-[20px] p-6 hover:from-blue-50/90 hover:via-sky-50/80 hover:to-blue-50/90 hover:border-blue-300/70 hover:shadow-[0_8px_25px_rgba(59,130,246,0.2),inset_0_1px_1px_rgba(255,255,255,1),inset_0_-2px_4px_rgba(59,130,246,0.08)] hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
+                    {/* Tooltip with 3D depth style */}
+                    <div className="absolute -top-14 left-1/2 -translate-x-1/2 z-50 opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-300 ease-out group-hover:translate-y-0 translate-y-2">
+                      <div className="bg-gradient-to-br from-white/95 via-slate-50/90 to-white/95 backdrop-blur-xl border-2 border-slate-200/80 shadow-[0_8px_25px_rgba(0,0,0,0.15),inset_0_2px_4px_rgba(255,255,255,0.9),inset_0_-2px_4px_rgba(0,0,0,0.05)] rounded-[12px] px-4 py-2.5 relative">
+                        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full">
+                          <div className="w-0 h-0 border-l-[8px] border-r-[8px] border-t-[8px] border-l-transparent border-r-transparent border-t-slate-200/80 drop-shadow-[0_2px_4px_rgba(0,0,0,0.1)]"></div>
+                        </div>
+                        <div className="absolute inset-0 rounded-[12px] bg-gradient-to-br from-white/40 to-transparent opacity-60 pointer-events-none"></div>
+                        <p className="text-slate-800 font-bold text-[13px] leading-tight whitespace-nowrap relative z-10">
                           {schoolCareer.school.name}
-                        </h3>
-                        {schoolCareer.school.location?.city && (
-                          <div className="flex items-center gap-1.5 mt-2">
-                            <IconMapPin className="w-3.5 h-3.5 text-slate-400" />
-                            <span className="text-[13px] text-slate-500 font-medium">
-                              {schoolCareer.school.location.city}
-                              {schoolCareer.school.location.state && `, ${schoolCareer.school.location.state}`}
-                            </span>
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex flex-col h-full">
+                      {/* Icon and Title Section */}
+                      <div className="flex items-start gap-4 mb-4">
+                        <div className="w-10 h-10 bg-gradient-to-b from-blue-100 via-blue-200 to-blue-300 shadow-[0_3px_10px_rgba(59,130,246,0.25),inset_0_-2px_4px_rgba(37,99,235,0.15),inset_0_2px_4px_rgba(255,255,255,0.8)] border-2 border-blue-300/60 rounded-full flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:shadow-[0_5px_15px_rgba(59,130,246,0.35),inset_0_-2px_4px_rgba(37,99,235,0.2),inset_0_2px_4px_rgba(255,255,255,1)] transition-all duration-300 relative">
+                          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/40 to-transparent opacity-60"></div>
+                          <IconBuilding className="w-5 h-5 text-blue-700 drop-shadow-[0_2px_4px_rgba(37,99,235,0.3)] relative z-10" />
+                        </div>
+                        <div className="min-w-0 flex-1 pt-1">
+                          <h3 className="font-bold text-blue-700 text-[15px] leading-tight group-hover:text-blue-800 transition-colors line-clamp-2">
+                            {schoolCareer.school.name}
+                          </h3>
+                        </div>
+                      </div>
+
+                      {/* Location */}
+                      {schoolCareer.school.location?.city && (
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="w-6 h-6 rounded-full bg-gradient-to-b from-blue-100 to-blue-200 shadow-[0_2px_5px_rgba(59,130,246,0.2),inset_0_-1px_2px_rgba(37,99,235,0.1),inset_0_1px_2px_rgba(255,255,255,0.9)] border border-blue-300/60 flex items-center justify-center flex-shrink-0">
+                            <IconMapPin className="w-3.5 h-3.5 text-blue-600 drop-shadow-sm" />
+                          </div>
+                          <span className="text-[13px] text-blue-800 font-medium">
+                            {schoolCareer.school.location.city}
+                            {schoolCareer.school.location.state && `, ${schoolCareer.school.location.state}`}
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Distance */}
+                      {distance !== null && (
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="w-6 h-6 rounded-full bg-gradient-to-b from-blue-100 to-blue-200 shadow-[0_2px_5px_rgba(59,130,246,0.2),inset_0_-1px_2px_rgba(37,99,235,0.1),inset_0_1px_2px_rgba(255,255,255,0.9)] border border-blue-300/60 flex items-center justify-center flex-shrink-0">
+                            <IconTarget className="w-3.5 h-3.5 text-blue-600 drop-shadow-sm" />
+                          </div>
+                          <span className="text-[12px] text-blue-800 bg-gradient-to-b from-blue-100/90 to-blue-200/80 shadow-[0_2px_5px_rgba(59,130,246,0.15),inset_0_-1px_2px_rgba(37,99,235,0.08),inset_0_1px_2px_rgba(255,255,255,0.9)] border border-blue-300/60 px-2.5 py-1 rounded-full font-bold">
+                            {formatDistance(distance)} de distancia
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Shifts Section */}
+                      {schoolCareer.shifts && schoolCareer.shifts.length > 0 && (
+                        <div className="flex items-center gap-2 mb-3">
+                          <div className="w-6 h-6 rounded-full bg-gradient-to-b from-blue-100 to-blue-200 shadow-[0_2px_5px_rgba(59,130,246,0.2),inset_0_-1px_2px_rgba(37,99,235,0.1),inset_0_1px_2px_rgba(255,255,255,0.9)] border border-blue-300/60 flex items-center justify-center flex-shrink-0">
+                            <IconClock className="w-3.5 h-3.5 text-blue-600 drop-shadow-sm" />
+                          </div>
+                          <div className="flex flex-wrap gap-1.5 flex-1">
+                            {Array.isArray(schoolCareer.shifts)
+                              ? schoolCareer.shifts.map((shift: string, idx: number) => (
+                                  <span key={idx} className="text-[12px] text-blue-800 bg-gradient-to-b from-blue-100/90 to-blue-200/80 shadow-[0_2px_5px_rgba(59,130,246,0.15),inset_0_-1px_2px_rgba(37,99,235,0.08),inset_0_1px_2px_rgba(255,255,255,0.9)] border border-blue-300/60 px-2.5 py-1 rounded-full font-bold">
+                                    {shift}
+                                  </span>
+                                ))
+                              : <span className="text-[12px] text-blue-800 bg-gradient-to-b from-blue-100/90 to-blue-200/80 shadow-[0_2px_5px_rgba(59,130,246,0.15),inset_0_-1px_2px_rgba(37,99,235,0.08),inset_0_1px_2px_rgba(255,255,255,0.9)] border border-blue-300/60 px-2.5 py-1 rounded-full font-bold">
+                                  {schoolCareer.shifts}
+                                </span>
+                            }
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Additional Info */}
+                      <div className="mt-auto pt-3 space-y-1.5 border-t border-blue-200/50">
+                        {schoolCareer.duration_years && (
+                          <div className="text-[12px] text-blue-700 font-medium">
+                            Duración: {schoolCareer.duration_years} años
                           </div>
                         )}
-                        {distance !== null && (
-                          <div className="flex items-center gap-1.5 mt-1">
-                            <IconTarget className="w-3.5 h-3.5 text-blue-500" />
-                            <span className="text-[13px] text-blue-600 font-bold">
-                              {formatDistance(distance)} de distancia
-                            </span>
-                          </div>
-                        )}
-                        {schoolCareer.shifts && schoolCareer.shifts.length > 0 && (
-                          <div className="flex items-center gap-1.5 mt-1">
-                            <IconClock className="w-3.5 h-3.5 text-slate-400" />
-                            <span className="text-[13px] text-slate-500 font-medium">
-                              {Array.isArray(schoolCareer.shifts)
-                                ? schoolCareer.shifts.join(', ')
-                                : schoolCareer.shifts}
-                            </span>
+                        {schoolCareer.modality && (
+                          <div className="text-[12px] text-blue-700 font-medium capitalize">
+                            Modalidad: {schoolCareer.modality}
                           </div>
                         )}
                       </div>

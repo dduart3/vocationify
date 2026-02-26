@@ -18,7 +18,7 @@ interface SchoolMapProps {
 
 export function SchoolMap({ latitude, longitude, schoolName }: SchoolMapProps) {
   return (
-    <div className="h-96 w-full rounded-lg overflow-hidden border border-gray-200">
+    <div className="h-full w-full rounded-[20px] overflow-hidden">
       <MapContainer
         center={[latitude, longitude]}
         zoom={15}

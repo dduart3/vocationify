@@ -397,15 +397,15 @@ export function ResultDetail() {
                 {/* Right Column - Recommendations & Details */}
                 <div className="xl:col-span-7 flex flex-col gap-5 sm:gap-6">
                   
-                  {/* Career Recommendations */}
-                  {result.career_recommendations && result.career_recommendations.length > 0 && (
-                    <div id="career-recommendations" className="bg-white/50 backdrop-blur-xl border border-white/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_4px_20px_rgba(0,0,0,0.03)] rounded-[24px] p-6 lg:p-8 flex-1">
-                      <h2 className="text-[18px] font-bold text-slate-800 mb-6 flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-b from-amber-50 to-amber-100 shadow-[inset_0_2px_4px_rgba(255,255,255,0.8),0_2px_6px_rgba(245,158,11,0.4)] border border-amber-300 flex items-center justify-center shrink-0">
-                          <IconTrophy className="w-4 h-4 text-amber-600 drop-shadow-sm" />
-                        </div>
-                        Carreras Recomendadas
-                      </h2>
+                  {/* Career Recommendations - Always show */}
+                  <div id="career-recommendations" className="bg-white/50 backdrop-blur-xl border border-white/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_4px_20px_rgba(0,0,0,0.03)] rounded-[24px] p-6 lg:p-8 flex-1">
+                    <h2 className="text-[18px] font-bold text-slate-800 mb-6 flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-b from-amber-50 to-amber-100 shadow-[inset_0_2px_4px_rgba(255,255,255,0.8),0_2px_6px_rgba(245,158,11,0.4)] border border-amber-300 flex items-center justify-center shrink-0">
+                        <IconTrophy className="w-4 h-4 text-amber-600 drop-shadow-sm" />
+                      </div>
+                      Carreras Recomendadas
+                    </h2>
+                    {result.career_recommendations && result.career_recommendations.length > 0 ? (
                       <div className="flex flex-col gap-4">
                         {result.career_recommendations.map((career: any, index: number) => {
                           const score = career.confidence || 0;
@@ -425,38 +425,45 @@ export function ResultDetail() {
                           const strokeDasharray = `${(score / 100) * circleCircumference} ${circleCircumference}`
 
                           const careerContent = (
-                            <div className="flex flex-col md:flex-row items-center gap-4 p-4 rounded-[1.25rem] bg-slate-50/80 backdrop-blur-md border border-slate-200 shadow-inner hover:bg-slate-100/80 transition-all duration-500 group">
-                              {/* Left side Rank */}
+                            <div className="flex flex-col md:flex-row items-center gap-4 p-5 rounded-[20px] bg-white/60 backdrop-blur-md border border-white/80 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_4px_15px_rgba(0,0,0,0.02)] hover:bg-white/80 hover:shadow-[0_8px_25px_rgba(59,130,246,0.08)] hover:-translate-y-1 transition-all duration-300 group">
+                              {/* Left side Rank with 3D style */}
                               <div className="shrink-0">
-                                <div className={`w-10 h-10 bg-gradient-to-b ${rankClass} rounded-full flex items-center justify-center font-bold text-lg group-hover:scale-110 transition-transform duration-300 border`}>
+                                <div className={`w-12 h-12 bg-gradient-to-b ${rankClass} rounded-full flex items-center justify-center font-bold text-lg group-hover:scale-110 transition-transform duration-300 border shadow-[0_2px_5px_rgba(0,0,0,0.1)]`}>
                                   {index + 1}
                                 </div>
                               </div>
 
                               {/* Middle Content */}
                               <div className="flex-1 min-w-0 flex flex-col items-center md:items-start text-center md:text-left py-1">
-                                <h4 className="font-bold text-slate-800 text-[16px] leading-tight mb-1 flex items-center gap-2 group-hover:text-blue-600 transition-colors">
-                                  {career.career_name}
-                                  {career.career_id && <IconExternalLink className="w-4 h-4 text-blue-500 opacity-50 group-hover:opacity-100 transition-opacity" />}
+                                <h4 className="font-bold text-slate-800 text-[16px] leading-tight mb-2 flex items-center gap-2 group-hover:text-blue-600 transition-colors">
+                                  {career.career_name || 'Carrera sin nombre'}
+                                  {career.career_id && (
+                                    <div className="w-5 h-5 rounded-full bg-gradient-to-b from-blue-50 to-blue-100 shadow-[0_2px_5px_rgba(59,130,246,0.15),inset_0_-1px_2px_rgba(59,130,246,0.1),inset_0_1px_2px_rgba(255,255,255,1)] border border-blue-200/80 flex items-center justify-center">
+                                      <IconExternalLink className="w-3 h-3 text-blue-600 drop-shadow-sm" />
+                                    </div>
+                                  )}
                                 </h4>
-                                <p className="text-slate-500 text-[13.5px] leading-relaxed font-medium">
-                                  {career.reasoning}
-                                </p>
+                                {career.reasoning && (
+                                  <p className="text-slate-500 text-[13.5px] leading-relaxed font-medium">
+                                    {career.reasoning}
+                                  </p>
+                                )}
                               </div>
 
-                              {/* Right side Pie Chart */}
-                              <div className="shrink-0 relative w-[50px] h-[50px] flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
-                                <svg className="w-full h-full transform -rotate-90 drop-shadow-sm">
-                                  <circle cx="25" cy="25" r="20" stroke="currentColor" strokeWidth="4.5" fill="transparent" className="text-slate-100" />
+                              {/* Right side Pie Chart with 3D style */}
+                              <div className="shrink-0 relative w-[56px] h-[56px] flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
+                                <div className="absolute inset-0 rounded-full bg-gradient-to-b from-white to-slate-50 shadow-[0_2px_5px_rgba(0,0,0,0.1),inset_0_-1px_2px_rgba(0,0,0,0.03),inset_0_1px_2px_rgba(255,255,255,1)] border border-slate-200/80"></div>
+                                <svg className="w-full h-full transform -rotate-90 drop-shadow-sm relative z-10" viewBox="0 0 56 56">
+                                  <circle cx="28" cy="28" r="22" stroke="currentColor" strokeWidth="4.5" fill="transparent" className="text-slate-100" />
                                   <circle 
-                                    cx="25" cy="25" r="20" 
+                                    cx="28" cy="28" r="22" 
                                     stroke="currentColor" strokeWidth="4.5" fill="transparent" 
                                     strokeDasharray={strokeDasharray} 
                                     className={strokeClass} 
                                     strokeLinecap="round" 
                                   />
                                 </svg>
-                                <div className="absolute inset-0 flex items-center justify-center flex-col">
+                                <div className="absolute inset-0 flex items-center justify-center flex-col z-20">
                                   <span className={`text-xs font-bold ${strokeClass} drop-shadow-sm leading-none`}>
                                     {score}%
                                   </span>
@@ -481,8 +488,16 @@ export function ResultDetail() {
                           )
                         })}
                       </div>
-                    </div>
-                  )}
+                    ) : (
+                      <div className="flex flex-col items-center justify-center py-12 text-center">
+                        <div className="w-16 h-16 rounded-full bg-gradient-to-b from-slate-50 to-slate-100 shadow-[0_4px_10px_rgba(0,0,0,0.1),inset_0_-2px_4px_rgba(0,0,0,0.06),inset_0_2px_4px_rgba(255,255,255,1)] border border-slate-200/80 flex items-center justify-center mb-4">
+                          <IconTrophy className="w-8 h-8 text-slate-400 drop-shadow-sm" />
+                        </div>
+                        <p className="text-slate-500 text-[15px] font-medium mb-2">No hay carreras recomendadas disponibles</p>
+                        <p className="text-slate-400 text-[13px]">Completa el test vocacional para recibir recomendaciones personalizadas</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
