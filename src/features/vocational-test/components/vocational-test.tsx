@@ -540,10 +540,10 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
         
         {/* Career Recommendations Overlay (when needed) */}
         {uiBehavior.showCareers && recommendations && recommendations.length > 0 && (
-          <div className="absolute inset-0 z-10 bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-50 flex flex-col">
+          <div className="absolute inset-0 z-10 flex flex-col">
             {/* Career recommendations content - no duplicate header, uses main header */}
-            <div className="flex-1 overflow-y-auto p-6 pt-24">
-              <div className="max-w-4xl mx-auto">
+            <div className="flex-1 overflow-y-auto px-4 pt-24 md:px-6 md:pt-[110px] pb-6 flex flex-col justify-start">
+              <div className="max-w-4xl mx-auto w-full">
                 <CareerRecommendations 
                   recommendations={recommendations}
                 />
@@ -573,13 +573,13 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
           <UIModeSwitcher
             currentMode={uiMode}
             onModeChange={setUIMode}
-            disabled={isSending || isTransitioning}
+            disabled={isSending || isTransitioning || !!(uiBehavior.showCareers && recommendations && recommendations.length > 0)}
           />
         </div>
 
         {/* Chat Interface with custom scrollbar */}
         {/* Content based on UI mode */}
-        {uiMode === 'chat' ? (
+        {uiMode === 'chat' && !(uiBehavior.showCareers && recommendations && recommendations.length > 0) && (
           <div 
             className="flex-1 overflow-y-auto custom-scrollbar relative z-0"
             style={{
@@ -617,11 +617,13 @@ export function VocationalTest({ userId, sessionId, onComplete }: VocationalTest
               />
             </div>
           </div>
-        ) : (
+        )}
+        
+        {uiMode === 'voice' && !(uiBehavior.showCareers && recommendations && recommendations.length > 0) && (
           <div className="flex-1 flex flex-col relative z-0 w-full h-full overflow-visible">
             <VoiceInterface
               onSendMessage={sendMessage}
-              disabled={isSending || isTransitioning || (uiBehavior.showCareers && recommendations && recommendations.length > 0)}
+              disabled={isSending || isTransitioning || !!(uiBehavior.showCareers && recommendations && recommendations.length > 0)}
               isLoading={isSending}
               currentQuestion={session?.conversation_history?.slice(-1)[0]?.role === 'assistant' ? session.conversation_history.slice(-1)[0].content : undefined}
               messages={session?.conversation_history || []}

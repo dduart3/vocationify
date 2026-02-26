@@ -22,48 +22,31 @@ export function PhaseSeparator({ fromPhase, toPhase, timestamp }: PhaseSeparator
   const ToIcon = toInfo.IconComponent
 
   return (
-    <div className="flex justify-center py-8 px-4">
-      <div 
-        className="backdrop-blur-sm rounded-2xl px-6 py-4"
-        style={{
-          background: `
-            linear-gradient(135deg, 
-              rgba(59, 130, 246, 0.08) 0%, 
-              rgba(147, 51, 234, 0.06) 50%,
-              rgba(99, 102, 241, 0.08) 100%
-            )
-          `,
-          boxShadow: `
-            0 4px 16px 0 rgba(0, 0, 0, 0.1),
-            inset 0 1px 0 rgba(255, 255, 255, 0.05)
-          `
-        }}
-      >
-        <div className="flex items-center gap-4 text-sm">
-          <div className="flex items-center gap-2 text-gray-600">
-            <FromIcon className="w-4 h-4" />
-            <span className="font-medium">{fromInfo.label}</span>
-          </div>
-
-          <ArrowRight className="w-4 h-4 text-gray-400" />
-
-          <div className="flex items-center gap-2 text-gray-900">
-            <ToIcon className="w-4 h-4" />
-            <span className="font-semibold">{toInfo.label}</span>
-          </div>
-
-          {timestamp && (
-            <>
-              <div className="w-px h-4 bg-gray-300 mx-2" />
-              <span className="text-gray-500 text-xs">
-                {new Date(timestamp).toLocaleTimeString('es-ES', {
-                  hour: '2-digit',
-                  minute: '2-digit'
-                })}
-              </span>
-            </>
-          )}
+    <div className="flex justify-center py-6 px-4">
+      <div className="inline-flex items-center gap-3 md:gap-4 px-5 py-2.5 rounded-full bg-slate-100/80 backdrop-blur-md border border-white/80 shadow-[inset_0_1px_1px_rgba(255,255,255,1),0_4px_15px_rgba(0,0,0,0.03)] transition-all duration-300">
+        <div className="flex items-center gap-2 text-slate-500">
+          <FromIcon className="w-4 h-4" />
+          <span className="font-medium text-[13px] tracking-wide">{fromInfo.label}</span>
         </div>
+
+        <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
+
+        <div className="flex items-center gap-2 text-slate-800">
+          <ToIcon className="w-4 h-4" />
+          <span className="font-semibold text-[13px] tracking-wide">{toInfo.label}</span>
+        </div>
+
+        {timestamp && (
+          <>
+            <div className="w-px h-3.5 bg-slate-300 mx-1" />
+            <span className="text-slate-500 text-[12px] font-medium tracking-wide">
+              {new Date(timestamp).toLocaleTimeString('es-ES', {
+                hour: '2-digit',
+                minute: '2-digit'
+              })}
+            </span>
+          </>
+        )}
       </div>
     </div>
   )

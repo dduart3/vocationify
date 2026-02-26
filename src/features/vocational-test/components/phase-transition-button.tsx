@@ -25,16 +25,17 @@ export function PhaseTransitionButton({
       case 'career_matching':
         return {
           text: 'Continuar a Reality Check',
-          icon: <Target className="w-5 h-5" />,
-          bgColor: 'bg-orange-600 hover:bg-orange-700',
-          description: 'Evalúa qué tan preparado estás para estas carreras'
+          icon: <Target className="w-5 h-5 flex-shrink-0" />,
+          bgColor: 'bg-blue-600 shadow-[inset_0_-2px_4px_rgba(0,0,0,0.2),0_4px_8px_rgba(37,99,235,0.4)]',
+          description: 'Evalúa qué tan preparado estás para estas carreras',
+          isPill: true
         }
 
       case 'reality_check':
         return {
           text: 'Completar Reality Check',
-          icon: <CheckCircle className="w-5 h-5" />,
-          bgColor: 'bg-green-600 hover:bg-green-700',
+          icon: <CheckCircle className="w-5 h-5 flex-shrink-0" />,
+             bgColor: 'bg-blue-600 shadow-[inset_0_-2px_4px_rgba(0,0,0,0.2),0_4px_8px_rgba(37,99,235,0.4)]',
           description: 'Finaliza el reality check y obtén tus recomendaciones finales'
         }
 
@@ -42,16 +43,17 @@ export function PhaseTransitionButton({
         return {
           text: 'Ver Resultados Finales',
           icon: <ArrowRight className="w-5 h-5" />,
-          bgColor: 'bg-blue-600 hover:bg-blue-700',
+            bgColor: 'bg-blue-600 shadow-[inset_0_-2px_4px_rgba(0,0,0,0.2),0_4px_8px_rgba(37,99,235,0.4)]',
           description: 'Revisa tu evaluación completa'
         }
 
       default:
         return {
           text: 'Continuar',
-          icon: <ArrowRight className="w-5 h-5" />,
-          bgColor: 'bg-blue-600 hover:bg-blue-700',
-          description: 'Siguiente paso'
+          icon: <ArrowRight className="w-5 h-5 flex-shrink-0" />,
+            bgColor: 'bg-blue-600 shadow-[inset_0_-2px_4px_rgba(0,0,0,0.2),0_4px_8px_rgba(37,99,235,0.4)]',
+          description: 'Siguiente paso',
+          isPill: false
         }
     }
   }
@@ -68,9 +70,9 @@ export function PhaseTransitionButton({
   const config = getButtonConfig(currentPhase)
 
   return (
-    <div className="text-center py-6">
+    <div className="text-center py-6 relative z-20">
       <div className="max-w-md mx-auto">
-        <p className="text-white/70 text-sm mb-4">
+        <p className="text-slate-900 font-semibold text-sm mb-4">
           {config.description}
         </p>
         
@@ -78,24 +80,29 @@ export function PhaseTransitionButton({
           onClick={onTransition}
           disabled={disabled || isLoading}
           className={`
+            relative overflow-hidden
             ${config.bgColor} 
             disabled:opacity-50 disabled:cursor-not-allowed
-            text-white px-8 py-4 rounded-xl font-semibold 
+            text-white px-8 py-3.5 ${config.isPill ? 'rounded-full' : 'rounded-xl'} font-semibold 
             flex items-center gap-3 mx-auto
-            transition-all duration-200 
-            hover:scale-105 active:scale-95
-            shadow-lg hover:shadow-xl
+            transition-all duration-300 
+            hover:scale-105 active:scale-95 hover:brightness-110
           `}
         >
+          {config.isPill && !disabled && !isLoading && (
+            <div className="absolute inset-0 -translate-x-[150%] animate-[glare-sweep_4s_ease-in-out_infinite] bg-gradient-to-r from-transparent via-white/40 to-transparent w-full pointer-events-none" />
+          )}
+
           {isLoading ? (
             <>
-              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              Procesando...
+              <div className="relative z-10 w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <span className="relative z-10">Procesando...</span>
             </>
           ) : (
             <>
-              {config.text}
-              {config.icon}
+              {config.isPill && <div className="relative z-10">{config.icon}</div>}
+              <span className="relative z-10 whitespace-nowrap">{config.text}</span>
+              {!config.isPill && <div className="relative z-10">{config.icon}</div>}
             </>
           )}
         </button>

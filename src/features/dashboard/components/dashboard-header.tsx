@@ -1,5 +1,5 @@
 import { useAuth } from '@/context/auth-context'
-import { Sparkles } from 'lucide-react'
+import { Shimmer } from "@/components/ai-elements/shimmer"
 
 export function DashboardHeader() {
   const { profile } = useAuth()
@@ -12,18 +12,23 @@ export function DashboardHeader() {
   }
 
   return (
-    <div id="welcome-section" className="relative text-center space-y-4 mb-8">
+    <div id="welcome-section" className="relative text-center space-y-2 mb-2">
       <div className="relative z-10">
-        <div className="flex items-center justify-center gap-3 mb-3">
-          <h1 className="text-4xl md:text-5xl font-black bg-gradient-to-r from-gray-900 via-blue-700 to-purple-700 bg-clip-text text-transparent">
-            {getGreeting()}, {profile?.first_name || 'Usuario'}
+        <div className="flex items-center justify-center gap-1.5 mb-1">
+          <h1 className="text-3xl md:text-4xl font-medium tracking-tight flex flex-wrap justify-center items-center gap-x-2">
+            <span className="text-slate-500 font-light">{getGreeting()},</span>
+            <Shimmer 
+              as="span" 
+              duration={3} 
+              spread={1.5} 
+              className="font-semibold [--color-muted-foreground:theme(colors.blue.400)] [--color-background:theme(colors.white)] drop-shadow-sm"
+            >
+              {profile?.first_name || 'Usuario'}
+            </Shimmer>
           </h1>
-          <div className="w-12 h-12 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full flex items-center justify-center">
-            <Sparkles className="w-5 h-5 text-blue-600 animate-pulse" />
-          </div>
         </div>
 
-        <p className="text-gray-600 text-xl max-w-2xl mx-auto leading-relaxed">
+        <p className="text-slate-500 text-[15px] max-w-2xl mx-auto leading-relaxed font-light">
           Tu progreso vocacional te está esperando
         </p>
       </div>

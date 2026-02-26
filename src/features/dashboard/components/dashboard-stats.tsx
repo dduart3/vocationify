@@ -62,7 +62,7 @@ export function DashboardStats() {
         ? `${dashboardStats.totalTests - dashboardStats.completedTests} en progreso`
         : 'Todos completados',
       icon: Brain,
-      color: 'from-blue-500 to-blue-600',
+      iconColor: 'text-blue-500',
     },
     {
       title: 'Confianza Promedio',
@@ -70,47 +70,47 @@ export function DashboardStats() {
       description: dashboardStats.averageConfidence >= 80 ? 'Muy alta' : 
                    dashboardStats.averageConfidence >= 60 ? 'Alta' : 'En desarrollo',
       icon: BarChart3,
-      color: 'from-green-500 to-green-600',
+      iconColor: 'text-green-500',
     },
     {
       title: 'Último Test',
       value: formatTimeAgo(dashboardStats.lastTestDate),
       description: dashboardStats.lastTestDate ? 'Test completado' : 'Aún no has empezado',
       icon: Clock,
-      color: 'from-purple-500 to-purple-600',
+      iconColor: 'text-purple-500',
     },
     {
       title: 'Perfil Activo',
       value: dashboardStats.completedTests > 0 ? 'Sí' : 'No',
       description: dashboardStats.completedTests > 0 ? 'Con recomendaciones' : 'Completa un test',
       icon: Target,
-      color: 'from-orange-500 to-orange-600',
+      iconColor: 'text-orange-500',
     },
   ]
 
   return (
-    <div id="dashboard-stats" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {stats.map((stat) => {
+    <div id="dashboard-stats" className="flex flex-col md:flex-row items-center justify-between py-4 px-6 md:px-8 rounded-[2rem] bg-white/50 backdrop-blur-2xl border border-white/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_4px_20px_rgba(0,0,0,0.03)] mx-auto w-full gap-4 md:divide-x divide-gray-200/50">
+      {stats.map((stat, index) => {
         const IconComponent = stat.icon
         return (
           <div
             key={stat.title}
-            className="p-6 rounded-3xl bg-white/80 backdrop-blur-sm border border-gray-300/50 shadow-lg shadow-gray-200/50 hover:shadow-xl hover:shadow-gray-300/50 hover:scale-105 hover:border-gray-400/50 transition-all duration-300 group"
+            className={`flex flex-col items-center justify-center flex-1 transition-all duration-300 group w-full ${index !== 0 ? 'md:pl-4' : ''}`}
           >
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+            <div className="flex items-center gap-2 mb-1.5">
+              <div
+                className={`flex shrink-0 items-center justify-center w-8 h-8 rounded-full bg-gradient-to-b from-white to-gray-50 shadow-[0_2px_5px_rgba(0,0,0,0.05),inset_0_-1px_2px_rgba(0,0,0,0.02),inset_0_1px_2px_rgba(255,255,255,1)] border border-gray-100 group-hover:scale-105 transition-transform duration-300`}
+              >
+                <IconComponent className={`w-4 h-4 ${stat.iconColor} drop-shadow-sm`} />
+              </div>
+              <h3 className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
                 {stat.title}
               </h3>
-              <div
-                className={`p-2.5 rounded-xl bg-gradient-to-br ${stat.color} shadow-md group-hover:rotate-12 transition-transform duration-300`}
-              >
-                <IconComponent className="w-5 h-5 text-white" />
-              </div>
             </div>
-            <div className="text-3xl font-bold bg-gradient-to-br from-gray-900 to-gray-700 bg-clip-text text-transparent mb-2">
+            <div className="text-2xl font-bold bg-gradient-to-br from-gray-900 to-gray-700 bg-clip-text text-transparent mb-0.5">
               {stat.value}
             </div>
-            <p className="text-sm text-gray-600 font-medium">
+            <p className="text-[11px] text-gray-400 font-medium">
               {stat.description}
             </p>
           </div>

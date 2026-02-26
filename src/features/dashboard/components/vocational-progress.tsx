@@ -71,42 +71,41 @@ export function VocationalProgress() {
     .sort((a, b) => b.progress - a.progress)
 
   return (
-    <div className="p-8 rounded-3xl bg-white/80 backdrop-blur-sm border border-gray-300/50 shadow-lg shadow-gray-200/50">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold bg-gradient-to-br from-gray-900 to-gray-700 bg-clip-text text-transparent">Tu Perfil RIASEC</h2>
+    <div className="p-6 rounded-[2rem] bg-white/50 backdrop-blur-2xl border border-white/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_4px_20px_rgba(0,0,0,0.03)] h-full">
+      <div className="flex items-center justify-between mb-5">
+        <h2 className="text-xl font-bold bg-gradient-to-br from-gray-900 to-gray-700 bg-clip-text text-transparent">Tu Perfil RIASEC</h2>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-4">
         {riasecData.map((item, index) => (
-          <div key={item.key} className="space-y-3 group">
-            <div className="flex justify-between items-center">
-              <div>
-                <span className="text-sm font-bold text-gray-900">
+          <div key={item.key} className="space-y-2 group">
+            <div className="flex justify-between items-end">
+              <div className="flex items-baseline gap-2">
+                <span className="text-[13px] font-bold text-gray-800">
                   {item.area}
                 </span>
-                <p className="text-sm text-gray-600 font-medium">
-                  {item.description}
-                </p>
+                <span className="text-[11px] text-gray-500 font-medium hidden sm:block">
+                  • {item.description}
+                </span>
               </div>
-              <span className="text-lg text-gray-900 font-mono font-bold px-3 py-1 bg-gray-100 rounded-lg border border-gray-300">
+              <span className="text-[13px] text-gray-700 font-mono font-bold">
                 {item.progress}%
               </span>
             </div>
-            <div className="w-full bg-gradient-to-r from-gray-200 to-gray-100 rounded-full h-4 overflow-hidden shadow-inner">
+            <div className="w-full bg-gradient-to-r from-gray-200/50 to-gray-100/50 rounded-full h-2.5 overflow-hidden shadow-inner">
               <div
-                className={`h-4 rounded-full transition-all duration-1000 ${item.color} shadow-md`}
+                className={`h-2.5 rounded-full transition-all duration-1000 ${item.color} shadow-sm opacity-90 group-hover:opacity-100`}
                 style={{
                   width: `${item.progress}%`,
-                  boxShadow: index === 0 ? '0 2px 8px rgba(0,0,0,0.15)' : '0 2px 4px rgba(0,0,0,0.1)'
                 }}
               ></div>
             </div>
           </div>
         ))}
 
-        <div className="mt-6 pt-6 border-t border-gray-300">
-          <p className="text-sm text-gray-600 font-medium">
-            Basado en tu último test completado. Los porcentajes más altos indican mayor afinidad.
+        <div className="mt-4 pt-4 border-t border-gray-200/50">
+          <p className="text-[11px] text-gray-500 font-medium text-center">
+            Basado en tu último test completado
           </p>
         </div>
       </div>
