@@ -12,8 +12,9 @@ interface RiasecRadarChartProps {
 
 export function RiasecRadarChart({ scores, size = 300 }: RiasecRadarChartProps) {
   const center = size / 2
-  const radius = (size - 80) / 2
-  const labelOffset = 20
+  const padding = 120 // Increased padding so badges and text don't get cut off
+  const radius = (size - padding) / 2
+  const labelOffset = 26
 
   // RIASEC labels in Spanish with darker colors
   const labels = [
@@ -80,8 +81,11 @@ export function RiasecRadarChart({ scores, size = 300 }: RiasecRadarChartProps) 
   })
 
   return (
-    <div className="flex flex-col items-center space-y-4">
-      <svg width={size} height={size} className="overflow-visible">
+    <div className="flex flex-col items-center w-full">
+      <svg 
+        viewBox={`0 0 ${size} ${size}`} 
+        className="w-full h-full max-w-[350px] overflow-visible drop-shadow-sm"
+      >
         {/* Grid circles */}
         {gridCircles}
         
@@ -101,15 +105,23 @@ export function RiasecRadarChart({ scores, size = 300 }: RiasecRadarChartProps) 
         {labels.map((label, index) => {
           const point = getPointPosition(index, scores[label.key as keyof typeof scores])
           return (
-            <circle
-              key={label.key}
-              cx={point.x}
-              cy={point.y}
-              r="5"
-              fill={label.color}
-              stroke="white"
-              strokeWidth="3"
-            />
+            <foreignObject
+              key={`dot-${label.key}`}
+              x={point.x - 7}
+              y={point.y - 7}
+              width="14"
+              height="14"
+              className="overflow-visible"
+            >
+              <div
+                className="w-3.5 h-3.5 rounded-full"
+                style={{
+                  backgroundColor: label.color,
+                  border: '1.5px solid white',
+                  boxShadow: `inset 0 1.5px 2px rgba(255,255,255,0.7), inset 0 -1px 2px rgba(0,0,0,0.15), 0 3px 6px ${label.color}60, 0 1px 3px rgba(0,0,0,0.2)`
+                }}
+              />
+            </foreignObject>
           )
         })}
         
@@ -120,23 +132,26 @@ export function RiasecRadarChart({ scores, size = 300 }: RiasecRadarChartProps) 
 
           return (
             <g key={label.key}>
-              <circle
-                cx={labelPos.x}
-                cy={labelPos.y - 8}
-                r="14"
-                fill={label.bgColor}
-                stroke={label.color}
-                strokeWidth="2"
-              />
-              <text
-                x={labelPos.x}
-                y={labelPos.y - 4}
-                textAnchor="middle"
-                className="text-xs font-bold"
-                fill={label.color}
+              <foreignObject
+                x={labelPos.x - 18}
+                y={labelPos.y - 26}
+                width="36"
+                height="36"
+                className="overflow-visible"
               >
-                {label.key}
-              </text>
+                <div
+                  className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-[14px]"
+                  style={{
+                    background: `linear-gradient(to bottom, #ffffff, ${label.bgColor})`,
+                    borderColor: label.color,
+                    borderWidth: '1.5px',
+                    color: label.color,
+                    boxShadow: `inset 0 2px 5px rgba(255,255,255,0.9), 0 3px 8px ${label.color}30, 0 1px 3px ${label.color}20`,
+                  }}
+                >
+                  {label.key}
+                </div>
+              </foreignObject>
               <text
                 x={labelPos.x}
                 y={labelPos.y + 20}
@@ -168,14 +183,18 @@ export function RiasecRadarChart({ scores, size = 300 }: RiasecRadarChartProps) 
       </svg>
       
       {/* Legend */}
-      <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
+      <div className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm mt-8">
         {labels.map((label) => (
-          <div key={label.key} className="flex items-center gap-2">
+          <div key={label.key} className="flex items-center gap-2.5">
             <div
-              className="w-3 h-3 rounded-full border-2"
-              style={{ backgroundColor: label.color, borderColor: label.color }}
+              className="w-3.5 h-3.5 rounded-full"
+              style={{ 
+                backgroundColor: label.color,
+                border: '1.5px solid white',
+                boxShadow: `inset 0 1px 2px rgba(255,255,255,0.7), 0 2px 4px ${label.color}60`
+              }}
             />
-            <span className="text-gray-700 font-bold">
+            <span className="text-gray-700 font-bold text-[13px]">
               {label.key} - {label.label}
             </span>
           </div>

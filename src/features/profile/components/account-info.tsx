@@ -13,7 +13,7 @@ export function AccountInfo() {
   }
 
   return (
-    <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-6 shadow-lg shadow-gray-200/50 border border-gray-300/50 relative overflow-hidden">
+    <div className="bg-white/50 backdrop-blur-md rounded-[24px] p-6 sm:p-8 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_4px_20px_rgba(0,0,0,0.03)] border border-white/60 relative overflow-hidden h-full">
       <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-3">
         <Shield className="w-6 h-6 text-blue-600" />
         Información de Cuenta

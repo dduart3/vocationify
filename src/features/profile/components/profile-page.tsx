@@ -3,11 +3,11 @@ import { AlertCircle } from 'lucide-react'
 import { ProfileHeader } from './profile-header'
 import { ProfileForm, validateProfileData } from './profile-form'
 import { ActivitySummary } from './activity-summary'
-import { AccountInfo } from './account-info'
+
 import { useAuth } from '@/context/auth-context'
 import type { ProfileUpdateData } from '../types'
 import { OnboardingProvider, profileSteps } from '@/features/onboarding'
-
+import { Shimmer } from "@/components/ai-elements/shimmer"
 export function ProfilePage() {
   const { profile, updateProfile } = useAuth()
   const [isEditing, setIsEditing] = useState(false)
@@ -100,46 +100,99 @@ export function ProfilePage() {
 
   return (
     <OnboardingProvider section="profile" steps={profileSteps}>
-      <div className="min-h-screen p-4 sm:p-6">
-        <div className="max-w-4xl mx-auto">
-
-          {/* Header */}
-          <div id="profile-header" className="mb-6 sm:mb-8">
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Perfil</h1>
-            <p className="text-sm sm:text-base text-gray-600">Tu información y configuración</p>
-          </div>
-
-          {/* Profile Section */}
-          <div id="profile-form" className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 mb-6 shadow-sm border border-gray-200 relative overflow-hidden">
-            <ProfileHeader
-              isEditing={isEditing}
-              isLoading={isLoading}
-              onEdit={handleEdit}
-              onSave={handleSave}
-              onCancel={handleCancel}
+      <div className="flex-1 min-h-[100dvh] w-full relative flex flex-col bg-[#f8fafc] overflow-hidden">
+        
+        {/* Exact Sandra AI Background Match: Blue Gradient + Light Ellipse from Top */}
+        <div className="fixed inset-0 pointer-events-none z-0 bg-[#f8fafc]">
+            {/* 1. The Multi-Color Pastel Gradient Background */}
+            <div 
+              className="absolute inset-x-0 bottom-0 h-full opacity-100" 
+              style={{
+                background: 'linear-gradient(120deg, #fed7aa 0%, #fbcfe8 45%, #bae6fd 100%)',
+                maskImage: 'linear-gradient(to top, black 10%, transparent 65%)',
+                WebkitMaskImage: 'linear-gradient(to top, black 10%, transparent 65%)'
+              }}
             />
 
-            {error && (
-              <div className="mb-4 p-3 rounded-2xl bg-red-50 text-red-700 text-xs sm:text-sm border border-red-200 flex items-start gap-2">
-                <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
-                <span>{error}</span>
-              </div>
-            )}
+            {/* Premium Fine Grain Texture Overlay */}
+            <div 
+              className="absolute inset-0 opacity-[0.25] mix-blend-overlay pointer-events-none"
+              style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+                backgroundRepeat: 'repeat',
+                backgroundSize: '120px 120px',
+              }}
+            />
 
-            <div className="mt-6 pt-6 border-t border-gray-200">
-              <ProfileForm
-                isEditing={isEditing}
-                editData={editData}
-                onDataChange={setEditData}
-              />
+            {/* 2. The Ellipse from Top to Bottom (creating the U-shape downward arch) */}
+            <div className="absolute -top-[10%] left-1/2 -translate-x-1/2 w-[90vw] h-[95vh] bg-[#f8fafc] rounded-[50%] blur-[70px]" />
+            <div className="absolute -top-[5%] left-1/2 -translate-x-1/2 w-[70vw] h-[90vh] bg-[#f8fafc] rounded-[50%] blur-[40px]" />
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[55vw] h-[85vh] bg-[#f8fafc] rounded-[50%] blur-[20px]" />
+
+            {/* Warm reflection edge */}
+            <div className="absolute bottom-0 inset-x-0 h-[2px] bg-gradient-to-r from-orange-300 via-pink-300 to-sky-300 opacity-60" />
+            <div className="absolute bottom-0 inset-x-0 h-[8px] bg-gradient-to-r from-orange-300 via-pink-300 to-sky-300 blur-[4px] opacity-40" />
+        </div>
+
+        {/* Inner Structure */}
+        <div className="relative z-10 w-full min-h-screen p-4 md:pl-[104px] md:pr-6 md:py-6 max-w-[1000px] mx-auto flex flex-col pt-6 sm:pt-6 lg:h-screen lg:max-h-screen lg:overflow-hidden">
+          <div className="flex-1 flex flex-col min-h-0 px-2 sm:px-4 lg:px-6 pt-6 sm:pt-8 lg:pt-10">
+
+            {/* Header */}
+            <div id="profile-header" className="mb-6 sm:mb-8 shrink-0 text-center lg:text-left px-2 sm:px-4">
+              <h1 className="text-[28px] sm:text-[34px] lg:text-[40px] font-medium tracking-tight mb-1 text-slate-800">
+                <Shimmer 
+                  as="span" 
+                  duration={3} 
+                  spread={1.5} 
+                  className="font-medium [--color-muted-foreground:theme(colors.blue.400)] [--color-background:theme(colors.white)] drop-shadow-sm"
+                >
+                  Perfil
+                </Shimmer>
+              </h1>
+              <p className="text-[14px] text-slate-500 font-medium">Tu información y configuración</p>
             </div>
-          </div>
 
-          {/* Bottom Grid */}
-          <div id="activity-summary" className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-            <ActivitySummary />
-            <div className="space-y-4 sm:space-y-6">
-              <AccountInfo />
+            {/* Profile Content inside the big Glassmorphism Container */}
+            <div className="flex-1 flex flex-col min-h-0">
+              
+              {error && (
+                <div className="mb-4 mt-1 p-2 rounded-xl bg-red-50 text-red-700 text-xs sm:text-sm border border-red-200 flex items-start gap-2 max-w-2xl mx-auto w-full">
+                  <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                  <span>{error}</span>
+                </div>
+              )}
+
+              {/* Combine Header + Stats + Form into one seamless block */}
+              <div className="flex-1 flex flex-col bg-white/50 backdrop-blur-md rounded-[24px] border border-white/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_4px_20px_rgba(0,0,0,0.03)] overflow-hidden">
+                <div className="shrink-0">
+                  <ProfileHeader
+                    isEditing={isEditing}
+                    isLoading={isLoading}
+                    editData={editData}
+                    onDataChange={setEditData}
+                    onEdit={handleEdit}
+                    onSave={handleSave}
+                    onCancel={handleCancel}
+                  />
+                  <div className="px-6 pb-2">
+                     <ActivitySummary />
+                  </div>
+                </div>
+
+                {/* Subtle Divider */}
+                <div className="mx-6 h-[1px] bg-slate-200/50 my-3 shrink-0" />
+
+                {/* Form flush below with added padding for breathing room */}
+                <div id="profile-form" className="flex-1 overflow-y-auto custom-scrollbar px-5 sm:px-8 pb-8 pr-3 sm:pr-8">
+                  <ProfileForm
+                    isEditing={isEditing}
+                    editData={editData}
+                    onDataChange={setEditData}
+                  />
+                </div>
+              </div>
+
             </div>
           </div>
         </div>

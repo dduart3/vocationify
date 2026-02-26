@@ -423,17 +423,17 @@ export function PDFExport({
     <button
       onClick={generatePDF}
       disabled={disabled || isGenerating || !testResult}
-      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white border-2 border-gray-300 hover:border-blue-400 hover:bg-blue-50 transition-all duration-200 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed text-gray-900 font-semibold"
+      className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-gradient-to-b from-blue-50/80 to-blue-100/50 shadow-[0_4px_12px_rgba(59,130,246,0.12),inset_0_-2px_4px_rgba(59,130,246,0.05),inset_0_2px_4px_rgba(255,255,255,1)] border border-blue-200/60 hover:shadow-[0_6px_15px_rgba(59,130,246,0.18),inset_0_-2px_4px_rgba(59,130,246,0.05),inset_0_2px_4px_rgba(255,255,255,1)] hover:-translate-y-[1px] transition-all duration-300 group disabled:opacity-50 text-blue-900 font-medium"
     >
       {isGenerating ? (
         <>
-          <Loader2 className="w-4 h-4 animate-spin text-blue-600" />
-          <span className="text-sm">Generando PDF...</span>
+          <Loader2 className="w-[18px] h-[18px] animate-spin text-blue-600" />
+          <span className="text-[14px]">Generando PDF...</span>
         </>
       ) : (
         <>
-          <Download className="w-4 h-4 text-blue-600" />
-          <span className="text-sm">Descargar Informe PDF</span>
+          <Download className="w-[18px] h-[18px] text-blue-600 group-hover:scale-110 transition-transform duration-300" />
+          <span className="text-[14px] font-semibold tracking-tight">Descargar Informe PDF</span>
         </>
       )}
     </button>

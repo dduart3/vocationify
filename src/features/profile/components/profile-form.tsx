@@ -130,320 +130,236 @@ export function ProfileForm({ isEditing, editData, onDataChange }: ProfileFormPr
     }
   })
 
-  // Update form when editData changes (when edit mode is toggled)
+  // Update form when editData changes (when edit mode is toggled or when Header edits fields)
   useEffect(() => {
     if (isEditing) {
-      // Reset form fields to current editData values when entering edit mode
-      form.setFieldValue('first_name', editData.first_name || '')
-      form.setFieldValue('last_name', editData.last_name || '')
-      form.setFieldValue('email', editData.email || '')
-      form.setFieldValue('phone', editData.phone || '')
-      form.setFieldValue('address', editData.address || '')
-      form.setFieldValue('location', editData.location || null)
+      if (form.state.values.first_name !== editData.first_name) form.setFieldValue('first_name', editData.first_name || '')
+      if (form.state.values.last_name !== editData.last_name) form.setFieldValue('last_name', editData.last_name || '')
+      if (form.state.values.email !== editData.email) form.setFieldValue('email', editData.email || '')
+      if (form.state.values.phone !== editData.phone) form.setFieldValue('phone', editData.phone || '')
+      if (form.state.values.address !== editData.address) form.setFieldValue('address', editData.address || '')
+      
+      const loc1 = form.state.values.location
+      const loc2 = editData.location
+      if (loc1?.latitude !== loc2?.latitude || loc1?.longitude !== loc2?.longitude) {
+         form.setFieldValue('location', editData.location || null)
+      }
     }
-  }, [isEditing])
+  }, [isEditing, editData, form])
 
   return (
-    <div className="space-y-6">
-      {/* Subscribe to form state changes and sync to parent */}
-      <form.Subscribe
-        selector={(state) => state.values}
-        children={(values) => {
-          if (isEditing && JSON.stringify(values) !== JSON.stringify(editData)) {
-            console.log('🔄 Form values changed, syncing to parent:', values)
-            onDataChange(values as ProfileUpdateData)
-          }
-          return null
-        }}
-      />
-
-      <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-3">
-        <User className="w-6 h-6 text-blue-600" />
-        Información Personal
-      </h3>
-
-      <div className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* First Name */}
-          <form.Field
-            name="first_name"
-            validators={{
-              onChange: ({ value }) => {
-                const result = profileSchema.shape.first_name.safeParse(value)
-                return result.success ? undefined : result.error.issues[0]?.message
-              }
-            }}
-            children={(field) => (
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Nombre</label>
-                {isEditing ? (
-                  <>
-                    <input
-                      type="text"
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      className={`w-full p-3 bg-gray-50 border rounded-xl text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:border-transparent transition-all ${
-                        field.state.meta.errors.length > 0
-                          ? 'border-red-300 focus:ring-red-500'
-                          : 'border-gray-300 focus:ring-blue-500'
-                      }`}
-                      placeholder="Tu nombre"
-                    />
-                    {field.state.meta.errors.length > 0 && (
-                      <div className="flex items-center gap-2 text-red-600 text-xs animate-fade-in">
-                        <AlertCircle className="w-3 h-3" />
-                        <span>{field.state.meta.errors[0]}</span>
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <div className="p-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900">
-                    {profile?.first_name || 'No especificado'}
-                  </div>
-                )}
-              </div>
-            )}
-          />
-
-          {/* Last Name */}
-          <form.Field
-            name="last_name"
-            validators={{
-              onChange: ({ value }) => {
-                const result = profileSchema.shape.last_name.safeParse(value)
-                return result.success ? undefined : result.error.issues[0]?.message
-              }
-            }}
-            children={(field) => (
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Apellido</label>
-                {isEditing ? (
-                  <>
-                    <input
-                      type="text"
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      className={`w-full p-3 bg-gray-50 border rounded-xl text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:border-transparent transition-all ${
-                        field.state.meta.errors.length > 0
-                          ? 'border-red-300 focus:ring-red-500'
-                          : 'border-gray-300 focus:ring-blue-500'
-                      }`}
-                      placeholder="Tu apellido"
-                    />
-                    {field.state.meta.errors.length > 0 && (
-                      <div className="flex items-center gap-2 text-red-600 text-xs animate-fade-in">
-                        <AlertCircle className="w-3 h-3" />
-                        <span>{field.state.meta.errors[0]}</span>
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <div className="p-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900">
-                    {profile?.last_name || 'No especificado'}
-                  </div>
-                )}
-              </div>
-            )}
-          />
+    <div className="flex flex-col space-y-4">
+      <div className="flex items-center gap-2.5 mb-3 mt-2">
+        <div className="flex items-center gap-1.5 px-3 py-1 sm:py-1.5 bg-slate-100/70 backdrop-blur-sm border border-slate-200/80 rounded-full shadow-[inset_0_1px_1px_rgba(255,255,255,1),0_1px_2px_rgba(0,0,0,0.02)] w-fit">
+          <div className="flex items-center justify-center shrink-0">
+            <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500" strokeWidth={2.5} />
+          </div>
+          <h3 className="text-[13px] sm:text-[14px] font-medium text-slate-700 tracking-tight pr-0.5">
+            Información Personal
+          </h3>
         </div>
+      </div>
 
-        {/* Email */}
-        <form.Field
-          name="email"
-          validators={{
-            onChange: ({ value }) => {
-              if (!value) return undefined
-              const result = profileSchema.shape.email.safeParse(value)
-              return result.success ? undefined : result.error.issues[0]?.message
-            }
-          }}
-          children={(field) => (
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Correo electrónico</label>
-              {isEditing ? (
-                <>
-                  <input
-                    type="email"
-                    value={field.state.value || ''}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    className={`w-full p-3 bg-gray-50 border rounded-xl text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:border-transparent transition-all ${
-                      field.state.meta.errors.length > 0
-                        ? 'border-red-300 focus:ring-red-500'
-                        : 'border-gray-300 focus:ring-blue-500'
-                    }`}
-                    placeholder="tu@email.com"
-                  />
-                  {field.state.meta.errors.length > 0 && (
-                    <div className="flex items-center gap-2 text-red-600 text-xs animate-fade-in">
-                      <AlertCircle className="w-3 h-3" />
-                      <span>{field.state.meta.errors[0]}</span>
-                    </div>
-                  )}
-                </>
-              ) : (
-                <div className="p-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 flex items-center gap-2">
-                  <Mail className="w-4 h-4 text-blue-600" />
-                  {profile?.email || 'No especificado'}
-                </div>
-              )}
-            </div>
-          )}
-        />
-
-        {/* Phone */}
-        <form.Field
-          name="phone"
-          validators={{
-            onChange: ({ value }) => {
-              if (!value) return undefined
-              const result = profileSchema.shape.phone.safeParse(value)
-              return result.success ? undefined : result.error.issues[0]?.message
-            }
-          }}
-          children={(field) => (
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
-                Teléfono <span className="text-gray-500 text-xs">(opcional)</span>
-              </label>
-              {isEditing ? (
-                <>
-                  <input
-                    type="tel"
-                    value={field.state.value || ''}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => {
-                      const formatted = formatPhoneNumber(e.target.value)
-                      field.handleChange(formatted)
-                    }}
-                    className={`w-full p-3 bg-gray-50 border rounded-xl text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:border-transparent transition-all ${
-                      field.state.meta.errors.length > 0
-                        ? 'border-red-300 focus:ring-red-500'
-                        : 'border-gray-300 focus:ring-blue-500'
-                    }`}
-                    placeholder="0414 123 45 67"
-                    maxLength={14}
-                  />
-                  {field.state.meta.errors.length > 0 && (
-                    <div className="flex items-center gap-2 text-red-600 text-xs animate-fade-in">
-                      <AlertCircle className="w-3 h-3" />
-                      <span>{field.state.meta.errors[0]}</span>
-                    </div>
-                  )}
-                </>
-              ) : (
-                <div className="p-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 flex items-center gap-2">
-                  <Phone className="w-4 h-4 text-blue-600" />
-                  {profile?.phone || 'No especificado'}
-                </div>
-              )}
-            </div>
-          )}
-        />
-
-        {/* Address */}
-        <form.Field
-          name="address"
-          validators={{
-            onChange: ({ value }) => {
-              if (!value) return undefined
-              const result = profileSchema.shape.address.safeParse(value)
-              return result.success ? undefined : result.error.issues[0]?.message
-            }
-          }}
-          children={(field) => (
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
-                Dirección <span className="text-gray-500 text-xs">(opcional)</span>
-              </label>
-              {isEditing ? (
-                <>
-                  <textarea
-                    rows={3}
-                    value={field.state.value || ''}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    className={`w-full p-3 bg-gray-50 border rounded-xl text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:border-transparent resize-none transition-all ${
-                      field.state.meta.errors.length > 0
-                        ? 'border-red-300 focus:ring-red-500'
-                        : 'border-gray-300 focus:ring-blue-500'
-                    }`}
-                    placeholder="Av. Universidad, Maracaibo, Zulia"
-                  />
-                  {field.state.meta.errors.length > 0 && (
-                    <div className="flex items-center gap-2 text-red-600 text-xs animate-fade-in">
-                      <AlertCircle className="w-3 h-3" />
-                      <span>{field.state.meta.errors[0]}</span>
-                    </div>
-                  )}
-                </>
-              ) : (
-                <div className="p-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 flex items-start gap-2">
-                  <MapPin className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                  <span>{profile?.address || 'No especificado'}</span>
-                </div>
-              )}
-            </div>
-          )}
-        />
-
-        {/* Location */}
-        <form.Field
-          name="location"
-          children={(field) => (
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
-                Ubicación en el mapa <span className="text-gray-500 text-xs">(opcional)</span>
-              </label>
-              {isEditing ? (
-                <div className="space-y-2">
-                  <p className="text-xs text-gray-500">
-                    Haz clic en el mapa para seleccionar tu ubicación
-                  </p>
-                  <LocationPicker
-                    value={field.state.value || undefined}
-                    onChange={(location) => {
-                      console.log('📍 LocationPicker onChange called with:', location)
-                      field.handleChange(location || null)
-                      console.log('📍 Field value after change:', field.state.value)
-                    }}
-                  />
-                  {field.state.value && (
-                    <p className="text-xs text-green-600">
-                      ✓ Ubicación seleccionada: {field.state.value.latitude.toFixed(6)}, {field.state.value.longitude.toFixed(6)}
-                    </p>
-                  )}
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  {profile?.location ? (
-                    <div className="p-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900">
-                      <div className="flex items-center gap-2 mb-2">
-                        <MapPin className="w-4 h-4 text-blue-600" />
-                        <span className="text-sm">
-                          Lat: {profile.location.latitude.toFixed(6)},
-                          Lng: {profile.location.longitude.toFixed(6)}
-                        </span>
+      <div className="space-y-3 sm:space-y-3.5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+          
+          {/* Email */}
+          <form.Field
+            name="email"
+            validators={{
+              onChange: ({ value }) => {
+                if (!value) return undefined
+                const result = profileSchema.shape.email.safeParse(value)
+                return result.success ? undefined : result.error.issues[0]?.message
+              }
+            }}
+            children={(field) => (
+              <div className="space-y-1.5">
+                <label className="flex items-center gap-1.5 text-[11.5px] font-semibold text-slate-500 ml-1 tracking-tight">
+                   <Mail className="w-3 h-3 text-blue-400" strokeWidth={2.5} />
+                   Correo electrónico
+                </label>
+                {isEditing ? (
+                  <>
+                    <input
+                      type="email"
+                      value={field.state.value || ''}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => {
+                        field.handleChange(e.target.value)
+                        onDataChange({ ...editData, email: e.target.value })
+                      }}
+                      className={`w-full px-3 py-1.5 sm:py-2 bg-white/60 border rounded-[12px] text-[13px] text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:border-transparent shadow-[inset_0_1px_2px_rgba(0,0,0,0.02),0_1px_1px_rgba(255,255,255,1)] transition-all ${
+                        field.state.meta.errors.length > 0
+                          ? 'border-red-300 focus:ring-red-500/20'
+                          : 'border-slate-200/80 focus:ring-blue-500/20 focus:border-blue-400'
+                      }`}
+                      placeholder="tu@email.com"
+                    />
+                    {field.state.meta.errors.length > 0 && (
+                      <div className="flex items-center gap-1.5 text-red-500 text-[11px] font-medium ml-1">
+                        <AlertCircle className="w-3 h-3" />
+                        <span>{field.state.meta.errors[0]}</span>
                       </div>
-                      <LocationPicker
-                        value={profile.location}
-                        onChange={() => {}}
-                        readOnly={true}
-                      />
+                    )}
+                  </>
+                ) : (
+                  <div className="w-full px-3 py-1.5 sm:py-2 bg-white/40 border border-slate-200/60 rounded-[12px] text-[13px] text-slate-700 font-medium shadow-[0_1px_1px_rgba(255,255,255,1)] min-h-[32px] sm:min-h-[36px] flex items-center">
+                    <span>{profile?.email || 'No especificado'}</span>
+                  </div>
+                )}
+              </div>
+            )}
+          />
+
+          {/* Phone */}
+          <form.Field
+            name="phone"
+            validators={{
+              onChange: ({ value }) => {
+                if (!value) return undefined
+                const result = profileSchema.shape.phone.safeParse(value)
+                return result.success ? undefined : result.error.issues[0]?.message
+              }
+            }}
+            children={(field) => (
+              <div className="space-y-1.5">
+                <label className="flex items-center gap-1.5 text-[11.5px] font-semibold text-slate-500 ml-1 tracking-tight">
+                   <Phone className="w-3 h-3 text-blue-400" strokeWidth={2.5} />
+                   Teléfono <span className="text-slate-400/80 font-medium">(opcional)</span>
+                </label>
+                {isEditing ? (
+                  <>
+                    <input
+                      type="tel"
+                      value={field.state.value || ''}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => {
+                        const formatted = formatPhoneNumber(e.target.value)
+                        field.handleChange(formatted)
+                        onDataChange({ ...editData, phone: formatted })
+                      }}
+                      className={`w-full px-3 py-1.5 sm:py-2 bg-white/60 border rounded-[12px] text-[13px] text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:border-transparent shadow-[inset_0_1px_2px_rgba(0,0,0,0.02),0_1px_1px_rgba(255,255,255,1)] transition-all ${
+                        field.state.meta.errors.length > 0
+                          ? 'border-red-300 focus:ring-red-500/20'
+                          : 'border-slate-200/80 focus:ring-blue-500/20 focus:border-blue-400'
+                      }`}
+                      placeholder="0414 123 45 67"
+                      maxLength={14}
+                    />
+                    {field.state.meta.errors.length > 0 && (
+                      <div className="flex items-center gap-1.5 text-red-500 text-[11px] font-medium ml-1">
+                        <AlertCircle className="w-3 h-3" />
+                        <span>{field.state.meta.errors[0]}</span>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="w-full px-3 py-1.5 sm:py-2 bg-white/40 border border-slate-200/60 rounded-[12px] text-[13px] text-slate-700 font-medium shadow-[0_1px_1px_rgba(255,255,255,1)] min-h-[32px] sm:min-h-[36px] flex items-center">
+                    <span>{profile?.phone || 'No especificado'}</span>
+                  </div>
+                )}
+              </div>
+            )}
+          />
+
+          {/* Address */}
+          <form.Field
+            name="address"
+            validators={{
+              onChange: ({ value }) => {
+                if (!value) return undefined
+                const result = profileSchema.shape.address.safeParse(value)
+                return result.success ? undefined : result.error.issues[0]?.message
+              }
+            }}
+            children={(field) => (
+              <div className="space-y-1.5">
+                <label className="flex items-center gap-1.5 text-[11.5px] font-semibold text-slate-500 ml-1 tracking-tight">
+                   <MapPin className="w-3 h-3 text-blue-400" strokeWidth={2.5} />
+                   Dirección <span className="text-slate-400/80 font-medium">(opcional)</span>
+                </label>
+                {isEditing ? (
+                  <>
+                    <input
+                      type="text"
+                      value={field.state.value || ''}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => {
+                        field.handleChange(e.target.value)
+                        onDataChange({ ...editData, address: e.target.value })
+                      }}
+                      className={`w-full px-3 py-1.5 sm:py-2 bg-white/60 border rounded-[12px] text-[13px] text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:border-transparent shadow-[inset_0_1px_2px_rgba(0,0,0,0.02),0_1px_1px_rgba(255,255,255,1)] transition-all ${
+                        field.state.meta.errors.length > 0
+                          ? 'border-red-300 focus:ring-red-500/20'
+                          : 'border-slate-200/80 focus:ring-blue-500/20 focus:border-blue-400'
+                      }`}
+                      placeholder="Av. Universidad, Maracaibo, Zulia"
+                    />
+                    {field.state.meta.errors.length > 0 && (
+                      <div className="flex items-center gap-1.5 text-red-500 text-[11px] font-medium ml-1">
+                        <AlertCircle className="w-3 h-3" />
+                        <span>{field.state.meta.errors[0]}</span>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="w-full px-3 py-1.5 sm:py-2 bg-white/40 border border-slate-200/60 rounded-[12px] text-[13px] text-slate-700 font-medium shadow-[0_1px_1px_rgba(255,255,255,1)] min-h-[32px] sm:min-h-[36px] flex items-center">
+                    <span className="truncate">{profile?.address || 'No especificado'}</span>
+                  </div>
+                )}
+              </div>
+            )}
+          />
+
+          {/* Location */}
+          <form.Field
+            name="location"
+            children={(field) => (
+              <div className="space-y-1.5">
+                <label className="flex items-center gap-1.5 text-[11.5px] font-semibold text-slate-500 ml-1 tracking-tight">
+                   <MapPin className="w-3 h-3 text-blue-400" strokeWidth={2.5} />
+                   Ubicación en el mapa <span className="text-slate-400/80 font-medium">(opcional)</span>
+                </label>
+                {isEditing ? (
+                  <div className="space-y-1.5">
+                    <div className="h-[140px] w-full rounded-[12px] overflow-hidden border border-slate-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+                        <LocationPicker
+                          value={field.state.value || undefined}
+                          onChange={(location) => {
+                            field.handleChange(location || null)
+                            onDataChange({ ...editData, location: location || null })
+                          }}
+                        />
                     </div>
-                  ) : (
-                    <div className="p-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-blue-600" />
-                      No especificado
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
-        />
+                    {field.state.value && (
+                      <p className="text-[10.5px] text-green-600 font-semibold ml-1">
+                        ✓ Ubicación guardada
+                      </p>
+                    )}
+                  </div>
+                ) : (
+                  <div className="w-full">
+                    {profile?.location ? (
+                      <div className="w-full p-1 bg-white/40 border border-slate-200/60 rounded-[12px] shadow-[0_1px_1px_rgba(255,255,255,1)] h-[84px] overflow-hidden">
+                        <LocationPicker
+                          value={profile.location}
+                          onChange={() => {}}
+                          readOnly={true}
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-full px-3 py-1.5 sm:py-2 bg-white/40 border border-slate-200/60 rounded-[12px] text-[13px] text-slate-700 font-medium shadow-[0_1px_1px_rgba(255,255,255,1)] min-h-[32px] sm:min-h-[36px] flex items-center">
+                        <span>No especificado</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+          />
+
+        </div>
       </div>
     </div>
   )

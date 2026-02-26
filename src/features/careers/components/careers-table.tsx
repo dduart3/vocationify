@@ -1,3 +1,4 @@
+import { useNavigate } from '@tanstack/react-router'
 import {
   useReactTable,
   getCoreRowModel,
@@ -17,6 +18,8 @@ interface CareersTableProps {
 }
 
 export function CareersTable({ columns, data, isLoading = false }: CareersTableProps) {
+  const navigate = useNavigate()
+
   const table = useReactTable({
     data,
     columns,
@@ -32,15 +35,16 @@ export function CareersTable({ columns, data, isLoading = false }: CareersTableP
   })
 
   return (
-    <div className="bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden border border-gray-300/50 shadow-lg shadow-gray-200/50 overflow-x-auto">
-      <table className="w-full">
-          <thead>
+    <div className="bg-white/50 backdrop-blur-2xl border border-white/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_4px_20px_rgba(0,0,0,0.03)] rounded-[2rem] flex flex-col min-h-0 h-full overflow-hidden">
+      <div className="flex-1 overflow-y-auto custom-scrollbar min-h-0">
+        <table className="w-full table-fixed">
+          <thead className="sticky top-0 z-20">
             {table.getHeaderGroups().map(headerGroup => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map(header => (
                   <th
                     key={header.id}
-                    className="px-6 py-4 text-left text-sm font-bold text-gray-700 bg-gradient-to-r from-gray-50 to-gray-100 border-b-2 border-gray-300"
+                    className="px-4 sm:px-6 py-3.5 sm:py-4 text-left text-[11px] sm:text-[12px] font-bold text-slate-500 uppercase tracking-wider bg-slate-100/80 backdrop-blur-md border-b border-white/60 shadow-[inset_0_1px_1px_rgba(255,255,255,1)]"
                     style={{ width: header.getSize() }}
                   >
                     {header.isPlaceholder ? null : (
@@ -85,25 +89,28 @@ export function CareersTable({ columns, data, isLoading = false }: CareersTableP
             {isLoading ? (
               Array(10).fill(0).map((_, i) => (
                 <tr key={i}>
-                  <td colSpan={4} className="px-6 py-4">
+                  <td colSpan={columns.length} className="px-6 py-4">
                     <div className="animate-pulse bg-gray-200 h-12 rounded" />
                   </td>
                 </tr>
               ))
             ) : table.getRowModel().rows.length === 0 ? (
               <tr>
-                <td colSpan={4} className="px-6 py-12 text-center text-gray-500 font-medium">
+                <td colSpan={columns.length} className="px-6 py-12 text-center text-gray-500 font-medium">
                   No se encontraron carreras
                 </td>
               </tr>
             ) : (
               table.getRowModel().rows.map((row) => (
-                <tr key={row.id} className="hover:bg-blue-50/50 transition-colors duration-200 border-b border-gray-200 last:border-0">
+                <tr 
+                  key={row.id} 
+                  onClick={() => navigate({ to: '/careers/$careerId', params: { careerId: row.original.id } })}
+                  className="hover:bg-white/60 transition-colors duration-200 border-b border-black/[0.04] last:border-0 cursor-pointer group even:bg-slate-100/40"
+                >
                   {row.getVisibleCells().map(cell => (
                     <td
                       key={cell.id}
-                      className="px-6 py-4"
-                      style={{ width: cell.column.getSize() }}
+                      className="px-4 sm:px-6 py-4 text-xs sm:text-sm align-middle"
                     >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </td>
@@ -113,10 +120,11 @@ export function CareersTable({ columns, data, isLoading = false }: CareersTableP
             )}
           </tbody>
         </table>
+      </div>
 
-        {/* Pagination */}
-        <div className="px-6 py-4 flex items-center justify-between bg-gradient-to-r from-gray-50 to-gray-100 border-t-2 border-gray-300">
-        <div className="text-sm text-gray-700 font-medium">
+      {/* Pagination */}
+      <div className="shrink-0 px-4 sm:px-6 py-3 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-0 bg-slate-50/50 backdrop-blur-md border-t border-white/60 shadow-[inset_0_1px_0px_rgba(255,255,255,0.7)]">
+        <div className="text-[12px] sm:text-[13px] text-slate-500 font-medium text-center sm:text-left">
           Mostrando {table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1} a{' '}
           {Math.min((table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize, table.getFilteredRowModel().rows.length)} de{' '}
           {table.getFilteredRowModel().rows.length} resultados
@@ -126,21 +134,21 @@ export function CareersTable({ columns, data, isLoading = false }: CareersTableP
           <button
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
-            className="p-2 rounded-lg bg-white border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm"
+            className="p-1.5 rounded-xl bg-white/60 border border-slate-200/60 shadow-[0_2px_5px_rgba(0,0,0,0.04),inset_0_1px_2px_rgba(255,255,255,1)] hover:bg-white hover:shadow-[0_4px_8px_rgba(0,0,0,0.08),inset_0_1px_2px_rgba(255,255,255,1)] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
           >
-            <IconChevronLeft className="w-4 h-4 text-gray-700" />
+            <IconChevronLeft className="w-4 h-4 text-slate-600" />
           </button>
 
-          <span className="px-3 py-1 text-sm text-gray-700 font-bold">
+          <span className="px-3 py-1 text-[13px] text-slate-600 font-bold whitespace-nowrap bg-white/50 rounded-lg shadow-inner border border-black/5">
             {table.getState().pagination.pageIndex + 1} de {table.getPageCount()}
           </span>
 
           <button
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
-            className="p-2 rounded-lg bg-white border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm"
+            className="p-1.5 rounded-xl bg-white/60 border border-slate-200/60 shadow-[0_2px_5px_rgba(0,0,0,0.04),inset_0_1px_2px_rgba(255,255,255,1)] hover:bg-white hover:shadow-[0_4px_8px_rgba(0,0,0,0.08),inset_0_1px_2px_rgba(255,255,255,1)] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
           >
-            <IconChevronRight className="w-4 h-4 text-gray-700" />
+            <IconChevronRight className="w-4 h-4 text-slate-600" />
           </button>
         </div>
       </div>

@@ -1,10 +1,11 @@
 import { useState, useMemo } from 'react'
 import { Link } from '@tanstack/react-router'
-import { IconArrowLeft, IconSchool, IconTarget, IconClock, IconBookmark, IconBookmarkFilled, IconMapPin, IconBuilding } from '@tabler/icons-react'
+import { IconArrowLeft, IconSchool, IconTarget, IconClock, IconBookmark, IconBookmarkFilled, IconMapPin, IconBuilding, IconChartBar } from '@tabler/icons-react'
 import { useCareerWithSchools } from '../hooks/use-careers'
 import { useAuth } from '@/context/auth-context'
 import { calculateDistance, formatDistance } from '@/utils/distance'
 import { OnboardingProvider, careerDetailSteps } from '@/features/onboarding'
+import { Shimmer } from '@/components/ai-elements/shimmer'
 
 interface CareerDetailProps {
   careerId: string
@@ -68,6 +69,41 @@ export function CareerDetail({ careerId }: CareerDetailProps) {
 
 
 
+  const getRiasecBarClasses = (type: string, isFilled: boolean) => {
+    if (!isFilled) {
+      const bases: Record<string, string> = {
+        'realistic': 'bg-green-100/60',
+        'investigative': 'bg-blue-100/60',
+        'artistic': 'bg-purple-100/60',
+        'social': 'bg-orange-100/60',
+        'enterprising': 'bg-yellow-100/60',
+        'conventional': 'bg-cyan-100/60'
+      }
+      return bases[type.toLowerCase()] || 'bg-slate-100/60'
+    }
+    const fills: Record<string, string> = {
+      'realistic': 'bg-gradient-to-t from-green-500 to-emerald-400 shadow-[0_2px_4px_rgba(34,197,94,0.2)]',
+      'investigative': 'bg-gradient-to-t from-blue-500 to-sky-400 shadow-[0_2px_4px_rgba(59,130,246,0.2)]',
+      'artistic': 'bg-gradient-to-t from-purple-500 to-fuchsia-400 shadow-[0_2px_4px_rgba(168,85,247,0.2)]',
+      'social': 'bg-gradient-to-t from-orange-500 to-amber-400 shadow-[0_2px_4px_rgba(249,115,22,0.2)]',
+      'enterprising': 'bg-gradient-to-t from-yellow-500 to-amber-400 shadow-[0_2px_4px_rgba(234,179,8,0.2)]',
+      'conventional': 'bg-gradient-to-t from-cyan-500 to-teal-400 shadow-[0_2px_4px_rgba(6,182,212,0.2)]'
+    }
+    return fills[type.toLowerCase()] || 'bg-gradient-to-t from-slate-500 to-slate-400 shadow-sm'
+  }
+
+  const getRiasecTextGradient = (type: string) => {
+    const gradients: Record<string, string> = {
+      'realistic': 'from-green-500 to-emerald-400',
+      'investigative': 'from-blue-600 to-sky-400',
+      'artistic': 'from-purple-600 to-fuchsia-400',
+      'social': 'from-orange-500 to-amber-400',
+      'enterprising': 'from-yellow-500 to-amber-400',
+      'conventional': 'from-cyan-500 to-teal-400'
+    }
+    return gradients[type.toLowerCase()] || 'from-slate-600 to-slate-400'
+  }
+
   if (isLoading) {
     return (
       <div className="max-w-4xl mx-auto space-y-6">
@@ -99,52 +135,110 @@ export function CareerDetail({ careerId }: CareerDetailProps) {
 
   return (
     <OnboardingProvider section="career-detail" steps={careerDetailSteps}>
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div id="career-detail-header" className="flex items-center gap-4 mb-8">
-        <Link
-          to="/careers"
-          className="p-3 rounded-lg bg-white border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-100 transition-all duration-200 shadow-sm"
-        >
-          <IconArrowLeft className="w-5 h-5 text-gray-700" />
-        </Link>
-        <div className="flex-1">
-          <h1 className="text-3xl font-bold text-gray-900">{career.name}</h1>
-          <p className="text-gray-600 mt-1">Información detallada de la carrera</p>
+      <div className="flex-1 min-h-[100dvh] w-full relative flex flex-col bg-[#f8fafc] overflow-hidden">
+        {/* Exact Sandra AI Background Match */}
+        <div className="fixed inset-0 pointer-events-none z-0 bg-[#f8fafc]">
+            <div 
+              className="absolute inset-x-0 bottom-0 h-full opacity-100" 
+              style={{
+                background: 'linear-gradient(120deg, #fed7aa 0%, #fbcfe8 45%, #bae6fd 100%)',
+                maskImage: 'linear-gradient(to top, black 10%, transparent 65%)',
+                WebkitMaskImage: 'linear-gradient(to top, black 10%, transparent 65%)'
+              }}
+            />
+            <div 
+              className="absolute inset-0 opacity-[0.25] mix-blend-overlay pointer-events-none"
+              style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+                backgroundRepeat: 'repeat',
+                backgroundSize: '120px 120px',
+              }}
+            />
+            <div className="absolute -top-[10%] left-1/2 -translate-x-1/2 w-[90vw] h-[95vh] bg-[#f8fafc] rounded-[50%] blur-[70px]" />
+            <div className="absolute -top-[5%] left-1/2 -translate-x-1/2 w-[70vw] h-[90vh] bg-[#f8fafc] rounded-[50%] blur-[40px]" />
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[55vw] h-[85vh] bg-[#f8fafc] rounded-[50%] blur-[20px]" />
+            <div className="absolute bottom-0 inset-x-0 h-[2px] bg-gradient-to-r from-orange-300 via-pink-300 to-sky-300 opacity-60" />
+            <div className="absolute bottom-0 inset-x-0 h-[8px] bg-gradient-to-r from-orange-300 via-pink-300 to-sky-300 blur-[4px] opacity-40" />
         </div>
-        <button
-          onClick={() => setIsFavorite(!isFavorite)}
-          className="p-3 rounded-lg bg-white border-2 border-gray-300 hover:border-pink-400 hover:bg-pink-50 transition-all duration-200 shadow-sm"
-        >
-          {isFavorite ? (
-            <IconBookmarkFilled className="w-5 h-5 text-pink-600" />
-          ) : (
-            <IconBookmark className="w-5 h-5 text-gray-600" />
-          )}
-        </button>
-      </div>
 
-      {/* Main Info */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        {/* Career Details */}
-        <div className="lg:col-span-2 space-y-6">
+        {/* Inner Structure */}
+        <div className="relative z-10 w-full min-h-screen flex flex-col pt-6 sm:pt-6 lg:h-screen lg:max-h-screen lg:overflow-hidden md:pl-[104px]">
+          <div className="flex-1 flex flex-col min-h-0 pt-6 sm:pt-8 lg:pt-10">
+
+            {/* Header */}
+            <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 shrink-0" id="career-detail-header">
+              <div className="flex items-center gap-5 sm:gap-6">
+                <Link
+                  to="/careers"
+                  className="w-[42px] h-[42px] bg-gradient-to-b from-slate-100 to-slate-200 border border-slate-300 shadow-[inset_0_2px_4px_rgba(255,255,255,0.8),0_2px_6px_rgba(148,163,184,0.4)] text-slate-700 rounded-full flex items-center justify-center group-hover:scale-110 hover:-translate-y-[1px] transition-all duration-300 flex-shrink-0 group"
+                >
+                  <IconArrowLeft className="w-5 h-5 group-hover:-translate-x-[2px] transition-transform duration-300" />
+                </Link>
+                <div>
+                  <h1 className="text-3xl sm:text-4xl lg:text-[42px] font-black tracking-tight leading-tight pb-1 md:pb-2">
+                    <Shimmer
+                      as="span"
+                      duration={3}
+                      spread={1.5}
+                      className="font-black [--color-muted-foreground:theme(colors.blue.400)] [--color-background:theme(colors.white)] drop-shadow-sm"
+                    >
+                      {career.name}
+                    </Shimmer>
+                  </h1>
+                  <p className="text-slate-500 text-[14px] font-medium mt-1">Información detallada de la carrera</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 ml-auto sm:ml-0">
+                <button
+                  onClick={() => setIsFavorite(!isFavorite)}
+                  className="w-[42px] h-[42px] bg-gradient-to-b from-slate-100 to-slate-200 border border-slate-300 shadow-[inset_0_2px_4px_rgba(255,255,255,0.8),0_2px_6px_rgba(148,163,184,0.4)] text-slate-700 rounded-full flex items-center justify-center group-hover:scale-110 hover:-translate-y-[1px] transition-all duration-300 flex-shrink-0 group"
+                >
+                  {isFavorite ? (
+                    <IconBookmarkFilled className="w-5 h-5 text-amber-500 group-hover:scale-110 transition-transform duration-300" />
+                  ) : (
+                    <IconBookmark className="w-5 h-5 text-slate-600 group-hover:scale-110 transition-transform duration-300" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Scrollable Content Area */}
+            <div 
+              className="relative flex-1 min-h-0 w-full flex flex-col overflow-hidden"
+              style={{
+                maskImage: 'linear-gradient(to bottom, transparent, black 24px, black calc(100% - 24px), transparent)',
+                WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 24px, black calc(100% - 24px), transparent)'
+              }}
+            >
+              <div className="flex-1 overflow-y-auto custom-scrollbar">
+                <style>{`
+                  .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+                  .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+                  .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.3); border-radius: 10px; }
+                  .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.5); }
+                `}</style>
+                <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24">
+                  {/* Main Info */}
+                  <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 sm:gap-6 mb-8">
+                    {/* Career Details */}
+                    <div className="xl:col-span-8 space-y-5 sm:space-y-6">
           {/* Description */}
-          <div className="bg-white/80 backdrop-blur-sm border border-gray-300/50 shadow-lg shadow-gray-200/50 rounded-2xl p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Descripción</h2>
-            <p className="text-gray-700 leading-relaxed">
+          <div className="bg-white/50 backdrop-blur-xl border border-white/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_4px_20px_rgba(0,0,0,0.03)] rounded-[24px] p-6 lg:p-8 shrink-0">
+            <h2 className="text-[18px] font-bold text-slate-800 mb-4 flex items-center gap-2">Descripción</h2>
+            <p className="text-slate-600 leading-relaxed text-[14px] font-medium">
               {career.description}
             </p>
           </div>
 
           {/* Skills */}
           {career.key_skills && career.key_skills.length > 0 && (
-            <div className="bg-white/80 backdrop-blur-sm border border-gray-300/50 shadow-lg shadow-gray-200/50 rounded-2xl p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Habilidades Clave</h2>
-              <div className="flex flex-wrap gap-2">
+            <div className="bg-white/50 backdrop-blur-xl border border-white/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_4px_20px_rgba(0,0,0,0.03)] rounded-[24px] p-6 lg:p-8 shrink-0">
+              <h2 className="text-[18px] font-bold text-slate-800 mb-4 flex items-center gap-2">Habilidades Clave</h2>
+              <div className="flex flex-wrap gap-2.5">
                 {career.key_skills.map((skill, index) => (
                   <span
                     key={index}
-                    className="px-3 py-1.5 bg-blue-100 text-blue-700 border border-blue-300 rounded-lg text-sm font-medium"
+                    className="px-3.5 py-1.5 bg-gradient-to-b from-blue-50 to-blue-100 shadow-[0_2px_5px_rgba(59,130,246,0.15),inset_0_-1px_2px_rgba(59,130,246,0.1),inset_0_1px_2px_rgba(255,255,255,1)] border border-blue-200/80 rounded-full text-blue-700 text-[13px] font-bold"
                   >
                     {skill}
                   </span>
@@ -155,13 +249,13 @@ export function CareerDetail({ careerId }: CareerDetailProps) {
 
           {/* Work Environment */}
           {career.work_environment && career.work_environment.length > 0 && (
-            <div className="bg-white/80 backdrop-blur-sm border border-gray-300/50 shadow-lg shadow-gray-200/50 rounded-2xl p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Ambiente de Trabajo</h2>
-              <div className="flex flex-wrap gap-2">
+            <div className="bg-white/50 backdrop-blur-xl border border-white/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_4px_20px_rgba(0,0,0,0.03)] rounded-[24px] p-6 lg:p-8 shrink-0">
+              <h2 className="text-[18px] font-bold text-slate-800 mb-4 flex items-center gap-2">Ambiente de Trabajo</h2>
+              <div className="flex flex-wrap gap-2.5">
                 {career.work_environment.map((env, index) => (
                   <span
                     key={index}
-                    className="px-3 py-1.5 bg-purple-100 text-purple-700 border border-purple-300 rounded-lg text-sm font-medium"
+                    className="px-3.5 py-1.5 bg-gradient-to-b from-purple-50 to-purple-100 shadow-[0_2px_5px_rgba(168,85,247,0.15),inset_0_-1px_2px_rgba(168,85,247,0.1),inset_0_1px_2px_rgba(255,255,255,1)] border border-purple-200/80 rounded-full text-purple-700 text-[13px] font-bold"
                   >
                     {env}
                   </span>
@@ -172,13 +266,13 @@ export function CareerDetail({ careerId }: CareerDetailProps) {
 
           {/* Related Careers */}
           {career.related_careers && career.related_careers.length > 0 && (
-            <div className="bg-white/80 backdrop-blur-sm border border-gray-300/50 shadow-lg shadow-gray-200/50 rounded-2xl p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Carreras Relacionadas</h2>
-              <div className="flex flex-wrap gap-2">
+            <div className="bg-white/50 backdrop-blur-xl border border-white/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_4px_20px_rgba(0,0,0,0.03)] rounded-[24px] p-6 lg:p-8 shrink-0">
+              <h2 className="text-[18px] font-bold text-slate-800 mb-4 flex items-center gap-2">Carreras Relacionadas</h2>
+              <div className="flex flex-wrap gap-2.5">
                 {career.related_careers.map((relatedCareer, index) => (
                   <span
                     key={index}
-                    className="px-3 py-1.5 bg-green-100 text-green-700 border border-green-300 rounded-lg text-sm font-medium"
+                    className="px-3.5 py-1.5 bg-gradient-to-b from-green-50 to-green-100 shadow-[0_2px_5px_rgba(34,197,94,0.15),inset_0_-1px_2px_rgba(34,197,94,0.1),inset_0_1px_2px_rgba(255,255,255,1)] border border-green-200/80 rounded-full text-green-700 text-[13px] font-bold"
                   >
                     {relatedCareer}
                   </span>
@@ -189,48 +283,69 @@ export function CareerDetail({ careerId }: CareerDetailProps) {
         </div>
 
         {/* Sidebar */}
-        <div className="space-y-6">
+        <div className="xl:col-span-4 space-y-5 sm:space-y-6">
           {/* Quick Stats */}
-          <div className="bg-white/80 backdrop-blur-sm border border-gray-300/50 shadow-lg shadow-gray-200/50 rounded-2xl p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Información General</h2>
+          <div className="bg-white/50 backdrop-blur-xl border border-white/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_4px_20px_rgba(0,0,0,0.03)] rounded-[24px] p-6 lg:p-8 shrink-0">
+            <h2 className="text-[18px] font-bold text-slate-800 mb-6 flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-b from-slate-50 to-slate-100 shadow-[inset_0_2px_4px_rgba(255,255,255,0.8),0_2px_6px_rgba(148,163,184,0.4)] border border-slate-300 flex items-center justify-center shrink-0">
+                  <IconBuilding className="w-4 h-4 text-slate-600 drop-shadow-sm" />
+              </div>
+              Información General
+            </h2>
             <div className="space-y-4">
               <div className="flex items-center gap-3">
-                <IconClock className="w-5 h-5 text-gray-600" />
-                <div>
-                  <p className="text-sm text-gray-600">Duración</p>
-                  <p className="text-gray-900 font-medium">{career.duration_years} años</p>
+                <div className="w-8 h-8 rounded-full bg-gradient-to-b from-amber-50 to-amber-100 shadow-[0_2px_5px_rgba(245,158,11,0.15),inset_0_-1px_2px_rgba(245,158,11,0.1),inset_0_1px_2px_rgba(255,255,255,1)] border border-amber-200/80 flex items-center justify-center shrink-0">
+                   <IconClock className="w-4 h-4 text-amber-600 drop-shadow-sm" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[13px] text-slate-500 font-bold uppercase tracking-wider">Duración</span>
+                  <span className="text-[15px] font-bold text-slate-800 leading-tight">{career.duration_years} años</span>
                 </div>
               </div>
-
             </div>
           </div>
 
           {/* RIASEC Profile */}
-          <div id="career-riasec-match" className="bg-white/80 backdrop-blur-sm border border-gray-300/50 shadow-lg shadow-gray-200/50 rounded-2xl p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Perfil RIASEC</h2>
-            <div className="space-y-3">
-              <div className={`px-3 py-2 rounded-lg ${getRiasecColor(career.primary_riasec_type)}`}>
-                <div className="flex items-center gap-2">
-                  <IconTarget className="w-4 h-4" />
-                  <span className="font-medium">{getRiasecDisplayName(career.primary_riasec_type)}</span>
-                  <span className="text-sm opacity-75">Principal</span>
+          <div id="career-riasec-match" className="bg-white/50 backdrop-blur-xl border border-white/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_4px_20px_rgba(0,0,0,0.03)] rounded-[24px] p-6 lg:p-8 shrink-0">
+            <h2 className="text-[18px] font-bold text-slate-800 mb-6 flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-b from-purple-50 to-purple-100 shadow-[inset_0_2px_4px_rgba(255,255,255,0.8),0_2px_6px_rgba(168,85,247,0.4)] border border-purple-300 flex items-center justify-center shrink-0">
+                  <IconChartBar className="w-4 h-4 text-purple-600 drop-shadow-sm" />
+              </div>
+              Perfil RIASEC
+            </h2>
+            
+            <div className="space-y-4 mb-6">
+              <div className="flex flex-col justify-between h-full bg-white/40 p-3 rounded-2xl shadow-sm border border-white/50">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-b from-slate-50 to-slate-100 shadow-[0_2px_5px_rgba(148,163,184,0.15),inset_0_1px_2px_rgba(255,255,255,1)] border border-slate-200/80 flex items-center justify-center shrink-0">
+                    <IconTarget className="w-3.5 h-3.5 text-slate-500 drop-shadow-sm" />
+                  </div>
+                  <span className="text-[12px] text-slate-500 font-bold uppercase tracking-wider">Principal</span>
+                </div>
+                <div className={`inline-flex self-start items-center px-3.5 py-1.5 rounded-full text-[13px] font-bold shadow-[inset_0_1px_1px_rgba(255,255,255,0.8)] ${getRiasecColor(career.primary_riasec_type)}`}>
+                  {getRiasecDisplayName(career.primary_riasec_type)}
                 </div>
               </div>
 
               {career.secondary_riasec_type && (
-                <div className={`px-3 py-2 rounded-lg opacity-75 ${getRiasecColor(career.secondary_riasec_type)}`}>
-                  <div className="flex items-center gap-2">
-                    <IconTarget className="w-4 h-4" />
-                    <span className="font-medium">{getRiasecDisplayName(career.secondary_riasec_type)}</span>
-                    <span className="text-sm opacity-75">Secundario</span>
+                <div className="flex flex-col justify-between h-full bg-white/40 p-3 rounded-2xl shadow-sm border border-white/50">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-b from-slate-50 to-slate-100 shadow-[0_2px_5px_rgba(148,163,184,0.15),inset_0_1px_2px_rgba(255,255,255,1)] border border-slate-200/80 flex items-center justify-center shrink-0">
+                      <IconTarget className="w-3.5 h-3.5 text-slate-500 drop-shadow-sm" />
+                    </div>
+                    <span className="text-[12px] text-slate-500 font-bold uppercase tracking-wider">Secundario</span>
+                  </div>
+                  <div className={`inline-flex self-start items-center px-3.5 py-1.5 rounded-full text-[13px] font-bold shadow-[inset_0_1px_1px_rgba(255,255,255,0.8)] ${getRiasecColor(career.secondary_riasec_type)}`}>
+                    {getRiasecDisplayName(career.secondary_riasec_type)}
                   </div>
                 </div>
               )}
             </div>
 
             {/* RIASEC Scores */}
-            <div className="mt-4 space-y-2">
-              <h3 className="text-sm font-medium text-gray-700">Puntuaciones detalladas:</h3>
+            <div className="mt-2 space-y-4">
+              <h3 className="text-[14.5px] font-bold text-slate-800 mb-2">Puntuaciones detalladas:</h3>
+              <div className="flex flex-col gap-4">
               {[
                 { key: 'realistic', label: 'Realista', score: career.realistic_score },
                 { key: 'investigative', label: 'Investigativo', score: career.investigative_score },
@@ -239,19 +354,28 @@ export function CareerDetail({ careerId }: CareerDetailProps) {
                 { key: 'enterprising', label: 'Emprendedor', score: career.enterprising_score },
                 { key: 'conventional', label: 'Convencional', score: career.conventional_score },
               ].map((item) => (
-                <div key={item.key} className="flex items-center justify-between">
-                  <span className="text-sm text-gray-700">{item.label}</span>
-                  <div className="flex items-center gap-2">
-                    <div className="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-blue-600 rounded-full"
-                        style={{ width: `${item.score}%` }}
-                      />
-                    </div>
-                    <span className="text-xs text-gray-600 w-12">{item.score}/100</span>
+                <div key={item.key} className="flex flex-col gap-1.5">
+                  <div className="flex items-end justify-between mb-1">
+                    <span className="text-[13.5px] font-bold text-slate-600 mb-0.5">{item.label}</span>
+                    <span className={`text-[18px] font-black bg-gradient-to-r ${getRiasecTextGradient(item.key)} bg-clip-text text-transparent leading-tight drop-shadow-sm pb-1 pr-0.5`}>
+                      {item.score}%
+                    </span>
+                  </div>
+                  <div className="w-full flex gap-[3px] h-[12px] items-end opacity-90">
+                    {Array.from({ length: 30 }).map((_, i) => {
+                      const threshold = (i / 30) * 100
+                      const isFilled = threshold < item.score
+                      return (
+                        <div 
+                          key={i} 
+                          className={`flex-[1_1_0%] rounded-full transition-all duration-300 ${isFilled ? 'h-full ' + getRiasecBarClasses(item.key, true) : 'h-[35%] ' + getRiasecBarClasses(item.key, false)}`} 
+                        />
+                      )
+                    })}
                   </div>
                 </div>
               ))}
+              </div>
             </div>
           </div>
         </div>
@@ -259,15 +383,20 @@ export function CareerDetail({ careerId }: CareerDetailProps) {
 
       {/* Schools Section */}
       {sortedSchools && sortedSchools.length > 0 && (
-        <div id="career-schools-list" className="bg-white/80 backdrop-blur-sm border border-gray-300/50 shadow-lg shadow-gray-200/50 rounded-2xl p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Dónde Estudiar</h2>
+        <div id="career-schools-list" className="bg-white/50 backdrop-blur-xl border border-white/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_4px_20px_rgba(0,0,0,0.03)] rounded-[24px] p-6 lg:p-8 shrink-0 mb-8 w-full block">
+          <h2 className="text-[18px] font-bold text-slate-800 mb-2 flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-b from-blue-50 to-blue-100 shadow-[inset_0_2px_4px_rgba(255,255,255,0.8),0_2px_6px_rgba(59,130,246,0.4)] border border-blue-300 flex items-center justify-center shrink-0">
+                  <IconSchool className="w-4 h-4 text-blue-600 drop-shadow-sm" />
+              </div>
+              Dónde Estudiar
+          </h2>
           {profile?.location && (
-            <p className="text-sm text-green-700 mb-4 flex items-center gap-1">
+            <p className="text-[13px] text-green-700 font-bold mb-6 flex items-center gap-1.5 ml-10">
               <IconMapPin className="w-4 h-4" />
               Ordenado por distancia desde tu ubicación
             </p>
           )}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {sortedSchools.map((schoolCareer, index) => {
               // Calculate distance if user has location
               const distance = profile?.location &&
@@ -283,36 +412,36 @@ export function CareerDetail({ careerId }: CareerDetailProps) {
 
               return (
                 <Link key={index} to="/schools/$schoolId" params={{ schoolId: schoolCareer.school.id }}>
-                  <div className="bg-gradient-to-br from-gray-50 to-white border-2 border-gray-200 rounded-xl p-4 hover:border-blue-400 hover:shadow-lg hover:shadow-blue-100/50 transition-all duration-200 cursor-pointer">
-                    <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 bg-green-100 border border-green-300 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <IconBuilding className="w-5 h-5 text-green-700" />
+                  <div className="h-full bg-white/60 backdrop-blur-md border border-white/80 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_4px_15px_rgba(0,0,0,0.02)] rounded-[20px] p-5 hover:bg-white/80 hover:shadow-[0_8px_25px_rgba(59,130,246,0.08)] hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
+                    <div className="flex items-start gap-4">
+                      <div className="w-11 h-11 bg-gradient-to-b from-green-50 to-green-100 shadow-[0_2px_5px_rgba(34,197,94,0.15),inset_0_-1px_2px_rgba(34,197,94,0.1),inset_0_1px_2px_rgba(255,255,255,1)] border border-green-200/80 rounded-full flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
+                        <IconBuilding className="w-5 h-5 text-green-700 drop-shadow-sm" />
                       </div>
-                      <div className="min-w-0 flex-1">
-                        <h3 className="font-semibold text-gray-900 text-sm leading-tight">
+                      <div className="min-w-0 flex-1 pt-0.5">
+                        <h3 className="font-bold text-slate-800 text-[15px] leading-tight group-hover:text-blue-600 transition-colors">
                           {schoolCareer.school.name}
                         </h3>
                         {schoolCareer.school.location?.city && (
-                          <div className="flex items-center gap-1 mt-1">
-                            <IconMapPin className="w-3 h-3 text-gray-600" />
-                            <span className="text-xs text-gray-600">
+                          <div className="flex items-center gap-1.5 mt-2">
+                            <IconMapPin className="w-3.5 h-3.5 text-slate-400" />
+                            <span className="text-[13px] text-slate-500 font-medium">
                               {schoolCareer.school.location.city}
                               {schoolCareer.school.location.state && `, ${schoolCareer.school.location.state}`}
                             </span>
                           </div>
                         )}
                         {distance !== null && (
-                          <div className="flex items-center gap-1 mt-1">
-                            <IconTarget className="w-3 h-3 text-blue-600" />
-                            <span className="text-xs text-blue-600 font-medium">
+                          <div className="flex items-center gap-1.5 mt-1">
+                            <IconTarget className="w-3.5 h-3.5 text-blue-500" />
+                            <span className="text-[13px] text-blue-600 font-bold">
                               {formatDistance(distance)} de distancia
                             </span>
                           </div>
                         )}
                         {schoolCareer.shifts && schoolCareer.shifts.length > 0 && (
-                          <div className="flex items-center gap-1 mt-1">
-                            <IconClock className="w-3 h-3 text-gray-600" />
-                            <span className="text-xs text-gray-600">
+                          <div className="flex items-center gap-1.5 mt-1">
+                            <IconClock className="w-3.5 h-3.5 text-slate-400" />
+                            <span className="text-[13px] text-slate-500 font-medium">
                               {Array.isArray(schoolCareer.shifts)
                                 ? schoolCareer.shifts.join(', ')
                                 : schoolCareer.shifts}
@@ -328,6 +457,11 @@ export function CareerDetail({ careerId }: CareerDetailProps) {
           </div>
         </div>
       )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </OnboardingProvider>
   )
