@@ -48,15 +48,15 @@ export const resultsColumns: ColumnDef<TestResult>[] = [
   columnHelper.accessor('created_at' as any, {
     header: 'Fecha',
     cell: ({ getValue }) => (
-      <div className="flex items-center gap-3 group">
-        <div className="w-8 h-8 bg-gradient-to-br from-blue-100 to-purple-100 rounded-lg flex items-center justify-center flex-shrink-0 border border-blue-200">
-          <IconBrain className="w-4 h-4 text-blue-600" />
+      <div className="flex items-center gap-3">
+        <div className="w-9 h-9 rounded-full bg-slate-100 border border-slate-200/60 shadow-[inset_0_2px_4px_rgba(255,255,255,0.7),0_1px_2px_rgba(0,0,0,0.05)] group-even:bg-slate-200/60 group-even:border-slate-300/80 group-hover:bg-white group-hover:border-blue-100 group-hover:shadow-[inset_0_2px_4px_rgba(255,255,255,1),0_2px_6px_rgba(59,130,246,0.15)] transition-all duration-300 flex items-center justify-center flex-shrink-0">
+          <IconBrain className="w-4 h-4 text-slate-500 group-hover:text-blue-500 transition-colors duration-300" />
         </div>
         <div className="min-w-0">
-          <div className="font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+          <div className="font-bold text-[13px] text-slate-700 group-hover:text-blue-600 transition-colors duration-300">
             Test Vocacional
           </div>
-          <div className="text-xs text-gray-600 font-medium">
+          <div className="text-[11px] text-slate-500 font-medium">
             {formatDate(getValue() as string)}
           </div>
         </div>
@@ -71,8 +71,8 @@ export const resultsColumns: ColumnDef<TestResult>[] = [
       const scores = getValue() as TestResult['riasec_scores']
       return (
         <div className="flex items-center gap-2">
-          <IconTrophy className="w-4 h-4 text-amber-600" />
-          <span className={`font-bold ${getRiasecColor(getTopRiasecType(scores))}`}>
+          <IconTrophy className={`w-4 h-4 ${getRiasecColor(getTopRiasecType(scores))}`} />
+          <span className={`font-bold text-[13px] ${getRiasecColor(getTopRiasecType(scores))}`}>
             {getTopRiasecType(scores)}
           </span>
         </div>
@@ -87,13 +87,13 @@ export const resultsColumns: ColumnDef<TestResult>[] = [
       const confidence = getValue() as number | null
       return (
         <div className="flex items-center gap-2">
-          <div className="w-12 h-2.5 bg-gray-200 rounded-full overflow-hidden border border-gray-300 shadow-inner">
+          <div className="w-12 h-2 bg-slate-200/80 group-even:bg-slate-300/80 rounded-full overflow-hidden border border-slate-300 group-even:border-slate-300 shadow-inner transition-colors duration-200">
             <div
-              className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full shadow-sm"
+              className="h-full bg-blue-500 rounded-full shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)]"
               style={{ width: `${confidence || 0}%` }}
             />
           </div>
-          <span className="text-gray-900 text-sm font-bold">{confidence || 'N/A'}%</span>
+          <span className="text-slate-700 text-[13px] font-bold">{confidence || 'N/A'}%</span>
         </div>
       )
     },
@@ -106,14 +106,14 @@ export const resultsColumns: ColumnDef<TestResult>[] = [
       const recommendations = getValue() as TestResult['career_recommendations']
       const topCareer = recommendations?.[0]
       return topCareer ? (
-        <div className="text-gray-900">
-          <div className="font-bold text-sm">
+        <div className="text-slate-700 min-w-0">
+          <div className="font-bold text-[13px] text-blue-600 truncate">
             {topCareer.career?.name || topCareer.name || topCareer.career_name || topCareer.title || 'Carrera sin nombre'}
           </div>
-          <div className="text-xs text-gray-600 font-medium">{topCareer.confidence || topCareer.match || 'N/A'}% compatibilidad</div>
+          <div className="text-[11px] text-slate-500 font-medium truncate">{topCareer.confidence || topCareer.match || 'N/A'}% compatibilidad</div>
         </div>
       ) : (
-        <span className="text-gray-500 font-medium">Sin recomendaciones</span>
+        <span className="text-slate-400 text-[12px] font-medium">Sin recomendaciones</span>
       )
     },
     size: 200,
@@ -126,9 +126,9 @@ export const resultsColumns: ColumnDef<TestResult>[] = [
       <Link
         to="/results/$sessionId"
         params={{ sessionId: row.original.id }}
-        className="p-2 rounded-lg bg-blue-100 border border-blue-300 hover:border-blue-500 hover:bg-blue-200 text-blue-700 hover:text-blue-900 transition-all duration-200 inline-flex items-center justify-center"
+        className="w-7 h-7 rounded-full bg-slate-50 group-even:bg-slate-200/60 border border-slate-200 group-even:border-slate-300 shadow-[0_2px_5px_rgba(0,0,0,0.08),inset_0_-1px_2px_rgba(0,0,0,0.03),inset_0_1px_2px_rgba(255,255,255,1)] hover:shadow-[0_4px_8px_rgba(0,0,0,0.1),inset_0_-1px_2px_rgba(0,0,0,0.02),inset_0_2px_4px_rgba(255,255,255,1)] hover:bg-white hover:-translate-y-[1px] hover:text-blue-600 text-slate-400 group-even:text-slate-500 transition-all duration-300 inline-flex items-center justify-center shrink-0"
       >
-        <IconEye className="w-4 h-4" />
+        <IconEye className="w-3.5 h-3.5 origin-center transition-transform duration-300 hover:scale-110" />
       </Link>
     ),
     size: 60,
