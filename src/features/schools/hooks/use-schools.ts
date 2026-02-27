@@ -63,7 +63,8 @@ export function useSchoolWithCareers(schoolId: string) {
           career:careers (
             id,
             name,
-            description
+            description,
+            duration_years
           )
         `)
         .eq('school_id', schoolId)
@@ -72,9 +73,23 @@ export function useSchoolWithCareers(schoolId: string) {
         throw careersError
       }
 
+      // Normalize so duration_years and modality come from row or nested career (Supabase may use snake_case)
+      const normalizedCareers = (careers || []).map((row: Record<string, unknown>) => {
+        const career = row.career as Record<string, unknown> | undefined
+        const durationYears = row.duration_years ?? row.duration ?? career?.duration_years ?? career?.duration
+        const modality = row.modality ?? career?.modality
+        return {
+          ...row,
+          career: career ? { id: career.id, name: career.name, description: career.description } : row.career,
+          duration_years: durationYears != null ? Number(durationYears) : (career?.duration_years != null ? Number(career.duration_years) : undefined),
+          modality: modality ?? undefined,
+          shifts: row.shifts != null ? (Array.isArray(row.shifts) ? row.shifts : [row.shifts]) : []
+        }
+      })
+
       return {
         ...school,
-        careers: careers || []
+        careers: normalizedCareers
       }
     },
     enabled: !!schoolId,

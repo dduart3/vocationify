@@ -1,7 +1,8 @@
 import { useState, useMemo } from 'react'
 import { Link } from '@tanstack/react-router'
-import { IconArrowLeft, IconBuilding, IconPhone, IconMail, IconWorld, IconUsers, IconBookmark, IconBookmarkFilled, IconSchool, IconClock, IconMapPin, IconTarget } from '@tabler/icons-react'
+import { IconArrowLeft, IconBuilding, IconPhone, IconMail, IconWorld, IconUsers, IconBookmark, IconBookmarkFilled, IconSchool, IconMapPin, IconTarget } from '@tabler/icons-react'
 import { SchoolMap } from './school-map'
+import { SchoolCareersTable } from './school-careers-table'
 import { useSchoolWithCareers } from '../hooks/use-schools'
 import { useAuth } from '@/context/auth-context'
 import { calculateDistance, formatDistance } from '@/utils/distance'
@@ -292,87 +293,17 @@ export function SchoolDetail({ schoolId }: SchoolDetailProps) {
               </div>
             </div>
 
-            {/* Careers Section */}
+            {/* Careers Section - Table list like careers page */}
             {school.careers && school.careers.length > 0 && (
-              <div id="school-careers-offered" className="bg-white/50 backdrop-blur-xl border border-white/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_4px_20px_rgba(0,0,0,0.03)] rounded-[24px] p-6 lg:p-8 shrink-0">
-                <h2 className="text-[18px] font-bold text-slate-800 mb-6 flex items-center gap-2">
+              <div id="school-careers-offered" className="shrink-0">
+                <h2 className="text-[18px] font-bold text-slate-800 mb-4 flex items-center gap-2">
                   <div className="w-8 h-8 rounded-full bg-gradient-to-b from-amber-50 to-amber-100 shadow-[inset_0_2px_4px_rgba(255,255,255,0.8),0_2px_6px_rgba(245,158,11,0.4)] border border-amber-300 flex items-center justify-center shrink-0">
                     <IconSchool className="w-4 h-4 text-amber-600 drop-shadow-sm" />
                   </div>
                   Carreras Disponibles
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                  {school.careers.map((schoolCareer, index) => (
-                    <Link key={index} to="/careers/$careerId" params={{ careerId: schoolCareer.career.id }}>
-                      <div className="relative h-full bg-gradient-to-br from-blue-50/80 via-sky-50/70 to-blue-50/80 backdrop-blur-md border border-blue-200/60 shadow-[0_4px_15px_rgba(59,130,246,0.12),inset_0_1px_1px_rgba(255,255,255,0.9),inset_0_-1px_2px_rgba(59,130,246,0.05)] rounded-[20px] p-6 hover:from-blue-50/90 hover:via-sky-50/80 hover:to-blue-50/90 hover:border-blue-300/70 hover:shadow-[0_8px_25px_rgba(59,130,246,0.2),inset_0_1px_1px_rgba(255,255,255,1),inset_0_-2px_4px_rgba(59,130,246,0.08)] hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
-                        {/* Tooltip with 3D depth style - White theme */}
-                        <div className="absolute -top-14 left-1/2 -translate-x-1/2 z-50 opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-300 ease-out group-hover:translate-y-0 translate-y-2">
-                          <div className="bg-gradient-to-br from-white/95 via-slate-50/90 to-white/95 backdrop-blur-xl border-2 border-slate-200/80 shadow-[0_8px_25px_rgba(0,0,0,0.15),inset_0_2px_4px_rgba(255,255,255,0.9),inset_0_-2px_4px_rgba(0,0,0,0.05)] rounded-[12px] px-4 py-2.5 relative">
-                            {/* Arrow pointing down */}
-                            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full">
-                              <div className="w-0 h-0 border-l-[8px] border-r-[8px] border-t-[8px] border-l-transparent border-r-transparent border-t-slate-200/80 drop-shadow-[0_2px_4px_rgba(0,0,0,0.1)]"></div>
-                            </div>
-                            {/* Inner glow effect */}
-                            <div className="absolute inset-0 rounded-[12px] bg-gradient-to-br from-white/40 to-transparent opacity-60 pointer-events-none"></div>
-                            <p className="text-slate-800 font-bold text-[13px] leading-tight whitespace-nowrap relative z-10">
-                              {schoolCareer.career.name}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex flex-col h-full">
-                          {/* Icon and Title Section */}
-                          <div className="flex items-start gap-4 mb-4">
-                            <div className="w-10 h-10 bg-gradient-to-b from-blue-100 via-blue-200 to-blue-300 shadow-[0_3px_10px_rgba(59,130,246,0.25),inset_0_-2px_4px_rgba(37,99,235,0.15),inset_0_2px_4px_rgba(255,255,255,0.8)] border-2 border-blue-300/60 rounded-full flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:shadow-[0_5px_15px_rgba(59,130,246,0.35),inset_0_-2px_4px_rgba(37,99,235,0.2),inset_0_2px_4px_rgba(255,255,255,1)] transition-all duration-300 relative">
-                              {/* Inner glow effect */}
-                              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/40 to-transparent opacity-60"></div>
-                              <IconSchool className="w-5 h-5 text-blue-700 drop-shadow-[0_2px_4px_rgba(37,99,235,0.3)] relative z-10" />
-                            </div>
-                            <div className="min-w-0 flex-1 pt-1">
-                              <h3 className="font-bold text-blue-700 text-[15px] leading-tight group-hover:text-blue-800 transition-colors line-clamp-2">
-                                {schoolCareer.career.name}
-                              </h3>
-                            </div>
-                          </div>
-
-                          {/* Shifts Section */}
-                          {schoolCareer.shifts && schoolCareer.shifts.length > 0 && (
-                            <div className="flex items-center gap-2 mb-3">
-                              <div className="w-6 h-6 rounded-full bg-gradient-to-b from-blue-100 to-blue-200 shadow-[0_2px_5px_rgba(59,130,246,0.2),inset_0_-1px_2px_rgba(37,99,235,0.1),inset_0_1px_2px_rgba(255,255,255,0.9)] border border-blue-300/60 flex items-center justify-center flex-shrink-0">
-                                <IconClock className="w-3.5 h-3.5 text-blue-600 drop-shadow-sm" />
-                              </div>
-                              <div className="flex flex-wrap gap-1.5 flex-1">
-                                {Array.isArray(schoolCareer.shifts)
-                                  ? schoolCareer.shifts.map((shift, idx) => (
-                                      <span key={idx} className="text-[12px] text-blue-800 bg-gradient-to-b from-blue-100/90 to-blue-200/80 shadow-[0_2px_5px_rgba(59,130,246,0.15),inset_0_-1px_2px_rgba(37,99,235,0.08),inset_0_1px_2px_rgba(255,255,255,0.9)] border border-blue-300/60 px-2.5 py-1 rounded-full font-bold">
-                                        {shift}
-                                      </span>
-                                    ))
-                                  : <span className="text-[12px] text-blue-800 bg-gradient-to-b from-blue-100/90 to-blue-200/80 shadow-[0_2px_5px_rgba(59,130,246,0.15),inset_0_-1px_2px_rgba(37,99,235,0.08),inset_0_1px_2px_rgba(255,255,255,0.9)] border border-blue-300/60 px-2.5 py-1 rounded-full font-bold">
-                                      {schoolCareer.shifts}
-                                    </span>
-                                }
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Additional Info */}
-                          <div className="mt-auto pt-3 space-y-1.5 border-t border-blue-200/50">
-                            {schoolCareer.duration_years && (
-                              <div className="text-[12px] text-blue-700 font-medium">
-                                Duración: {schoolCareer.duration_years} años
-                              </div>
-                            )}
-
-                            {schoolCareer.modality && (
-                              <div className="text-[12px] text-blue-700 font-medium capitalize">
-                                Modalidad: {schoolCareer.modality}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
-                  ))}
+                <div className="min-h-[280px]">
+                  <SchoolCareersTable data={school.careers} />
                 </div>
               </div>
             )}
