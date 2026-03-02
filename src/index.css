@@ -136,3 +136,8 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Inter typography for hero section only (not navbar) */
+.font-hero {
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}

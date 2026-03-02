@@ -1,150 +1,115 @@
 import { useRef, useEffect } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import type { LucideIcon } from 'lucide-react'
 
 gsap.registerPlugin(ScrollTrigger)
 
 interface FeatureCardProps {
-  icon: LucideIcon
   title: string
   description: string
+  image?: string
+  imageScale?: number
+  imagePaddingY?: number
+  imageMargin?: number
+  imageMarginTop?: number
+  imageMarginLeft?: number
+  imageMarginRight?: number
   delay?: number
 }
 
-export function FeatureCard({ icon: Icon, title, description, delay = 0 }: FeatureCardProps) {
+export function FeatureCard({ title, description, image, imageScale = 1.7, imagePaddingY = 0, imageMargin = 0, imageMarginTop = 0, imageMarginLeft = 0, imageMarginRight = 0, delay = 0 }: FeatureCardProps) {
   const cardRef = useRef<HTMLDivElement>(null)
-  const iconRef = useRef<HTMLDivElement>(null)
-  const contentRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const card = cardRef.current
-    const iconEl = iconRef.current
-    const content = contentRef.current
+    if (!card) return
 
-    if (!card || !iconEl || !content) return
+    gsap.set(card, { opacity: 0, y: 20 })
 
-    // Initial state
-    gsap.set(card, { 
-      opacity: 0, 
-      y: 30,
-      scale: 0.95
-    })
-
-    // Scroll trigger animation
     gsap.to(card, {
       opacity: 1,
       y: 0,
-      scale: 1,
-      duration: 0.8,
+      duration: 0.7,
       delay: delay * 0.1,
-      ease: "power3.out",
+      ease: 'power3.out',
       scrollTrigger: {
         trigger: card,
-        start: "top 85%",
-        toggleActions: "play none none reverse"
-      }
+        start: 'top 85%',
+        toggleActions: 'play none none reverse',
+      },
     })
-
-    // Hover animations
-    const handleMouseEnter = () => {
-      gsap.to(card, {
-        y: -8,
-        scale: 1.02,
-        duration: 0.4,
-        ease: "power2.out"
-      })
-      
-      gsap.to(iconEl, {
-        scale: 1.1,
-        rotate: 5,
-        duration: 0.3,
-        ease: "back.out(1.7)"
-      })
-
-      gsap.to(content, {
-        y: -2,
-        duration: 0.3,
-        ease: "power2.out"
-      })
-    }
-
-    const handleMouseLeave = () => {
-      gsap.to(card, {
-        y: 0,
-        scale: 1,
-        duration: 0.4,
-        ease: "power2.out"
-      })
-      
-      gsap.to(iconEl, {
-        scale: 1,
-        rotate: 0,
-        duration: 0.3,
-        ease: "power2.out"
-      })
-
-      gsap.to(content, {
-        y: 0,
-        duration: 0.3,
-        ease: "power2.out"
-      })
-    }
-
-    card.addEventListener('mouseenter', handleMouseEnter)
-    card.addEventListener('mouseleave', handleMouseLeave)
-
-    return () => {
-      card.removeEventListener('mouseenter', handleMouseEnter)
-      card.removeEventListener('mouseleave', handleMouseLeave)
-    }
   }, [delay])
 
   return (
     <div
       ref={cardRef}
-      className="group relative p-6 rounded-xl cursor-pointer"
-      style={{
-        background: 'transparent',
-        backdropFilter: 'blur(12px)',
-        boxShadow: '0 0 50px rgba(0, 0, 0, 0.3)',
-        border: '1px solid rgba(255, 255, 255, 0.1)'
-      }}
+      className="relative rounded-2xl overflow-hidden bg-neutral-200/40 backdrop-blur-xl border border-white/60 shadow-[0_2px_0_0_rgba(255,255,255,0.4),0_8px_32px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.6)]"
     >
-      {/* Subtle gradient overlay on hover */}
-      <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-white/5 to-transparent"></div>
-      
-      {/* Icon */}
-      <div 
-        ref={iconRef}
-        className="w-12 h-12 mx-auto mb-4 rounded-lg flex items-center justify-center relative"
+      {/* Grain overlay */}
+      <div
+        className="absolute inset-0 pointer-events-none z-10 opacity-[0.3] mix-blend-overlay rounded-2xl"
         style={{
-          background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(147, 51, 234, 0.2) 100%)',
-          border: '1px solid rgba(255, 255, 255, 0.2)'
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+          backgroundRepeat: 'repeat',
         }}
-      >
-        <Icon 
-          size={24} 
-          className="text-white drop-shadow-sm group-hover:text-white transition-colors duration-300" 
-        />
-        
-        {/* Glow effect */}
-        <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-blue-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm"></div>
+      />
+      {/* Image area */}
+      <div className="relative w-full aspect-[6/5] flex items-center justify-center overflow-hidden">
+        {/* Glow gradient behind image only */}
+        {image && (
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: 'radial-gradient(ellipse 75% 75% at 50% 50%, rgba(96,165,250,0.65) 0%, rgba(147,197,253,0.5) 25%, rgba(186,230,253,0.35) 45%, rgba(224,242,254,0.2) 65%, transparent 90%)',
+            }}
+          />
+        )}
+        <div className="relative w-full h-full flex items-center justify-center">
+          {image ? (
+            <>
+              {/* Mask layer – fixed at bottom of image area */}
+              <div
+                className="absolute inset-0"
+                style={{
+                  maskImage: 'linear-gradient(to bottom, black 75%, transparent 100%)',
+                  WebkitMaskImage: 'linear-gradient(to bottom, black 75%, transparent 100%)',
+                }}
+              >
+                <div
+                  className="absolute inset-0 flex items-center justify-center"
+                  style={{
+                    paddingTop: imagePaddingY ? `${imagePaddingY}rem` : undefined,
+                    paddingBottom: imagePaddingY ? `${imagePaddingY}rem` : undefined,
+                    margin: imageMargin ? `${imageMargin}rem` : undefined,
+                    marginTop: imageMarginTop ? `${imageMarginTop}rem` : undefined,
+                    marginLeft: imageMarginLeft ? `${imageMarginLeft}rem` : undefined,
+                    marginRight: imageMarginRight ? `${imageMarginRight}rem` : undefined,
+                  }}
+                >
+                  <img
+                    src={image}
+                    alt={title}
+                    className="w-full h-full pl-3 object-contain"
+                    style={{ transform: `scale(${imageScale})` }}
+                  />
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="w-16 h-16 rounded-full bg-neutral-200/60 border border-neutral-300/50" />
+          )}
+        </div>
       </div>
 
-      {/* Content */}
-      <div ref={contentRef} className="text-center relative z-10">
-        <h3 className="text-lg font-semibold mb-3 text-white group-hover:text-white transition-colors duration-300">
+      {/* Text content */}
+      <div className="px-5 pt-4 pb-5">
+        <h3 className="text-base font-medium text-neutral-800 mb-1.5 font-['Inter']">
           {title}
         </h3>
-        
-        <p className="text-sm text-neutral-300 leading-relaxed font-light">
+        <p className="text-sm text-neutral-500 leading-relaxed">
           {description}
         </p>
       </div>
-
-      {/* Bottom accent line */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 group-hover:w-12 transition-all duration-500 rounded-full"></div>
     </div>
   )
 }

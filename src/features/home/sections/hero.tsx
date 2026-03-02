@@ -1,8 +1,9 @@
 import { useRef, useEffect } from 'react'
 import gsap from 'gsap'
-import { Link } from "@tanstack/react-router"
-import { ArrowRight, Sparkles, TrendingUp, Users } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
+import { ArrowRight } from 'lucide-react'
 import { useAuth } from '@/context/auth-context'
+import { landingText } from '../landing-text'
 
 export function HeroSection() {
   const { isAuthenticated } = useAuth()
@@ -10,206 +11,152 @@ export function HeroSection() {
   const titleRef = useRef<HTMLHeadingElement>(null)
   const subtitleRef = useRef<HTMLParagraphElement>(null)
   const buttonsRef = useRef<HTMLDivElement>(null)
-  const statsRef = useRef<HTMLDivElement>(null)
-  const floatingElementsRef = useRef<HTMLDivElement>(null)
+  const mockupsRef = useRef<HTMLDivElement>(null)
+
+  const {
+    headline,
+    subhead,
+    ctaPrimary,
+    ctaPrimaryAuthenticated,
+  } = landingText.hero
 
   useEffect(() => {
-    const section = sectionRef.current
     const title = titleRef.current
     const subtitle = subtitleRef.current
     const buttons = buttonsRef.current
-    const stats = statsRef.current
-    const floatingElements = floatingElementsRef.current
+    const mockups = mockupsRef.current
 
-    if (!section || !title || !subtitle || !buttons || !stats) return
+    if (!title || !subtitle || !buttons) return
 
-    // Initial states
-    gsap.set(title, { opacity: 0, y: 50, scale: 0.9 })
-    gsap.set(subtitle, { opacity: 0, y: 30 })
-    gsap.set(buttons, { opacity: 0, y: 30 })
-    gsap.set(stats, { opacity: 0, y: 30 })
+    gsap.set(title, { opacity: 0, y: 32 })
+    gsap.set(subtitle, { opacity: 0, y: 24 })
+    gsap.set(buttons, { opacity: 0, y: 20 })
+    if (mockups) gsap.set(mockups, { opacity: 0, y: 40 })
 
-    // Main animation timeline
-    const tl = gsap.timeline({ delay: 0.5 })
-
-    tl.to(title, {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      duration: 1,
-      ease: "power3.out"
-    })
-    .to(subtitle, {
-      opacity: 1,
-      y: 0,
-      duration: 0.8,
-      ease: "power2.out"
-    }, "-=0.5")
-    .to(buttons, {
-      opacity: 1,
-      y: 0,
-      duration: 0.8,
-      ease: "back.out(1.7)"
-    }, "-=0.4")
-    .to(stats, {
-      opacity: 1,
-      y: 0,
-      duration: 0.8,
-      ease: "power2.out"
-    }, "-=0.3")
-
-    // Floating elements animation
-    if (floatingElements) {
-      const elements = floatingElements.children
-      Array.from(elements).forEach((element, index) => {
-        gsap.to(element, {
-          y: -20,
-          duration: 3 + index,
-          repeat: -1,
-          yoyo: true,
-          ease: "power1.inOut",
-          delay: index * 0.5
-        })
-      })
+    const tl = gsap.timeline({ delay: 0.3 })
+    tl.to(title, { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' })
+      .to(subtitle, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, '-=0.4')
+      .to(buttons, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, '-=0.3')
+    if (mockups) {
+      tl.to(mockups, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, '-=0.2')
     }
-
-    // Stats counter animation
-    const statElements = [
-      { element: stats.querySelector('[data-stat="riasec"]'), value: 6, suffix: '' },
-      { element: stats.querySelector('[data-stat="conversation"]'), value: 100, suffix: '%' },
-      { element: stats.querySelector('[data-stat="careers"]'), value: 126, suffix: '+' }
-    ]
-
-    statElements.forEach(({ element, value, suffix }, index) => {
-      if (element) {
-        gsap.fromTo(element, 
-          { textContent: 0 },
-          {
-            textContent: value,
-            duration: 2,
-            delay: 1.5 + (index * 0.2),
-            ease: "power2.out",
-            snap: { textContent: 1 },
-            onUpdate: function() {
-              const current = Math.round(this.targets()[0].textContent)
-              element.textContent = current + suffix
-            }
-          }
-        )
-      }
-    })
-
   }, [])
 
   return (
-    <section ref={sectionRef} className="relative py-24 lg:py-32 overflow-hidden">
-      {/* Background Effects */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[600px] bg-gradient-to-r from-blue-500/5 to-purple-500/5 rounded-full blur-3xl"></div>
-
-      {/* Floating Elements */}
-      <div ref={floatingElementsRef} className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-20 left-10 w-3 h-3 rounded-full bg-gradient-to-r from-blue-400 to-cyan-400 opacity-60"></div>
-        <div className="absolute top-40 right-20 w-2 h-2 rounded-full bg-gradient-to-r from-purple-400 to-pink-400 opacity-60"></div>
-        <div className="absolute bottom-40 left-20 w-4 h-4 rounded-full bg-gradient-to-r from-green-400 to-emerald-400 opacity-60"></div>
-        <div className="absolute top-60 right-40 w-2 h-2 rounded-full bg-gradient-to-r from-yellow-400 to-orange-400 opacity-60"></div>
+    <section
+      ref={sectionRef}
+      className="font-hero relative h-[100dvh] flex flex-col overflow-hidden"
+      style={{
+        backgroundColor: '#f5fbff',
+      }}
+    >
+      {/* Grid pattern + radial mask (no grid in center), behind photo */}
+      <div
+        className="absolute inset-0 pointer-events-none z-0"
+        style={{
+          backgroundImage: `
+            linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px)
+          `,
+          backgroundSize: '36px 36px',
+          maskImage: 'radial-gradient(ellipse 90% 90% at 50% 55%, transparent 38%, black 72%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 90% 90% at 50% 55%, transparent 38%, black 72%)',
+        }}
+      />
+      {/* Rainbow glow beams moving slowly over the grid */}
+      <div
+        className="absolute inset-0 pointer-events-none z-0 overflow-hidden"
+        style={{
+          maskImage: 'radial-gradient(ellipse 90% 90% at 50% 55%, transparent 38%, black 72%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 90% 90% at 50% 55%, transparent 38%, black 72%)',
+        }}
+      >
+        <div
+          className="absolute inset-0 w-[200%] h-full blur-2xl"
+          style={{
+            backgroundImage: `linear-gradient(
+              90deg,
+              transparent 0%,
+              rgba(255,99,71,0.25) 8%,
+              rgba(255,165,0,0.3) 16%,
+              rgba(255,215,0,0.25) 24%,
+              rgba(50,205,50,0.3) 32%,
+              rgba(0,191,255,0.25) 40%,
+              rgba(138,43,226,0.3) 48%,
+              rgba(255,99,71,0.25) 56%,
+              rgba(255,165,0,0.3) 64%,
+              rgba(255,215,0,0.25) 72%,
+              rgba(50,205,50,0.3) 80%,
+              rgba(0,191,255,0.25) 88%,
+              transparent 100%
+            )`,
+            backgroundSize: '50% 100%',
+            animation: 'hero-rainbow-beams 25s linear infinite',
+          }}
+        />
       </div>
 
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            {/* Main Title */}
-            <h1 ref={titleRef} className="text-5xl md:text-6xl lg:text-7xl font-bold mb-8 tracking-tight">
-              <span className="text-white">Descubre Tu</span>
-              <br />
-              <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
-                Vocación Perfecta
-              </span>
-            </h1>
+      {/* Grain effect overlay */}
+      <div
+        className="absolute inset-0 pointer-events-none z-[1] opacity-[0.35] mix-blend-overlay"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+          backgroundRepeat: 'repeat',
+        }}
+      />
 
-            {/* Subtitle */}
-            <p ref={subtitleRef} className="text-lg md:text-xl text-neutral-300 mb-12 max-w-3xl mx-auto leading-relaxed font-light">
-              Orientación vocacional conversacional con IA. Test RIASEC interactivo,
-              recomendaciones personalizadas, encuentra tu carrera ideal.
-            </p>
-
-            {/* CTA Button */}
-            <div ref={buttonsRef} className="flex justify-center mb-16">
-              <Link
-                to={isAuthenticated ? "/vocational-test" : "/register"}
-                className="group inline-flex items-center gap-3 px-8 py-4 rounded-xl font-semibold text-lg text-white transition-all duration-300 hover:scale-105"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.8) 0%, rgba(147, 51, 234, 0.8) 100%)',
-                  boxShadow: '0 10px 30px rgba(59, 130, 246, 0.3)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)'
-                }}
-              >
-                <Sparkles size={20} />
-                {isAuthenticated ? "Comenzar Análisis" : "Empezar Ahora"}
-                <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform duration-300" />
-              </Link>
-            </div>
-          </div>
-
-          {/* Stats Cards */}
-          <div ref={statsRef} className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            <div 
-              className="p-6 rounded-xl text-center group hover:scale-105 transition-all duration-300"
-              style={{
-                background: 'transparent',
-                backdropFilter: 'blur(12px)',
-                boxShadow: '0 0 30px rgba(0, 0, 0, 0.2)',
-                border: '1px solid rgba(255, 255, 255, 0.1)'
-              }}
+      {/* Centered content – high z-index so button stays clickable */}
+      <div className="relative z-20 flex-1 flex flex-col items-center justify-center px-6 sm:px-8 lg:px-12 pt-16 sm:pt-20 pb-6 text-center">
+        <div className="w-full max-w-6xl mx-auto">
+          <h1
+            ref={titleRef}
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl xl:text-5xl font-bold tracking-tight text-neutral-800 leading-tight"
+          >
+            {headline.line1} {headline.line2}
+          </h1>
+          <p
+            ref={subtitleRef}
+            className="text-sm md:text-base text-neutral-600 max-w-3xl mx-auto mb-5 sm:mb-6 leading-relaxed"
+          >
+            {subhead}
+          </p>
+          <div
+            ref={buttonsRef}
+            className="flex flex-wrap items-center justify-center"
+          >
+            <Link
+              to={isAuthenticated ? '/vocational-test' : '/register'}
+              className="group/btn relative overflow-hidden inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full font-semibold text-base text-white bg-gradient-to-b from-blue-500 to-blue-600 border border-blue-400/50 shadow-[inset_0_2px_4px_rgba(255,255,255,0.4),0_4px_10px_rgba(37,99,235,0.35)] hover:from-blue-400 hover:to-blue-500 hover:border-blue-400 hover:shadow-[inset_0_2px_4px_rgba(255,255,255,0.5),0_6px_15px_rgba(37,99,235,0.4)] active:shadow-[inset_0_1px_2px_rgba(255,255,255,0.2),0_1px_3px_rgba(37,99,235,0.3)] active:scale-[0.98] transition-all duration-200"
             >
-              <div className="w-12 h-12 mx-auto mb-4 rounded-xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
-                <Users size={24} className="text-blue-400" />
-              </div>
-              <div data-stat="riasec" className="text-3xl font-bold text-white mb-2">0</div>
-              <div className="text-sm text-neutral-300 uppercase tracking-wide">
-                Dimensiones RIASEC
-              </div>
-            </div>
-
-            <div
-              className="p-6 rounded-xl text-center group hover:scale-105 transition-all duration-300"
-              style={{
-                background: 'transparent',
-                backdropFilter: 'blur(12px)',
-                boxShadow: '0 0 30px rgba(0, 0, 0, 0.2)',
-                border: '1px solid rgba(255, 255, 255, 0.1)'
-              }}
-            >
-              <div className="w-12 h-12 mx-auto mb-4 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center">
-                <TrendingUp size={24} className="text-purple-400" />
-              </div>
-              <div data-stat="conversation" className="text-3xl font-bold text-white mb-2">0%</div>
-              <div className="text-sm text-neutral-300 uppercase tracking-wide">
-                Interfaz Conversacional
-              </div>
-            </div>
-
-            <div
-              className="p-6 rounded-xl text-center group hover:scale-105 transition-all duration-300"
-              style={{
-                background: 'transparent',
-                backdropFilter: 'blur(12px)',
-                boxShadow: '0 0 30px rgba(0, 0, 0, 0.2)',
-                border: '1px solid rgba(255, 255, 255, 0.1)'
-              }}
-            >
-              <div className="w-12 h-12 mx-auto mb-4 rounded-xl bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center">
-                <Sparkles size={24} className="text-green-400" />
-              </div>
-              <div data-stat="careers" className="text-3xl font-bold text-white mb-2">0+</div>
-              <div className="text-sm text-neutral-300 uppercase tracking-wide">
-                Carreras en Base de Datos
-              </div>
-            </div>
+              <span className="absolute inset-0 -translate-x-[150%] group-hover/btn:translate-x-[150%] transition-transform duration-700 bg-gradient-to-r from-transparent via-white/30 to-transparent pointer-events-none" aria-hidden />
+              <span className="relative z-10">{isAuthenticated ? ctaPrimaryAuthenticated : ctaPrimary}</span>
+              <ArrowRight className="w-4 h-4 relative z-10" />
+            </Link>
           </div>
         </div>
       </div>
+
+      {/* Laptop mockup image */}
+      <div
+        ref={mockupsRef}
+        className="relative z-10 flex-1 min-h-0 flex items-end justify-center px-4 pb-6 sm:pb-8 pt-4"
+      >
+        <div className="relative w-full max-w-5xl flex items-center justify-center">
+          <img
+            src="/images/laptop-mockup.webp"
+            alt="Vocationify app preview"
+            className="w-full max-w-[100%] scale-120 my-[-4rem] mx-auto object-contain drop-shadow-2xl"
+          />
+        </div>
+      </div>
+
+      {/* White fade at the bottom */}
+      <div
+        className="absolute inset-x-0 bottom-0 h-32 sm:h-48 pointer-events-none z-10"
+        style={{
+          background: 'linear-gradient(to bottom, transparent, white)',
+        }}
+      />
     </section>
   )
 }
