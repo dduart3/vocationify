@@ -14,7 +14,7 @@ export function FeaturesSection() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-6xl mx-auto">
           <FeatureCard
             image="/images/prueba2.png"
             title="Test Conversacional"
@@ -44,21 +44,19 @@ export function FeaturesSection() {
             imageMarginRight={1}
           />
           <FeatureCard
-            title="Comparación de Carreras"
-            description="Compara múltiples carreras lado a lado según tu perfil RIASEC y elige la que mejor se adapte a ti."
-            delay={3}
-          />
-          <FeatureCard
+            className="md:col-span-2"
+            image="/images/giant-card.png"
             title="Resultados Personalizados"
-            description="Recibe recomendaciones de carreras basadas en tu perfil RIASEC y tus respuestas."
-            delay={4}
+            description="Recibe recomendaciones de carreras basadas en tu perfil RIASEC y tus respuestas. Obtén un informe detallado con tus fortalezas y áreas de interés profesional."
+            delay={3}
+            imageScale={3}
           />
           <FeatureCard
             image="/images/card-4.png"
             title="Historial de Resultados"
             description="Consulta tus evaluaciones anteriores y revisa las carreras que exploraste."
-            delay={5}
-            imageScale={1.9}
+            delay={4}
+            imageScale={2.7}
             imagePaddingY={2}
             imageMarginTop={0.5}
             imageMarginRight={1}

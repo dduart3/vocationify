@@ -7,6 +7,7 @@ gsap.registerPlugin(ScrollTrigger)
 interface FeatureCardProps {
   title: string
   description: string
+  className?: string
   image?: string
   imageScale?: number
   imagePaddingY?: number
@@ -17,7 +18,7 @@ interface FeatureCardProps {
   delay?: number
 }
 
-export function FeatureCard({ title, description, image, imageScale = 1.7, imagePaddingY = 0, imageMargin = 0, imageMarginTop = 0, imageMarginLeft = 0, imageMarginRight = 0, delay = 0 }: FeatureCardProps) {
+export function FeatureCard({ title, description, className, image, imageScale = 1.7, imagePaddingY = 0, imageMargin = 0, imageMarginTop = 0, imageMarginLeft = 0, imageMarginRight = 0, delay = 0 }: FeatureCardProps) {
   const cardRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -43,7 +44,7 @@ export function FeatureCard({ title, description, image, imageScale = 1.7, image
   return (
     <div
       ref={cardRef}
-      className="relative rounded-2xl overflow-hidden bg-neutral-200/40 backdrop-blur-xl border border-white/60 shadow-[0_2px_0_0_rgba(255,255,255,0.4),0_8px_32px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.6)]"
+      className={`relative rounded-2xl overflow-hidden bg-neutral-200/40 backdrop-blur-xl border border-white/60 shadow-[0_2px_0_0_rgba(255,255,255,0.4),0_8px_32px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.6)] ${className ?? ''}`}
     >
       {/* Grain overlay */}
       <div
@@ -54,7 +55,7 @@ export function FeatureCard({ title, description, image, imageScale = 1.7, image
         }}
       />
       {/* Image area */}
-      <div className="relative w-full aspect-[6/5] flex items-center justify-center overflow-hidden">
+      <div className="relative w-full h-52 flex items-center justify-center overflow-hidden flex-shrink-0">
         {/* Glow gradient behind image only */}
         {image && (
           <div
