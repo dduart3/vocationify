@@ -22,22 +22,56 @@ const Laptop3DLazy = lazy(() =>
 
 export function InteractiveLaptopSection() {
   const sectionRef = useRef<HTMLElement>(null);
+  const textRef = useRef<HTMLDivElement>(null);
+  const text = "Explora el futuro de tu carrera con Aria";
 
   useEffect(() => {
     const section = sectionRef.current;
-    if (!section) return;
+    if (!section || !textRef.current) return;
 
-    // Handle the pinning here
+    // Pinning trigger
     const st = ScrollTrigger.create({
       trigger: section,
       start: 'top top',
-      end: '+=150%', // Pin for 1.5x the viewport height
+      end: '+=150%',
       pin: true,
       anticipatePin: 1,
     });
 
+    // Text animation timeline
+    const chars = textRef.current.querySelectorAll('.char');
+    // Initial state: Invisible
+    gsap.set(chars, { y: 60, opacity: 0, scale: 0.9, rotateX: -30 });
+    gsap.set(textRef.current, { '--mask-p': '0%' } as any);
+
+    // Initial state: Invisible
+    gsap.set(chars, { y: 20, opacity: 0 });
+    gsap.set(textRef.current, { opacity: 0 });
+
+    const textTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: section,
+        start: '70% top', // Entrance starts when laptop is fully open
+        end: '95% top', 
+        scrub: true,
+      }
+    });
+
+    // Simple fade in + wavy for now to ensure visibility
+    textTl.to(textRef.current, {
+      opacity: 1,
+      duration: 0.5
+    })
+    .to(chars, {
+      y: 0,
+      opacity: 1,
+      stagger: 0.03,
+      ease: "power2.out",
+    }, 0);
+
     return () => {
       st.kill();
+      textTl.kill();
     };
   }, []);
 
@@ -57,6 +91,20 @@ export function InteractiveLaptopSection() {
         }>
           <Laptop3DLazy />
         </Suspense>
+      </div>
+
+      {/* Background Text Overlay - Moved to bottom for Z-index safety */}
+      <div className="absolute top-[30%] left-0 w-full flex justify-center z-50 pointer-events-none px-4">
+        <h2 
+          ref={textRef}
+          className="text-4xl md:text-6xl font-bold text-slate-800 text-center tracking-tight leading-tight opacity-0"
+        >
+          {text.split('').map((char, i) => (
+            <span key={i} className="char inline-block min-w-[0.1em] origin-bottom opacity-0">
+              {char === " " ? "\u00A0" : char}
+            </span>
+          ))}
+        </h2>
       </div>
     </section>
   );

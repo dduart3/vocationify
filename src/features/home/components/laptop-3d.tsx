@@ -29,24 +29,30 @@ function Model({ ...props }: any) {
       }
     })
 
-    // Phase 1: Body Rotation (Tilted to flat)
+    // Phase 1: Lower the closed, tilted laptop
+    tl.to(group.current.position, {
+      y: -3,
+      ease: 'power2.inOut',
+      duration: 1
+    })
+
+    // Phase 2: Rotate to flat
     tl.to(group.current.rotation, {
       x: 0,
       ease: 'power2.inOut',
       duration: 1
-    })
+    }, '<')
     
-    // Phase 2: Lid Opening & Zoom (Sequential)
+    // Phase 3: Lid Opening & Final Zoom
     tl.to(lidGroup.current.rotation, {
       x: -0.1,
       ease: 'power2.inOut',
       duration: 1.5
-    }, '>-0.2') // Slight overlap for smoothness
+    }, '>-0.2')
 
-    // Simultaneously move closer and lower
     tl.to(group.current.position, {
       z: 2,
-      y: -2.5,
+      y: -8,
       ease: 'power2.inOut',
       duration: 1.5
     }, '<')
@@ -100,7 +106,7 @@ export function Laptop3D() {
       <Canvas camera={{ position: [5, 0, -20], fov: 55 }}>
         <pointLight position={[10, 10, 10]} intensity={1.5} />
         <Suspense fallback={null}>
-          <group rotation={[0, 2.9, 0]} position={[1.3, 0, -5]}>
+          <group rotation={[0, 2.9, 0]} position={[1.3, 3, -5]}>
             <Model />
           </group>
           <Environment preset="city" />
