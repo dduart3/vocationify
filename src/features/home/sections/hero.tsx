@@ -5,6 +5,8 @@ import { ArrowRight } from 'lucide-react'
 import { useAuth } from '@/context/auth-context'
 import { landingText } from '../landing-text'
 
+
+
 export function HeroSection() {
   const { isAuthenticated } = useAuth()
   const sectionRef = useRef<HTMLDivElement>(null)
@@ -136,16 +138,17 @@ export function HeroSection() {
         </div>
       </div>
 
-      {/* Laptop mockup image */}
+      {/* Laptop mockups */}
       <div
         ref={mockupsRef}
-        className="relative z-10 flex-1 min-h-0 flex items-end justify-center px-4 pb-6 sm:pb-8 pt-4"
+        className="relative z-10 flex-1 min-h-0 flex items-end justify-center px-4 pb-6 sm:pb-8 pt-4 w-full h-full"
       >
-        <div className="relative w-full max-w-5xl flex items-center justify-center">
+        <div className="relative w-full max-w-5xl flex items-center justify-center -mt-10 lg:-mt-20">
           <img
             src="/images/laptop-mockup.webp"
             alt="Vocationify app preview"
-            className="w-full max-w-[100%] scale-120 my-[-4rem] mx-auto object-contain drop-shadow-2xl"
+            className="w-full h-auto object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.15)]"
+            draggable="false"
           />
         </div>
       </div>

@@ -2,9 +2,10 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Background } from "./components/background";
 import { CTASection } from "./sections/call-to-action";
-import { FeaturesSection } from "./sections/features";
+// import { FeaturesSection } from "./sections/features";
 import { HeroSection } from "./sections/hero";
 import { ProcessSection } from "./sections/process";
+import { InteractiveLaptopSection } from "./sections/interactive-laptop-section";
 
 export function Home() {
   return (
@@ -17,7 +18,7 @@ export function Home() {
         <div className="relative overflow-hidden">
           <Background />
           <HeroSection />
-          <FeaturesSection />
+          <InteractiveLaptopSection />
           <ProcessSection />
           <CTASection />
         </div>
