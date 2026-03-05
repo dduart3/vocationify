@@ -53,8 +53,10 @@ export interface SchoolCareer {
 export interface CareerWithSchools extends Career {
   schools: Array<{
     school: School
-    shifts: string
+    shifts: string | string[]
     admission_requirements: string
+    duration_years?: number
+    modality?: string
   }>
 }
 

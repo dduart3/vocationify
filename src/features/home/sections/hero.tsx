@@ -128,11 +128,11 @@ export function HeroSection() {
           >
             <Link
               to={isAuthenticated ? '/vocational-test' : '/register'}
-              className="group/btn relative overflow-hidden inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full font-semibold text-base text-white bg-gradient-to-b from-blue-500 to-blue-600 border border-blue-400/50 shadow-[inset_0_2px_4px_rgba(255,255,255,0.4),0_4px_10px_rgba(37,99,235,0.35)] hover:from-blue-400 hover:to-blue-500 hover:border-blue-400 hover:shadow-[inset_0_2px_4px_rgba(255,255,255,0.5),0_6px_15px_rgba(37,99,235,0.4)] active:shadow-[inset_0_1px_2px_rgba(255,255,255,0.2),0_1px_3px_rgba(37,99,235,0.3)] active:scale-[0.98] transition-all duration-200"
+              className="group/btn relative overflow-hidden inline-flex items-center justify-center gap-2 px-10 py-4 text-[18px] font-bold rounded-full text-white bg-gradient-to-b from-blue-500 to-blue-600 border border-blue-400/50 shadow-[inset_0_2px_4px_rgba(255,255,255,0.4),0_6px_15px_rgba(37,99,235,0.35)] hover:from-blue-400 hover:to-blue-500 hover:border-blue-400 hover:shadow-[inset_0_2px_4px_rgba(255,255,255,0.5),0_8px_20px_rgba(37,99,235,0.4)] active:shadow-[inset_0_1px_2px_rgba(255,255,255,0.2),0_2px_5px_rgba(37,99,235,0.3)] active:scale-[0.98] transition-all duration-200"
             >
               <span className="absolute inset-0 -translate-x-[150%] group-hover/btn:translate-x-[150%] transition-transform duration-700 bg-gradient-to-r from-transparent via-white/30 to-transparent pointer-events-none" aria-hidden />
               <span className="relative z-10">{isAuthenticated ? ctaPrimaryAuthenticated : ctaPrimary}</span>
-              <ArrowRight className="w-4 h-4 relative z-10" />
+              <ArrowRight className="w-5 h-5 relative z-10 transition-transform duration-300 group-hover/btn:translate-x-1" />
             </Link>
           </div>
         </div>

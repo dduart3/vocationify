@@ -13,7 +13,7 @@ import type { SchoolCareer } from '../types'
 
 const columnHelper = createColumnHelper<SchoolCareer>()
 
-const schoolCareersColumns: ColumnDef<SchoolCareer>[] = [
+const schoolCareersColumns: ColumnDef<SchoolCareer, any>[] = [
   columnHelper.accessor((row) => row.career?.name ?? '', {
     id: 'career',
     header: 'Carrera',

@@ -87,7 +87,9 @@ export function useCareerWithSchools(careerId: string) {
         schools: schoolCareers?.map(sc => ({
           school: sc.school,
           shifts: sc.shifts,
-          admission_requirements: sc.admission_requirements
+          admission_requirements: sc.admission_requirements,
+          duration_years: (sc as any).duration_years,
+          modality: (sc as any).modality
         })) || []
       }
     },

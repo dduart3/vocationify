@@ -1,224 +1,115 @@
-import { useRef, useEffect } from 'react'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { Clock, Database, Brain, ArrowRight, Sparkles } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
+import { ArrowRight } from 'lucide-react'
 import { useAuth } from '@/context/auth-context'
+import { Persona } from '@/components/ai-elements/persona'
 
-gsap.registerPlugin(ScrollTrigger)
+// Careers for the floating pills positioned in a tight arch around the top of the sphere
+const CAREERS = [
+  // Left Side
+  { name: "Psicología",        top: "5%",  left: "-15%", delay: "0.8s", rotation: "-12deg" },
+  { name: "Ing. Sistemas",     top: "22%", left: "-2%",  delay: "2.1s", rotation: "8deg" },
+  { name: "Ing. Mecatrónica",  top: "40%", left: "-20%", delay: "0.2s", rotation: "-14deg" },
+  { name: "Diseño Gráfico",    top: "60%", left: "-5%",  delay: "1.5s", rotation: "-5deg" },
+  { name: "Comunicación",      top: "78%", left: "-12%", delay: "0.5s", rotation: "-8deg" },
+  
+  // Right Side 
+  { name: "Ing. Electrónica",  top: "10%", right: "-10%", delay: "0.5s", rotation: "10deg" },
+  { name: "Mercadeo",          top: "28%", right: "-2%",  delay: "2.5s", rotation: "3deg" },
+  { name: "Arquitectura",      top: "48%", right: "-18%", delay: "1.1s", rotation: "12deg" },
+  { name: "Derecho",           top: "68%", right: "0%",   delay: "0.5s", rotation: "-6deg" },
+  { name: "Odontología",       top: "86%", right: "-14%", delay: "0.2s", rotation: "15deg" },
+]
 
 export function CTASection() {
   const { isAuthenticated } = useAuth()
-  const sectionRef = useRef<HTMLDivElement>(null)
-  const titleRef = useRef<HTMLHeadingElement>(null)
-  const subtitleRef = useRef<HTMLParagraphElement>(null)
-  const buttonRef = useRef<HTMLAnchorElement>(null)
-  const benefitsRef = useRef<HTMLDivElement>(null)
-  const cardRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const section = sectionRef.current
-    const title = titleRef.current
-    const subtitle = subtitleRef.current
-    const button = buttonRef.current
-    const benefits = benefitsRef.current
-    const card = cardRef.current
-
-    if (!section || !title || !subtitle || !button || !benefits || !card) return
-
-    // Initial states
-    gsap.set([title, subtitle, button, benefits], { opacity: 0, y: 30 })
-    gsap.set(card, { opacity: 0, scale: 0.9, y: 50 })
-
-    // Animation timeline
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: section,
-        start: "top 70%",
-        toggleActions: "play none none reverse"
-      }
-    })
-
-    tl.to(card, {
-      opacity: 1,
-      scale: 1,
-      y: 0,
-      duration: 0.8,
-      ease: "power3.out"
-    })
-    .to(title, {
-      opacity: 1,
-      y: 0,
-      duration: 0.6,
-      ease: "power2.out"
-    }, "-=0.4")
-    .to(subtitle, {
-      opacity: 1,
-      y: 0,
-      duration: 0.6,
-      ease: "power2.out"
-    }, "-=0.3")
-    .to(benefits, {
-      opacity: 1,
-      y: 0,
-      duration: 0.6,
-      ease: "power2.out"
-    }, "-=0.2")
-    .to(button, {
-      opacity: 1,
-      y: 0,
-      duration: 0.6,
-      ease: "back.out(1.7)"
-    }, "-=0.3")
-
-    // Button hover animation
-    const handleButtonHover = () => {
-      gsap.to(button, {
-        scale: 1.05,
-        duration: 0.3,
-        ease: "power2.out"
-      })
-    }
-
-    const handleButtonLeave = () => {
-      gsap.to(button, {
-        scale: 1,
-        duration: 0.3,
-        ease: "power2.out"
-      })
-    }
-
-    if (button) {
-      button.addEventListener('mouseenter', handleButtonHover)
-      button.addEventListener('mouseleave', handleButtonLeave)
-    }
-
-    return () => {
-      if (button) {
-        button.removeEventListener('mouseenter', handleButtonHover)
-        button.removeEventListener('mouseleave', handleButtonLeave)
-      }
-    }
-  }, [])
-
+  
   return (
-    <section ref={sectionRef} className="py-24 relative overflow-hidden">
-      {/* Background Effects */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl animate-pulse"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1.5s'}}></div>
-
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="max-w-5xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            
-            {/* Left Side - Main CTA */}
-            <div>
-              <h2 ref={titleRef} className="text-4xl md:text-5xl font-bold mb-6 text-white">
-                ¿Listo Para Descubrir
-                <br />
-                <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                  Tu Verdadera Vocación?
-                </span>
-              </h2>
-              
-              <p ref={subtitleRef} className="text-lg text-neutral-300 mb-8 font-light leading-relaxed">
-                Toma decisiones informadas sobre tu futuro profesional. Explora carreras
-                que se alinean con tu personalidad y habilidades.
-              </p>
-
-              {/* Benefits List */}
-              <div ref={benefitsRef} className="space-y-4 mb-8">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center">
-                    <Clock size={16} className="text-green-400" />
-                  </div>
-                  <span className="text-neutral-300">Test conversacional con IA</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
-                    <Brain size={16} className="text-blue-400" />
-                  </div>
-                  <span className="text-neutral-300">Evaluación basada en modelo RIASEC</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center">
-                    <Database size={16} className="text-purple-400" />
-                  </div>
-                  <span className="text-neutral-300">126+ carreras e instituciones</span>
-                </div>
-              </div>
-
-              {/* CTA Button */}
-              <Link
-                ref={buttonRef}
-                to={isAuthenticated ? "/vocational-test" : "/register"}
-                className="group inline-flex items-center gap-3 px-8 py-4 rounded-xl font-semibold text-lg text-white transition-all duration-300"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.8) 0%, rgba(147, 51, 234, 0.8) 100%)',
-                  boxShadow: '0 10px 30px rgba(59, 130, 246, 0.3)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)'
+    <section className="relative w-full bg-[#f8fafc] overflow-hidden pt-24 lg:pt-32 pb-0 font-inter z-20 flex flex-col items-center">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 flex flex-col justify-start items-center text-center">
+        
+        {/* Floating Pills - 3D depth style spread left and right */}
+        <div className="absolute inset-0 z-0 pointer-events-none hidden lg:block">
+            {CAREERS.map((career, i) => (
+              <div 
+                key={i}
+                className="absolute will-change-transform"
+                style={{ 
+                  top: career.top, 
+                  ...(career.left ? { left: career.left } : {}),
+                  ...(career.right ? { right: career.right } : {}),
+                  animation: `float-pill 6s ease-in-out infinite alternate`,
+                  animationDelay: career.delay,
                 }}
               >
-                <Sparkles size={20} />
-                {isAuthenticated ? "Comenzar Test" : "Registrarse Gratis"}
-                <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform duration-300" />
-              </Link>
-
-            </div>
-
-            {/* Right Side - Info Card */}
-            <div
-              ref={cardRef}
-              className="relative p-8 rounded-2xl"
-              style={{
-                background: 'transparent',
-                backdropFilter: 'blur(12px)',
-                boxShadow: '0 0 50px rgba(0, 0, 0, 0.3)',
-                border: '1px solid rgba(255, 255, 255, 0.1)'
-              }}
-            >
-              {/* Gradient overlay */}
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/5 to-transparent opacity-50"></div>
-
-              <div className="relative z-10">
-                <h3 className="text-2xl font-bold text-white mb-4">
-                  ¿Cómo Funciona?
-                </h3>
-                <div className="space-y-4 text-neutral-300">
-                  <div className="flex gap-3">
-                    <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0 mt-1">
-                      <span className="text-blue-400 text-sm font-bold">1</span>
-                    </div>
-                    <p className="leading-relaxed">
-                      <strong className="text-white">Conversa con la IA:</strong> Responde preguntas sobre
-                      tus intereses, habilidades y preferencias de forma natural.
-                    </p>
-                  </div>
-                  <div className="flex gap-3">
-                    <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0 mt-1">
-                      <span className="text-purple-400 text-sm font-bold">2</span>
-                    </div>
-                    <p className="leading-relaxed">
-                      <strong className="text-white">Obtén tu perfil:</strong> La IA analiza tus respuestas
-                      y calcula tu perfil RIASEC personalizado.
-                    </p>
-                  </div>
-                  <div className="flex gap-3">
-                    <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0 mt-1">
-                      <span className="text-green-400 text-sm font-bold">3</span>
-                    </div>
-                    <p className="leading-relaxed">
-                      <strong className="text-white">Explora carreras:</strong> Descubre carreras compatibles
-                      y las universidades que las ofrecen.
-                    </p>
-                  </div>
+                <div 
+                  className="px-8 py-4 bg-gradient-to-b from-white to-slate-100 text-slate-600 font-bold text-[16px] leading-none rounded-full border border-slate-200 shadow-[0_6px_0_#cbd5e1,0_12px_20px_rgba(148,163,184,0.3)] transition-transform duration-300 pointer-events-auto hover:-translate-y-[2px] cursor-default whitespace-nowrap"
+                  style={{ transform: `rotate(${career.rotation})` }}
+                >
+                  {career.name}
                 </div>
               </div>
-            </div>
+            ))}
+        </div>
 
+        {/* Text and Button at the Top */}
+        <div className="relative z-40 max-w-3xl mx-auto flex flex-col items-center mb-16 sm:mb-20">
+            <h2 className="text-4xl md:text-[52px] lg:text-[64px] font-normal text-slate-800 tracking-tight leading-[1.05] mb-6 drop-shadow-sm">
+                Desbloquea tu potencial.<br />
+                Comienza a explorar hoy.
+            </h2>
+            
+            <p className="text-[17px] md:text-[19px] text-slate-500 mb-10 max-w-2xl font-light leading-relaxed px-4">
+                Nuestra IA generativa analiza tus habilidades, intereses y estilo para encontrar carreras increíbles que realmente encajan contigo.
+            </p>
+
+            {/* Single Blue 3D Depth Button */}
+            <Link
+                to={isAuthenticated ? "/vocational-test" : "/register"}
+                className="group/btn relative overflow-hidden inline-flex items-center justify-center gap-2 px-10 py-4 rounded-full font-bold text-[18px] text-white bg-gradient-to-b from-blue-500 to-blue-600 border border-blue-400/50 shadow-[inset_0_2px_4px_rgba(255,255,255,0.4),0_6px_15px_rgba(37,99,235,0.35)] hover:from-blue-400 hover:to-blue-500 hover:border-blue-400 hover:shadow-[inset_0_2px_4px_rgba(255,255,255,0.5),0_8px_20px_rgba(37,99,235,0.4)] active:shadow-[inset_0_1px_2px_rgba(255,255,255,0.2),0_2px_5px_rgba(37,99,235,0.3)] active:scale-[0.98] transition-all duration-200"
+            >
+                <span className="absolute inset-0 -translate-x-[150%] group-hover/btn:translate-x-[150%] transition-transform duration-700 bg-gradient-to-r from-transparent via-white/30 to-transparent pointer-events-none" aria-hidden />
+                <span className="relative z-10">{isAuthenticated ? "Comenzar Análisis" : "Comenzar Análisis"}</span>
+                <ArrowRight className="w-5 h-5 relative z-10 transition-transform duration-300 group-hover/btn:translate-x-1" />
+            </Link>
+        </div>
+
+        {/* Center Content: White Sphere & Floating Pills - Cropped at bottom */}
+        {/* Negative margin pulls the bottom boundary up, effectively cropping it in half */}
+        <div className="relative w-full max-w-7xl h-[450px] flex items-start justify-center -mb-[220px] sm:-mb-[260px]">
+          
+          {/* Persona Core */}
+          <div className="relative z-30 flex items-center justify-center -mt-4 sm:-mt-8">
+             <Persona variant="obsidian" state="listening" className="w-[300px] h-[300px] sm:w-[420px] sm:h-[420px] drop-shadow-2xl" />
+          </div>
+
+          {/* Mobile visible pills */}
+          <div className="absolute top-[5%] left-[2%] sm:hidden animate-[float-pill_5s_ease-in-out_infinite_alternate]">
+             <div className="px-4 py-2 bg-gradient-to-b from-white to-slate-100 text-slate-600 font-bold text-[11px] rounded-full border border-slate-200 shadow-[0_4px_0_#cbd5e1,0_10px_15px_rgba(148,163,184,0.3)] rotate-[-6deg]">
+                Ing. Electrónica
+             </div>
+          </div>
+          <div className="absolute top-[-5%] left-[50%] -translate-x-1/2 sm:hidden animate-[float-pill_4s_ease-in-out_infinite_alternate_0.5s]">
+             <div className="px-4 py-2 bg-gradient-to-b from-white to-slate-100 text-slate-600 font-bold text-[11px] rounded-full border border-slate-200 shadow-[0_4px_0_#cbd5e1,0_10px_15px_rgba(148,163,184,0.3)] rotate-[0deg]">
+                Mercadeo
+             </div>
+          </div>
+          <div className="absolute top-[10%] right-[2%] sm:hidden animate-[float-pill_6s_ease-in-out_infinite_alternate_1s]">
+             <div className="px-4 py-2 bg-gradient-to-b from-white to-slate-100 text-slate-600 font-bold text-[11px] rounded-full border border-slate-200 shadow-[0_4px_0_#cbd5e1,0_10px_15px_rgba(148,163,184,0.3)] rotate-[6deg]">
+                Diseño Gráfico
+             </div>
           </div>
         </div>
+
       </div>
+
+      {/* Floating Animation Styles */}
+      <style>{`
+        @keyframes float-pill {
+          0% { transform: translateY(0px); }
+          50% { transform: translateY(-15px); }
+          100% { transform: translateY(0px); }
+        }
+      `}</style>
     </section>
   )
 }

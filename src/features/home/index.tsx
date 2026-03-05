@@ -4,8 +4,9 @@ import { Background } from "./components/background";
 import { CTASection } from "./sections/call-to-action";
 // import { FeaturesSection } from "./sections/features";
 import { HeroSection } from "./sections/hero";
-import { ProcessSection } from "./sections/process";
+import { TextRevealSection } from "./sections/text-reveal-section";
 import { InteractiveLaptopSection } from "./sections/interactive-laptop-section";
+import { AIAnalysisFeature } from "./sections/ai-analysis-feature";
 
 export function Home() {
   return (
@@ -15,11 +16,12 @@ export function Home() {
 
       {/* Main content area */}
       <div className="transition-all duration-500 ease-in-out z-0">
-        <div className="relative overflow-hidden">
+        <div className="relative overflow-x-clip">
           <Background />
           <HeroSection />
           <InteractiveLaptopSection />
-          <ProcessSection />
+          <TextRevealSection />
+          <AIAnalysisFeature />
           <CTASection />
         </div>
       </div>

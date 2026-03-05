@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import React, { Suspense, useRef } from 'react'
 import { Canvas } from '@react-three/fiber'
-import { Html, Environment, useGLTF, ContactShadows } from '@react-three/drei'
+import { Html, Environment, useGLTF } from '@react-three/drei'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
@@ -19,43 +19,68 @@ function Model({ ...props }: any) {
     if (!group.current || !lidGroup.current) return
 
     // Create the timeline
-    // The trigger is the parent section's ID
+    // The trigger is parent section
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: '#interactive-laptop-container',
         start: 'top top',
-        end: '+=150%',
-        scrub: 1,
+        end: '+=1400%',
+        scrub: true,
       }
     })
 
-    // Phase 1: Lower the closed, tilted laptop
+    // Phase 1: Lower the closed, tilted laptop (0% - 10%)
     tl.to(group.current.position, {
       y: -3,
       ease: 'power2.inOut',
-      duration: 1
+      duration: 10
     })
 
-    // Phase 2: Rotate to flat
+    // Phase 2: Rotate to flat (0% - 10%)
     tl.to(group.current.rotation, {
       x: 0,
       ease: 'power2.inOut',
-      duration: 1
+      duration: 10
     }, '<')
     
-    // Phase 3: Lid Opening & Final Zoom
+    // Phase 3: Lid Opening & Final Zoom (10% - 25%)
     tl.to(lidGroup.current.rotation, {
       x: -0.1,
-      ease: 'power2.inOut',
-      duration: 1.5
-    }, '>-0.2')
+      ease: 'power2.out',
+      duration: 15
+    }, '>')
 
     tl.to(group.current.position, {
       z: 2,
       y: -8,
-      ease: 'power2.inOut',
-      duration: 1.5
+      ease: 'power2.out',
+      duration: 15
     }, '<')
+
+    // STAY OPEN (25% - 55%)
+    tl.to({}, { duration: 30 })
+
+    // PHASE 6 EXIT: Rotate back, Close lid, Drop down (55% - 65%)
+    tl.to(lidGroup.current.rotation, {
+      x: Math.PI / 2, // Close lid
+      duration: 10,
+      ease: "power2.inOut"
+    }, "exit")
+
+    tl.to(group.current.rotation, {
+      x: -3, // Tilt back
+      duration: 10,
+      ease: "power2.inOut"
+    }, "exit")
+
+    tl.to(group.current.position, {  
+      y: -20,
+      duration: 10,
+      ease: "power2.in"
+    }, "exit")
+
+    // PADDING to keep it offscreen for the rest of the HTML animations (65% - 100%)
+    tl.to({}, { duration: 35 })
 
     return () => {
       tl.kill()
@@ -74,7 +99,7 @@ function Model({ ...props }: any) {
               rotation-x={-Math.PI / 2} 
               position={[0, 0.05, -0.09]} 
               transform 
-              occlude
+              occlude="blending"
             >
               <div 
                 className="w-[668px] h-[432px] origin-top-left scale-50" 
