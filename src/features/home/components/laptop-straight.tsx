@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { Suspense, useRef } from 'react'
+import { Suspense, useRef, useState, useEffect } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { Html, Environment, useGLTF } from '@react-three/drei'
 
@@ -50,14 +50,22 @@ function Model({ ...props }: any) {
 }
 
 export function LaptopStraight() {
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768)
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
   return (
     <div className="w-full h-full relative pointer-events-auto">
       <Canvas camera={{ position: [0, 0, 14], fov: 45 }}>
         <pointLight position={[10, 10, 10]} intensity={1.5} />
         <Suspense fallback={null}>
-          {/* Exactly straight facing. No horizontal offset, pure front angles */}
-          <group rotation={[0, 0, 0]} position={[0, -2, 0]}>
-            <Model scale={0.9} />
+          <group rotation={[0, 0, 0]} position={[0, isMobile ? -4 : -2, 0]}>
+            <Model scale={isMobile ? 0.55 : 0.9} />
           </group>
           <Environment preset="city" />
         </Suspense>     

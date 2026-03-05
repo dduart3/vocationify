@@ -126,12 +126,21 @@ function Model({ ...props }: any) {
 }
 
 export function Laptop3D() {
+  const [isMobile, setIsMobile] = React.useState(false)
+
+  React.useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768)
+    checkMobile() // check on mount
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
   return (
     <div className="w-full h-full absolute inset-0">
       <Canvas camera={{ position: [5, 0, -20], fov: 55 }}>
         <pointLight position={[10, 10, 10]} intensity={1.5} />
         <Suspense fallback={null}>
-          <group rotation={[0, 2.9, 0]} position={[1.3, 3, -5]}>
+          <group rotation={[0, 2.9, 0]} position={[1.3, 3, -5]} scale={isMobile ? 0.75 : 1}>
             <Model />
           </group>
           <Environment preset="city" />

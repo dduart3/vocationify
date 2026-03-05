@@ -107,14 +107,14 @@ export function AIAnalysisFeature() {
           />
       </div>
 
-      <div className="container mx-auto px-6 lg:px-24 relative z-20 h-full flex items-center max-w-[1400px]">
+      <div className="container mx-auto px-6 lg:px-24 relative z-20 h-full flex flex-col md:flex-row items-center md:items-center justify-center md:justify-start pt-10 md:pt-0 pb-32 md:pb-0 max-w-[1400px]">
         {/* Left Side: Minimal Content Container with masked animation */}
-        <div className="w-full max-w-2xl relative h-[450px] flex items-center overflow-hidden">
+        <div className="w-full max-w-2xl relative h-[250px] md:h-[450px] flex items-center justify-center md:justify-start overflow-hidden">
           {features.map((text, index) => (
              <p 
                key={index}
                ref={el => { textRefs.current[index] = el; }}
-               className="absolute inset-0 flex items-center text-[36px] md:text-[48px] lg:text-[64px] text-[#111111] font-normal tracking-[-0.05em] leading-[1.1] max-w-3xl font-inter antialiased"
+               className="absolute inset-0 flex items-center md:items-center justify-center md:justify-start text-center md:text-left text-[28px] md:text-[48px] lg:text-[64px] text-[#111111] font-normal tracking-[-0.05em] leading-[1.1] max-w-3xl font-inter antialiased"
              >
                {text}
              </p>
@@ -122,8 +122,8 @@ export function AIAnalysisFeature() {
          </div>
       </div>
 
-      <div className="absolute inset-0 w-full h-full z-10 animate-in fade-in zoom-in-95 duration-1000 delay-300 pointer-events-none">
-        <div className="relative w-full h-full flex items-center justify-center translate-x-[25%] lg:translate-x-[35%] mt-8">
+      <div className="absolute inset-0 w-full h-full z-10 animate-in fade-in zoom-in-95 duration-1000 delay-300 pointer-events-none flex flex-col justify-end md:justify-center">
+        <div className="relative w-full h-full flex items-end md:items-center justify-center translate-x-0 md:translate-x-[25%] lg:translate-x-[35%] pb-8 md:pb-0 mt-8">
           <LaptopStraight />
           {/* Ambient glow behind the straight laptop */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-blue-50/50 blur-[120px] -z-10 rounded-full" />

@@ -87,6 +87,10 @@ html.lenis, html.lenis body {
 .lenis.lenis-smooth iframe {
   pointer-events: none;
 }
+html, body {
+  overflow-x: hidden;
+}
+
 body {
   background: linear-gradient(135deg, 
     var(--color-background) 0%, 

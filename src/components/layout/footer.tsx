@@ -1,9 +1,7 @@
 import { useRef, useEffect } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import {
-  IconHeart,
-} from '@tabler/icons-react'
+
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -55,69 +53,121 @@ export function Footer() {
   }, [])
 
   return (
-    <footer ref={footerRef} className="relative overflow-visible z-30 py-24 bg-neutral-950">
-      {/* Background Effects */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[600px] bg-gradient-to-r from-blue-500/5 to-purple-500/5 rounded-full blur-3xl"></div>
+    <footer ref={footerRef} className="relative z-30 pt-0 w-full flex flex-col justify-between min-h-[500px]">
+      
+      {/* Fading overlap to smooth the transition from the previously cropped section */}
+      {/* Scaled slightly wider than screen so no edges show over horizontal scroll if it breaks */}
+      <div className="absolute top-0 left-0 w-[120vw] -ml-[10vw] h-48 -translate-y-[99%] bg-gradient-to-t from-[#f8fafc] via-[#f8fafc]/90 to-transparent pointer-events-none z-0"></div>
 
-      <div className="container mx-auto px-8 md:px-12 lg:px-16 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
-          {/* Brand Section */}
-          <div ref={brandRef} className="col-span-1 md:col-span-2">
-            <div className="flex items-center space-x-3 mb-6">
+      {/* Main Container Layer with overflow-hidden to cut off horizontal bleed and tight crop bottom */}
+      <div className="relative w-full flex-1 flex flex-col justify-between bg-[#f8fafc] overflow-hidden pt-24 z-10">
+      
+        {/* Main Background gradient */}
+        <div className="absolute inset-0 pointer-events-none z-0">
+            <div 
+              className="absolute inset-0 opacity-90" 
+              style={{
+                background: 'linear-gradient(120deg, #fed7aa 0%, #fbcfe8 50%, #bae6fd 100%)',
+                maskImage: 'linear-gradient(to top, black 5%, transparent 40%)',
+                WebkitMaskImage: 'linear-gradient(to top, black 5%, transparent 40%)'
+              }}
+            >
+              {/* Premium Fine Grain Texture Overlay */}
               <div 
-                className="w-10 h-10 rounded-xl flex items-center justify-center"
+                className="absolute inset-0 opacity-[0.35] mix-blend-overlay pointer-events-none"
                 style={{
-                  background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.8) 0%, rgba(147, 51, 234, 0.8) 100%)',
-                  boxShadow: '0 10px 30px rgba(59, 130, 246, 0.3)'
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+                  backgroundRepeat: 'repeat',
+                  backgroundSize: '120px 120px',
                 }}
-              >
-                <span className="text-white font-bold">V</span>
-              </div>
-              <span className="font-bold text-2xl text-white">
-                Vocationify
-              </span>
+              />
             </div>
-            
-            <p className="text-neutral-300 mb-8 max-w-md leading-relaxed">
-              La plataforma más avanzada de orientación vocacional.
-              Tecnología de vanguardia para decisiones profesionales inteligentes.
-            </p>
+        </div>
 
+      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 flex-1 flex flex-col pt-10">
+        
+        {/* Top Content Row */}
+        <div className="flex flex-col lg:flex-row justify-between w-full pb-10 gap-16 lg:gap-8">
+          
+          {/* Top Left Column (Slogan) */}
+          <div ref={brandRef} className="w-full lg:w-[35%] flex flex-col mt-2">
+            <h3 className="font-hero text-2xl lg:text-3xl font-medium text-slate-800 tracking-tight">
+              Desbloquea tu potencial.
+            </h3>
           </div>
 
-          {/* Links Section */}
-          <div ref={linksRef} className="grid grid-cols-1 md:grid-cols-2 gap-8 md:col-span-2">
-            {/* Quick Links */}
+          {/* Top Right Column (Links Grid) */}
+          <div ref={linksRef} className="w-full lg:w-[60%] grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-4 mt-6 lg:mt-0">
+            <div className="flex flex-col space-y-5">
+              <h4 className="font-semibold text-slate-800 text-[14px]">Planes</h4>
+              <nav className="flex flex-col space-y-4">
+                <a href="#" className="text-[#718299] hover:text-blue-600 text-[14px] font-medium transition-colors">Test Vocacional</a>
+                <a href="#" className="text-[#718299] hover:text-blue-600 text-[14px] font-medium transition-colors">Asesorías</a>
+                <a href="#" className="text-[#718299] hover:text-blue-600 text-[14px] font-medium transition-colors">Instituciones</a>
+              </nav>
+            </div>
+            
+            <div className="flex flex-col space-y-5">
+              <h4 className="font-semibold text-slate-800 text-[14px]">Aprende</h4>
+              <nav className="flex flex-col space-y-4">
+                <a href="#" className="text-[#718299] hover:text-blue-600 text-[14px] font-medium transition-colors">Blog</a>
+                <a href="#" className="text-[#718299] hover:text-blue-600 text-[14px] font-medium transition-colors">Investigación</a>
+                <a href="#" className="text-[#718299] hover:text-blue-600 text-[14px] font-medium transition-colors">Guías</a>
+              </nav>
+            </div>
+
+            <div className="flex flex-col space-y-5">
+              <h4 className="font-semibold text-slate-800 text-[14px]">Nosotros</h4>
+              <nav className="flex flex-col space-y-4">
+                <a href="#" className="text-[#718299] hover:text-blue-600 text-[14px] font-medium transition-colors">Plataforma</a>
+                <a href="#" className="text-[#718299] hover:text-blue-600 text-[14px] font-medium transition-colors">Misión</a>
+                <a href="#" className="text-[#718299] hover:text-blue-600 text-[14px] font-medium transition-colors">Contacto</a>
+              </nav>
+            </div>
+
+            <div className="flex flex-col space-y-5">
+              <h4 className="font-semibold text-slate-800 text-[14px]">Legal</h4>
+              <nav className="flex flex-col space-y-4">
+                <a href="#" className="text-[#718299] hover:text-blue-600 text-[14px] font-medium transition-colors">Términos</a>
+                <a href="#" className="text-[#718299] hover:text-blue-600 text-[14px] font-medium transition-colors">Privacidad</a>
+                <a href="#" className="text-[#718299] hover:text-blue-600 text-[14px] font-medium transition-colors">Cookies</a>
+              </nav>
+            </div>
           </div>
         </div>
 
-        {/* Bottom Section */}
-        <div 
-          ref={bottomRef}
-          className="mt-12 pt-8 flex flex-col md:flex-row justify-between items-center"
-          style={{
-            borderTop: '1px solid rgba(255, 255, 255, 0.1)'
-          }}
-        >
-          <p className="text-neutral-400 text-sm">
-            {`© ${new Date().getFullYear()} Vocationify. Todos los derechos reservados.`}
-          </p>
-          
-          <div className="flex items-center space-x-6 mt-4 md:mt-0">
-            <span className="text-neutral-500 text-sm flex items-center gap-2">
-              Desarrollado con 
-              <IconHeart size={14} className="text-red-400 animate-pulse" />
-              en Venezuela
-            </span>
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-              <span className="text-neutral-500 text-sm">Sistema Activo</span>
+        {/* Massive Typography in Middle */}
+        <div className="w-full relative z-10 flex justify-center items-center pointer-events-none select-none py-8 md:py-16">
+          <h1 
+            className="font-hero font-normal text-[17.5vw] md:text-[20vw] leading-none tracking-[-0.04em] text-[#0f172a] opacity-10"
+          >
+            Vocationify
+          </h1>
+        </div>
+
+        {/* Bottom Bar (Logo/Copyright & Links) */}
+        <div ref={bottomRef} className="w-full border-t border-slate-200/60 flex flex-col md:flex-row justify-between items-center py-8 gap-4">
+          <div className="flex items-center space-x-2">
+            <div className="w-6 h-6 rounded flex items-center justify-center bg-slate-900">
+               <span className="text-white font-bold text-xs">V</span>
             </div>
+            <p className="text-slate-600 font-medium text-[14px]">
+              Vocationify
+            </p>
+          </div>
+          
+          <div className="flex flex-wrap items-center justify-center gap-6">
+            <a href="#" className="text-slate-500 hover:text-slate-800 text-[13px] font-medium transition-colors">Términos de servicio</a>
+            <a href="#" className="text-slate-500 hover:text-slate-800 text-[13px] font-medium transition-colors">Política de privacidad</a>
+            <a href="#" className="text-slate-500 hover:text-slate-800 text-[13px] font-medium transition-colors">Configuración de cookies</a>
+            <p className="text-slate-400 font-medium text-[13px] ml-2">
+              {`© ${new Date().getFullYear()}`}
+            </p>
           </div>
         </div>
       </div>
+      </div>{/* closes inner overflow-hidden flex container */}
+
     </footer>
   )
 }
