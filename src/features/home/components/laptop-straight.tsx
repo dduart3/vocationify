@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { Suspense, useRef } from 'react'
 import { Canvas } from '@react-three/fiber'
-import { Html, Environment, useGLTF, ContactShadows } from '@react-three/drei'
+import { Html, Environment, useGLTF } from '@react-three/drei'
 
 function Model({ ...props }: any) {
   const group = useRef<THREE.Group>(null)
@@ -60,7 +60,6 @@ export function LaptopStraight() {
             <Model scale={0.9} />
           </group>
           <Environment preset="city" />
-          <ContactShadows position={[0, -4.5, 0]} opacity={0.6} scale={20} blur={2.5} far={4.5} />
         </Suspense>     
       </Canvas>
     </div>
