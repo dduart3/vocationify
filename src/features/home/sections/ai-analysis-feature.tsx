@@ -114,7 +114,7 @@ export function AIAnalysisFeature() {
              <p 
                key={index}
                ref={el => { textRefs.current[index] = el; }}
-               className="absolute inset-0 flex items-center md:items-center justify-center md:justify-start text-center md:text-left text-[28px] md:text-[48px] lg:text-[64px] text-[#111111] font-normal tracking-[-0.05em] leading-[1.1] max-w-3xl font-inter antialiased"
+               className="absolute inset-0 flex items-center md:items-center justify-center md:justify-start text-center md:text-left text-[28px] md:text-[36px] lg:text-[44px] xl:text-[52px] 2xl:text-[64px] text-[#111111] font-normal tracking-[-0.05em] leading-[1.1] max-w-3xl font-inter antialiased"
              >
                {text}
              </p>
