@@ -56,7 +56,7 @@ export function AIAnalysisFeature() {
     const st = ScrollTrigger.create({
       trigger: sectionRef.current,
       start: 'top top',
-      end: `+=${features.length * 80}%`,
+      end: `+=${features.length * 50}%`,
       pin: true,
       onUpdate: (self) => {
         const p = self.progress;

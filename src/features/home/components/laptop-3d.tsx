@@ -24,7 +24,7 @@ function Model({ ...props }: any) {
       scrollTrigger: {
         trigger: '#interactive-laptop-container',
         start: 'top top',
-        end: '+=1400%',
+        end: '+=800%',
         scrub: true,
       }
     })

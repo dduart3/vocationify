@@ -145,7 +145,7 @@ export function InteractiveLaptopSection() {
     const st = ScrollTrigger.create({
       trigger: section,
       start: 'top top',
-      end: '+=1400%', 
+      end: '+=800%', 
       pin: true,
       anticipatePin: 1,
       onUpdate: (self) => {
