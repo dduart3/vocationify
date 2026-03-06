@@ -185,7 +185,7 @@ export function ResultDetail() {
 
   return (
     <OnboardingProvider section="result-detail" steps={resultDetailSteps}>
-      <div className="flex-1 min-h-[100dvh] w-full relative flex flex-col bg-[#f8fafc] overflow-hidden">
+      <div className="flex-1 min-h-[100dvh] w-full relative flex flex-col bg-[#f8fafc]">
         {/* Exact Sandra AI Background Match */}
         <div className="fixed inset-0 pointer-events-none z-0 bg-[#f8fafc]">
             <div 
@@ -212,8 +212,8 @@ export function ResultDetail() {
         </div>
 
         {/* Inner Structure */}
-        <div className="relative z-10 w-full min-h-screen flex flex-col pt-6 sm:pt-6 lg:h-screen lg:max-h-screen lg:overflow-hidden md:pl-[104px]">
-          <div className="flex-1 flex flex-col min-h-0 pt-6 sm:pt-8 lg:pt-10">
+        <div className="relative z-10 w-full min-h-screen flex flex-col pt-6 sm:pt-6 md:pl-[104px] pb-24">
+          <div className="flex-1 flex flex-col pt-6 sm:pt-8 lg:pt-10">
 
             {/* Header */}
             <div className="w-full max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 shrink-0" id="result-detail-content">
@@ -258,16 +258,10 @@ export function ResultDetail() {
               </div>
             </div>
 
-            {/* Scrollable Content Area */}
-            <div 
-              className="relative flex-1 min-h-0 w-full flex flex-col overflow-hidden"
-              style={{
-                maskImage: 'linear-gradient(to bottom, transparent, black 24px, black calc(100% - 24px), transparent)',
-                WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 24px, black calc(100% - 24px), transparent)'
-              }}
-            >
-              <div className="flex-1 overflow-y-auto custom-scrollbar">
-                <div className="w-full max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24">
+            {/* Content Area */}
+            <div className="relative flex-1 w-full flex flex-col">
+              <div className="flex-1">
+                <div className="w-full max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
               <style>{`
                 .custom-scrollbar::-webkit-scrollbar { width: 6px; }
                 .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }

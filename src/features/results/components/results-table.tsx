@@ -35,8 +35,8 @@ export function ResultsTable({ columns, data, isLoading = false }: ResultsTableP
   })
 
   return (
-    <div className="bg-white/50 backdrop-blur-2xl border border-white/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_4px_20px_rgba(0,0,0,0.03)] rounded-[2rem] flex flex-col min-h-0 h-full overflow-hidden">
-      <div className="flex-1 overflow-y-auto custom-scrollbar min-h-0">
+    <div className="bg-white/50 backdrop-blur-2xl border border-white/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_4px_20px_rgba(0,0,0,0.03)] rounded-[2rem] flex flex-col w-full pb-4">
+      <div className="w-full">
         <table className="w-full table-fixed">
           <thead className="sticky top-0 z-20">
             {table.getHeaderGroups().map(headerGroup => (
@@ -123,7 +123,7 @@ export function ResultsTable({ columns, data, isLoading = false }: ResultsTableP
       </div>
 
       {/* Pagination */}
-      <div className="shrink-0 px-4 sm:px-6 py-3 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-0 bg-slate-50/50 backdrop-blur-md border-t border-white/60 shadow-[inset_0_1px_0px_rgba(255,255,255,0.7)]">
+      <div className="shrink-0 px-4 sm:px-6 mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-0">
         <div className="text-[12px] sm:text-[13px] text-slate-500 font-medium text-center sm:text-left">
           Mostrando {table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1} a{' '}
           {Math.min((table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize, table.getFilteredRowModel().rows.length)} de{' '}

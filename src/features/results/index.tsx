@@ -61,8 +61,8 @@ export function ResultsPage() {
         </div>
 
         {/* Inner Structure */}
-        <div className="relative z-10 w-full min-h-screen p-4 md:pl-[104px] md:pr-6 md:py-6 max-w-[1500px] mx-auto flex flex-col pt-6 sm:pt-6 lg:h-screen lg:max-h-screen lg:overflow-hidden">
-          <div className="flex-1 flex flex-col min-h-0 px-2 sm:px-4 lg:px-6 pt-6 sm:pt-8 lg:pt-10">
+        <div className="relative z-10 w-full min-h-screen p-4 md:pl-[104px] md:pr-6 md:py-6 max-w-[1500px] mx-auto flex flex-col pt-6 sm:pt-6 pb-24">
+          <div className="flex-1 flex flex-col px-2 sm:px-4 lg:px-6 pt-6 sm:pt-8 lg:pt-10">
 
           {/* Header */}
           <div id="results-header" className="mb-6 sm:mb-8 shrink-0 text-center lg:text-left">
@@ -90,7 +90,7 @@ export function ResultsPage() {
           </div>
 
           {/* Table */}
-          <div id="results-table" className="flex-1 min-h-0 flex flex-col z-10">
+          <div id="results-table" className="flex-1 flex flex-col z-10">
             <ResultsTable
               columns={resultsColumns}
               data={results}

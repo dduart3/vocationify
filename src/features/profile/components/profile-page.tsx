@@ -100,7 +100,7 @@ export function ProfilePage() {
 
   return (
     <OnboardingProvider section="profile" steps={profileSteps}>
-      <div className="flex-1 min-h-[100dvh] w-full relative flex flex-col bg-[#f8fafc] overflow-hidden">
+      <div className="flex-1 min-h-[100dvh] w-full relative flex flex-col bg-[#f8fafc]">
         
         {/* Exact Sandra AI Background Match: Blue Gradient + Light Ellipse from Top */}
         <div className="fixed inset-0 pointer-events-none z-0 bg-[#f8fafc]">
@@ -135,8 +135,8 @@ export function ProfilePage() {
         </div>
 
         {/* Inner Structure */}
-        <div className="relative z-10 w-full min-h-screen p-4 md:pl-[104px] md:pr-6 md:py-6 max-w-[1000px] mx-auto flex flex-col pt-6 sm:pt-6 lg:h-screen lg:max-h-screen lg:overflow-hidden">
-          <div className="flex-1 flex flex-col min-h-0 px-2 sm:px-4 lg:px-6 pt-6 sm:pt-8 lg:pt-10">
+        <div className="relative z-10 w-full min-h-screen p-4 md:pl-[104px] md:pr-6 md:py-6 max-w-[1000px] mx-auto flex flex-col pt-6 sm:pt-6 pb-24">
+          <div className="flex-1 flex flex-col px-2 sm:px-4 lg:px-6 pt-6 sm:pt-8 lg:pt-10">
 
             {/* Header */}
             <div id="profile-header" className="mb-6 sm:mb-8 shrink-0 text-center lg:text-left px-2 sm:px-4">
@@ -154,7 +154,7 @@ export function ProfilePage() {
             </div>
 
             {/* Profile Content inside the big Glassmorphism Container */}
-            <div className="flex-1 flex flex-col min-h-0">
+            <div className="flex-1 flex flex-col pt-2">
               
               {error && (
                 <div className="mb-4 mt-1 p-2 rounded-xl bg-red-50 text-red-700 text-xs sm:text-sm border border-red-200 flex items-start gap-2 max-w-2xl mx-auto w-full">
@@ -184,7 +184,7 @@ export function ProfilePage() {
                 <div className="mx-6 h-[1px] bg-slate-200/50 my-3 shrink-0" />
 
                 {/* Form flush below with added padding for breathing room */}
-                <div id="profile-form" className="flex-1 overflow-y-auto custom-scrollbar px-5 sm:px-8 pb-8 pr-3 sm:pr-8">
+                <div id="profile-form" className="flex-1 px-5 sm:px-8 pb-8 pr-3 sm:pr-8">
                   <ProfileForm
                     isEditing={isEditing}
                     editData={editData}
