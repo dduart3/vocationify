@@ -37,8 +37,8 @@
 .voice-bubble.listening {
   animation: voice-pulse 1.5s ease-in-out infinite;
   background: linear-gradient(135deg, 
-    var(--color-success-500) 0%, 
-    var(--color-success-600) 100%
+    var(--color-accent-500) 0%, 
+    var(--color-accent-600) 100%
   );
 }
 

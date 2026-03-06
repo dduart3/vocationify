@@ -2,7 +2,7 @@ import { FeatureCard } from "../components/feature-card";
 
 export function FeaturesSection() {
   return (
-    <section id="features" className="relative bg-white px-8 sm:px-12 lg:p-40">
+    <section id="features" className="relative bg-transparent px-8 sm:px-12 lg:p-40">
         <div className="max-w-7xl mx-auto relative z-10 pt-16 pb-24">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-neutral-800">

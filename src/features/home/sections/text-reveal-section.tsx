@@ -75,17 +75,18 @@ export function TextRevealSection() {
   return (
     <section 
       ref={sectionRef} 
-      className="h-screen w-full flex flex-col items-center justify-center relative bg-[#f8fafc] overflow-clip z-30 font-inter"
+      className="h-screen w-full flex flex-col items-center justify-center relative bg-transparent overflow-clip z-30 font-inter"
     >
       {/* Background - Matching Vocational Test */}
-      <div className="absolute inset-0 pointer-events-none z-0 bg-[#f8fafc]">
+      <div className="absolute inset-0 pointer-events-none z-0 bg-transparent">
           {/* 1. The Multi-Color Pastel Gradient Background */}
           <div 
             className="absolute inset-x-0 bottom-0 h-full opacity-100" 
             style={{
               background: 'linear-gradient(to right, #fbcfe8 0%, #e9d5ff 50%, #bae6fd 100%)',
-              maskImage: 'linear-gradient(to top, black 10%, transparent 65%)',
-              WebkitMaskImage: 'linear-gradient(to top, black 10%, transparent 65%)'
+              // Smooth entry mask from top
+              maskImage: 'linear-gradient(to bottom, transparent 0%, black 15%)',
+              WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 15%)'
             }}
           />
 
@@ -97,11 +98,14 @@ export function TextRevealSection() {
 
       {/* 2. Premium Fine Grain Texture Overlay */}
       <div 
-        className="absolute inset-0 opacity-[0.25] mix-blend-overlay pointer-events-none z-50"
+        className="absolute inset-0 opacity-[0.08] mix-blend-overlay pointer-events-none z-50"
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
           backgroundRepeat: 'repeat',
           backgroundSize: '120px 120px',
+          // Fade grain in smoothly at top
+          maskImage: 'linear-gradient(to bottom, transparent 0%, black 10%)',
+          WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 10%)'
         }}
       />
 

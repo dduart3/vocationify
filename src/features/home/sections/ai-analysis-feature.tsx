@@ -77,10 +77,14 @@ export function AIAnalysisFeature() {
   return (
     <section 
       ref={sectionRef} 
-      className="relative w-full h-screen flex items-center justify-center overflow-visible bg-[#f8fafc] z-30 font-inter"
+      className="relative w-full h-screen flex items-center justify-center overflow-visible bg-transparent z-30 font-inter"
+      style={{
+        maskImage: 'linear-gradient(to bottom, black 92%, transparent 100%)',
+        WebkitMaskImage: 'linear-gradient(to bottom, black 92%, transparent 100%)'
+      }}
     >
       {/* Background - Mirrored from previous section for perfect seamless continuity */}
-      <div className="absolute inset-0 z-0 overflow-visible pointer-events-none bg-[#f8fafc]">
+      <div className="absolute inset-0 z-0 overflow-visible pointer-events-none bg-transparent">
           {/* 1. The Multi-Color Pastel Gradient Background (Fading Top to Bottom) */}
           <div 
             className="absolute inset-x-0 top-0 h-full opacity-100" 
@@ -98,9 +102,9 @@ export function AIAnalysisFeature() {
 
           {/* Premium Fine Grain Texture Overlay */}
           <div 
-            className="absolute inset-0 opacity-[0.25] mix-blend-overlay z-50 pointer-events-none"
+            className="absolute inset-0 opacity-[0.08] mix-blend-overlay z-50 pointer-events-none"
             style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
               backgroundRepeat: 'repeat',
               backgroundSize: '120px 120px',
             }}
@@ -126,7 +130,6 @@ export function AIAnalysisFeature() {
         <div className="relative w-full h-full flex items-end md:items-center justify-center translate-x-0 md:translate-x-[25%] lg:translate-x-[35%] pb-8 md:pb-0 mt-8">
           <LaptopStraight />
           {/* Ambient glow behind the straight laptop */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-blue-50/50 blur-[120px] -z-10 rounded-full" />
         </div>
       </div>
     </section>

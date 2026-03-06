@@ -10,7 +10,7 @@ import { AIAnalysisFeature } from "./sections/ai-analysis-feature";
 
 export function Home() {
   return (
-    <div className="min-h-screen bg-neutral-950 dark:bg-neutral-950 text-white dark:text-white">
+    <div className="min-h-screen text-foreground">
       {/* Header handles both authenticated and unauthenticated states beautifully */}
       <Header />
 

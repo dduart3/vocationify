@@ -4,7 +4,7 @@ import { Link } from "@tanstack/react-router";
 
 export function SleekLaptopSection() {
   return (
-    <section className="w-full min-h-[90vh] flex items-center justify-center relative bg-white overflow-visible z-20 font-inter py-32">
+    <section className="w-full min-h-[90vh] flex items-center justify-center relative bg-transparent overflow-visible z-20 font-inter py-32">
       
       {/* Subtle sleek ambient light */}
       <div className="absolute inset-0 pointer-events-none">

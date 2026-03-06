@@ -3,7 +3,7 @@ import { createRootRouteWithContext, Outlet } from '@tanstack/react-router'
 import GeneralError from '@/components/errors/general-error'
 import NotFoundError from '@/components/errors/not-found-error'
 import { AuthProvider } from '@/context/auth-context'
-import { ReactLenis } from '@studio-freight/react-lenis'
+import { ReactLenis } from 'lenis/react'
 import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -48,7 +48,7 @@ function RootComponent() {
           smoothWheel: true 
         }}
       >
-        <div className="min-h-screen bg-background flex flex-col">
+        <div className="min-h-screen bg-transparent flex flex-col">
           <main className="flex-1">
             <Outlet />
           </main>

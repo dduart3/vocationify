@@ -1,6 +1,6 @@
 import { Link, useLocation } from '@tanstack/react-router'
 import { useAuth } from '@/context/auth-context'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   IconMenu2,
   IconX,
@@ -14,10 +14,42 @@ export function Header() {
   const { user, profile, isAuthenticated, signOut } = useAuth()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
+  const [isVisible, setIsVisible] = useState(true)
+  const [lastScrollY, setLastScrollY] = useState(0)
   const location = useLocation()
 
+  useEffect(() => {
+    const controlNavbar = () => {
+      if (typeof window !== 'undefined') {
+        const currentScrollY = window.scrollY
+        
+        // Always show at the very top
+        if (currentScrollY < 10) {
+          setIsVisible(true)
+        } else if (currentScrollY > lastScrollY && currentScrollY > 100) {
+          // Hide when scrolling down significantly
+          setIsVisible(false)
+        } else if (currentScrollY < lastScrollY) {
+          // Show when scrolling up
+          setIsVisible(true)
+        }
+        
+        setLastScrollY(currentScrollY)
+      }
+    }
+
+    window.addEventListener('scroll', controlNavbar)
+    return () => {
+      window.removeEventListener('scroll', controlNavbar)
+    }
+  }, [lastScrollY])
+
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 py-4 px-4 sm:px-6 transition-all duration-300">
+    <header 
+      className={`fixed top-0 left-0 right-0 z-[100] py-4 px-4 sm:px-6 transition-all duration-500 ease-in-out ${
+        isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+      }`}
+    >
       <div className="container mx-auto">
         <div
           className="flex items-center justify-between rounded-[2rem] px-4 sm:px-6 py-3 bg-white/20 backdrop-blur-3xl border border-white/30 shadow-[inset_0_1px_1px_rgba(255,255,255,0.5),0_8px_32px_rgba(0,0,0,0.06)]"
@@ -34,16 +66,7 @@ export function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-0.5">
-            {!isAuthenticated ? (
-              <>
-                <NavLink to="/" active={location.pathname === '/'}>
-                  Inicio
-                </NavLink>
-                <NavLink to="/#features" active={false}>
-                  Características
-                </NavLink>
-              </>
-            ) : (
+            {isAuthenticated && (
               <>
                 <NavLink to="/dashboard" active={location.pathname === '/dashboard'}>
                   Dashboard
@@ -136,13 +159,7 @@ export function Header() {
             <nav className="flex flex-col gap-1">
               {!isAuthenticated ? (
                 <>
-                  <MobileNavLink to="/" active={location.pathname === '/'} onClick={() => setIsMenuOpen(false)}>
-                    Inicio
-                  </MobileNavLink>
-                  <MobileNavLink to="/#features" active={false} onClick={() => setIsMenuOpen(false)}>
-                    Características
-                  </MobileNavLink>
-                  <div className="pt-4 mt-2 flex flex-col gap-2">
+                  <div className="pt-2 flex flex-col gap-2">
                     <Link
                       to="/login"
                       className="py-2.5 text-sm font-medium text-neutral-700"

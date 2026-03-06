@@ -46,9 +46,6 @@ export function InteractiveLaptopSection() {
   const userTypedTextRef = useRef<HTMLDivElement>(null);
   const ariaAnswerContainerRef = useRef<HTMLDivElement>(null);
 
-  const currentPhaseRef = useRef<string>('phase0');
-  const masterTlRef = useRef<gsap.core.Timeline | null>(null);
-
   useEffect(() => {
     const section = sectionRef.current;
     if (!section || !textRef.current || !chatRef.current || !voiceRef.current) return;
@@ -76,110 +73,80 @@ export function InteractiveLaptopSection() {
     gsap.set(ariaAnswerContainerRef.current, { opacity: 0, y: 10 });
     gsap.set(ariaWords, { color: "rgba(51,65,85,0.3)" });
 
-    // Master Sequential Timeline
-    const masterTl = gsap.timeline({ paused: true });
-    masterTlRef.current = masterTl;
-
-    masterTl
-      .addLabel('phase0')
-      
-      // Text Appears
-      .to(textRef.current, { opacity: 1, duration: 0.3 })
-      .to(chars, { y: 0, opacity: 1, stagger: 0.03, ease: "power2.out", duration: 0.4 }, "<")
-      .addLabel('phase1')
-
-      // Text Disappears
-      .to(chars, { y: -10, opacity: 0, stagger: 0.02, duration: 0.3 })
-      .to(textRef.current, { opacity: 0, duration: 0.2 }, "<0.1")
-      .addLabel('phase2')
-
-      // Chat Appears
-      .to(chatRef.current, { opacity: 1, duration: 0.1 })
-      .to(chatBubble1Ref.current, { y: 0, opacity: 1, scale: 1, duration: 1.0, ease: "back.out(1.2)" })
-      .to(chatBubble2Ref.current, { y: 0, opacity: 1, scale: 1, duration: 1.0, ease: "back.out(1.2)" }, "-=0.6")
-      .to(chatBubble3Ref.current, { y: 0, opacity: 1, scale: 1, duration: 1.0, ease: "back.out(1.2)" }, "-=0.6")
-      .addLabel('phase3')
-
-      // Chat Sucks In
-      .to([chatBubble1Ref.current, chatBubble3Ref.current], { 
-        x: 400, y: 150, scale: 0, opacity: 0, duration: 1.5, ease: "expo.in" 
-      })
-      .to(chatBubble2Ref.current, { 
-        x: -400, y: -150, scale: 0, opacity: 0, duration: 1.5, ease: "expo.in" 
-      }, "<")
-      .to(chatRef.current, { opacity: 0, duration: 0.2 })
-      .addLabel('phase4')
-
-      // Voice Appears
-      .to(voiceRef.current, { opacity: 1, duration: 0.4 })
-      .to(voiceSwitchRef.current, { y: 0, opacity: 1, scale: 1, duration: 1.0, ease: "back.out(1.4)" })
-      .to(voiceThumbRef.current, { x: 0, duration: 1.2, ease: "power3.inOut" }, "+=0.2")
-      .to(voiceLabelRef.current, { color: "#ffffff", duration: 0.4 }, "<")
-      .to(chatLabelRef.current, { color: "#64748b", duration: 0.4 }, "<")
-      .addLabel('phase5')
-
-      // Voice Disappears & Persona Appears
-      .to(voiceRef.current, { opacity: 0, scale: 0.95, duration: 0.6 }, "+=0.4")
-      .to(personaContainerRef.current, { opacity: 1, scale: 1, y: 0, duration: 1.2, ease: "back.out(1.2)" })
-      .addLabel('phase6')
-
-      // User Types (phase7)
-      .to(transcribingShimmerRef.current, { opacity: 0, duration: 0.2 }, "+=0.2")
-      .to(userWords, { opacity: 1, stagger: 0.1, duration: 0.8 }, "<")
-      .addLabel('phase7')
-
-      // Send & Process (phase8)
-      .to(transcriptBoxContainerRef.current, { opacity: 0, scale: 0.8, y: -20, duration: 0.8 }, "+=0.2")
-      .to(personaListeningIconRef.current, { opacity: 0, duration: 0.3 }, "<")
-      .to(personaProcessingIconRef.current, { opacity: 1, duration: 0.3 }, "<0.2")
-      .addLabel('phase8')
-
-      // Aria Answers (phase9)
-      .to(personaProcessingIconRef.current, { opacity: 0, duration: 0.3 }, "+=0.4")
-      .to(personaSpeakingIconRef.current, { opacity: 1, duration: 0.3 }, "<")
-      .to(ariaAnswerContainerRef.current, { opacity: 1, y: 0, duration: 0.8, ease: "back.out(1.2)" }, "<")
-      .to(ariaWords, { color: "#334155", stagger: 0.15, duration: 1.5, ease: "power1.inOut" }, "<0.4")
-      .addLabel('phase9');
-
-    // Pinning trigger
-    const st = ScrollTrigger.create({
-      trigger: section,
-      start: 'top top',
-      end: '+=800%', 
-      pin: true,
-      anticipatePin: 1,
-      onUpdate: (self) => {
-        const p = self.progress;
-
-        // Contiguous breakpoints:
-        let targetPhase = 'phase0';
-        if (p >= 0.87) targetPhase = 'phase9';           // Aria answers
-        else if (p >= 0.80) targetPhase = 'phase8';      // Message sends, processing
-        else if (p >= 0.73) targetPhase = 'phase7';      // User types text
-        else if (p >= 0.65) targetPhase = 'phase6';      // Persona appears ONLY after laptop drops fully
-        else if (p >= 0.44) targetPhase = 'phase5';      // Voice switcher visible
-        else if (p >= 0.33) targetPhase = 'phase4';      // Chat sucked in
-        else if (p >= 0.22) targetPhase = 'phase3';      // Chat visible
-        else if (p >= 0.11) targetPhase = 'phase2';      // Text gone
-        else if (p >= 0.05) targetPhase = 'phase1';      // Text visible
-
-        if (currentPhaseRef.current !== targetPhase) {
-          currentPhaseRef.current = targetPhase;
-          // Dynamically adjust animation sweep speed: slower going down, faster going up 
-          // to clear the UI elements out of the way before the 3D laptop re-enters.
-          const targetTime = masterTl.labels[targetPhase];
-          gsap.to(masterTl, { 
-            time: targetTime, 
-            duration: self.direction === -1 ? 0.6 : 2.2, 
-            ease: "power2.inOut", 
-            overwrite: true 
-          });
-        }
+    // Master Direct Scroll Timeline mapped to 0-100 to match 3D laptop exactly
+    const masterTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: section,
+        start: 'top top',
+        end: '+=600%',
+        pin: true,
+        scrub: 2,
+        anticipatePin: 1
       }
     });
 
+    masterTl
+      // Text Appears
+      .to(textRef.current, { opacity: 1, duration: 1 }, 2)
+      .to(chars, { y: 0, opacity: 1, stagger: 0.05, ease: "power2.out", duration: 3 }, 2)
+      
+      // Text Disappears (Sliding UP to the other side, staggering from start)
+      .to(chars, { 
+        y: -40, 
+        opacity: 0, 
+        stagger: 0.04, 
+        ease: "power2.inOut", 
+        duration: 2.5 
+      }, 10)
+      .to(textRef.current, { opacity: 0, duration: 1 }, 12.5)
+
+      // Chat Appears
+      .to(chatRef.current, { opacity: 1, duration: 0.5 }, 20)
+      .to(chatBubble1Ref.current, { y: 0, opacity: 1, scale: 1, duration: 3, ease: "back.out(1.2)" }, 20)
+      .to(chatBubble2Ref.current, { y: 0, opacity: 1, scale: 1, duration: 3, ease: "back.out(1.2)" }, 22)
+      .to(chatBubble3Ref.current, { y: 0, opacity: 1, scale: 1, duration: 3, ease: "back.out(1.2)" }, 24)
+
+      // Chat Sucks In
+      .to([chatBubble1Ref.current, chatBubble3Ref.current], { 
+        x: 400, y: 150, scale: 0, opacity: 0, duration: 3, ease: "expo.in" 
+      }, 35)
+      .to(chatBubble2Ref.current, { 
+        x: -400, y: -150, scale: 0, opacity: 0, duration: 3, ease: "expo.in" 
+      }, 35)
+      .to(chatRef.current, { opacity: 0, duration: 1 }, 38)
+
+      // Voice Appears
+      .to(voiceRef.current, { opacity: 1, duration: 1 }, 42)
+      .to(voiceSwitchRef.current, { y: 0, opacity: 1, scale: 1, duration: 2, ease: "back.out(1.4)" }, 42)
+      .to(voiceThumbRef.current, { x: 0, duration: 2, ease: "power3.inOut" }, 45)
+      .to(voiceLabelRef.current, { color: "#ffffff", duration: 1 }, 45)
+      .to(chatLabelRef.current, { color: "#64748b", duration: 1 }, 45)
+
+      // Voice Disappears (Right as laptop starts dropping down at 55%)
+      .to(voiceRef.current, { opacity: 0, scale: 0.95, duration: 2 }, 53)
+
+      // Persona Appears (Fully visible after laptop drops at 65%)
+      .to(personaContainerRef.current, { opacity: 1, scale: 1, y: 0, duration: 4, ease: "back.out(1.2)" }, 66)
+
+      // User Types Text
+      .to(transcribingShimmerRef.current, { opacity: 0, duration: 1 }, 72)
+      .to(userWords, { opacity: 1, stagger: 0.5, duration: 3 }, 72)
+
+      // Send & Process Message
+      .to(transcriptBoxContainerRef.current, { opacity: 0, scale: 0.8, y: -20, duration: 2 }, 80)
+      .to(personaListeningIconRef.current, { opacity: 0, duration: 1 }, 80)
+      .to(personaProcessingIconRef.current, { opacity: 1, duration: 1 }, 81)
+
+      // Aria Answers
+      .to(personaProcessingIconRef.current, { opacity: 0, duration: 1 }, 87)
+      .to(personaSpeakingIconRef.current, { opacity: 1, duration: 1 }, 87)
+      .to(ariaAnswerContainerRef.current, { opacity: 1, y: 0, duration: 3, ease: "back.out(1.2)" }, 87)
+      .to(ariaWords, { color: "#334155", stagger: 0.3, duration: 5, ease: "power1.inOut" }, 89)
+      
+      // Final padding to ensure timeline adds up exactly to 100 for perfect synchronization
+      .to({}, { duration: 1 }, 100);
+
     return () => {
-      st.kill();
       masterTl.kill();
     };
   }, []);
@@ -188,7 +155,11 @@ export function InteractiveLaptopSection() {
     <section 
       ref={sectionRef}
       id="interactive-laptop-container"
-      className="relative w-full h-[100vh] flex items-center justify-center pointer-events-auto overflow-hidden bg-gradient-to-b from-white to-[#f8fafc]"
+      className="relative w-full h-[100vh] flex items-center justify-center pointer-events-auto overflow-hidden bg-transparent"
+      style={{
+        maskImage: 'linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%)',
+        WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%)'
+      }}
     >
       <div 
         className="relative w-full h-full flex items-center justify-center p-0 m-0 z-10"
@@ -291,7 +262,7 @@ export function InteractiveLaptopSection() {
       </div>
 
       {/* Background Text Overlay */}
-      <div className="absolute top-[30%] left-0 w-full flex justify-center z-50 pointer-events-none px-4">
+      <div className="absolute top-[30%] left-0 w-full flex justify-center z-0 pointer-events-none px-4">
         <h2 
           ref={textRef}
           className="text-4xl md:text-6xl font-bold text-slate-800 text-center tracking-tight leading-tight opacity-0"

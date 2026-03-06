@@ -47,9 +47,10 @@ export function HeroSection() {
   return (
     <section
       ref={sectionRef}
-      className="font-hero relative h-[100dvh] flex flex-col overflow-hidden"
+      className="font-hero relative h-[100dvh] flex flex-col overflow-hidden bg-transparent"
       style={{
-        backgroundColor: '#f5fbff',
+        maskImage: 'linear-gradient(to bottom, black 85%, transparent 100%)',
+        WebkitMaskImage: 'linear-gradient(to bottom, black 85%, transparent 100%)'
       }}
     >
       {/* Grid pattern + radial mask (no grid in center), behind photo */}
@@ -82,13 +83,13 @@ export function HeroSection() {
               rgba(255,99,71,0.25) 8%,
               rgba(255,165,0,0.3) 16%,
               rgba(255,215,0,0.25) 24%,
-              rgba(50,205,50,0.3) 32%,
+              rgba(255,105,180,0.2) 32%,
               rgba(0,191,255,0.25) 40%,
               rgba(138,43,226,0.3) 48%,
               rgba(255,99,71,0.25) 56%,
               rgba(255,165,0,0.3) 64%,
               rgba(255,215,0,0.25) 72%,
-              rgba(50,205,50,0.3) 80%,
+              rgba(255,105,180,0.2) 80%,
               rgba(0,191,255,0.25) 88%,
               transparent 100%
             )`,
@@ -98,12 +99,14 @@ export function HeroSection() {
         />
       </div>
 
-      {/* Grain effect overlay */}
+
+      {/* Premium Fine Grain Texture Overlay */}
       <div
-        className="absolute inset-0 pointer-events-none z-[1] opacity-[0.35] mix-blend-overlay"
+        className="absolute inset-0 pointer-events-none z-[1] opacity-[0.08] mix-blend-overlay"
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
           backgroundRepeat: 'repeat',
+          backgroundSize: '120px 120px',
         }}
       />
 
@@ -152,12 +155,6 @@ export function HeroSection() {
           />
         </div>
       </div>
-
-      {/* White gradient overlay mask */}
-      <div
-        className="absolute inset-x-0 bottom-0 h-24 sm:h-32 pointer-events-none z-10"
-        style={{ background: 'linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 80%, rgba(255,255,255,1) 100%)' }}
-      />
     </section>
   )
 }

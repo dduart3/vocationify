@@ -92,11 +92,7 @@ html, body {
 }
 
 body {
-  background: linear-gradient(135deg, 
-    var(--color-background) 0%, 
-    color-mix(in srgb, var(--color-primary-50) 30%, var(--color-background)) 50%, 
-    var(--color-background) 100%
-  );
+  background-color: #f8fafc;
   color: var(--color-foreground);
   font-family: var(--font-family-sans);
   font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
@@ -152,7 +148,7 @@ body {
 
 @layer base {
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
   }
 }
 

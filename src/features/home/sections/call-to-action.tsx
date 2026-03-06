@@ -26,7 +26,13 @@ export function CTASection() {
   const [isHovered, setIsHovered] = useState(false)
   
   return (
-    <section className="relative w-full bg-[#f8fafc] overflow-hidden pt-24 lg:pt-32 pb-0 font-inter z-20 flex flex-col items-center">
+    <section 
+      className="relative w-full bg-transparent overflow-hidden pt-24 lg:pt-32 pb-0 font-inter z-20 flex flex-col items-center"
+      style={{
+        maskImage: 'linear-gradient(to bottom, transparent 0%, black 8%)',
+        WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 8%)'
+      }}
+    >
       {/* Background Gradient & Grain - Inverted to an ellipse radiating from the bottom */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
           <div 
@@ -41,9 +47,9 @@ export function CTASection() {
           >
             {/* Premium Fine Grain Texture Overlay masked inside the ellipse */}
             <div 
-              className="absolute inset-0 opacity-[0.35] mix-blend-overlay pointer-events-none"
+              className="absolute inset-0 opacity-[0.08] mix-blend-overlay pointer-events-none"
               style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+                backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
                 backgroundRepeat: 'repeat',
                 backgroundSize: '120px 120px',
               }}
@@ -51,10 +57,10 @@ export function CTASection() {
           </div>
       </div>
 
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 flex flex-col justify-start items-center text-center">
-        
-        {/* Floating Pills - 3D depth style spread left and right */}
-        <div className="absolute inset-0 z-0 pointer-events-none hidden lg:block">
+      {/* Floating Pills - 3D depth style spread left and right */}
+      {/* Container is back to 7xl, but scales down on smaller screens to prevent cropping */}
+      <div className="absolute inset-x-0 inset-y-0 z-0 pointer-events-none hidden lg:block w-full max-w-7xl mx-auto overflow-visible">
+          <div className="relative w-full h-full lg:scale-75 xl:scale-90 2xl:scale-100 transition-transform duration-700 origin-center">
             {CAREERS.map((career, i) => (
               <div 
                 key={i}
@@ -75,7 +81,10 @@ export function CTASection() {
                 </div>
               </div>
             ))}
-        </div>
+          </div>
+      </div>
+
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 flex flex-col justify-start items-center text-center">
 
         {/* Text and Button at the Top */}
         <div className="relative z-40 max-w-3xl mx-auto flex flex-col items-center mb-16 sm:mb-20">
