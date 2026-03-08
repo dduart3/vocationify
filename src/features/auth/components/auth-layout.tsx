@@ -1,7 +1,8 @@
 import { useRef, useEffect, type ReactNode } from 'react'
 import { Link } from '@tanstack/react-router'
 import gsap from 'gsap'
-import { IconArrowLeft, IconSparkles } from '@tabler/icons-react'
+import { IconArrowLeft } from '@tabler/icons-react'
+import { MeshGradient } from '@paper-design/shaders-react'
 import { Logo } from '@/components/logo'
 
 interface AuthLayoutProps {
@@ -21,201 +22,140 @@ export function AuthLayout({
   showBackButton = true,
   backTo = "/"
 }: AuthLayoutProps) {
-  // Refs for animations
-  const containerRef = useRef<HTMLDivElement>(null)
-  const cardRef = useRef<HTMLDivElement>(null)
-  const logoRef = useRef<HTMLDivElement>(null)
-  const titleRef = useRef<HTMLDivElement>(null)
-  const contentRef = useRef<HTMLDivElement>(null)
-  const backButtonRef = useRef<HTMLDivElement>(null)
-  const floatingElementsRef = useRef<(HTMLDivElement | null)[]>([])
-
-  // Helper function to set floating element refs
-  const setFloatingElementRef = (index: number) => (el: HTMLDivElement | null) => {
-    floatingElementsRef.current[index] = el
-  }
+  const formContainerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const container = containerRef.current
-    const card = cardRef.current
-    const logo = logoRef.current
-    const title = titleRef.current
-    const content = contentRef.current
-    const backButton = backButtonRef.current
+    const formContainer = formContainerRef.current
 
-    if (!container || !card) return
-
-    // Initial states
-    gsap.set(card, { 
-      opacity: 0, 
-      y: 30, 
-      scale: 0.95
-    })
-
-    const elementsToAnimate = [backButton, logo, title, content].filter(Boolean)
-    gsap.set(elementsToAnimate, { opacity: 0, y: 20 })
-
-    // Floating elements animation
-    floatingElementsRef.current.forEach((el, index) => {
-      if (el) {
-        gsap.set(el, { opacity: 0, scale: 0 })
-        gsap.to(el, {
-          opacity: 1,
-          scale: 1,
-          duration: 1,
-          delay: 0.3 + index * 0.1,
-          ease: "back.out(1.7)"
-        })
-        
-        // Continuous floating animation
-        gsap.to(el, {
-          y: -8,
-          duration: 2 + index * 0.3,
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut",
-          delay: index * 0.2
-        })
-      }
-    })
-
-    // Main animation timeline
-    const tl = gsap.timeline({ delay: 0.1 })
-
-    // Card entrance
-    tl.to(card, {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      duration: 0.8,
-      ease: "power3.out"
-    })
-
-    // Content animations
-    elementsToAnimate.forEach((element, index) => {
-      if (element) {
-        tl.to(element, {
-          opacity: 1,
-          y: 0,
-          duration: 0.6,
-          ease: "power3.out"
-        }, index === 0 ? "-=0.6" : "-=0.4")
-      }
-    })
-
-
+    if (formContainer) {
+      gsap.fromTo(formContainer, 
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }
+      )
+    }
   }, [])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center p-3 sm:p-4 relative overflow-hidden">
-      {/* Enhanced Background Effects */}
-      <div className="absolute inset-0">
-        {/* Primary gradient orbs */}
-        <div className="absolute top-1/4 left-1/4 w-72 h-72 sm:w-96 sm:h-96 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-72 h-72 sm:w-96 sm:h-96 bg-gradient-to-r from-purple-600/15 to-pink-600/15 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[300px] sm:w-[600px] sm:h-[400px] bg-gradient-to-r from-blue-500/8 to-purple-500/8 rounded-full blur-3xl"></div>
-      </div>
-
-      {/* Floating Decorative Elements */}
-      <div className="absolute inset-0 pointer-events-none">
-        {[...Array(4)].map((_, i) => (
-          <div
-            key={i}
-            ref={setFloatingElementRef(i)}
-            className={`absolute w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${
-              i % 3 === 0 ? 'bg-blue-400/30' : 
-              i % 3 === 1 ? 'bg-purple-400/30' : 'bg-pink-400/30'
-            }`}
-            style={{
-              top: `${25 + (i * 20)}%`,
-              left: `${15 + (i * 20)}%`,
-            }}
-          />
-        ))}
-      </div>
-
-      <div ref={containerRef} className="w-full max-w-sm sm:max-w-md relative z-10">
-        {/* Back Button */}
-        {showBackButton && (
-          <div ref={backButtonRef} className="mb-4 sm:mb-6">
-            <Link 
-              to={backTo}
-              className="inline-flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2 rounded-xl sm:rounded-2xl text-slate-300 hover:text-white transition-all duration-300 group text-sm"
-              style={{
-                background: 'rgba(255, 255, 255, 0.05)',
-                backdropFilter: 'blur(20px)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
-              }}
-            >
-              <IconArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform duration-200" />
-              <span className="font-medium">Volver al inicio</span>
-            </Link>
+    <div className="relative min-h-screen w-full bg-white flex flex-col md:flex-row overflow-hidden">
+      {/* 1. Left Decorative Side (Approx 42% width) */}
+      <div className="hidden md:flex w-[42%] lg:w-[45%] h-screen p-3 lg:p-4 flex-col shrink-0">
+        <div className="flex-1 relative rounded-[2.25rem] overflow-hidden shadow-[0_20px_50px_-12px_rgba(0,0,0,0.06)]">
+          {/* Mesh Gradient Shader Background inside the card */}
+          <div className="absolute inset-0 pointer-events-none z-0">
+            <MeshGradient
+              colors={["#1d4ed8", "#1e40af", "#1e3a8a", "#2563eb"]}
+              speed={0.3}
+              distortion={2}
+              swirl={0.1}
+              className="w-full h-full"
+              style={{ width: '100%', height: '100%', position: 'absolute', inset: 0 }}
+            />
           </div>
+            
+            {/* Extra Large Blended Logo Icon - Centered/Cropped with Texture */}
+            <div className="absolute -bottom-[65%] -right-[80%] w-[1800px] h-[1800px] opacity-[0.16] mix-blend-overlay pointer-events-none z-0">
+               <div className="relative w-full h-full">
+                 <img 
+                  src="/vocationify-icon.svg" 
+                  alt="" 
+                  className="w-full h-full object-contain" 
+                 />
+                 {/* Internal Icon Texture Overlay */}
+                 <div 
+                  className="absolute inset-0 opacity-[0.5] mix-blend-soft-light pointer-events-none"
+                  style={{
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+                    backgroundRepeat: 'repeat',
+                    backgroundSize: '80px 80px',
+                  }}
+                />
+               </div>
+            </div>
+
+            {/* Centered Persona AI Element - Small and subtle reference removed */}
+            
+            {/* Grain Effect - Topmost layer of the decorative card */}
+            <div 
+              className="absolute inset-0 opacity-[0.65] mix-blend-overlay pointer-events-none z-20"
+              style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2.0' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+                backgroundRepeat: 'repeat',
+                backgroundSize: '120px 120px',
+              }}
+            />
+
+          <div className="relative z-10 flex flex-col h-full p-12 lg:p-14 justify-end">
+            <div>
+              <p className="text-[11px] font-bold uppercase tracking-[0.4em] text-white/70 mb-6">
+                Vocationify AI
+              </p>
+              <h2 className="text-[1.85rem] lg:text-[2.25rem] font-bold tracking-tight text-white leading-[1.1] max-w-[340px]">
+                Descubre tu camino profesional con claridad y propósito
+              </h2>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 2. Right Form Side */}
+      <div className="flex-1 flex flex-col relative bg-white">
+        {/* Simple Back button - Top Right */}
+        {showBackButton && (
+          <Link
+            to={backTo}
+            className="absolute right-8 top-10 lg:right-12 lg:top-12 inline-flex items-center text-[13px] font-medium text-slate-500 hover:text-slate-900 transition-colors gap-2 z-50"
+          >
+            <IconArrowLeft className="w-4 h-4" />
+            Volver al inicio
+          </Link>
         )}
 
-        {/* Main Card */}
-        <div 
-          ref={cardRef}
-          className="relative"
-          style={{
-            background: 'rgba(255, 255, 255, 0.08)',
-            backdropFilter: 'blur(20px)',
-            borderRadius: '20px',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            boxShadow: `
-              0 20px 40px -12px rgba(0, 0, 0, 0.4),
-              0 0 0 1px rgba(255, 255, 255, 0.05),
-              inset 0 1px 0 rgba(255, 255, 255, 0.1)
-            `,
-            padding: '1.5rem',
-            transformStyle: 'preserve-3d',
-          }}
-        >
-          {/* Inner glow effect */}
-          <div 
-            className="absolute inset-0 rounded-[20px] opacity-40"
-            style={{
-              background: 'radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.08) 0%, transparent 50%)',
-              pointerEvents: 'none'
-            }}
-          />
-
-          {/* Logo */}
-          {showLogo && (
-            <div ref={logoRef} className="text-center mb-6">
-              <div className="flex justify-center mb-3 relative">
-                <div className="relative">
-                  <Logo size={44} className="drop-shadow-2xl relative z-10" />
-                  {/* Logo glow effect */}
-                  <div className="absolute inset-0 bg-blue-500/15 rounded-full blur-lg scale-125 animate-pulse"></div>
-                </div>
-              </div>
-              <div className="flex items-center justify-center gap-2">
-                <h1 className="text-xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
-                  Vocationify
-                </h1>
-                <IconSparkles size={16} className="text-blue-400 animate-pulse" />
-              </div>
+        {/* Content Centered Container */}
+        <div className="flex-1 flex flex-col items-center justify-center p-8 md:p-12 lg:p-20">
+          <div ref={formContainerRef} className="w-full max-w-[420px] flex flex-col">
+            <div className="flex flex-col text-left items-start mb-10">
+              {showLogo && (
+                 <div className="mb-8">
+                   <Logo size={42} showText={false} />
+                 </div>
+              )}
+              <h1 className="text-[2.25rem] font-black tracking-tight text-slate-900 mb-3 leading-[1.1]">
+                {title}
+              </h1>
+              <p className="text-[15px] leading-relaxed text-slate-500 max-w-[340px]">
+                {subtitle}
+              </p>
             </div>
-          )}
-
-          {/* Title */}
-          <div ref={titleRef} className="text-center mb-6">
-            <h2 className="text-lg sm:text-xl font-semibold text-white mb-2">
-              {title}
-            </h2>
-            <p className="text-slate-400 text-sm leading-relaxed">
-              {subtitle}
-            </p>
-          </div>
-
-          {/* Content */}
-          <div ref={contentRef}>
-            {children}
+            
+            <div className="w-full">
+              {children}
+            </div>
+            
+            <div className="border-t border-slate-100 pt-8 mt-10">
+              <p className="text-left text-[14px] text-slate-400 leading-relaxed font-medium">
+                Al continuar, aceptas nuestros{" "}
+                <a
+                  href="#"
+                  className="underline underline-offset-4 hover:text-slate-600 font-bold transition-all"
+                >
+                  Términos de servicio
+                </a>{" "}
+                y{" "}
+                <a
+                  href="#"
+                  className="underline underline-offset-4 hover:text-slate-600 font-bold transition-all"
+                >
+                  Política de privacidad
+                </a>
+                .
+              </p>
+            </div>
           </div>
         </div>
       </div>
     </div>
+
   )
 }
+
+

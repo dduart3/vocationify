@@ -36,7 +36,7 @@ export function CareersTable({ columns, data, isLoading = false }: CareersTableP
 
   return (
     <div className="bg-white/50 backdrop-blur-2xl border border-white/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_4px_20px_rgba(0,0,0,0.03)] rounded-[2rem] flex flex-col min-h-0 h-full overflow-hidden">
-      <div className="flex-1 overflow-y-auto custom-scrollbar min-h-0">
+      <div className="flex-1 overflow-auto custom-scrollbar min-h-0" data-lenis-prevent="true">
         <table className="w-full table-fixed">
           <thead className="sticky top-0 z-20">
             {table.getHeaderGroups().map(headerGroup => (

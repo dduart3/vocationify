@@ -36,7 +36,7 @@ export function ResultsTable({ columns, data, isLoading = false }: ResultsTableP
 
   return (
     <div className="bg-white/50 backdrop-blur-2xl border border-white/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_4px_20px_rgba(0,0,0,0.03)] rounded-[2rem] flex flex-col w-full pb-4">
-      <div className="w-full">
+      <div className="w-full overflow-auto custom-scrollbar" data-lenis-prevent="true">
         <table className="w-full table-fixed">
           <thead className="sticky top-0 z-20">
             {table.getHeaderGroups().map(headerGroup => (

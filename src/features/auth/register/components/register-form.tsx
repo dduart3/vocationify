@@ -168,46 +168,17 @@ export function RegisterForm({ onSubmit, loading = false, error }: RegisterFormP
     }
   })
 
+  const inputBaseClass = "flex h-10 w-full rounded-md border bg-transparent px-3 text-sm placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
+
   return (
     <div className="space-y-4">
       {/* Error Message */}
       {error && (
-        <div 
-          className="p-3 rounded-xl flex items-center gap-2 animate-fade-in"
-          style={{
-            background: 'rgba(239, 68, 68, 0.1)',
-            backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(239, 68, 68, 0.2)',
-            boxShadow: '0 8px 32px rgba(239, 68, 68, 0.1)'
-          }}
-        >
-          <IconAlertCircle size={16} className="text-red-400 flex-shrink-0" />
-          <p className="text-red-300 text-sm">{error}</p>
+        <div className="p-3 rounded-md bg-red-50 border border-red-200 flex items-center space-x-3">
+          <IconAlertCircle size={16} className="text-red-500 flex-shrink-0" />
+          <p className="text-red-500 text-sm font-medium">{error}</p>
         </div>
       )}
-
-      {/* Google Register Button - DISABLED */}
-      {/* <button
-        onClick={() => onSocialLogin('google')}
-        disabled={loading}
-        className="w-full py-3 px-4 rounded-xl font-medium text-white transition-all duration-300 flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed group text-sm mb-4"
-        style={{
-          background: 'rgba(255, 255, 255, 0.08)',
-          backdropFilter: 'blur(10px)',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
-        }}
-      >
-        <IconBrandGoogle size={16} className="text-red-400" />
-        <span>Registrarse con Google</span>
-      </button> */}
-
-      {/* Divider - DISABLED */}
-      {/* <div className="flex items-center my-5">
-        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-slate-600 to-transparent"></div>
-        <span className="px-4 text-xs text-slate-400 font-medium">o completa el formulario</span>
-        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-slate-600 to-transparent"></div>
-      </div> */}
 
       {/* Form */}
       <form 
@@ -230,41 +201,32 @@ export function RegisterForm({ onSubmit, loading = false, error }: RegisterFormP
               }
             }}
             children={(field) => (
-              <div>
-                <label className="block text-sm font-medium text-slate-200 mb-2">
+              <div className="space-y-2">
+                <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-slate-900">
                   Nombre
                 </label>
                 <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
-                    <IconUser size={16} className="text-slate-400 group-focus-within:text-blue-400 transition-colors duration-200" />
-                  </div>
+                  <IconUser 
+                    size={16} 
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 transition-colors duration-200 z-10" 
+                  />
                   <input
                     type="text"
                     value={field.state.value}
                     onBlur={field.handleBlur}
                     onChange={(e) => field.handleChange(e.target.value)}
-                    className={`w-full pl-10 pr-3 py-3 rounded-xl text-white placeholder-slate-400 transition-all duration-300 focus:outline-none focus:ring-2 text-sm ${
+                    className={`${inputBaseClass} pl-10 ${
                       field.state.meta.errors.length > 0
-                        ? 'focus:ring-red-500/50'
-                        : 'focus:ring-blue-500/50'
+                        ? 'border-red-500 focus-visible:ring-red-500'
+                        : 'border-slate-200'
                     }`}
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.08)',
-                      backdropFilter: 'blur(10px)',
-                      border: `1px solid ${
-                        field.state.meta.errors.length > 0
-                          ? 'rgba(239, 68, 68, 0.3)'
-                          : 'rgba(255, 255, 255, 0.1)'
-                      }`,
-                      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
-                    }}
                     placeholder="Juan"
                   />
                 </div>
                 {field.state.meta.errors.length > 0 && (
-                  <div className="mt-1.5 flex items-center gap-2 animate-fade-in">
-                    <IconAlertCircle size={12} className="text-red-400" />
-                    <p className="text-red-400 text-xs">
+                  <div className="flex items-center gap-2 animate-fade-in">
+                    <IconAlertCircle size={12} className="text-red-500" />
+                    <p className="text-red-500 text-xs font-medium">
                       {field.state.meta.errors[0]}
                     </p>
                   </div>
@@ -283,41 +245,32 @@ export function RegisterForm({ onSubmit, loading = false, error }: RegisterFormP
               }
             }}
             children={(field) => (
-              <div>
-                <label className="block text-sm font-medium text-slate-200 mb-2">
+              <div className="space-y-2">
+                <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-slate-900">
                   Apellido
                 </label>
                 <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
-                    <IconUser size={16} className="text-slate-400 group-focus-within:text-blue-400 transition-colors duration-200" />
-                  </div>
+                  <IconUser 
+                    size={16} 
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 transition-colors duration-200 z-10" 
+                  />
                   <input
                     type="text"
                     value={field.state.value}
                     onBlur={field.handleBlur}
                     onChange={(e) => field.handleChange(e.target.value)}
-                    className={`w-full pl-10 pr-3 py-3 rounded-xl text-white placeholder-slate-400 transition-all duration-300 focus:outline-none focus:ring-2 text-sm ${
+                    className={`${inputBaseClass} pl-10 ${
                       field.state.meta.errors.length > 0
-                        ? 'focus:ring-red-500/50'
-                        : 'focus:ring-blue-500/50'
+                        ? 'border-red-500 focus-visible:ring-red-500'
+                        : 'border-slate-200'
                     }`}
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.08)',
-                      backdropFilter: 'blur(10px)',
-                      border: `1px solid ${
-                        field.state.meta.errors.length > 0
-                          ? 'rgba(239, 68, 68, 0.3)'
-                          : 'rgba(255, 255, 255, 0.1)'
-                      }`,
-                      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
-                    }}
                     placeholder="Pérez"
                   />
                 </div>
                 {field.state.meta.errors.length > 0 && (
-                  <div className="mt-1.5 flex items-center gap-2 animate-fade-in">
-                    <IconAlertCircle size={12} className="text-red-400" />
-                    <p className="text-red-400 text-xs">
+                  <div className="flex items-center gap-2 animate-fade-in">
+                    <IconAlertCircle size={12} className="text-red-500" />
+                    <p className="text-red-500 text-xs font-medium">
                       {field.state.meta.errors[0]}
                     </p>
                   </div>
@@ -337,41 +290,32 @@ export function RegisterForm({ onSubmit, loading = false, error }: RegisterFormP
             }
           }}
           children={(field) => (
-            <div>
-              <label className="block text-sm font-medium text-slate-200 mb-2">
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-slate-900">
                 Correo Electrónico
               </label>
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
-                  <IconMail size={16} className="text-slate-400 group-focus-within:text-blue-400 transition-colors duration-200" />
-                </div>
+                <IconMail 
+                  size={16} 
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 transition-colors duration-200 z-10" 
+                />
                 <input
                   type="email"
                   value={field.state.value}
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  className={`w-full pl-10 pr-3 py-3 rounded-xl text-white placeholder-slate-400 transition-all duration-300 focus:outline-none focus:ring-2 text-sm ${
+                  className={`${inputBaseClass} pl-10 ${
                     field.state.meta.errors.length > 0
-                      ? 'focus:ring-red-500/50'
-                      : 'focus:ring-blue-500/50'
+                      ? 'border-red-500 focus-visible:ring-red-500'
+                      : 'border-slate-200'
                   }`}
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.08)',
-                    backdropFilter: 'blur(10px)',
-                    border: `1px solid ${
-                      field.state.meta.errors.length > 0
-                        ? 'rgba(239, 68, 68, 0.3)'
-                        : 'rgba(255, 255, 255, 0.1)'
-                    }`,
-                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
-                  }}
                   placeholder="juan@email.com"
                 />
               </div>
               {field.state.meta.errors.length > 0 && (
-                <div className="mt-1.5 flex items-center gap-2 animate-fade-in">
-                  <IconAlertCircle size={12} className="text-red-400" />
-                  <p className="text-red-400 text-xs">
+                <div className="flex items-center gap-2 animate-fade-in">
+                  <IconAlertCircle size={12} className="text-red-500" />
+                  <p className="text-red-500 text-xs font-medium">
                     {field.state.meta.errors[0]}
                   </p>
                 </div>
@@ -392,48 +336,39 @@ export function RegisterForm({ onSubmit, loading = false, error }: RegisterFormP
               }
             }}
             children={(field) => (
-              <div>
-                <label className="block text-sm font-medium text-slate-200 mb-2">
+              <div className="space-y-2">
+                <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-slate-900">
                   Contraseña
                 </label>
                 <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
-                    <IconLock size={16} className="text-slate-400 group-focus-within:text-blue-400 transition-colors duration-200" />
-                  </div>
+                  <IconLock 
+                    size={16} 
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 transition-colors duration-200 z-10" 
+                  />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={field.state.value}
                     onBlur={field.handleBlur}
                     onChange={(e) => field.handleChange(e.target.value)}
-                    className={`w-full pl-10 pr-10 py-3 rounded-xl text-white placeholder-slate-400 transition-all duration-300 focus:outline-none focus:ring-2 text-sm ${
+                    className={`${inputBaseClass} pl-10 pr-10 ${
                       field.state.meta.errors.length > 0
-                        ? 'focus:ring-red-500/50'
-                        : 'focus:ring-blue-500/50'
+                        ? 'border-red-500 focus-visible:ring-red-500'
+                        : 'border-slate-200'
                     }`}
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.08)',
-                      backdropFilter: 'blur(10px)',
-                      border: `1px solid ${
-                        field.state.meta.errors.length > 0
-                          ? 'rgba(239, 68, 68, 0.3)'
-                          : 'rgba(255, 255, 255, 0.1)'
-                      }`,
-                      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
-                    }}
                     placeholder="••••••••"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-white transition-colors duration-200 z-10"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-900 transition-colors duration-200 z-10"
                   >
                     {showPassword ? <IconEyeOff size={16} /> : <IconEye size={16} />}
                   </button>
                 </div>
                 {field.state.meta.errors.length > 0 && (
-                  <div className="mt-1.5 flex items-center gap-2 animate-fade-in">
-                    <IconAlertCircle size={12} className="text-red-400" />
-                    <p className="text-red-400 text-xs">
+                  <div className="flex items-center gap-2 animate-fade-in">
+                    <IconAlertCircle size={12} className="text-red-500" />
+                    <p className="text-red-500 text-xs font-medium">
                       {field.state.meta.errors[0]}
                     </p>
                   </div>
@@ -455,48 +390,39 @@ export function RegisterForm({ onSubmit, loading = false, error }: RegisterFormP
               }
             }}
             children={(field) => (
-              <div>
-                <label className="block text-sm font-medium text-slate-200 mb-2">
+              <div className="space-y-2">
+                <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-slate-900">
                   Confirmar Contraseña
                 </label>
                 <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
-                    <IconLock size={16} className="text-slate-400 group-focus-within:text-blue-400 transition-colors duration-200" />
-                  </div>
+                  <IconLock 
+                    size={16} 
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 transition-colors duration-200 z-10" 
+                  />
                   <input
                     type={showConfirmPassword ? 'text' : 'password'}
                     value={field.state.value}
                     onBlur={field.handleBlur}
                     onChange={(e) => field.handleChange(e.target.value)}
-                    className={`w-full pl-10 pr-10 py-3 rounded-xl text-white placeholder-slate-400 transition-all duration-300 focus:outline-none focus:ring-2 text-sm ${
+                    className={`${inputBaseClass} pl-10 pr-10 ${
                       field.state.meta.errors.length > 0
-                        ? 'focus:ring-red-500/50'
-                        : 'focus:ring-blue-500/50'
+                        ? 'border-red-500 focus-visible:ring-red-500'
+                        : 'border-slate-200'
                     }`}
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.08)',
-                      backdropFilter: 'blur(10px)',
-                      border: `1px solid ${
-                        field.state.meta.errors.length > 0
-                          ? 'rgba(239, 68, 68, 0.3)'
-                          : 'rgba(255, 255, 255, 0.1)'
-                      }`,
-                      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
-                    }}
                     placeholder="••••••••"
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-white transition-colors duration-200 z-10"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-900 transition-colors duration-200 z-10"
                   >
                     {showConfirmPassword ? <IconEyeOff size={16} /> : <IconEye size={16} />}
                   </button>
                 </div>
                 {field.state.meta.errors.length > 0 && (
-                  <div className="mt-1.5 flex items-center gap-2 animate-fade-in">
-                    <IconAlertCircle size={12} className="text-red-400" />
-                    <p className="text-red-400 text-xs">
+                  <div className="flex items-center gap-2 animate-fade-in">
+                    <IconAlertCircle size={12} className="text-red-500" />
+                    <p className="text-red-500 text-xs font-medium">
                       {field.state.meta.errors[0]}
                     </p>
                   </div>
@@ -516,14 +442,15 @@ export function RegisterForm({ onSubmit, loading = false, error }: RegisterFormP
             }
           }}
           children={(field) => (
-            <div>
-              <label className="block text-sm font-medium text-slate-200 mb-2">
-                Teléfono <span className="text-slate-400">(opcional)</span>
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-slate-900">
+                Teléfono <span className="text-slate-500 font-normal">(opcional)</span>
               </label>
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
-                  <IconPhone size={16} className="text-slate-400 group-focus-within:text-blue-400 transition-colors duration-200" />
-                </div>
+                <IconPhone 
+                  size={16} 
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 transition-colors duration-200 z-10" 
+                />
                 <input
                   type="tel"
                   value={field.state.value || ''}
@@ -532,29 +459,19 @@ export function RegisterForm({ onSubmit, loading = false, error }: RegisterFormP
                     const formatted = formatPhoneNumber(e.target.value)
                     field.handleChange(formatted)
                   }}
-                  className={`w-full pl-10 pr-3 py-3 rounded-xl text-white placeholder-slate-400 transition-all duration-300 focus:outline-none focus:ring-2 text-sm ${
+                  className={`${inputBaseClass} pl-10 ${
                     field.state.meta.errors.length > 0
-                      ? 'focus:ring-red-500/50'
-                      : 'focus:ring-blue-500/50'
+                      ? 'border-red-500 focus-visible:ring-red-500'
+                      : 'border-slate-200'
                   }`}
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.08)',
-                    backdropFilter: 'blur(10px)',
-                    border: `1px solid ${
-                      field.state.meta.errors.length > 0
-                        ? 'rgba(239, 68, 68, 0.3)'
-                        : 'rgba(255, 255, 255, 0.1)'
-                    }`,
-                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
-                  }}
                   placeholder="0414 123 45 67"
                   maxLength={14}
                 />
               </div>
               {field.state.meta.errors.length > 0 && (
-                <div className="mt-1.5 flex items-center gap-2 animate-fade-in">
-                  <IconAlertCircle size={12} className="text-red-400" />
-                  <p className="text-red-400 text-xs">
+                <div className="flex items-center gap-2 animate-fade-in">
+                  <IconAlertCircle size={12} className="text-red-500" />
+                  <p className="text-red-500 text-xs font-medium">
                     {field.state.meta.errors[0]}
                   </p>
                 </div>
@@ -567,26 +484,21 @@ export function RegisterForm({ onSubmit, loading = false, error }: RegisterFormP
         <form.Field
           name="address"
           children={(field) => (
-            <div>
-              <label className="block text-sm font-medium text-slate-200 mb-2">
-                Dirección <span className="text-slate-400">(opcional)</span>
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-slate-900">
+                Dirección <span className="text-slate-500 font-normal">(opcional)</span>
               </label>
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
-                  <IconMapPin size={16} className="text-slate-400 group-focus-within:text-blue-400 transition-colors duration-200" />
-                </div>
+                <IconMapPin 
+                  size={16} 
+                  className="absolute left-3 top-3 text-slate-400 group-focus-within:text-slate-900 transition-colors duration-200 z-10" 
+                />
                 <textarea
                   rows={2}
                   value={field.state.value}
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  className="w-full pl-10 pr-3 py-3 rounded-xl text-white placeholder-slate-400 transition-all duration-300 focus:outline-none focus:ring-2 text-sm focus:ring-blue-500/50 resize-none"
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.08)',
-                    backdropFilter: 'blur(10px)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
-                  }}
+                  className="flex min-h-[60px] w-full rounded-md border border-slate-200 bg-transparent px-3 pl-10 py-2 text-sm placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none transition-colors"
                   placeholder="Av. Universidad, Maracaibo, Zulia"
                 />
               </div>
@@ -598,23 +510,23 @@ export function RegisterForm({ onSubmit, loading = false, error }: RegisterFormP
         <form.Field
           name="location"
           children={(field) => (
-            <div>
-              <label className="block text-sm font-medium text-slate-200 mb-2">
-                Ubicación en el mapa <span className="text-slate-400">(opcional)</span>
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-slate-900">
+                Ubicación en el mapa <span className="text-slate-500 font-normal">(opcional)</span>
               </label>
-              <p className="text-slate-400 text-xs mb-3">
+              <p className="text-slate-500 text-xs mt-1">
                 Haz clic en el mapa para seleccionar tu ubicación
               </p>
-              <LocationPicker
-                value={field.state.value}
-                onChange={(location) => {
-                  console.log('📍 Register - LocationPicker onChange:', location)
-                  field.handleChange(location || undefined)
-                  console.log('📍 Register - Field value after change:', field.state.value)
-                }}
-              />
+              <div className="rounded-md border border-slate-200 overflow-hidden mt-2">
+                <LocationPicker
+                  value={field.state.value}
+                  onChange={(location) => {
+                    field.handleChange(location || undefined)
+                  }}
+                />
+              </div>
               {field.state.value && (
-                <p className="text-green-400 text-xs mt-2">
+                <p className="text-emerald-600 font-medium text-xs mt-2">
                   ✓ Ubicación seleccionada: {field.state.value.latitude.toFixed(6)}, {field.state.value.longitude.toFixed(6)}
                 </p>
               )}
@@ -629,26 +541,17 @@ export function RegisterForm({ onSubmit, loading = false, error }: RegisterFormP
             <button
               type="submit"
               disabled={!canSubmit || loading || isSubmitting}
-              className="w-full py-3 px-4 rounded-xl font-semibold text-white transition-all duration-300 flex items-center justify-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98] text-sm"
-              style={{
-                background: (!canSubmit || loading || isSubmitting)
-                  ? 'rgba(59, 130, 246, 0.5)' 
-                  : 'linear-gradient(135deg, rgba(59, 130, 246, 0.8) 0%, rgba(147, 51, 234, 0.8) 100%)',
-                boxShadow: (!canSubmit || loading || isSubmitting)
-                  ? 'none' 
-                  : '0 15px 30px rgba(59, 130, 246, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1)',
-                backdropFilter: 'blur(10px)'
-              }}
+              className="inline-flex w-full items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-slate-900 text-slate-50 hover:bg-slate-900/90 h-10 px-4 py-2 mt-4"
             >
               {(loading || isSubmitting) ? (
                 <>
-                  <IconLoader2 size={16} className="animate-spin" />
-                  <span>Creando cuenta...</span>
+                  <IconLoader2 size={16} className="mr-2 animate-spin" />
+                  Creando cuenta...
                 </>
               ) : (
                 <>
-                  <span>Crear Cuenta</span>
-                  <IconArrowRight size={16} className="group-hover:translate-x-1 transition-transform duration-200" />
+                  Crear Cuenta
+                  <IconArrowRight size={16} className="ml-2" />
                 </>
               )}
             </button>
@@ -657,12 +560,12 @@ export function RegisterForm({ onSubmit, loading = false, error }: RegisterFormP
       </form>
 
       {/* Sign In Link */}
-      <div className="text-center pt-3">
-        <p className="text-slate-400 text-xs">
+      <div className="text-center pt-2">
+        <p className="text-slate-500 text-sm">
           ¿Ya tienes una cuenta?{' '}
           <Link 
             to="/login" 
-            className="text-blue-400 hover:text-blue-300 transition-colors duration-200 font-medium hover:underline"
+            className="font-semibold text-slate-900 underline-offset-4 hover:underline"
           >
             Inicia sesión aquí
           </Link>

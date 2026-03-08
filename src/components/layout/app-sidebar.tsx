@@ -161,11 +161,10 @@ export function AppSidebar() {
             {/* Logo */}
             <Link
               to="/"
-              className="flex items-center space-x-3 mb-8"
+              className="flex items-center mb-8"
               onClick={handleLinkClick}
             >
-              <Logo size={32} />
-              <span className="font-bold text-lg text-gray-900">Vocationify</span>
+              <Logo size={48} showText={true} />
             </Link>
 
             {/* Navigation */}
@@ -243,18 +242,16 @@ export function AppSidebar() {
       >
         {/* Top Logo */}
         <div className="flex items-center mb-6 w-full flex-shrink-0 overflow-hidden px-2 mt-2">
-          <Link to="/" className="flex items-center w-full group rounded-full transition-all duration-300" style={{ padding: '6px' }}>
-            <div className="flex items-center justify-center flex-shrink-0" style={{ width: '36px', height: '36px' }}>
-              <Logo size={26} className="drop-shadow-sm group-hover:scale-105 transition-transform duration-300" />
-            </div>
-            <div 
-              className="flex flex-col justify-center whitespace-nowrap transition-opacity duration-300 ml-3"
-              style={{ opacity: isHovered ? 1 : 0 }}
-            >
-               <span className="font-semibold text-[16px] text-gray-900 tracking-tight">
-                Vocationify
-              </span>
-            </div>
+          <Link 
+            to="/" 
+            className={`flex items-center w-full group rounded-full transition-all duration-300 ${isHovered ? 'gap-3 px-3' : 'justify-center'}`} 
+            style={{ padding: '6px' }}
+          >
+            <Logo 
+              size={46} 
+              showText={isHovered} 
+              className="drop-shadow-sm group-hover:scale-105 transition-transform duration-300" 
+            />
           </Link>
         </div>
 

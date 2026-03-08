@@ -46,13 +46,15 @@ export function ForgotPasswordForm({ onSubmit, loading = false, error }: ForgotP
     }
   })
 
+  const inputBaseClass = "flex h-10 w-full rounded-md border bg-transparent px-3 text-sm placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
+
   return (
     <div className="space-y-6">
       {/* Error Alert */}
       {error && (
-        <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center space-x-3">
-          <IconAlertCircle size={20} className="text-red-400 flex-shrink-0" />
-          <p className="text-red-400 text-sm">{error}</p>
+        <div className="p-3 rounded-md bg-red-50 border border-red-200 flex items-center space-x-3">
+          <IconAlertCircle size={16} className="text-red-500 flex-shrink-0" />
+          <p className="text-red-500 text-sm font-medium">{error}</p>
         </div>
       )}
 
@@ -62,19 +64,19 @@ export function ForgotPasswordForm({ onSubmit, loading = false, error }: ForgotP
           e.stopPropagation()
           form.handleSubmit()
         }}
-        className="space-y-6"
+        className="space-y-4"
       >
         {/* Email Field */}
         <form.Field name="email">
           {(field) => (
             <div className="space-y-2">
-              <label className="text-sm font-medium text-neutral-200">
+              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-slate-900">
                 Correo Electrónico
               </label>
-              <div className="relative">
+              <div className="relative group">
                 <IconMail 
-                  size={20} 
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400" 
+                  size={16} 
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 transition-colors duration-200" 
                 />
                 <input
                   type="email"
@@ -83,43 +85,55 @@ export function ForgotPasswordForm({ onSubmit, loading = false, error }: ForgotP
                   onBlur={field.handleBlur}
                   placeholder="tu@correo.com"
                   disabled={loading}
-                  className="w-full pl-10 pr-4 py-3 bg-white/5 border border-neutral-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-white placeholder-neutral-400 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className={`${inputBaseClass} pl-10 ${
+                    field.state.meta.errors.length > 0
+                      ? 'border-red-500 focus-visible:ring-red-500'
+                      : 'border-slate-200'
+                  }`}
                 />
               </div>
               {field.state.meta.errors.length > 0 && (
-                <p className="text-red-400 text-sm mt-1">
-                  {field.state.meta.errors[0]}
-                </p>
+                <div className="flex items-center gap-2 animate-fade-in">
+                  <IconAlertCircle size={12} className="text-red-500" />
+                  <p className="text-red-500 text-xs font-medium">
+                    {field.state.meta.errors[0]}
+                  </p>
+                </div>
               )}
             </div>
           )}
         </form.Field>
 
         {/* Submit Button */}
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:from-gray-600 disabled:to-gray-600 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2 disabled:cursor-not-allowed disabled:opacity-50 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:transform-none"
-        >
-          {loading ? (
-            <>
-              <IconLoader2 size={20} className="animate-spin" />
-              <span>Enviando...</span>
-            </>
-          ) : (
-            <>
-              <span>Enviar enlace de restablecimiento</span>
-              <IconArrowRight size={20} />
-            </>
+        <form.Subscribe
+          selector={(state) => [state.canSubmit, state.isSubmitting]}
+          children={([canSubmit, isSubmitting]) => (
+            <button
+              type="submit"
+              disabled={!canSubmit || loading || isSubmitting}
+              className="inline-flex w-full items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-slate-900 text-slate-50 hover:bg-slate-900/90 h-10 px-4 py-2 mt-2"
+            >
+              {(loading || isSubmitting) ? (
+                <>
+                  <IconLoader2 size={16} className="mr-2 animate-spin" />
+                  Enviando...
+                </>
+              ) : (
+                <>
+                  Enviar enlace
+                  <IconArrowRight size={16} className="ml-2" />
+                </>
+              )}
+            </button>
           )}
-        </button>
+        />
       </form>
 
       {/* Back to Login */}
       <div className="text-center">
         <Link 
           to="/login"
-          className="inline-flex items-center space-x-2 text-sm text-neutral-400 hover:text-white transition-colors duration-200 hover:underline"
+          className="inline-flex items-center justify-center space-x-2 text-sm text-slate-500 hover:text-slate-900 transition-colors duration-200 hover:underline underline-offset-4 font-medium"
         >
           <IconArrowLeft size={16} />
           <span>Volver al inicio de sesión</span>

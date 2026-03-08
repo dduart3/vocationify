@@ -57,11 +57,10 @@ export function Header() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 group text-neutral-800">
             <Logo
-              size={28}
-              variant="light"
+              size={43}
+              showText={true}
               className="group-hover:scale-105 transition-transform duration-300"
             />
-            <span className="font-bold text-lg">Vocationify</span>
           </Link>
 
           {/* Desktop Navigation */}
