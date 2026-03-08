@@ -148,7 +148,7 @@ export function Footer() {
 
         {/* Bottom Bar (Logo/Copyright & Links) */}
         <div ref={bottomRef} className="w-full border-t border-slate-200/60 flex flex-col md:flex-row justify-between items-center py-8 gap-4">
-          <Logo size={45} showText={true} />
+          <Logo className=' invisible' size={45} showText={true} />
           
           <div className="flex flex-wrap items-center justify-center gap-6">
             <a href="#" className="text-slate-500 hover:text-slate-800 text-[13px] font-medium transition-colors">Términos de servicio</a>
