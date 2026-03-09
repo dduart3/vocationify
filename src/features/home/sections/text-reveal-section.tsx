@@ -117,8 +117,6 @@ export function TextRevealSection() {
         {/* Top small label mimic */}
         <div className="flex justify-between w-full mb-12 text-[10px] uppercase tracking-[0.2em] text-slate-400 font-semibold border-b border-slate-100/50 pb-4">
           <span>01 / IA Vocacional</span>
-          <span>Cielo Abierto</span>
-          <span>Progreso de misión</span>
           <span>vocationify.ai</span>
         </div>
 
@@ -136,7 +134,7 @@ export function TextRevealSection() {
         </div>
 
         {/* Bottom details block mimic */}
-        <div className="grid md:grid-cols-2 gap-16 mt-24 border-t border-slate-100/50 pt-12 w-full max-w-4xl">
+        <div className="grid md:grid-cols-3 gap-8 md:gap-16 mt-24 border-t border-slate-100/50 pt-12 w-full max-w-4xl items-start">
           <div>
             <h4 className="text-[10px] uppercase tracking-widest font-black text-slate-900 mb-4 opacity-70">El Desafío</h4>
             <p className="text-sm text-slate-500 font-medium leading-relaxed">
@@ -148,6 +146,17 @@ export function TextRevealSection() {
             <p className="text-sm text-slate-500 font-medium leading-relaxed">
               Modelos de IA entrenados en psicometría para ofrecer orientación humana con precisión.
             </p>
+          </div>
+          <div className="flex flex-col items-start w-full">
+            <h4 className="text-[10px] uppercase tracking-widest font-black text-slate-900 mb-4 opacity-70">Patrocinado por</h4>
+            {/* Visual crop container to remove white space from the logo asset */}
+            <div className="-ml-3 -mt-2 overflow-hidden w-48 md:w-56 h-16 md:h-20 flex items-center justify-start mix-blend-multiply">
+              <img 
+                src="/images/urbe.webp" 
+                alt="Universidad URBE" 
+                className="w-full h-full object-cover scale-60 translate-x-[-20%] translate-y-[-15%] origin-center grayscale opacity-30 hover:grayscale-0 hover:opacity-100 transition-all duration-500" 
+              />
+            </div>
           </div>
         </div>
       </div>
