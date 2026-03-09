@@ -111,9 +111,9 @@ export function AIAnalysisFeature() {
           />
       </div>
 
-      <div className="container mx-auto px-6 lg:px-24 relative z-20 h-full flex flex-col md:flex-row items-center md:items-center justify-center md:justify-start pt-10 md:pt-0 pb-32 md:pb-0 max-w-[1400px]">
+      <div className="container mx-auto px-6 lg:px-24 relative z-20 h-full flex flex-col md:flex-row items-center md:items-center justify-center md:justify-start pt-4 md:pt-0 pb-56 md:pb-0 max-w-[1400px]">
         {/* Left Side: Minimal Content Container with masked animation */}
-        <div className="w-full max-w-2xl relative h-[250px] md:h-[450px] flex items-center justify-center md:justify-start overflow-hidden">
+        <div className="w-full max-w-2xl relative h-[250px] md:h-[450px] flex items-center justify-center md:justify-start overflow-hidden -translate-y-12 md:translate-y-0">
           {features.map((text, index) => (
              <p 
                key={index}
