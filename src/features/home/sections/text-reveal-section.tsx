@@ -117,7 +117,7 @@ export function TextRevealSection() {
         {/* Top small label mimic */}
         <div className="flex justify-between w-full mb-12 text-[10px] uppercase tracking-[0.2em] text-slate-400 font-semibold border-b border-slate-100/50 pb-4">
           <span>01 / IA Vocacional</span>
-          <span>vocationify.ai</span>
+          <span>vocationify AI</span>
         </div>
 
         <div className="w-full max-w-4xl">
@@ -148,7 +148,7 @@ export function TextRevealSection() {
             </p>
           </div>
           <div className="flex flex-col items-center md:items-start text-center md:text-left w-full">
-            <h4 className="text-[10px] uppercase tracking-widest font-black text-slate-900 mb-4 opacity-70">Patrocinado por</h4>
+            <h4 className="text-[10px] uppercase tracking-widest font-black text-slate-900 mb-4 opacity-70">Desarrollado para</h4>
             {/* Visual crop container to remove white space from the logo asset */}
             <div className="md:-ml-3 -mt-2 overflow-hidden w-48 md:w-56 h-16 md:h-20 flex items-center justify-center md:justify-start mix-blend-multiply">
               <img 
