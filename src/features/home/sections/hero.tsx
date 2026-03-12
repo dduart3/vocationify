@@ -1,11 +1,10 @@
-import { useRef, useEffect } from 'react'
+import { useRef } from 'react'
 import gsap from 'gsap'
+import { useGSAP } from '@gsap/react'
 import { Link } from '@tanstack/react-router'
 import { ArrowRight } from 'lucide-react'
 import { useAuth } from '@/context/auth-context'
 import { landingText } from '../landing-text'
-
-
 
 export function HeroSection() {
   const { isAuthenticated } = useAuth()
@@ -22,7 +21,7 @@ export function HeroSection() {
     ctaPrimaryAuthenticated,
   } = landingText.hero
 
-  useEffect(() => {
+  useGSAP(() => {
     const title = titleRef.current
     const subtitle = subtitleRef.current
     const buttons = buttonsRef.current
@@ -33,16 +32,31 @@ export function HeroSection() {
     gsap.set(title, { opacity: 0, y: 32 })
     gsap.set(subtitle, { opacity: 0, y: 24 })
     gsap.set(buttons, { opacity: 0, y: 20 })
-    if (mockups) gsap.set(mockups, { opacity: 0, y: 40 })
+    if (mockups) {
+      gsap.set(mockups, {
+        opacity: 0,
+        y: 20,
+        scale: 1.05,
+        filter: 'drop-shadow(0 0px 0px rgba(0,0,0,0))'
+      })
+    }
 
     const tl = gsap.timeline({ delay: 0.3 })
     tl.to(title, { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' })
-      .to(subtitle, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, '-=0.4')
+      .to(subtitle, { opacity: 1, y: 0, duration: 0.55, ease: 'power2.out' }, '-=0.4')
       .to(buttons, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, '-=0.3')
+
     if (mockups) {
-      tl.to(mockups, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, '-=0.2')
+      tl.to(mockups, {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        filter: 'drop-shadow(0 20px 50px rgba(0,0,0,0.15))',
+        duration: 1.2,
+        ease: 'power3.out'
+      }, '-=0.6')
     }
-  }, [])
+  }, { scope: sectionRef })
 
   return (
     <section
@@ -116,18 +130,21 @@ export function HeroSection() {
           <h1
             ref={titleRef}
             className="text-5xl sm:text-5xl md:text-6xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-normal tracking-tight text-neutral-900 leading-[0.9] mb-4 sm:mb-6"
+            style={{ opacity: 0 }}
           >
             {headline.line1} {headline.line2}
           </h1>
           <p
             ref={subtitleRef}
             className="text-[13px] sm:text-sm md:text-base text-neutral-600 max-w-3xl mx-auto mb-8 sm:mb-12 leading-relaxed"
+            style={{ opacity: 0 }}
           >
             {subhead}
           </p>
           <div
             ref={buttonsRef}
             className="flex flex-wrap items-center justify-center"
+            style={{ opacity: 0 }}
           >
             <Link
               to={isAuthenticated ? '/vocational-test' : '/register'}
@@ -145,12 +162,13 @@ export function HeroSection() {
       <div
         ref={mockupsRef}
         className="relative z-10 flex-1 min-h-0 flex items-end justify-center px-4 pb-0 w-full h-full"
+        style={{ opacity: 0 }}
       >
         <div className="relative w-full max-w-5xl sm:max-w-4xl flex items-center justify-center -mt-20 sm:-mt-4 lg:-mt-10">
           <img
             src="/images/laptop-mockup.webp"
             alt="Vocationify app preview"
-            className="w-full h-auto object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.15)] scale-110 sm:scale-100"
+            className="w-full h-auto object-contain scale-110 sm:scale-100"
             draggable="false"
           />
         </div>
