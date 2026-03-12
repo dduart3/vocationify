@@ -1,18 +1,65 @@
 import * as THREE from 'three'
-import { Suspense, useRef, useState, useEffect } from 'react'
+import React, { Suspense, useRef, useState, useEffect, memo } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { Html, Environment, useGLTF } from '@react-three/drei'
+import gsap from 'gsap'
 
-function Model({ ...props }: any) {
+const VideoScreen = memo(({ src }: { src: string }) => {
+  const [displaySrc, setDisplaySrc] = useState(src);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const flashRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (src !== displaySrc) {
+      const tl = gsap.timeline();
+
+      // fast white flash transition
+      tl.to(flashRef.current, { 
+        opacity: 1, 
+        duration: 0.15, 
+        ease: 'power2.out',
+        onComplete: () => {
+          setDisplaySrc(src);
+        }
+      })
+      .to(flashRef.current, { 
+        opacity: 0, 
+        duration: 0.25, 
+        ease: 'power2.in',
+        delay: 0.05
+      });
+    }
+  }, [src, displaySrc]);
+
+  return (
+    <div className="w-[668px] h-[432px] origin-top-left scale-50 relative bg-black overflow-hidden">
+      <video
+        ref={videoRef}
+        key={displaySrc} // key ensures video restarts/reloads correctly on src swap
+        src={displaySrc}
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover"
+      />
+      {/* White Flash Overlay */}
+      <div 
+        ref={flashRef}
+        className="absolute inset-0 bg-white opacity-0 pointer-events-none z-10"
+      />
+    </div>
+  );
+});
+
+const Model = memo(({ videoUrl, ...props }: any) => {
   const group = useRef<THREE.Group>(null)
   const lidGroup = useRef<THREE.Group>(null)
   
-  // Load model
   const { nodes, materials } = useGLTF('/mac-draco.glb') as any
 
   return (
     <group ref={group} rotation-x={0.1} {...props} dispose={null}>
-      {/* Lid group rotated to be open */}
       <group ref={lidGroup} rotation-x={-0.1} position={[0, -0.04, 0.41]}>
         <group position={[0, 2.96, -0.13]} rotation={[Math.PI / 2, 0, 0]}>
           <mesh material={materials.aluminium} geometry={nodes['Cube008'].geometry} />
@@ -25,15 +72,18 @@ function Model({ ...props }: any) {
               transform 
               occlude="blending"
             >
-              <div 
-                className="w-[668px] h-[432px] origin-top-left scale-50" 
-                onPointerDown={(e) => e.stopPropagation()}
-              >
-                <img 
-                  src="/images/aria-ai-screen.png" 
-                  alt="Aria AI Screen"
-                  className="w-full h-full object-cover"
-                />
+              <div onPointerDown={(e) => e.stopPropagation()}>
+                {videoUrl ? (
+                  <VideoScreen src={videoUrl} />
+                ) : (
+                  <div className="w-[668px] h-[432px] origin-top-left scale-50">
+                    <img 
+                      src="/images/aria-ai-screen.png" 
+                      alt="Aria AI Screen"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
               </div>
             </Html>
           </mesh>
@@ -47,9 +97,9 @@ function Model({ ...props }: any) {
       <mesh material={materials.touchbar} geometry={nodes.touchbar.geometry} position={[0, -0.03, 1.2]} />
     </group>
   )
-}
+});
 
-export function LaptopStraight() {
+export const LaptopStraight = memo(({ videoUrl }: { videoUrl?: string }) => {
   const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
@@ -65,13 +115,16 @@ export function LaptopStraight() {
         <pointLight position={[10, 10, 10]} intensity={1.5} />
         <Suspense fallback={null}>
           <group rotation={[0, 0, 0]} position={[0, isMobile ? -4 : -2, 0]}>
-            <Model scale={isMobile ? 0.55 : 0.9} />
+            <Model scale={isMobile ? 0.55 : 0.9} videoUrl={videoUrl} />
           </group>
           <Environment preset="city" />
         </Suspense>     
       </Canvas>
     </div>
   )
-}
+});
+
+useGLTF.preload('/mac-draco.glb')
+
 
 useGLTF.preload('/mac-draco.glb')
