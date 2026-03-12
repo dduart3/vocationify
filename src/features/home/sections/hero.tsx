@@ -6,7 +6,7 @@ import { ArrowRight } from 'lucide-react'
 import { useAuth } from '@/context/auth-context'
 import { landingText } from '../landing-text'
 
-export function HeroSection() {
+export function HeroSection({ isReady = true }: { isReady?: boolean }) {
   const { isAuthenticated } = useAuth()
   const sectionRef = useRef<HTMLDivElement>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
@@ -35,37 +35,33 @@ export function HeroSection() {
     if (mockups) {
       gsap.set(mockups, {
         opacity: 0,
-        y: 20,
-        scale: 1.05,
-        filter: 'drop-shadow(0 0px 0px rgba(0,0,0,0))'
+        y: 60,
+        scale: 0.95
       })
     }
 
+    if (!isReady) return; // Wait until Preloader is done
+
     const tl = gsap.timeline({ delay: 0.3 })
-    tl.to(title, { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' })
-      .to(subtitle, { opacity: 1, y: 0, duration: 0.55, ease: 'power2.out' }, '-=0.4')
-      .to(buttons, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, '-=0.3')
+    tl.to(title, { opacity: 1, y: 0, duration: 1, ease: 'power4.out' })
+      .to(subtitle, { opacity: 1, y: 0, duration: 1, ease: 'power4.out' }, '-=0.8')
+      .to(buttons, { opacity: 1, y: 0, duration: 1, ease: 'back.out(1.2)' }, '-=0.8')
 
     if (mockups) {
       tl.to(mockups, {
         opacity: 1,
         y: 0,
         scale: 1,
-        filter: 'drop-shadow(0 20px 50px rgba(0,0,0,0.15))',
-        duration: 1.2,
+        duration: 1.5,
         ease: 'power3.out'
       }, '-=0.6')
     }
-  }, { scope: sectionRef })
+  }, { scope: sectionRef, dependencies: [isReady] })
 
   return (
     <section
       ref={sectionRef}
       className="font-hero relative h-[100dvh] flex flex-col overflow-hidden bg-transparent"
-      style={{
-        maskImage: 'linear-gradient(to bottom, black 85%, transparent 100%)',
-        WebkitMaskImage: 'linear-gradient(to bottom, black 85%, transparent 100%)'
-      }}
     >
       {/* Grid pattern + radial mask (no grid in center), behind photo */}
       <div
@@ -80,49 +76,38 @@ export function HeroSection() {
           WebkitMaskImage: 'radial-gradient(ellipse 90% 90% at 50% 55%, transparent 38%, black 72%)',
         }}
       />
-      {/* Rainbow glow beams moving slowly over the grid */}
-      <div
-        className="absolute inset-0 pointer-events-none z-0 overflow-hidden"
+
+      {/* Optimized Rainbow Glow Beams — static blobs with slow breathing animation */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden"
         style={{
           maskImage: 'radial-gradient(ellipse 90% 90% at 50% 55%, transparent 38%, black 72%)',
           WebkitMaskImage: 'radial-gradient(ellipse 90% 90% at 50% 55%, transparent 38%, black 72%)',
         }}
       >
-        <div
-          className="absolute inset-0 w-[200%] h-full blur-2xl"
-          style={{
-            backgroundImage: `linear-gradient(
-              90deg,
-              transparent 0%,
-              rgba(255,99,71,0.25) 8%,
-              rgba(255,165,0,0.3) 16%,
-              rgba(255,215,0,0.25) 24%,
-              rgba(255,105,180,0.2) 32%,
-              rgba(0,191,255,0.25) 40%,
-              rgba(138,43,226,0.3) 48%,
-              rgba(255,99,71,0.25) 56%,
-              rgba(255,165,0,0.3) 64%,
-              rgba(255,215,0,0.25) 72%,
-              rgba(255,105,180,0.2) 80%,
-              rgba(0,191,255,0.25) 88%,
-              transparent 100%
-            )`,
-            backgroundSize: '50% 100%',
-            animation: 'hero-rainbow-beams 25s linear infinite',
-          }}
-        />
+        {/* Left: Pink / Red tones */}
+        <div className="absolute -top-[15%] -left-[8%] w-[45%] h-[70%] rounded-full blur-[100px]"
+          style={{ background: 'radial-gradient(circle, rgba(255,80,60,0.5) 0%, rgba(255,105,180,0.35) 50%, transparent 80%)', animation: 'hero-blob-breathe 12s ease-in-out infinite' }} />
+        
+        {/* Center-Left: Orange / Yellow */}
+        <div className="absolute top-[0%] left-[18%] w-[38%] h-[60%] rounded-full blur-[100px]"
+          style={{ background: 'radial-gradient(circle, rgba(255,155,0,0.45) 0%, rgba(255,210,0,0.3) 50%, transparent 80%)', animation: 'hero-blob-breathe 15s ease-in-out infinite 3s' }} />
+        
+        {/* Center-Left: Green / Emerald */}
+        <div className="absolute top-[8%] left-[30%] w-[28%] h-[50%] rounded-full blur-[100px]"
+          style={{ background: 'radial-gradient(circle, rgba(52,211,153,0.4) 0%, rgba(16,185,129,0.25) 50%, transparent 80%)', animation: 'hero-blob-breathe 17s ease-in-out infinite 5s' }} />
+        
+        {/* Center: Warm pink */}
+        <div className="absolute top-[5%] left-[38%] w-[30%] h-[50%] rounded-full blur-[100px]"
+          style={{ background: 'radial-gradient(circle, rgba(255,105,180,0.35) 0%, rgba(255,215,0,0.2) 60%, transparent 80%)', animation: 'hero-blob-breathe 18s ease-in-out infinite 6s' }} />
+        
+        {/* Center-Right: Cyan / Sky Blue */}
+        <div className="absolute -top-[10%] right-[8%] w-[45%] h-[70%] rounded-full blur-[100px]"
+          style={{ background: 'radial-gradient(circle, rgba(0,180,255,0.5) 0%, rgba(100,200,255,0.35) 50%, transparent 80%)', animation: 'hero-blob-breathe 14s ease-in-out infinite 2s' }} />
+        
+        {/* Far Right: Purple / Violet */}
+        <div className="absolute top-[10%] -right-[5%] w-[35%] h-[55%] rounded-full blur-[100px]"
+          style={{ background: 'radial-gradient(circle, rgba(138,43,226,0.45) 0%, rgba(100,0,200,0.3) 50%, transparent 80%)', animation: 'hero-blob-breathe 16s ease-in-out infinite 4s' }} />
       </div>
-
-
-      {/* Premium Fine Grain Texture Overlay */}
-      <div
-        className="absolute inset-0 pointer-events-none z-[1] opacity-[0.08] mix-blend-overlay"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-          backgroundRepeat: 'repeat',
-          backgroundSize: '120px 120px',
-        }}
-      />
 
       {/* Centered content – high z-index so button stays clickable */}
       <div className="relative z-20 flex-1 flex flex-col items-center justify-center px-6 sm:px-8 lg:px-12 pt-28 sm:pt-20 pb-10 sm:pb-6 text-center">
@@ -161,14 +146,17 @@ export function HeroSection() {
       {/* Laptop mockups */}
       <div
         ref={mockupsRef}
-        className="relative z-10 flex-1 min-h-0 flex items-end justify-center px-4 pb-0 w-full h-full"
+        className="relative z-10 flex-1 min-h-0 flex items-end justify-center px-4 pb-0 w-full h-full will-change-transform"
         style={{ opacity: 0 }}
       >
         <div className="relative w-full max-w-5xl sm:max-w-4xl flex items-center justify-center -mt-20 sm:-mt-4 lg:-mt-10">
+          {/* Ultra-performant fake shadow under the laptop */}
+          <div className="absolute top-[30%] sm:top-[20%] w-[80%] h-[70%] bg-black/15 blur-[60px] rounded-[100%] pointer-events-none" />
+          
           <img
             src="/images/laptop-mockup.webp"
             alt="Vocationify app preview"
-            className="w-full h-auto object-contain scale-110 sm:scale-100"
+            className="relative z-10 w-full h-auto object-contain scale-110 sm:scale-100"
             draggable="false"
           />
         </div>

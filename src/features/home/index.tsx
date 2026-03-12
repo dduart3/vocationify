@@ -10,8 +10,7 @@ import { AIAnalysisFeature } from "./sections/ai-analysis-feature";
 
 export function Home() {
   return (
-    <div className="min-h-screen text-foreground">
-      {/* Header handles both authenticated and unauthenticated states beautifully */}
+    <div className="min-h-screen text-foreground relative">
       <Header />
 
       {/* Main content area */}

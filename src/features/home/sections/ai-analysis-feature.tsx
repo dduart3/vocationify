@@ -1,9 +1,12 @@
-import { useRef, useEffect, useState } from 'react';
-import { LaptopStraight } from '../components/laptop-straight';
+import { useRef, useEffect, useState, lazy, Suspense } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
+
+const LaptopStraightLazy = lazy(() => 
+  import('../components/laptop-straight').then(mod => ({ default: mod.LaptopStraight }))
+);
 
 export function AIAnalysisFeature() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -240,7 +243,9 @@ export function AIAnalysisFeature() {
         {/* State-dependent wrapper - No entrance animations here to prevent re-triggering */}
         <div className="w-full h-full flex flex-col justify-end md:justify-center">
           <div className="relative w-full h-full flex items-end md:items-center justify-center translate-x-0 md:translate-x-[25%] lg:translate-x-[35%] pb-8 md:pb-0 mt-8">
-            <LaptopStraight videoUrl={features[activeIndex].video} />
+             <Suspense fallback={null}>
+               <LaptopStraightLazy videoUrl={features[activeIndex].video} />
+             </Suspense>
             {/* Ambient glow behind the straight laptop */}
           </div>
         </div>

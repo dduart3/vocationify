@@ -209,10 +209,10 @@
   }
 }
 
-/* Hero: rainbow glow beams moving slowly across the grid */
-@keyframes hero-rainbow-beams {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 200% 50%; }
+/* Hero: subtle breathing glow for rainbow blobs — GPU-friendly (opacity only) */
+@keyframes hero-blob-breathe {
+  0%, 100% { opacity: 0.75; }
+  50% { opacity: 1; }
 }
 
 /* Utility classes for animations */

@@ -125,6 +125,3 @@ export const LaptopStraight = memo(({ videoUrl }: { videoUrl?: string }) => {
 });
 
 useGLTF.preload('/mac-draco.glb')
-
-
-useGLTF.preload('/mac-draco.glb')
