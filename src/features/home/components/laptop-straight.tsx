@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import React, { Suspense, useRef, useState, useEffect, memo } from 'react'
+import { Suspense, useRef, useState, useEffect, memo } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { Html, Environment, useGLTF } from '@react-three/drei'
 import gsap from 'gsap'
