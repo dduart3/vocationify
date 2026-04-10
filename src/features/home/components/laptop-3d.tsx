@@ -152,5 +152,5 @@ export function Laptop3D() {
   )
 }
 
-// No preload here to prevent blocking hero animation
-// useGLTF.preload('/mac-draco.glb')
+// Preload the model asset
+useGLTF.preload('/mac-draco.glb')

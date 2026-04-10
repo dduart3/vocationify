@@ -110,7 +110,7 @@ export const LaptopStraight = memo(({ videoUrl }: { videoUrl?: string }) => {
   }, [])
 
   return (
-    <div className="w-full h-full relative pointer-events-auto animate-in fade-in duration-1000">
+    <div className="w-full h-full relative pointer-events-auto">
       <Canvas camera={{ position: [0, 0, 14], fov: 45 }}>
         <pointLight position={[10, 10, 10]} intensity={1.5} />
         <Suspense fallback={null}>
@@ -124,5 +124,5 @@ export const LaptopStraight = memo(({ videoUrl }: { videoUrl?: string }) => {
   )
 });
 
-// No preload here to keep landing light
-// useGLTF.preload('/mac-draco.glb')
+// Preload model
+useGLTF.preload('/mac-draco.glb')

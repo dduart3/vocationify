@@ -1,34 +1,16 @@
-import { useRef, useEffect, useState, lazy, Suspense } from 'react';
+import { useRef, useState } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const LaptopStraightLazy = lazy(() => 
-  import('../components/laptop-straight').then(mod => ({ default: mod.LaptopStraight }))
-);
+import { LaptopStraight } from '../components/laptop-straight';
 
 export function AIAnalysisFeature() {
   const sectionRef = useRef<HTMLElement>(null);
-  const [shouldMount, setShouldMount] = useState(false);
+  const [shouldMount] = useState(true);
   const [activeIndex, setActiveIndex] = useState(0);
-
-  useEffect(() => {
-    // Optimization: Defer mounting 3D assets until needed
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          setShouldMount(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: '200px' }
-    );
-
-    if (sectionRef.current) observer.observe(sectionRef.current);
-    return () => observer.disconnect();
-  }, []);
 
   const features = [
     {
@@ -256,9 +238,7 @@ export function AIAnalysisFeature() {
         <div className="w-full h-full flex flex-col justify-end md:justify-center">
           <div className="relative w-full h-full flex items-end md:items-center justify-center translate-x-0 md:translate-x-[25%] lg:translate-x-[35%] pb-8 md:pb-0 mt-8">
              {shouldMount && (
-               <Suspense fallback={null}>
-                 <LaptopStraightLazy videoUrl={features[activeIndex].video} />
-               </Suspense>
+               <LaptopStraight videoUrl={features[activeIndex].video} />
              )}
             {/* Ambient glow behind the straight laptop */}
           </div>
