@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import React, { Suspense, useRef, useState, useEffect, memo } from 'react'
+import { Suspense, useRef, useState, useEffect, memo } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { Html, Environment, useGLTF } from '@react-three/drei'
 import gsap from 'gsap'
@@ -110,7 +110,7 @@ export const LaptopStraight = memo(({ videoUrl }: { videoUrl?: string }) => {
   }, [])
 
   return (
-    <div className="w-full h-full relative pointer-events-auto">
+    <div className="w-full h-full relative pointer-events-auto animate-in fade-in duration-1000">
       <Canvas camera={{ position: [0, 0, 14], fov: 45 }}>
         <pointLight position={[10, 10, 10]} intensity={1.5} />
         <Suspense fallback={null}>
@@ -124,4 +124,5 @@ export const LaptopStraight = memo(({ videoUrl }: { videoUrl?: string }) => {
   )
 });
 
-useGLTF.preload('/mac-draco.glb')
+// No preload here to keep landing light
+// useGLTF.preload('/mac-draco.glb')

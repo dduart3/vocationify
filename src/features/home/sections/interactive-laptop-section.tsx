@@ -1,5 +1,6 @@
-import { Suspense, useRef, useEffect, lazy } from 'react';
+import { Suspense, useRef, useEffect, lazy, useState, useMemo } from 'react';
 import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { MessageCircle, Mic, Volume2 } from 'lucide-react';
 import { Persona } from '@/components/ai-elements/persona';
@@ -44,23 +45,54 @@ export function InteractiveLaptopSection() {
   const transcriptBoxContainerRef = useRef<HTMLDivElement>(null);
   const transcribingShimmerRef = useRef<HTMLDivElement>(null);
   const userTypedTextRef = useRef<HTMLDivElement>(null);
+  const [shouldMount, setShouldMount] = useState(false);
   const ariaAnswerContainerRef = useRef<HTMLDivElement>(null);
 
+  const ariaWordsText = "¡Genial! El diseño UX y la estética creativa es una excelente ruta. ¿Quieres explorar recursos tecnológicos creativos?";
+  const userTypedText = "Me gusta el diseño y la tecnología";
+  
+  const ariaWordsArray = useMemo(() => ariaWordsText.split(' '), []);
+  const userWordsArray = useMemo(() => userTypedText.split(' '), []);
+  const charsArray = useMemo(() => text.split(''), [text]);
+
   useEffect(() => {
+    // Optimization: Defer mounting the 3D heavy canvas until it's actually needed
+    // This solves the "chunky" feeling during hero entrance
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setShouldMount(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '100px' } // Start loading a bit before it enters
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  useGSAP(() => {
     const section = sectionRef.current;
     if (!section || !textRef.current || !chatRef.current || !voiceRef.current) return;
 
     // Text animation setup
     const chars = textRef.current.querySelectorAll('.char');
     
-    // Initial state
-    gsap.set(chars, { y: 15, opacity: 0 });
-    gsap.set([textRef.current, chatRef.current, voiceRef.current], { opacity: 0 });
-    gsap.set([chatBubble1Ref.current, chatBubble2Ref.current, chatBubble3Ref.current], { x: 0, y: 20, opacity: 0, scale: 0.95 });
-    gsap.set(voiceSwitchRef.current, { y: 20, opacity: 0, scale: 0.95 });
+    // Grouped initial state sets for efficiency
+    gsap.set([chars, textRef.current, chatRef.current, voiceRef.current, chatBubble1Ref.current, chatBubble2Ref.current, chatBubble3Ref.current, voiceSwitchRef.current], { 
+      opacity: 0, 
+      y: 20, 
+      scale: 0.95 
+    });
+    
+    gsap.set(chars, { y: 15 });
     gsap.set(voiceThumbRef.current, { x: 88 });
     gsap.set(chatLabelRef.current, { color: "#ffffff" });
-    gsap.set(voiceLabelRef.current, { color: "#64748b" }); // slate-500
+    gsap.set(voiceLabelRef.current, { color: "#64748b" });
 
     const userWords = userTypedTextRef.current ? gsap.utils.toArray(userTypedTextRef.current.querySelectorAll('.user-word')) : [];
     const ariaWords = ariaAnswerContainerRef.current ? gsap.utils.toArray(ariaAnswerContainerRef.current.querySelectorAll('.aria-word')) : [];
@@ -146,35 +178,24 @@ export function InteractiveLaptopSection() {
       // Final padding to ensure timeline adds up exactly to 100 for perfect synchronization
       .to({}, { duration: 1 }, 100);
 
-    return () => {
-      masterTl.kill();
-    };
-  }, []);
+  }, { scope: sectionRef });
 
   return (
     <section 
       ref={sectionRef}
       id="interactive-laptop-container"
       className="relative w-full h-[100vh] flex items-center justify-center pointer-events-auto overflow-hidden bg-transparent"
-      style={{
-        maskImage: 'linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%)',
-        WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%)'
-      }}
     >
-      <div 
-        className="relative w-full h-full flex items-center justify-center p-0 m-0 z-10"
-        style={{
-          maskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)',
-          WebkitMaskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)'
-        }}
-      >
-        <Suspense fallback={
-          <div className="flex items-center justify-center w-full h-full text-black">
-            Cargando interactividad 3D...
-          </div>
-        }>
-          <Laptop3DLazy />
-        </Suspense>
+      <div className="relative w-full h-full flex items-center justify-center p-0 m-0 z-10">
+        {shouldMount && (
+          <Suspense fallback={
+            <div className="flex items-center justify-center w-full h-full text-black/40 font-medium">
+              Cargando interactividad 3D...
+            </div>
+          }>
+            <Laptop3DLazy />
+          </Suspense>
+        )}
       </div>
 
       {/* Chat Mockup Overlay */}
@@ -267,7 +288,7 @@ export function InteractiveLaptopSection() {
           ref={textRef}
           className="text-4xl md:text-6xl font-bold text-slate-800 text-center tracking-tight leading-tight opacity-0"
         >
-          {text.split('').map((char, i) => (
+          {charsArray.map((char, i) => (
             <span key={i} className="char inline-block min-w-[0.1em] origin-bottom opacity-0">
               {char === " " ? "\u00A0" : char}
             </span>
@@ -319,7 +340,7 @@ export function InteractiveLaptopSection() {
         {/* Aria Answer Mockup (Appears after transcript sends) */}
         <div ref={ariaAnswerContainerRef} className="absolute top-[65%] w-full flex justify-center opacity-0 translate-y-4">
            <h2 className="text-xl md:text-2xl font-medium tracking-wide leading-relaxed drop-shadow-lg text-center max-w-2xl px-4 text-slate-700/30">
-               {"¡Genial! El diseño UX y la estética creativa es una excelente ruta. ¿Quieres explorar recursos tecnológicos creativos?".split(' ').map((word, i) => (
+               {ariaWordsArray.map((word, i) => (
                   <span key={i} className="aria-word transition-colors duration-300">
                      {word}{' '}
                   </span>
@@ -338,7 +359,7 @@ export function InteractiveLaptopSection() {
                 </Shimmer>
               </div>
               <div ref={userTypedTextRef} className="relative z-10 font-medium">
-                  {"Me gusta el diseño y la tecnología".split(' ').map((word, i) => (
+                  {userWordsArray.map((word, i) => (
                       <span key={i} className="user-word opacity-0">{word}{' '}</span>
                   ))}
               </div>

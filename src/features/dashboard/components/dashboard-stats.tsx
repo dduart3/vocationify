@@ -89,28 +89,28 @@ export function DashboardStats() {
   ]
 
   return (
-    <div id="dashboard-stats" className="flex flex-col md:flex-row items-center justify-between py-3 px-4 md:px-6 rounded-[2rem] bg-white/50 backdrop-blur-2xl border border-white/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_4px_20px_rgba(0,0,0,0.03)] mx-auto w-full gap-4 md:divide-x divide-gray-200/50">
+    <div id="dashboard-stats" className="grid grid-cols-2 lg:flex lg:flex-row items-center justify-between py-6 px-4 md:px-6 rounded-[2rem] bg-white/50 backdrop-blur-2xl border border-white/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_4px_20px_rgba(0,0,0,0.03)] mx-auto w-full gap-y-8 gap-x-2 md:gap-4 lg:divide-x divide-gray-200/50">
       {stats.map((stat, index) => {
         const IconComponent = stat.icon
         return (
           <div
             key={stat.title}
-            className={`flex flex-col items-center justify-center flex-1 transition-all duration-300 group w-full ${index !== 0 ? 'md:pl-4' : ''}`}
+            className={`flex flex-col items-center justify-center flex-1 transition-all duration-300 group w-full ${index !== 0 ? 'lg:pl-4' : ''}`}
           >
-            <div className="flex items-center gap-2 mb-1.5">
+            <div className="flex flex-col items-center gap-2 mb-1.5 text-center">
               <div
                 className={`flex shrink-0 items-center justify-center w-8 h-8 rounded-full bg-gradient-to-b from-white to-gray-50 shadow-[0_2px_5px_rgba(0,0,0,0.05),inset_0_-1px_2px_rgba(0,0,0,0.02),inset_0_1px_2px_rgba(255,255,255,1)] border border-gray-100 group-hover:scale-105 transition-transform duration-300`}
               >
                 <IconComponent className={`w-4 h-4 ${stat.iconColor} drop-shadow-sm`} />
               </div>
-              <h3 className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
+              <h3 className="text-[10px] sm:text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
                 {stat.title}
               </h3>
             </div>
-            <div className="text-2xl font-bold bg-gradient-to-br from-gray-900 to-gray-700 bg-clip-text text-transparent mb-0.5">
+            <div className="text-[17px] sm:text-[24px] font-bold bg-gradient-to-br from-gray-900 to-gray-700 bg-clip-text text-transparent mb-0.5 text-center leading-tight">
               {stat.value}
             </div>
-            <p className="text-[11px] text-gray-400 font-medium">
+            <p className="text-[10px] sm:text-[11px] text-gray-400 font-medium text-center px-1 leading-normal">
               {stat.description}
             </p>
           </div>

@@ -8,8 +8,99 @@ import {
   flexRender,
   type ColumnDef,
 } from '@tanstack/react-table'
-import { IconChevronUp, IconChevronDown, IconChevronLeft, IconChevronRight } from '@tabler/icons-react'
+import { IconChevronUp, IconChevronDown, IconChevronLeft, IconChevronRight, IconBrain, IconTrophy } from '@tabler/icons-react'
 import type { TestResult } from '../types'
+
+function MobileResultTile({ row, onClick }: { row: any, onClick: () => void }) {
+  const result = row.original as TestResult;
+  
+  // Hand-extracting styles from column defs for the tile look
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('es-ES', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  }
+
+  const getTopRiasecType = (scores: TestResult['riasec_scores']) => {
+    const types = { R: 'Realista', I: 'Investigativo', A: 'Artístico', S: 'Social', E: 'Emprendedor', C: 'Convencional' }
+    const maxScore = Math.max(...Object.values(scores))
+    const topType = Object.entries(scores).find(([_, score]) => score === maxScore)?.[0] as keyof typeof types
+    return topType ? types[topType] : 'N/A'
+  }
+
+  const getRiasecColor = (type: string) => {
+    const colors: Record<string, string> = {
+      'Realista': 'text-green-600',
+      'Investigativo': 'text-blue-600',
+      'Artístico': 'text-purple-600',
+      'Social': 'text-orange-600',
+      'Emprendedor': 'text-yellow-600',
+      'Convencional': 'text-cyan-600'
+    }
+    return colors[type] || 'text-cyan-600'
+  }
+
+  const topRiasec = getTopRiasecType(result.riasec_scores);
+  const topCareer = result.career_recommendations?.[0];
+
+  return (
+    <div 
+      onClick={onClick}
+      className="bg-white/70 backdrop-blur-xl border border-white/80 shadow-[0_4px_15px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,1)] rounded-3xl p-5 active:scale-[0.98] transition-all duration-200 flex flex-col gap-4 relative overflow-hidden group"
+    >
+      <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 blur-2xl rounded-full -mr-8 -mt-8 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      
+      {/* Header: Date & Type */}
+      <div className="flex items-start justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-slate-100 border border-slate-200/60 shadow-[inset_0_2px_4px_rgba(255,255,255,1),0_1px_2px_rgba(0,0,0,0.05)] flex items-center justify-center">
+            <IconBrain className="w-5 h-5 text-slate-500" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="font-bold text-[14px] text-slate-800 leading-tight">Test Vocacional</div>
+            <div className="text-[11px] text-slate-500 font-medium">{formatDate(result.created_at)}</div>
+          </div>
+        </div>
+      </div>
+
+      <div className="h-px bg-slate-100 w-full" />
+
+      {/* Main Info Grid */}
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-1">
+          <div className="text-[10px] uppercase tracking-wider font-bold text-slate-400">Perfil RIASEC</div>
+          <div className="flex items-center gap-2">
+            <IconTrophy className={`w-4 h-4 ${getRiasecColor(topRiasec)}`} />
+            <span className={`font-bold text-[14px] ${getRiasecColor(topRiasec)}`}>{topRiasec}</span>
+          </div>
+        </div>
+        
+        <div className="space-y-1">
+          <div className="text-[10px] uppercase tracking-wider font-bold text-slate-400">Confianza Test</div>
+          <div className="flex items-center gap-2">
+            <div className="w-12 h-2 bg-slate-200 rounded-full overflow-hidden border border-slate-200 shadow-inner">
+               <div className="h-full bg-blue-500 rounded-full" style={{ width: `${result.confidence_level}%` }} />
+            </div>
+            <span className="font-bold text-[13px] text-slate-700">{result.confidence_level}%</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Recommendation Block */}
+      {topCareer && (
+        <div className="bg-blue-50/50 border border-blue-100/50 rounded-2xl p-3 flex flex-col">
+          <div className="text-[10px] uppercase tracking-wider font-bold text-blue-400 mb-1">Recomendación Principal</div>
+          <div className="font-bold text-[13px] text-blue-700 leading-snug mb-1">{topCareer.career?.name || topCareer.name || topCareer.career_name || "Carrera recomendada"}</div>
+          <div className="text-[11px] font-medium text-blue-500/80">{topCareer.confidence || topCareer.match || 'N/A'}% compatibilidad</div>
+        </div>
+      )}
+    </div>
+  )
+}
 
 interface ResultsTableProps {
   columns: ColumnDef<TestResult>[]
@@ -36,7 +127,7 @@ export function ResultsTable({ columns, data, isLoading = false }: ResultsTableP
 
   return (
     <div className="bg-white/50 backdrop-blur-2xl border border-white/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_4px_20px_rgba(0,0,0,0.03)] rounded-[2rem] flex flex-col w-full pb-4">
-      <div className="w-full overflow-auto custom-scrollbar" data-lenis-prevent="true">
+      <div className="w-full overflow-auto custom-scrollbar hidden sm:block" data-lenis-prevent="true">
         <table className="w-full table-fixed">
           <thead className="sticky top-0 z-20">
             {table.getHeaderGroups().map(headerGroup => (
@@ -120,6 +211,27 @@ export function ResultsTable({ columns, data, isLoading = false }: ResultsTableP
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile Tiles Container */}
+      <div className="w-full flex flex-col gap-4 p-4 sm:hidden">
+        {isLoading ? (
+           Array(5).fill(0).map((_, i) => (
+             <div key={i} className="bg-white/50 animate-pulse h-48 rounded-3xl" />
+           ))
+        ) : table.getRowModel().rows.length === 0 ? (
+          <div className="py-12 text-center text-gray-500 font-medium">
+            No se encontraron resultados
+          </div>
+        ) : (
+          table.getRowModel().rows.map((row) => (
+            <MobileResultTile 
+              key={row.id} 
+              row={row} 
+              onClick={() => navigate({ to: '/results/$sessionId', params: { sessionId: row.original.id } })}
+            />
+          ))
+        )}
       </div>
 
       {/* Pagination */}

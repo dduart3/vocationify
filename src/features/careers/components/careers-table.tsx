@@ -8,8 +8,90 @@ import {
   flexRender,
   type ColumnDef,
 } from '@tanstack/react-table'
-import { IconChevronUp, IconChevronDown, IconChevronLeft, IconChevronRight } from '@tabler/icons-react'
+import { IconChevronUp, IconChevronDown, IconChevronLeft, IconChevronRight, IconSchool, IconTarget, IconClock } from '@tabler/icons-react'
 import type { Career } from '../types'
+
+function MobileCareerTile({ row, onClick }: { row: any, onClick: () => void }) {
+  const career = row.original as Career;
+  
+  const getRiasecColor = (type: string | null | undefined) => {
+    if (!type) return 'text-slate-700'
+    const colors: Record<string, string> = {
+      'realistic': 'text-green-600',
+      'investigative': 'text-blue-600',
+      'artistic': 'text-purple-600',
+      'social': 'text-orange-600',
+      'enterprising': 'text-yellow-600',
+      'conventional': 'text-cyan-600'
+    }
+    return colors[type.toLowerCase()] || 'text-cyan-600'
+  }
+
+  const getRiasecDisplayName = (type: string | null | undefined) => {
+    if (!type) return 'N/A'
+    const names: Record<string, string> = {
+      'realistic': 'Realista',
+      'investigative': 'Investigativo',
+      'artistic': 'Artístico',
+      'social': 'Social',
+      'enterprising': 'Emprendedor',
+      'conventional': 'Convencional'
+    }
+    return names[type.toLowerCase()] || type
+  }
+
+  return (
+    <div 
+      onClick={onClick}
+      className="bg-white/70 backdrop-blur-xl border border-white/80 shadow-[0_4px_15px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,1)] rounded-3xl p-5 active:scale-[0.98] transition-all duration-200 flex flex-col gap-4 relative overflow-hidden group mb-4"
+    >
+      <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 blur-2xl rounded-full -mr-8 -mt-8 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      
+      {/* Header */}
+      <div className="flex items-start justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-slate-100 border border-slate-200/60 shadow-[inset_0_2px_4px_rgba(255,255,255,1),0_1px_2px_rgba(0,0,0,0.05)] flex items-center justify-center">
+            <IconSchool className="w-5 h-5 text-slate-500" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="font-bold text-[15px] sm:text-[16px] text-blue-600 leading-tight mb-1">{career.name}</div>
+            <div className="text-[11px] text-slate-500 font-medium line-clamp-2">{career.description}</div>
+          </div>
+        </div>
+      </div>
+
+      <div className="h-px bg-slate-100 w-full" />
+
+      {/* Info Grid */}
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-1">
+          <div className="text-[10px] uppercase tracking-wider font-bold text-slate-400">Perfil RIASEC</div>
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="flex items-center gap-1.5">
+              <IconTarget className={`w-3.5 h-3.5 ${getRiasecColor(career.primary_riasec_type)}`} />
+              <span className={`font-bold text-[13px] ${getRiasecColor(career.primary_riasec_type)}`}>
+                {getRiasecDisplayName(career.primary_riasec_type)}
+              </span>
+            </div>
+            {career.secondary_riasec_type && (
+              <span className="text-[11px] text-slate-400 font-bold border-l pl-2 border-slate-200">
+                {getRiasecDisplayName(career.secondary_riasec_type)}
+              </span>
+            )}
+          </div>
+        </div>
+        
+        <div className="space-y-1">
+          <div className="text-[10px] uppercase tracking-wider font-bold text-slate-400">Duración</div>
+          <div className="flex items-center gap-2">
+            <IconClock className="w-4 h-4 text-slate-400" />
+            <span className="font-bold text-[13px] text-slate-700">{career.duration_years} Años</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 interface CareersTableProps {
   columns: ColumnDef<Career>[]
@@ -36,7 +118,7 @@ export function CareersTable({ columns, data, isLoading = false }: CareersTableP
 
   return (
     <div className="bg-white/50 backdrop-blur-2xl border border-white/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_4px_20px_rgba(0,0,0,0.03)] rounded-[2rem] flex flex-col min-h-0 h-full overflow-hidden">
-      <div className="flex-1 overflow-auto custom-scrollbar min-h-0" data-lenis-prevent="true">
+      <div className="flex-1 overflow-auto custom-scrollbar min-h-0 hidden sm:block" data-lenis-prevent="true">
         <table className="w-full table-fixed">
           <thead className="sticky top-0 z-20">
             {table.getHeaderGroups().map(headerGroup => (
@@ -120,6 +202,27 @@ export function CareersTable({ columns, data, isLoading = false }: CareersTableP
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile Tiles Container */}
+      <div className="flex-1 overflow-auto custom-scrollbar sm:hidden p-4" data-lenis-prevent="true">
+        {isLoading ? (
+           Array(5).fill(0).map((_, i) => (
+             <div key={i} className="bg-white/50 animate-pulse h-40 rounded-3xl mb-4" />
+           ))
+        ) : table.getRowModel().rows.length === 0 ? (
+          <div className="py-12 text-center text-gray-500 font-medium">
+            No se encontraron carreras
+          </div>
+        ) : (
+          table.getRowModel().rows.map((row) => (
+            <MobileCareerTile 
+              key={row.id} 
+              row={row} 
+              onClick={() => navigate({ to: '/careers/$careerId', params: { careerId: row.original.id } })}
+            />
+          ))
+        )}
       </div>
 
       {/* Pagination */}

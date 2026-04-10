@@ -99,7 +99,7 @@ function Model({ ...props }: any) {
               rotation-x={-Math.PI / 2} 
               position={[0, 0.05, -0.09]} 
               transform 
-              occlude="blending"
+              occlude
             >
               <div 
                 className="w-[668px] h-[432px] origin-top-left scale-50" 
@@ -136,8 +136,20 @@ export function Laptop3D() {
   }, [])
 
   return (
-    <div className="w-full h-full absolute inset-0">
-      <Canvas camera={{ position: [5, 0, -20], fov: 55 }}>
+    <div className="w-full h-full absolute inset-0 animate-in fade-in duration-1000">
+      <Canvas 
+        shadows={false}
+        dpr={[1, 2]} 
+        camera={{ position: [5, 0, -20], fov: 55 }}
+        gl={{ 
+          powerPreference: "high-performance",
+          antialias: false,
+          stencil: false,
+          depth: true,
+          alpha: true,
+          preserveDrawingBuffer: false
+        }}
+      >
         <pointLight position={[10, 10, 10]} intensity={1.5} />
         <Suspense fallback={null}>
           <group rotation={[0, 2.9, 0]} position={[1.3, 3, -5]} scale={isMobile ? 0.75 : 1}>
@@ -150,4 +162,5 @@ export function Laptop3D() {
   )
 }
 
-useGLTF.preload('/mac-draco.glb')
+// No preload here to prevent blocking hero animation
+// useGLTF.preload('/mac-draco.glb')

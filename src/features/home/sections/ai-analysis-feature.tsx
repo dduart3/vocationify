@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState, lazy, Suspense } from 'react';
 import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -10,7 +11,24 @@ const LaptopStraightLazy = lazy(() =>
 
 export function AIAnalysisFeature() {
   const sectionRef = useRef<HTMLElement>(null);
+  const [shouldMount, setShouldMount] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
+
+  useEffect(() => {
+    // Optimization: Defer mounting 3D assets until needed
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setShouldMount(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '200px' }
+    );
+
+    if (sectionRef.current) observer.observe(sectionRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   const features = [
     {
@@ -46,7 +64,7 @@ export function AIAnalysisFeature() {
   const pillHighlightRef = useRef<HTMLDivElement>(null);
   const pillTrackRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useGSAP(() => {
     if (!sectionRef.current) return;
     
     // Initial state: first feature is visible
@@ -80,13 +98,10 @@ export function AIAnalysisFeature() {
         // 2. Slide the TRACK itself to keep the active pill visible/centered
         let targetX = nextPill.offsetLeft - 20;
         
-        // If it's the last item, push the track enough to the left 
-        // to leave a nice visually balanced padding on the right edge.
         if (newIndex === features.length - 1) {
           targetX = nextPill.offsetLeft + nextPill.offsetWidth - 245;
         }
 
-        // Ensure we don't restrict the targetX with a too-small maxScroll
         const maxScroll = Math.max(0, pillTrackRef.current.scrollWidth - 220);
         const trackX = Math.max(0, Math.min(targetX, maxScroll));
         
@@ -120,7 +135,7 @@ export function AIAnalysisFeature() {
       setActiveIndex(newIndex);
     };
 
-    const st = ScrollTrigger.create({
+    ScrollTrigger.create({
       trigger: sectionRef.current,
       start: 'top top',
       end: `+=${features.length * 50}%`,
@@ -136,10 +151,7 @@ export function AIAnalysisFeature() {
       }
     });
 
-    return () => {
-      st.kill();
-    };
-  }, []);
+  }, { scope: sectionRef });
 
   return (
     <section 
@@ -243,9 +255,11 @@ export function AIAnalysisFeature() {
         {/* State-dependent wrapper - No entrance animations here to prevent re-triggering */}
         <div className="w-full h-full flex flex-col justify-end md:justify-center">
           <div className="relative w-full h-full flex items-end md:items-center justify-center translate-x-0 md:translate-x-[25%] lg:translate-x-[35%] pb-8 md:pb-0 mt-8">
-             <Suspense fallback={null}>
-               <LaptopStraightLazy videoUrl={features[activeIndex].video} />
-             </Suspense>
+             {shouldMount && (
+               <Suspense fallback={null}>
+                 <LaptopStraightLazy videoUrl={features[activeIndex].video} />
+               </Suspense>
+             )}
             {/* Ambient glow behind the straight laptop */}
           </div>
         </div>

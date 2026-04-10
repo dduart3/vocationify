@@ -36,10 +36,10 @@ export function SchoolFilters({
   const currentLabel = filterOptions.find(opt => opt.id === typeFilter)?.label || 'Todos los Tipos'
 
   return (
-    <div className="flex flex-col sm:flex-row gap-4 items-center justify-between w-full h-[60px] mb-2 sm:mb-0">
+    <div className="flex flex-col sm:flex-row gap-6 sm:gap-4 items-center justify-between w-full h-auto sm:h-[72px] mb-8 sm:mb-0">
       
       {/* 3D Static Search Bar */}
-      <div className="relative flex-1 group w-full sm:w-auto h-full flex z-10">
+      <div className="relative flex-1 group w-full h-[72px] sm:h-full flex z-10">
         <IconSearch className="absolute left-6 top-1/2 transform -translate-y-1/2 h-[18px] w-[18px] text-slate-500 z-10 transition-colors duration-300 group-focus-within:text-blue-500" />
         <input
           type="text"
@@ -51,10 +51,10 @@ export function SchoolFilters({
       </div>
 
       {/* 3D Custom Dropdown Menu with Pill Track */}
-      <div className="relative shrink-0 w-full sm:w-auto p-1 bg-slate-200/80 backdrop-blur-md border border-slate-300 shadow-inner rounded-full z-20 h-full flex flex-col justify-center" ref={dropdownRef}>
+      <div className="relative shrink-0 w-full sm:w-auto p-1 bg-slate-200/80 backdrop-blur-md border border-slate-300 shadow-inner rounded-full z-20 h-[72px] sm:h-full flex flex-col justify-center" ref={dropdownRef}>
         <div 
           onClick={() => setIsOpen(!isOpen)}
-          className={`relative w-full h-full rounded-full bg-slate-50 border border-slate-200 shadow-[0_2px_5px_rgba(0,0,0,0.08),inset_0_-1px_2px_rgba(0,0,0,0.03),inset_0_1px_2px_rgba(255,255,255,1)] hover:shadow-[0_4px_12px_rgba(59,130,246,0.15),inset_0_-2px_4px_rgba(59,130,246,0.08),inset_0_2px_4px_rgba(255,255,255,1)] hover:bg-white hover:border-blue-200/60 hover:-translate-y-[1px] transition-all duration-300 group flex items-center justify-between sm:justify-center cursor-pointer pl-6 pr-5 sm:w-[210px] select-none ${isOpen ? 'shadow-[0_4px_12px_rgba(59,130,246,0.15),inset_0_-2px_4px_rgba(59,130,246,0.08),inset_0_2px_4px_rgba(255,255,255,1)] bg-white border-blue-200/60 -translate-y-[1px]' : ''}`}
+          className={`relative w-full h-[64px] sm:h-full rounded-full bg-slate-50 border border-slate-200 shadow-[0_2px_5px_rgba(0,0,0,0.08),inset_0_-1px_2px_rgba(0,0,0,0.03),inset_0_1px_2px_rgba(255,255,255,1)] hover:shadow-[0_4px_12px_rgba(59,130,246,0.15),inset_0_-2px_4px_rgba(59,130,246,0.08),inset_0_2px_4px_rgba(255,255,255,1)] hover:bg-white hover:border-blue-200/60 hover:-translate-y-[1px] transition-all duration-300 group flex items-center justify-between sm:justify-center cursor-pointer pl-6 pr-5 sm:w-[210px] select-none ${isOpen ? 'shadow-[0_4px_12px_rgba(59,130,246,0.15),inset_0_-2px_4px_rgba(59,130,246,0.08),inset_0_2px_4px_rgba(255,255,255,1)] bg-white border-blue-200/60 -translate-y-[1px]' : ''}`}
         >
           <span className={`text-[13px] font-bold transition-colors duration-300 whitespace-nowrap ${isOpen ? 'text-blue-600' : 'text-slate-600 group-hover:text-blue-600'}`}>
             {currentLabel}

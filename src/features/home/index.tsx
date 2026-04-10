@@ -1,12 +1,13 @@
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Background } from "./components/background";
-import { CTASection } from "./sections/call-to-action";
-// import { FeaturesSection } from "./sections/features";
 import { HeroSection } from "./sections/hero";
-import { TextRevealSection } from "./sections/text-reveal-section";
-import { InteractiveLaptopSection } from "./sections/interactive-laptop-section";
-import { AIAnalysisFeature } from "./sections/ai-analysis-feature";
+import { lazy, Suspense } from "react";
+
+const TextRevealSection = lazy(() => import("./sections/text-reveal-section").then(m => ({ default: m.TextRevealSection })));
+const InteractiveLaptopSection = lazy(() => import("./sections/interactive-laptop-section").then(m => ({ default: m.InteractiveLaptopSection })));
+const AIAnalysisFeature = lazy(() => import("./sections/ai-analysis-feature").then(m => ({ default: m.AIAnalysisFeature })));
+const CTASection = lazy(() => import("./sections/call-to-action").then(m => ({ default: m.CTASection })));
 
 export function Home() {
   return (
@@ -18,10 +19,13 @@ export function Home() {
         <div className="relative overflow-x-clip">
           <Background />
           <HeroSection />
-          <InteractiveLaptopSection />
-          <TextRevealSection />
-          <AIAnalysisFeature />
-          <CTASection />
+          
+          <Suspense fallback={<div className="h-[60vh] flex items-center justify-center text-slate-400 font-medium">Cargando experiencia...</div>}>
+            <InteractiveLaptopSection key="interactive-laptop" />
+            <TextRevealSection key="text-reveal" />
+            <AIAnalysisFeature key="ai-analysis" />
+            <CTASection key="cta" />
+          </Suspense>
         </div>
       </div>
 
