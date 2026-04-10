@@ -20,13 +20,14 @@ const Toaster = ({ ...props }: ToasterProps) => {
         duration: 4000,
         unstyled: true,
         classNames: {
-          toast: 'toast-glass',
+          toast: 'toast-3d',
           title: 'toast-title',
           description: 'toast-description',
           success: 'toast-success',
           error: 'toast-error',
           warning: 'toast-warning',
           info: 'toast-info',
+          icon: 'toast-icon',
           closeButton: 'toast-close',
         },
       }}

@@ -29,33 +29,23 @@ function Model({ ...props }: any) {
       }
     })
 
-    // Phase 1: Lower the closed, tilted laptop (0% - 10%)
-    tl.to(group.current.position, {
-      y: -3,
-      ease: 'power2.inOut',
-      duration: 10
-    })
-
-    // Phase 2: Rotate to flat (0% - 10%)
-    tl.to(group.current.rotation, {
-      x: 0,
-      ease: 'power2.inOut',
-      duration: 10
-    }, '<')
+    // Start already flat and positioned
+    gsap.set(group.current.position, { y: -3 })
+    gsap.set(group.current.rotation, { x: 0 })
     
-    // Phase 3: Lid Opening & Final Zoom (10% - 25%)
+    // Phase 1: Lid Opening & Final Zoom (0% - 25%)
     tl.to(lidGroup.current.rotation, {
       x: -0.1,
       ease: 'power2.out',
       duration: 15
-    }, '>')
+    }, 0)
 
     tl.to(group.current.position, {
       z: 2,
       y: -8,
       ease: 'power2.out',
       duration: 15
-    }, '<')
+    }, 0)
 
     // STAY OPEN (25% - 55%)
     tl.to({}, { duration: 30 })
@@ -88,7 +78,7 @@ function Model({ ...props }: any) {
   }, [])
 
   return (
-    <group ref={group} rotation-x={1.3} {...props} dispose={null}>
+    <group ref={group} rotation-x={0} {...props} dispose={null}>
       <group ref={lidGroup} rotation-x={Math.PI / 2} position={[0, -0.04, 0.41]}>
         <group position={[0, 2.96, -0.13]} rotation={[Math.PI / 2, 0, 0]}>
           <mesh material={materials.aluminium} geometry={nodes['Cube008'].geometry} />

@@ -103,7 +103,7 @@ export function AuthLayout({
         {showBackButton && (
           <Link
             to={backTo}
-            className="absolute right-8 top-10 lg:right-12 lg:top-12 inline-flex items-center text-[13px] font-medium text-slate-500 hover:text-slate-900 transition-colors gap-2 z-50"
+            className="absolute top-8 left-0 right-0 sm:left-auto sm:right-8 sm:top-10 lg:right-12 lg:top-12 flex items-center justify-center sm:justify-start text-[13px] font-medium text-slate-500 hover:text-slate-900 transition-colors gap-2 z-50"
           >
             <IconArrowLeft className="w-4 h-4" />
             Volver al inicio
@@ -113,7 +113,7 @@ export function AuthLayout({
         {/* Content Centered Container */}
         <div className="flex-1 flex flex-col items-center justify-center p-8 md:p-12 lg:p-20">
           <div ref={formContainerRef} className="w-full max-w-[420px] flex flex-col">
-            <div className="flex flex-col text-left items-start mb-10">
+            <div className="flex flex-col text-center sm:text-left items-center sm:items-start mb-10">
               {showLogo && (
                  <div className="mb-8">
                    <Logo size={42} showText={false} />
@@ -132,7 +132,7 @@ export function AuthLayout({
             </div>
             
             <div className="border-t border-slate-100 pt-8 mt-10">
-              <p className="text-left text-[14px] text-slate-400 leading-relaxed font-medium">
+              <p className="text-center sm:text-left text-[14px] text-slate-400 leading-relaxed font-medium">
                 Al continuar, aceptas nuestros{" "}
                 <a
                   href="#"

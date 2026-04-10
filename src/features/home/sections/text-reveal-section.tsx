@@ -1,5 +1,6 @@
-import { useRef, useEffect } from 'react';
+import { useRef } from 'react';
 import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -11,7 +12,7 @@ export function TextRevealSection() {
   
   const sentence = "Vocationify es la plataforma de IA que guía a miles de estudiantes en su futuro profesional gracias a su análisis vocacional avanzado y experto.";
 
-  useEffect(() => {
+  useGSAP(() => {
     if (!textContainerRef.current || !sectionRef.current) return;
 
     const words = textContainerRef.current.querySelectorAll('.reveal-word');
@@ -38,7 +39,7 @@ export function TextRevealSection() {
       scrollTrigger: {
         trigger: sectionRef.current,
         start: "top top", 
-        end: "+=100%", 
+        end: "+=120%", // Slightly longer for a better feel
         scrub: 1,
         pin: true,
         pinSpacing: true,
@@ -62,15 +63,10 @@ export function TextRevealSection() {
       }
     );
 
-    // Removed the empty timeline hold so it seamlessly unpins.
+    // Add a small hold at the end so it doesn't unpin immediately after finishing the text
+    tl.to({}, { duration: 1 });
 
-    return () => {
-      tl.kill();
-      ScrollTrigger.getAll().forEach(st => {
-        if (st.trigger === sectionRef.current) st.kill();
-      });
-    };
-  }, []);
+  }, { scope: sectionRef });
 
   return (
     <section 

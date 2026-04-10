@@ -1,4 +1,4 @@
-import { Suspense, useRef, useEffect, lazy, useState, useMemo } from 'react';
+import { Suspense, useRef, lazy, useState, useMemo } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -45,7 +45,6 @@ export function InteractiveLaptopSection() {
   const transcriptBoxContainerRef = useRef<HTMLDivElement>(null);
   const transcribingShimmerRef = useRef<HTMLDivElement>(null);
   const userTypedTextRef = useRef<HTMLDivElement>(null);
-  const [shouldMount, setShouldMount] = useState(false);
   const ariaAnswerContainerRef = useRef<HTMLDivElement>(null);
 
   const ariaWordsText = "¡Genial! El diseño UX y la estética creativa es una excelente ruta. ¿Quieres explorar recursos tecnológicos creativos?";
@@ -55,25 +54,7 @@ export function InteractiveLaptopSection() {
   const userWordsArray = useMemo(() => userTypedText.split(' '), []);
   const charsArray = useMemo(() => text.split(''), [text]);
 
-  useEffect(() => {
-    // Optimization: Defer mounting the 3D heavy canvas until it's actually needed
-    // This solves the "chunky" feeling during hero entrance
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          setShouldMount(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: '100px' } // Start loading a bit before it enters
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
+  const [shouldMount] = useState(true);
 
   useGSAP(() => {
     const section = sectionRef.current;

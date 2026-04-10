@@ -161,14 +161,14 @@ export function Header() {
                   <div className="pt-2 flex flex-col gap-2">
                     <Link
                       to="/login"
-                      className="py-2.5 text-sm font-medium text-neutral-700"
+                      className="py-3 rounded-2xl text-sm font-semibold text-neutral-700 border border-neutral-300 bg-white/50 hover:bg-white transition-all text-center active:scale-[0.98]"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Iniciar Sesión
                     </Link>
                     <Link
                       to="/register"
-                      className="py-3 rounded-2xl text-sm font-semibold text-white bg-gradient-to-b from-blue-500 to-blue-600 border border-blue-400/50 shadow-[0_4px_12px_rgba(59,130,246,0.2),inset_0_-2px_4px_rgba(0,0,0,0.1),inset_0_2px_4px_rgba(255,255,255,0.3)] text-center"
+                      className="py-3 rounded-2xl text-sm font-semibold text-white bg-gradient-to-b from-blue-500 to-blue-600 border border-blue-400/50 shadow-[0_4px_12px_rgba(59,130,246,0.2),inset_0_-2px_4px_rgba(0,0,0,0.1),inset_0_2px_4px_rgba(255,255,255,0.3)] text-center active:scale-[0.98]"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Registrarse

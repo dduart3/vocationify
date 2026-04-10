@@ -112,14 +112,14 @@ export function HeroSection({ isReady = true }: { isReady?: boolean }) {
       </div>
 
       {/* Centered content – high z-index so button stays clickable */}
-      <div className="relative z-20 flex-1 flex flex-col items-center justify-center px-6 sm:px-8 lg:px-12 pt-28 sm:pt-20 pb-10 sm:pb-6 text-center">
+      <div className="relative z-20 flex-1 flex flex-col items-center justify-center px-6 sm:px-8 lg:px-12 pt-36 sm:pt-32 pb-10 sm:pb-6 text-center">
         <div className="w-full max-w-6xl mx-auto flex flex-col items-center">
           <h1
             ref={titleRef}
             className="text-5xl sm:text-5xl md:text-6xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-normal tracking-tight text-neutral-900 leading-[0.9] mb-4 sm:mb-6"
             style={{ opacity: 0 }}
           >
-            {headline.line1} {headline.line2}
+            {headline.line1} <br className="sm:hidden" /> {headline.line2}
           </h1>
           <p
             ref={subtitleRef}
@@ -145,7 +145,7 @@ export function HeroSection({ isReady = true }: { isReady?: boolean }) {
         </div>
       </div>
 
-      {/* Laptop mockups */}
+      {/* Laptop mockups with bottom gradient mask for smooth transition */}
       <div
         ref={mockupsRef}
         className="relative z-10 flex-1 min-h-0 flex items-end justify-center px-4 pb-0 w-full h-full will-change-transform"
@@ -164,6 +164,9 @@ export function HeroSection({ isReady = true }: { isReady?: boolean }) {
           />
         </div>
       </div>
+
+      {/* Full-width bottom fade mask to smooth section transition */}
+      <div className="absolute bottom-0 left-0 right-0 h-[40px] sm:h-[60px] bg-gradient-to-t from-[#f8fafc] via-[#f8fafc] to-transparent z-40 pointer-events-none" />
     </section>
   )
 }
